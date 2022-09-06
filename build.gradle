@@ -37,7 +37,7 @@ buildscript {
         retrofit_version = '2.9.0'
         okHttp_version = '5.0.0-alpha.6'
 
-        coil_version = '2.1.0'
+        coil_version = '2.2.0'
 
         datastore_version = '1.0.0'
 

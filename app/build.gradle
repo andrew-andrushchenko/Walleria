@@ -123,7 +123,6 @@ dependencies {
     implementation "com.google.accompanist:accompanist-swiperefresh:$accompainst_version"
     implementation "com.google.accompanist:accompanist-navigation-material:$accompainst_version"
     //implementation "com.google.accompanist:accompanist-navigation-animation:$accompainst_version"
-    implementation "com.google.accompanist:accompanist-insets:$accompainst_version"
     implementation "com.google.accompanist:accompanist-systemuicontroller:$accompainst_version"
     implementation "com.google.accompanist:accompanist-pager:$accompainst_version"
     implementation "com.google.accompanist:accompanist-permissions:$accompainst_version"

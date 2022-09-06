@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Dev/AndroidStudioProjects/Walleria/app/src/main/res/drawable/ic_at_sign.xml" value="0.172" />
+        <entry key="..\:/Dev/AndroidStudioProjects/Walleria/app/src/main/res/drawable/ic_dev.xml" value="0.172" />
+        <entry key="..\:/Dev/AndroidStudioProjects/Walleria/app/src/main/res/drawable/ic_eye.xml" value="0.172" />
+        <entry key="..\:/Dev/AndroidStudioProjects/Walleria/app/src/main/res/drawable/ic_github.xml" value="0.172" />
+        <entry key="..\:/Dev/AndroidStudioProjects/Walleria/app/src/main/res/drawable/ic_gmail.xml" value="0.172" />
+        <entry key="..\:/Dev/AndroidStudioProjects/Walleria/app/src/main/res/drawable/ic_instagram.xml" value="0.172" />
+        <entry key="..\:/Dev/AndroidStudioProjects/Walleria/app/src/main/res/drawable/ic_location.xml" value="0.172" />
+        <entry key="..\:/Dev/AndroidStudioProjects/Walleria/app/src/main/res/drawable/ic_network_error.xml" value="0.172" />
+        <entry key="..\:/Dev/AndroidStudioProjects/Walleria/app/src/main/res/drawable/ic_nothing_here.xml" value="0.172" />
+        <entry key="..\:/Dev/AndroidStudioProjects/Walleria/app/src/main/res/drawable/ic_topic_closed.xml" value="0.172" />
+        <entry key="..\:/Dev/AndroidStudioProjects/Walleria/app/src/main/res/drawable/ic_topic_open.xml" value="0.172" />
+        <entry key="..\:/Dev/AndroidStudioProjects/Walleria/app/src/main/res/drawable/ic_twitter.xml" value="0.172" />
+        <entry key="..\:/Dev/AndroidStudioProjects/Walleria/app/src/main/res/drawable/ic_views_outlined.xml" value="0.172" />
+      </map>
+    </option>
+  </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
