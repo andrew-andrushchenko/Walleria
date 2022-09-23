@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Walleria</string>
+
+    <!--Navigation screen titles-->
+    <string name="photos">Photos</string>
+    <string name="collections">Collections</string>
+    <string name="topics">Topics</string>
+    <string name="profile">Profile</string>
+
 </resources>
