@@ -12,6 +12,7 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import com.andrii_a.walleria.ui.navigation.MainNavHost
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -28,9 +29,13 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background,
                     modifier = Modifier.fillMaxSize()
                 ) {
+                    val systemUiController = rememberSystemUiController()
                     val navController = rememberNavController()
 
-                    MainNavHost(navHostController = navController)
+                    MainNavHost(
+                        navHostController = navController,
+                        systemUiController = systemUiController
+                    )
                 }
             }
         }
