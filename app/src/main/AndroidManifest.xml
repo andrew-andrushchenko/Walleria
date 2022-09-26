@@ -4,6 +4,7 @@
     package="com.andrii_a.walleria">
 
     <application
+        android:name=".WalleriaApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
