@@ -44,3 +44,7 @@ enum class NavigationScreen(
         iconSelected = Icons.Filled.AccountCircle
     )
 }
+
+val NavigationScreenRoutes: List<String> by lazy {
+    NavigationScreen.values().map { it.route }
+}

@@ -10,12 +10,12 @@ import javax.inject.Inject
 @HiltAndroidApp
 class WalleriaApplication : Application() {
 
-    @Inject
+    /*@Inject
     @ApplicationScope
-    lateinit var applicationScope: CoroutineScope
+    lateinit var applicationScope: CoroutineScope*/
 
     override fun onTerminate() {
-        applicationScope.cancel()
+        //applicationScope.cancel()
         super.onTerminate()
     }
 }
