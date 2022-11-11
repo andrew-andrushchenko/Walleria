@@ -3,10 +3,10 @@ package com.andrii_a.walleria.data.remote.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.andrii_a.walleria.core.SearchContentFilter
-import com.andrii_a.walleria.core.SearchOrder
-import com.andrii_a.walleria.core.SearchPhotoColor
-import com.andrii_a.walleria.core.SearchPhotoOrientation
+import com.andrii_a.walleria.core.SearchResultsContentFilter
+import com.andrii_a.walleria.core.SearchResultsDisplayOrder
+import com.andrii_a.walleria.core.SearchResultsPhotoColor
+import com.andrii_a.walleria.core.SearchResultsPhotoOrientation
 import com.andrii_a.walleria.data.remote.source.search.SearchCollectionsPagingSource
 import com.andrii_a.walleria.data.remote.source.search.SearchPhotosPagingSource
 import com.andrii_a.walleria.data.remote.source.search.SearchService
@@ -22,11 +22,11 @@ class SearchRepositoryImpl(private val searchService: SearchService) : SearchRep
 
     override fun searchPhotos(
         query: String,
-        order: SearchOrder,
+        order: SearchResultsDisplayOrder,
         collections: String?,
-        contentFilter: SearchContentFilter,
-        color: SearchPhotoColor,
-        orientation: SearchPhotoOrientation
+        contentFilter: SearchResultsContentFilter,
+        color: SearchResultsPhotoColor,
+        orientation: SearchResultsPhotoOrientation
     ): Flow<PagingData<Photo>> =
         Pager(
             config = PagingConfig(

@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.andrii_a.walleria.ui.photos.photosBottomNavRoute
 import com.google.accompanist.systemuicontroller.SystemUiController
 
 @Composable
@@ -21,6 +22,7 @@ fun MainNavHost(
         startDestination = BottomNavigationGraphRoute
     ) {
         bottomNavigation(navHostController, systemUiController)
+
     }
 }
 
@@ -32,19 +34,8 @@ fun NavGraphBuilder.bottomNavigation(
         route = BottomNavigationGraphRoute,
         startDestination = NavigationScreen.Photos.route
     ) {
-        composable(route = NavigationScreen.Photos.route) {
-            val statusBarColor = MaterialTheme.colors.primary.copy(alpha = 0.95f)
-            SideEffect {
-                systemUiController.setStatusBarColor(
-                    color = statusBarColor,
-                    darkIcons = true
-                )
-                systemUiController.setNavigationBarColor(
-                    color = Color.Transparent,
-                    darkIcons = true
-                )
-            }
-        }
+        photosBottomNavRoute(navHostController, systemUiController)
+
         composable(route = NavigationScreen.Collections.route) {
             val statusBarColor = MaterialTheme.colors.primary.copy(alpha = 0.95f)
             SideEffect {

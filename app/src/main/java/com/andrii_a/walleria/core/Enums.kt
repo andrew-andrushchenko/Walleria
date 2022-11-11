@@ -1,22 +1,22 @@
 package com.andrii_a.walleria.core
 
-enum class PhotoListOrder(val value: String) {
+enum class PhotoListDisplayOrder(val value: String) {
     LATEST("latest"),
     OLDEST("oldest"),
     POPULAR("popular")
 }
 
-enum class SearchOrder(val value: String) {
+enum class SearchResultsDisplayOrder(val value: String) {
     RELEVANT("relevant"),
     LATEST("latest")
 }
 
-enum class SearchContentFilter(val value: String) {
+enum class SearchResultsContentFilter(val value: String) {
     LOW("low"),
     HIGH("high")
 }
 
-enum class SearchPhotoColor(val value: String?) {
+enum class SearchResultsPhotoColor(val value: String?) {
     ANY(null),
     BLACK_AND_WHITE("black_and_white"),
     BLACK("black"),
@@ -31,14 +31,14 @@ enum class SearchPhotoColor(val value: String?) {
     BLUE("blue")
 }
 
-enum class SearchPhotoOrientation(val value: String?) {
+enum class SearchResultsPhotoOrientation(val value: String?) {
     ANY(null),
     LANDSCAPE("landscape"),
     PORTRAIT("portrait"),
     SQUARISH("squarish")
 }
 
-enum class TopicsOrder(val value: String) {
+enum class TopicsDisplayOrder(val value: String) {
     FEATURED("featured"),
     LATEST("latest"),
     OLDEST("oldest"),
@@ -63,7 +63,7 @@ enum class CollectionListLayoutType {
     ALBUM_COVER
 }
 
-enum class PhotoSize {
+enum class PhotoQuality {
     ORIGINAL,
     LARGE,
     MEDIUM,

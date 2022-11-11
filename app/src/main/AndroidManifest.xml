@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.andrii_a.walleria">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".WalleriaApplication"
         android:allowBackup="true"

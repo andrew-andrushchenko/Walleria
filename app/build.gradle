@@ -119,6 +119,9 @@ dependencies {
     // Android splash screen
     implementation "androidx.core:core-splashscreen:$splash_screen_version"
 
+    // Constraint layout
+    implementation "androidx.constraintlayout:constraintlayout-compose:$constraint_layout_compose_version"
+
     // Accompainst libs
     implementation "com.google.accompanist:accompanist-swiperefresh:$accompainst_version"
     implementation "com.google.accompanist:accompanist-navigation-material:$accompainst_version"

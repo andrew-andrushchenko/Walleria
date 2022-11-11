@@ -9,7 +9,7 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.andrii_a.walleria.core.CollectionListLayoutType
-import com.andrii_a.walleria.core.PhotoSize
+import com.andrii_a.walleria.core.PhotoQuality
 import com.andrii_a.walleria.core.PhotosListLayoutType
 import com.andrii_a.walleria.domain.repository.AppLocalPreferencesRepository
 import kotlinx.coroutines.flow.Flow
@@ -53,9 +53,9 @@ class AppLocalPreferencesRepositoryImpl(context: Context) : AppLocalPreferencesR
             )
         }
 
-    override val imagePreviewsQuality: Flow<PhotoSize> = preferencesFlow.map { preferences ->
-        PhotoSize.valueOf(
-            preferences[WalleriaAppPreferencesKeys.IMAGE_PREVIEWS_QUALITY] ?: PhotoSize.MEDIUM.name
+    override val imagePreviewsQuality: Flow<PhotoQuality> = preferencesFlow.map { preferences ->
+        PhotoQuality.valueOf(
+            preferences[WalleriaAppPreferencesKeys.IMAGE_PREVIEWS_QUALITY] ?: PhotoQuality.MEDIUM.name
         )
     }
 
@@ -73,7 +73,7 @@ class AppLocalPreferencesRepositoryImpl(context: Context) : AppLocalPreferencesR
         }
     }
 
-    override suspend fun saveImagePreviewsQuality(imagePreviewsQuality: PhotoSize) {
+    override suspend fun saveImagePreviewsQuality(imagePreviewsQuality: PhotoQuality) {
         appLocalPreferences.edit { preferences ->
             preferences[WalleriaAppPreferencesKeys.IMAGE_PREVIEWS_QUALITY] =
                 imagePreviewsQuality.name

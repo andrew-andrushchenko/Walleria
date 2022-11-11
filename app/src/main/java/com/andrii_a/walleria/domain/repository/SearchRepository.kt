@@ -1,10 +1,10 @@
 package com.andrii_a.walleria.domain.repository
 
 import androidx.paging.PagingData
-import com.andrii_a.walleria.core.SearchContentFilter
-import com.andrii_a.walleria.core.SearchOrder
-import com.andrii_a.walleria.core.SearchPhotoColor
-import com.andrii_a.walleria.core.SearchPhotoOrientation
+import com.andrii_a.walleria.core.SearchResultsContentFilter
+import com.andrii_a.walleria.core.SearchResultsDisplayOrder
+import com.andrii_a.walleria.core.SearchResultsPhotoColor
+import com.andrii_a.walleria.core.SearchResultsPhotoOrientation
 import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.user.User
@@ -14,11 +14,11 @@ interface SearchRepository {
 
     fun searchPhotos(
         query: String,
-        order: SearchOrder,
+        order: SearchResultsDisplayOrder,
         collections: String? = null,
-        contentFilter: SearchContentFilter,
-        color: SearchPhotoColor,
-        orientation: SearchPhotoOrientation
+        contentFilter: SearchResultsContentFilter,
+        color: SearchResultsPhotoColor,
+        orientation: SearchResultsPhotoOrientation
     ): Flow<PagingData<Photo>>
 
     fun searchCollections(query: String): Flow<PagingData<Collection>>

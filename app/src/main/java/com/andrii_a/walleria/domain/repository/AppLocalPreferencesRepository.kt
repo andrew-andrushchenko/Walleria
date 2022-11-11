@@ -2,7 +2,7 @@ package com.andrii_a.walleria.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 import com.andrii_a.walleria.core.CollectionListLayoutType
-import com.andrii_a.walleria.core.PhotoSize
+import com.andrii_a.walleria.core.PhotoQuality
 import com.andrii_a.walleria.core.PhotosListLayoutType
 
 interface AppLocalPreferencesRepository {
@@ -11,12 +11,12 @@ interface AppLocalPreferencesRepository {
 
     val collectionsListLayoutType: Flow<CollectionListLayoutType>
 
-    val imagePreviewsQuality: Flow<PhotoSize>
+    val imagePreviewsQuality: Flow<PhotoQuality>
 
     suspend fun savePhotosListLayoutType(photosListLayoutType: PhotosListLayoutType)
 
     suspend fun saveCollectionsListLayoutType(collectionListLayoutType: CollectionListLayoutType)
 
-    suspend fun saveImagePreviewsQuality(imagePreviewsQuality: PhotoSize)
+    suspend fun saveImagePreviewsQuality(imagePreviewsQuality: PhotoQuality)
 
 }

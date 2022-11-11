@@ -3,7 +3,7 @@ package com.andrii_a.walleria.data.remote.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.andrii_a.walleria.core.PhotoListOrder
+import com.andrii_a.walleria.core.PhotoListDisplayOrder
 import com.andrii_a.walleria.core.TopicPhotosOrientation
 import com.andrii_a.walleria.data.remote.source.photo.*
 import com.andrii_a.walleria.data.util.PAGE_SIZE
@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.Flow
 
 class PhotoRepositoryImpl(private val photoService: PhotoService) : PhotoRepository {
 
-    override fun getPhotos(order: PhotoListOrder): Flow<PagingData<Photo>> =
+    override fun getPhotos(order: PhotoListDisplayOrder): Flow<PagingData<Photo>> =
         Pager(
             config = PagingConfig(
                 pageSize = PAGE_SIZE,
@@ -55,7 +55,7 @@ class PhotoRepositoryImpl(private val photoService: PhotoService) : PhotoReposit
     override fun getTopicPhotos(
         idOrSlug: String,
         orientation: TopicPhotosOrientation,
-        order: PhotoListOrder
+        order: PhotoListDisplayOrder
     ): Flow<PagingData<Photo>> =
         Pager(
             config = PagingConfig(

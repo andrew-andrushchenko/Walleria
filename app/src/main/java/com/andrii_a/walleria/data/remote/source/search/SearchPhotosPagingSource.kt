@@ -1,9 +1,9 @@
 package com.andrii_a.walleria.data.remote.source.search
 
-import com.andrii_a.walleria.core.SearchContentFilter
-import com.andrii_a.walleria.core.SearchOrder
-import com.andrii_a.walleria.core.SearchPhotoColor
-import com.andrii_a.walleria.core.SearchPhotoOrientation
+import com.andrii_a.walleria.core.SearchResultsContentFilter
+import com.andrii_a.walleria.core.SearchResultsDisplayOrder
+import com.andrii_a.walleria.core.SearchResultsPhotoColor
+import com.andrii_a.walleria.core.SearchResultsPhotoOrientation
 import com.andrii_a.walleria.data.remote.dto.search.SearchPhotosResultDTO
 import com.andrii_a.walleria.data.remote.source.base.BasePagingSource
 import com.andrii_a.walleria.data.util.INITIAL_PAGE_INDEX
@@ -15,11 +15,11 @@ import java.io.IOException
 class SearchPhotosPagingSource(
     private val searchService: SearchService,
     private val query: String,
-    private val order: SearchOrder,
+    private val order: SearchResultsDisplayOrder,
     private val collections: String?,
-    private val contentFilter: SearchContentFilter,
-    private val color: SearchPhotoColor,
-    private val orientation: SearchPhotoOrientation
+    private val contentFilter: SearchResultsContentFilter,
+    private val color: SearchResultsPhotoColor,
+    private val orientation: SearchResultsPhotoOrientation
 ) : BasePagingSource<Photo>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Photo> {

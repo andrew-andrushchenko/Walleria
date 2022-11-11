@@ -1,7 +1,7 @@
 package com.andrii_a.walleria.domain.repository
 
 import androidx.paging.PagingData
-import com.andrii_a.walleria.core.PhotoListOrder
+import com.andrii_a.walleria.core.PhotoListDisplayOrder
 import com.andrii_a.walleria.core.TopicPhotosOrientation
 import com.andrii_a.walleria.data.util.network.BackendResult
 import com.andrii_a.walleria.domain.models.photo.Photo
@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface PhotoRepository {
 
-    fun getPhotos(order: PhotoListOrder = PhotoListOrder.LATEST): Flow<PagingData<Photo>>
+    fun getPhotos(order: PhotoListDisplayOrder = PhotoListDisplayOrder.LATEST): Flow<PagingData<Photo>>
 
     fun getCollectionPhotos(collectionId: String): Flow<PagingData<Photo>>
 
@@ -20,7 +20,7 @@ interface PhotoRepository {
     fun getTopicPhotos(
         idOrSlug: String,
         orientation: TopicPhotosOrientation = TopicPhotosOrientation.LANDSCAPE,
-        order: PhotoListOrder = PhotoListOrder.LATEST
+        order: PhotoListDisplayOrder = PhotoListDisplayOrder.LATEST
     ): Flow<PagingData<Photo>>
 
     fun getPhoto(photoId: String): Flow<BackendResult<Photo>>

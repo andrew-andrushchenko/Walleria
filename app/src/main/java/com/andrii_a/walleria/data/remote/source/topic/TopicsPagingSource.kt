@@ -1,6 +1,6 @@
 package com.andrii_a.walleria.data.remote.source.topic
 
-import com.andrii_a.walleria.core.TopicsOrder
+import com.andrii_a.walleria.core.TopicsDisplayOrder
 import com.andrii_a.walleria.data.remote.source.base.BasePagingSource
 import com.andrii_a.walleria.data.util.INITIAL_PAGE_INDEX
 import com.andrii_a.walleria.data.util.PAGE_SIZE
@@ -10,7 +10,7 @@ import java.io.IOException
 
 class TopicsPagingSource(
     private val topicService: TopicService,
-    private val order: TopicsOrder
+    private val order: TopicsDisplayOrder
 ) : BasePagingSource<Topic>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Topic> {

@@ -1,6 +1,6 @@
 package com.andrii_a.walleria.data.remote.source.photo
 
-import com.andrii_a.walleria.core.PhotoListOrder
+import com.andrii_a.walleria.core.PhotoListDisplayOrder
 import com.andrii_a.walleria.core.TopicPhotosOrientation
 import com.andrii_a.walleria.data.remote.source.base.BasePagingSource
 import com.andrii_a.walleria.data.util.INITIAL_PAGE_INDEX
@@ -13,7 +13,7 @@ class TopicPhotosPagingSource(
     private val photoService: PhotoService,
     private val idOrSlug: String,
     private val orientation: TopicPhotosOrientation,
-    private val order: PhotoListOrder
+    private val order: PhotoListDisplayOrder
 ) : BasePagingSource<Photo>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Photo> {
