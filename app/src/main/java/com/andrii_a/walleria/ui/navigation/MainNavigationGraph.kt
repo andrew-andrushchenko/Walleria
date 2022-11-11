@@ -62,6 +62,21 @@ fun NavGraphBuilder.bottomNavigation(
                 )
             }
         }
+
+        composable(route = NavigationScreen.Search.route) {
+            val statusBarColor = MaterialTheme.colors.primary.copy(alpha = 0.95f)
+            SideEffect {
+                systemUiController.setStatusBarColor(
+                    color = statusBarColor,
+                    darkIcons = true
+                )
+                systemUiController.setNavigationBarColor(
+                    color = Color.Transparent,
+                    darkIcons = true
+                )
+            }
+        }
+
         composable(route = NavigationScreen.Profile.route) {
             val statusBarColor = MaterialTheme.colors.primary.copy(alpha = 0.95f)
             SideEffect {

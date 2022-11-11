@@ -5,6 +5,7 @@
     <string name="photos">Photos</string>
     <string name="collections">Collections</string>
     <string name="topics">Topics</string>
+    <string name="search">Search</string>
     <string name="profile">Profile</string>
 
 </resources>

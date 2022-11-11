@@ -2,14 +2,8 @@ package com.andrii_a.walleria.ui.navigation
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Collections
-import androidx.compose.material.icons.filled.Photo
-import androidx.compose.material.icons.filled.Topic
-import androidx.compose.material.icons.outlined.AccountCircle
-import androidx.compose.material.icons.outlined.Collections
-import androidx.compose.material.icons.outlined.Photo
-import androidx.compose.material.icons.outlined.Topic
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.andrii_a.walleria.R
 
@@ -36,6 +30,12 @@ enum class NavigationScreen(
         titleRes = R.string.topics,
         iconUnselected = Icons.Outlined.Topic,
         iconSelected = Icons.Filled.Topic
+    ),
+    Search(
+        route = "search",
+        titleRes = R.string.search,
+        iconUnselected = Icons.Outlined.Search,
+        iconSelected = Icons.Filled.Search
     ),
     Profile(
         route = "profile",
