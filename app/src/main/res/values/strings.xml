@@ -11,6 +11,9 @@
     <string name="search">Search</string>
     <string name="profile">Profile</string>
 
+    <!--Photos tab-->
+    <string name="photos_title_template">%s photos</string>
+
     <!--Collections tab-->
     <string name="all_collections">All collections</string>
     <string name="description_first_photo">The first preview photo in collection</string>

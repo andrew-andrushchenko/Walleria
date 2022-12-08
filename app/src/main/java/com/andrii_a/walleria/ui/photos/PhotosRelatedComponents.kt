@@ -9,9 +9,11 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.ArrowDropUp
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,9 +27,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.itemsIndexed
+import androidx.paging.compose.items
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.andrii_a.walleria.core.PhotoListDisplayOrder
 import com.andrii_a.walleria.core.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.ui.common.PhotoId
@@ -56,7 +59,7 @@ fun PhotosList(
             contentPadding = contentPadding,
             modifier = modifier
         ) {
-            itemsIndexed(lazyPhotoItems) { index, photo ->
+            items(lazyPhotoItems) { photo ->
                 photo?.let {
                     DefaultPhotoItem(
                         width = it.width.toFloat(),
@@ -70,8 +73,7 @@ fun PhotosList(
                         modifier = Modifier.padding(
                             start = 16.dp,
                             end = 16.dp,
-                            bottom = 16.dp,
-                            top = if (index == 0) 16.dp else 0.dp
+                            bottom = 16.dp
                         )
                     )
                 }
@@ -195,5 +197,60 @@ fun UserRow(
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun TitleDropdown(
+    title: String,
+    orderPhotosBy: (Int) -> Unit
+) {
+    var dropdownExpanded by remember {
+        mutableStateOf(false)
+    }
+
+    ExposedDropdownMenuBox(
+        expanded = dropdownExpanded,
+        onExpandedChange = {
+            dropdownExpanded = !dropdownExpanded
+        },
+        modifier = Modifier.wrapContentWidth()
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.h6,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+
+            Icon(
+                imageVector = if (dropdownExpanded) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
+                contentDescription = ""
+            )
+        }
+
+        ExposedDropdownMenu(
+            expanded = dropdownExpanded,
+            onDismissRequest = {
+                dropdownExpanded = false
+            },
+            modifier = Modifier.wrapContentWidth()
+        ) {
+            PhotoListDisplayOrder.values().forEach { orderOption ->
+                DropdownMenuItem(
+                    onClick = {
+                        orderPhotosBy(orderOption.ordinal)
+                        dropdownExpanded = false
+                    }
+                ) {
+                    Text(text = orderOption.name)
+                }
+            }
+        }
     }
 }

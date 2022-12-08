@@ -18,7 +18,7 @@ fun NavGraphBuilder.photosBottomNavRoute(
     systemUiController: SystemUiController
 ) {
     composable(route = NavigationScreen.Photos.route) {
-        val statusBarColor = MaterialTheme.colors.primary
+        val statusBarColor = MaterialTheme.colors.primary.copy(alpha = 0.9f)
         val navigationBarColor = Color.Transparent
         val isDark = isSystemInDarkTheme()
 
