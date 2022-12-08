@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
@@ -30,12 +31,14 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.andrii_a.walleria.R
 import com.andrii_a.walleria.core.PhotoListDisplayOrder
 import com.andrii_a.walleria.core.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.common.ScrollToTopLayout
 import com.andrii_a.walleria.ui.common.UserNickname
+import com.andrii_a.walleria.ui.util.titleRes
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -248,7 +251,12 @@ fun TitleDropdown(
                         dropdownExpanded = false
                     }
                 ) {
-                    Text(text = orderOption.name)
+                    Text(
+                        text = stringResource(
+                            id = R.string.photos_title_template,
+                            stringResource(id = orderOption.titleRes)
+                        )
+                    )
                 }
             }
         }

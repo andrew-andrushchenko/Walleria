@@ -41,7 +41,10 @@ fun PhotosScreen(
                 .align(Alignment.TopCenter)
         ) {
             TitleDropdown(
-                title = stringResource(id = R.string.photos_title_template, order.titleRes),
+                title = stringResource(
+                    id = R.string.photos_title_template,
+                    stringResource(id = order.titleRes)
+                ),
                 orderPhotosBy = orderBy
             )
         }
