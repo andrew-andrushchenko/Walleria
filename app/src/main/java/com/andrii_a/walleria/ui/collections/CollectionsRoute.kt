@@ -3,6 +3,7 @@ package com.andrii_a.walleria.ui.collections
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -16,7 +17,7 @@ fun NavGraphBuilder.collectionsBottomNavRoute(
 ) {
     composable(route = NavigationScreen.Collections.route) {
         val statusBarColor = MaterialTheme.colors.primary.copy(alpha = 0.9f)
-        val navigationBarColor = MaterialTheme.colors.primary
+        val navigationBarColor = Color.Transparent
         val isDark = isSystemInDarkTheme()
 
         SideEffect {
