@@ -1,0 +1,56 @@
+package com.andrii_a.walleria.ui.collections
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.paging.PagingData
+import com.andrii_a.walleria.R
+import com.andrii_a.walleria.domain.models.collection.Collection
+import kotlinx.coroutines.flow.Flow
+
+@Composable
+fun CollectionsScreen(collections: Flow<PagingData<Collection>>) {
+    Box(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        CollectionsList(
+            pagingDataFlow = collections,
+            onCollectionClicked = {
+
+            },
+            onUserProfileClicked = {
+
+            },
+            onPhotoClicked = {
+
+            },
+            contentPadding = PaddingValues(
+                top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 48.dp
+            )
+        )
+
+        Row(
+            modifier = Modifier
+                .statusBarsPadding()
+                .background(color = MaterialTheme.colors.primary.copy(alpha = 0.9f))
+                .height(48.dp)
+                .padding(start = 16.dp, end = 16.dp)
+                .fillMaxWidth()
+                .align(Alignment.TopCenter)
+        ) {
+            Text(
+                text = stringResource(id = R.string.all_collections),
+                style = MaterialTheme.typography.h6,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
+}

@@ -21,8 +21,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.andrii_a.walleria.R
 import com.andrii_a.walleria.ui.theme.OnButtonDark
 import com.andrii_a.walleria.ui.theme.OnButtonLight
 import kotlinx.coroutines.launch
@@ -124,6 +126,7 @@ fun WTextButton(
 @Composable
 fun ScrollToTopLayout(
     listState: LazyListState,
+    contentPadding: PaddingValues,
     list: @Composable () -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -143,17 +146,23 @@ fun ScrollToTopLayout(
             exit = fadeOut(),
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(all = 8.dp)
+                .padding(contentPadding)
         ) {
-            CircleIconButton(
-                icon = Icons.Default.KeyboardArrowUp,
+            ExtendedFloatingActionButton(
+                text = {
+                    Text(text = stringResource(id = R.string.to_top))
+                },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowUp,
+                        contentDescription = stringResource(id = R.string.to_top)
+                    )
+                },
                 onClick = {
                     scope.launch {
                         listState.scrollToItem(0)
                     }
-                },
-                backgroundColor = MaterialTheme.colors.secondary,
-                contentColor = MaterialTheme.colors.onSecondary
+                }
             )
         }
     }

@@ -1,11 +1,22 @@
 <resources>
     <string name="app_name">Walleria</string>
 
+    <!--Common-->
+    <string name="to_top">To top</string>
+
     <!--Navigation screen titles-->
     <string name="photos">Photos</string>
     <string name="collections">Collections</string>
     <string name="topics">Topics</string>
     <string name="search">Search</string>
     <string name="profile">Profile</string>
+
+    <!--Collections tab-->
+    <string name="all_collections">All collections</string>
+    <string name="description_first_photo">The first preview photo in collection</string>
+    <string name="description_second_photo">The second preview photo in collection</string>
+    <string name="description_third_photo">The third preview photo in collection</string>
+    <string name="description_open_collection">Open collection</string>
+    <string name="bullet_template">%s \u2022 %s photos</string>
 
 </resources>
