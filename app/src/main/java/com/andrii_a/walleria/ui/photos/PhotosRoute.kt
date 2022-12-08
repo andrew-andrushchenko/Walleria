@@ -5,6 +5,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -18,11 +19,17 @@ fun NavGraphBuilder.photosBottomNavRoute(
 ) {
     composable(route = NavigationScreen.Photos.route) {
         val statusBarColor = MaterialTheme.colors.primary
+        val navigationBarColor = Color.Transparent
         val isDark = isSystemInDarkTheme()
 
         SideEffect {
-            systemUiController.setSystemBarsColor(
+            systemUiController.setStatusBarColor(
                 color = statusBarColor,
+                darkIcons = !isDark
+            )
+
+            systemUiController.setNavigationBarColor(
+                color = navigationBarColor,
                 darkIcons = !isDark
             )
         }
