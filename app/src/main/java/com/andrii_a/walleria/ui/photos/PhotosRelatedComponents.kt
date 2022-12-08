@@ -31,6 +31,7 @@ import coil.request.ImageRequest
 import com.andrii_a.walleria.core.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.ui.common.PhotoId
+import com.andrii_a.walleria.ui.common.ScrollToTopLayout
 import com.andrii_a.walleria.ui.common.UserNickname
 import kotlinx.coroutines.flow.Flow
 
@@ -46,29 +47,34 @@ fun PhotosList(
 ) {
     val lazyPhotoItems = pagingDataFlow.collectAsLazyPagingItems()
 
-    LazyColumn(
-        state = listState,
-        contentPadding = contentPadding,
-        modifier = modifier
+    ScrollToTopLayout(
+        listState = listState,
+        contentPadding = PaddingValues(bottom = 120.dp)
     ) {
-        itemsIndexed(lazyPhotoItems) { index, photo ->
-            photo?.let {
-                DefaultPhotoItem(
-                    width = it.width.toFloat(),
-                    height = it.height.toFloat(),
-                    photoUrl = it.urls.regular, // TODO: replace later
-                    photoPlaceholderColor = Color.Gray, // TODO: replace later
-                    userProfileImageUrl = it.user?.profileImage?.medium.orEmpty(),
-                    username = "${it.user?.firstName.orEmpty()} ${it.user?.lastName.orEmpty()}",
-                    onPhotoClicked = { onPhotoClicked(PhotoId(it.id)) },
-                    onUserClick = { onUserProfileClicked(UserNickname(photo.user?.username.orEmpty())) },
-                    modifier = Modifier.padding(
-                        start = 16.dp,
-                        end = 16.dp,
-                        bottom = 16.dp,
-                        top = if (index == 0) 16.dp else 0.dp
+        LazyColumn(
+            state = listState,
+            contentPadding = contentPadding,
+            modifier = modifier
+        ) {
+            itemsIndexed(lazyPhotoItems) { index, photo ->
+                photo?.let {
+                    DefaultPhotoItem(
+                        width = it.width.toFloat(),
+                        height = it.height.toFloat(),
+                        photoUrl = it.urls.regular, // TODO: replace later
+                        photoPlaceholderColor = Color.Gray, // TODO: replace later
+                        userProfileImageUrl = it.user?.profileImage?.medium.orEmpty(),
+                        username = "${it.user?.firstName.orEmpty()} ${it.user?.lastName.orEmpty()}",
+                        onPhotoClicked = { onPhotoClicked(PhotoId(it.id)) },
+                        onUserClick = { onUserProfileClicked(UserNickname(photo.user?.username.orEmpty())) },
+                        modifier = Modifier.padding(
+                            start = 16.dp,
+                            end = 16.dp,
+                            bottom = 16.dp,
+                            top = if (index == 0) 16.dp else 0.dp
+                        )
                     )
-                )
+                }
             }
         }
     }
