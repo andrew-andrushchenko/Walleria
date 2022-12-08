@@ -32,6 +32,7 @@ fun WNavigationBar(
     Card(
         elevation = 16.dp,
         shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+        backgroundColor = MaterialTheme.colors.primary,
         modifier = modifier.fillMaxWidth()
     ) {
         Row(
@@ -51,8 +52,8 @@ fun WNavigationBar(
                     item = item,
                     isSelected = selected,
                     onClick = { onItemSelected(item) },
-                    backgroundColor = if (selected) MaterialTheme.colors.onBackground else Color.Transparent,
-                    contentColor = if (selected) MaterialTheme.colors.background else MaterialTheme.colors.onBackground
+                    backgroundColor = if (selected) MaterialTheme.colors.onPrimary else Color.Transparent,
+                    contentColor = if (selected) MaterialTheme.colors.primary else MaterialTheme.colors.onPrimary
                 )
             }
         }
