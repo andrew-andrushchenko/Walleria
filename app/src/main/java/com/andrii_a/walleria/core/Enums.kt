@@ -64,9 +64,9 @@ enum class CollectionListLayoutType {
 }
 
 enum class PhotoQuality {
-    ORIGINAL,
-    LARGE,
+    RAW,
+    HIGH,
     MEDIUM,
-    SMALL,
-    THUMB
+    LOW,
+    THUMBNAIL
 }

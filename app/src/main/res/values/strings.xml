@@ -4,6 +4,12 @@
     <!--Common-->
     <string name="to_top">To top</string>
 
+    <string name="photo_quality_raw">Raw</string>
+    <string name="photo_quality_high">High</string>
+    <string name="photo_quality_medium">Medium</string>
+    <string name="photo_quality_low">Low</string>
+    <string name="photo_quality_thumbnail">Thumbnail</string>
+
     <!--Navigation screen titles-->
     <string name="photos">Photos</string>
     <string name="collections">Collections</string>
@@ -13,6 +19,9 @@
 
     <!--Photos tab-->
     <string name="photos_title_template">%s photos</string>
+    <string name="order_latest">Latest</string>
+    <string name="order_oldest">Oldest</string>
+    <string name="order_popular">Popular</string>
 
     <!--Collections tab-->
     <string name="all_collections">All collections</string>
@@ -21,5 +30,47 @@
     <string name="description_third_photo">The third preview photo in collection</string>
     <string name="description_open_collection">Open collection</string>
     <string name="bullet_template">%s \u2022 %s photos</string>
+
+    <!--Topics-->
+    <string name="order_position">Position</string>
+    <string name="order_featured">Featured</string>
+    <string name="curated_by_formatted">curated by %s</string>
+    <string name="status">Status:</string>
+    <string name="topic_photos_filter">Topic photos filter</string>
+    <string name="show">Show</string>
+    <string name="topic_open">Open</string>
+    <string name="topic_closed">Closed</string>
+    <string name="topics_formatted">%s topics</string>
+
+    <!-- Search -->
+    <string name="apply">Apply</string>
+    <string name="search_for_something">Search for something</string>
+    <string name="nothing_found">Hmm, seems like it\'s nothing here.\nTry to search something</string>
+    <string name="no_search_results_subtitle">Try searching for something</string>
+    <string name="filter">Filter</string>
+    <string name="photos_filter">Photos filter</string>
+    <string name="filter_relevance">Relevance</string>
+    <string name="filter_latest">Latest</string>
+    <string name="content_filter">Filter by:</string>
+    <string name="filter_low">Low</string>
+    <string name="filter_high">High</string>
+    <string name="orientation">Orientation</string>
+    <string name="filter_any">Any</string>
+    <string name="filter_portrait">Portrait</string>
+    <string name="filter_landscape">Landscape</string>
+    <string name="filter_square">Square</string>
+    <string name="filter_color">Color</string>
+    <string name="filter_color_any">Any</string>
+    <string name="filter_color_black_white">Black and white</string>
+    <string name="filter_color_black">Black</string>
+    <string name="filter_color_white">White</string>
+    <string name="filter_color_yellow">Yellow</string>
+    <string name="filter_color_orange">Orange</string>
+    <string name="filter_color_red">Red</string>
+    <string name="filter_color_purple">Purple</string>
+    <string name="filter_color_magenta">Magenta</string>
+    <string name="filter_color_green">Green</string>
+    <string name="filter_color_teal">Teal</string>
+    <string name="filter_color_blue">Blue</string>
 
 </resources>
