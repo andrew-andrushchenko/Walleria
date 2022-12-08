@@ -12,6 +12,7 @@ import androidx.paging.PagingData
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.core.PhotoListDisplayOrder
 import com.andrii_a.walleria.domain.models.photo.Photo
+import com.andrii_a.walleria.ui.util.titleRes
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -40,7 +41,7 @@ fun PhotosScreen(
                 .align(Alignment.TopCenter)
         ) {
             TitleDropdown(
-                title = stringResource(id = R.string.photos_title_template, order.name),
+                title = stringResource(id = R.string.photos_title_template, order.titleRes),
                 orderPhotosBy = orderBy
             )
         }
