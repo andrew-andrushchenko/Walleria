@@ -1,5 +1,6 @@
 package com.andrii_a.walleria.ui.common
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -9,10 +10,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,6 +19,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.andrii_a.walleria.R
@@ -206,4 +205,65 @@ fun LoadingItem(indicatorColor: Color = MaterialTheme.colors.secondary) {
             .padding(16.dp)
             .wrapContentWidth(Alignment.CenterHorizontally)
     )
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun WTitleDropdown(
+    title: String,
+    @StringRes optionsStringRes: List<Int>,
+    onItemSelected: (Int) -> Unit
+) {
+    var dropdownExpanded by remember {
+        mutableStateOf(false)
+    }
+
+    ExposedDropdownMenuBox(
+        expanded = dropdownExpanded,
+        onExpandedChange = {
+            dropdownExpanded = !dropdownExpanded
+        },
+        modifier = Modifier.wrapContentWidth()
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.h6,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+
+            Icon(
+                painter = painterResource(id = if (dropdownExpanded) R.drawable.ic_arrow_up_alt else R.drawable.ic_arrow_down_alt),
+                contentDescription = null
+            )
+        }
+
+        ExposedDropdownMenu(
+            expanded = dropdownExpanded,
+            onDismissRequest = {
+                dropdownExpanded = false
+            },
+            modifier = Modifier.wrapContentWidth()
+        ) {
+            optionsStringRes.forEachIndexed { indexOrdinal, optionStringRes ->
+                DropdownMenuItem(
+                    onClick = {
+                        onItemSelected(indexOrdinal)
+                        dropdownExpanded = false
+                    }
+                ) {
+                    Text(
+                        text = stringResource(
+                            id = R.string.photos_title_template,
+                            stringResource(id = optionStringRes)
+                        )
+                    )
+                }
+            }
+        }
+    }
 }

@@ -12,6 +12,7 @@ import androidx.paging.PagingData
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.core.PhotoListDisplayOrder
 import com.andrii_a.walleria.domain.models.photo.Photo
+import com.andrii_a.walleria.ui.common.WTitleDropdown
 import com.andrii_a.walleria.ui.util.titleRes
 import kotlinx.coroutines.flow.Flow
 
@@ -40,12 +41,15 @@ fun PhotosScreen(
                 .fillMaxWidth()
                 .align(Alignment.TopCenter)
         ) {
-            TitleDropdown(
+            val optionStringResources = PhotoListDisplayOrder.values().toList().map { it.titleRes }
+
+            WTitleDropdown(
                 title = stringResource(
                     id = R.string.photos_title_template,
                     stringResource(id = order.titleRes)
                 ),
-                orderPhotosBy = orderBy
+                optionsStringRes = optionStringResources,
+                onItemSelected = orderBy
             )
         }
     }

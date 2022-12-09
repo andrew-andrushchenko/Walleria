@@ -9,8 +9,9 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,8 +21,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
@@ -29,14 +28,11 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.andrii_a.walleria.R
-import com.andrii_a.walleria.core.PhotoListDisplayOrder
 import com.andrii_a.walleria.core.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.common.ScrollToTopLayout
 import com.andrii_a.walleria.ui.common.UserNickname
-import com.andrii_a.walleria.ui.util.titleRes
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -198,65 +194,5 @@ fun UserRow(
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
-    }
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun TitleDropdown(
-    title: String,
-    orderPhotosBy: (Int) -> Unit
-) {
-    var dropdownExpanded by remember {
-        mutableStateOf(false)
-    }
-
-    ExposedDropdownMenuBox(
-        expanded = dropdownExpanded,
-        onExpandedChange = {
-            dropdownExpanded = !dropdownExpanded
-        },
-        modifier = Modifier.wrapContentWidth()
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.h6,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-
-            Icon(
-                painter = painterResource(id = if (dropdownExpanded) R.drawable.ic_arrow_up_alt else R.drawable.ic_arrow_down_alt),
-                contentDescription = null
-            )
-        }
-
-        ExposedDropdownMenu(
-            expanded = dropdownExpanded,
-            onDismissRequest = {
-                dropdownExpanded = false
-            },
-            modifier = Modifier.wrapContentWidth()
-        ) {
-            PhotoListDisplayOrder.values().forEach { orderOption ->
-                DropdownMenuItem(
-                    onClick = {
-                        orderPhotosBy(orderOption.ordinal)
-                        dropdownExpanded = false
-                    }
-                ) {
-                    Text(
-                        text = stringResource(
-                            id = R.string.photos_title_template,
-                            stringResource(id = orderOption.titleRes)
-                        )
-                    )
-                }
-            }
-        }
     }
 }
