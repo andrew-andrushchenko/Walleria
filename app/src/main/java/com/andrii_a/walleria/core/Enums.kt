@@ -51,6 +51,12 @@ enum class TopicPhotosOrientation(val value: String) {
     SQUARISH("squarish")
 }
 
+enum class TopicStatus {
+    OPEN,
+    CLOSED,
+    OTHER
+}
+
 enum class PhotosListLayoutType {
     DEFAULT,
     MINIMAL_LIST,

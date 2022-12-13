@@ -37,3 +37,8 @@ val ButtonLight = Color(0xFF303030)
 val OnButtonLight = Color(0xFFF3F4F8)
 val OutlinedTextFieldBorderLight = Color(0xFF303030)
 val OutlinedTextFieldContentLight = Color(0xFFF3F4F8)
+
+val TopicStatusOpenTextColorLight = Color(0xFF006AF6)
+val TopicStatusOpenTextColorDark = Color(0xFF009AF6)
+val TopicStatusClosedTextColorLight = Color(0xFFEB5757)
+val TopicStatusClosedTextColorDark = Color(0xFFEB9797)

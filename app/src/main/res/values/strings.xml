@@ -38,9 +38,13 @@
     <string name="status">Status:</string>
     <string name="topic_photos_filter">Topic photos filter</string>
     <string name="show">Show</string>
-    <string name="topic_open">Open</string>
-    <string name="topic_closed">Closed</string>
-    <string name="topics_formatted">%s topics</string>
+    <string name="topic_status_open">Open</string>
+    <string name="topic_status_closed">Closed</string>
+    <string name="topic_status_other">Other</string>
+    <string name="topics_title_template">%s topics</string>
+    <string name="topic_photos_formatted">%s photos</string>
+    <string name="topic_cover_photo">Topic cover photo</string>
+    <string name="topic_curated_by_formatted">by %s</string>
 
     <!-- Search -->
     <string name="apply">Apply</string>
@@ -72,5 +76,15 @@
     <string name="filter_color_green">Green</string>
     <string name="filter_color_teal">Teal</string>
     <string name="filter_color_blue">Blue</string>
+    
+    <!--Time-->
+    <string name="just_now">just now</string>
+    <string name="minute_ago">a minute ago</string>
+    <string name="minutes_ago_formatted">%d minutes ago</string>
+    <string name="hour_ago">an hour ago</string>
+    <string name="hours_ago_formatted">%d hours ago</string>
+    <string name="yesterday">yesterday</string>
+    <string name="days_ago_formatted">%d days ago</string>
+
 
 </resources>

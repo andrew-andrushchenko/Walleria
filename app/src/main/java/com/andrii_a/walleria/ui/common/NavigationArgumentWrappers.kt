@@ -15,3 +15,8 @@ data class CollectionInfo(
     val description: String?,
     val isPrivate: Boolean
 )
+
+data class TopicInfo(
+    val idAsString: String,
+    val title: String?
+)

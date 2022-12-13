@@ -1,9 +1,10 @@
 package com.andrii_a.walleria.data.remote.dto.topic
 
+import com.andrii_a.walleria.core.TopicStatus
 import com.andrii_a.walleria.data.remote.dto.photo.PhotoDTO
+import com.andrii_a.walleria.data.remote.dto.user.UserDTO
 import com.andrii_a.walleria.domain.models.topic.Topic
 import com.google.gson.annotations.SerializedName
-import com.andrii_a.walleria.data.remote.dto.user.UserDTO
 
 data class TopicDTO(
     val id: String,
@@ -29,19 +30,28 @@ data class TopicDTO(
     @SerializedName("preview_photos")
     val previewPhotos: List<PhotoDTO>?
 ) {
-    fun toTopic(): Topic = Topic(
-        id = id,
-        slug = slug,
-        title = title,
-        description = description,
-        featured = featured,
-        startsAt = startsAt,
-        endsAt = endsAt,
-        totalPhotos = totalPhotos,
-        links = links?.toTopicLinks(),
-        status = status,
-        owners = owners?.map { it.toUser() },
-        coverPhoto = coverPhoto?.toPhoto(),
-        previewPhotos = previewPhotos?.map { it.toPhoto() }
-    )
+    fun toTopic(): Topic {
+        val domainTopicStatus = when (status?.lowercase()) {
+            "open" -> TopicStatus.OPEN
+            "closed" -> TopicStatus.CLOSED
+            else -> TopicStatus.OTHER
+        }
+
+        return Topic(
+            id = id,
+            slug = slug,
+            title = title,
+            description = description,
+            featured = featured,
+            startsAt = startsAt,
+            endsAt = endsAt,
+            updatedAt = updatedAt,
+            totalPhotos = totalPhotos,
+            links = links?.toTopicLinks(),
+            status = domainTopicStatus,
+            owners = owners?.map { it.toUser() },
+            coverPhoto = coverPhoto?.toPhoto(),
+            previewPhotos = previewPhotos?.map { it.toPhoto() }
+        )
+    }
 }

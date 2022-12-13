@@ -52,6 +52,14 @@ val TopicsDisplayOrder.titleRes: Int
         TopicsDisplayOrder.POSITION -> R.string.order_position
     }
 
+val TopicStatus.titleRes: Int
+    @StringRes
+    get() = when (this) {
+        TopicStatus.OPEN -> R.string.topic_status_open
+        TopicStatus.CLOSED -> R.string.topic_status_closed
+        TopicStatus.OTHER -> R.string.topic_status_other
+    }
+
 val PhotoQuality.titleRes: Int
     @StringRes
     get() = when (this) {
