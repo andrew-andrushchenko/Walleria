@@ -7,6 +7,7 @@ enum class Screen(val route: String) {
     UserDetails("user_details"),
     AddPhotoToCollection("add_photo_to_collection"),
     EditUserProfile("edit_user_profile"),
+    Profile("profile"),
     Settings("settings"),
     About("about")
 }

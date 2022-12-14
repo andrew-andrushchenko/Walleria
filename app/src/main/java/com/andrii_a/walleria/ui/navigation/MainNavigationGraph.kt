@@ -8,6 +8,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.dialog
 import androidx.navigation.navigation
 import com.andrii_a.walleria.ui.collections.collectionsBottomNavRoute
 import com.andrii_a.walleria.ui.photos.photosBottomNavRoute
@@ -53,7 +54,7 @@ fun NavGraphBuilder.bottomNavigation(
             }
         }
 
-        composable(route = NavigationScreen.Profile.route) {
+        dialog(route = Screen.Profile.route) {
             val statusBarColor = MaterialTheme.colors.primary.copy(alpha = 0.95f)
             SideEffect {
                 systemUiController.setStatusBarColor(

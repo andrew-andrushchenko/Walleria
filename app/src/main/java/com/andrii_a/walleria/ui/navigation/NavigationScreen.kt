@@ -33,12 +33,6 @@ enum class NavigationScreen(
         titleRes = R.string.search,
         iconUnselected = R.drawable.ic_search_outlined,
         iconSelected = R.drawable.ic_search_filled
-    ),
-    Profile(
-        route = "profile",
-        titleRes = R.string.profile,
-        iconUnselected = R.drawable.ic_user_outlined,
-        iconSelected = R.drawable.ic_user_outlined
     )
 }
 
