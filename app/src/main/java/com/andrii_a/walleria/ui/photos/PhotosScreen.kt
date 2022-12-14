@@ -6,7 +6,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
 import com.andrii_a.walleria.R
@@ -44,10 +43,8 @@ fun PhotosScreen(
             val optionStringResources = PhotoListDisplayOrder.values().toList().map { it.titleRes }
 
             WTitleDropdown(
-                title = stringResource(
-                    id = R.string.photos_title_template,
-                    stringResource(id = order.titleRes)
-                ),
+                selectedTitleRes = order.titleRes,
+                titleTemplateRes = R.string.photos_title_template,
                 optionsStringRes = optionStringResources,
                 onItemSelected = orderBy
             )

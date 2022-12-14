@@ -210,7 +210,8 @@ fun LoadingItem(indicatorColor: Color = MaterialTheme.colors.secondary) {
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun WTitleDropdown(
-    title: String,
+    @StringRes selectedTitleRes: Int,
+    @StringRes titleTemplateRes: Int,
     @StringRes optionsStringRes: List<Int>,
     onItemSelected: (Int) -> Unit
 ) {
@@ -230,7 +231,10 @@ fun WTitleDropdown(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = title,
+                text = stringResource(
+                    id = titleTemplateRes,
+                    stringResource(id = selectedTitleRes)
+                ),
                 style = MaterialTheme.typography.h6,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -258,7 +262,7 @@ fun WTitleDropdown(
                 ) {
                     Text(
                         text = stringResource(
-                            id = R.string.photos_title_template,
+                            id = titleTemplateRes,
                             stringResource(id = optionStringRes)
                         )
                     )
