@@ -31,7 +31,6 @@ import com.andrii_a.walleria.R
 import com.andrii_a.walleria.core.TopicStatus
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.topic.Topic
-import com.andrii_a.walleria.ui.common.ScrollToTopLayout
 import com.andrii_a.walleria.ui.common.TopicInfo
 import com.andrii_a.walleria.ui.theme.TopicStatusClosedTextColorDark
 import com.andrii_a.walleria.ui.theme.TopicStatusClosedTextColorLight
@@ -53,40 +52,35 @@ fun TopicsList(
     listState: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues()
 ) {
-    ScrollToTopLayout(
-        listState = listState,
-        contentPadding = PaddingValues(bottom = 120.dp)
-    ) {
-        val lazyTopicsItems = pagingDataFlow.collectAsLazyPagingItems()
+    val lazyTopicsItems = pagingDataFlow.collectAsLazyPagingItems()
 
-        LazyColumn(
-            state = listState,
-            contentPadding = contentPadding,
-            modifier = modifier
-        ) {
-            items(lazyTopicsItems) { topic ->
-                topic?.let {
-                    DefaultTopicItem(
-                        title = topic.title.orEmpty(),
-                        coverPhoto = topic.coverPhoto,
-                        totalPhotos = topic.totalPhotos ?: 0,
-                        curatorUsername = topic.owners?.first()?.username.orEmpty(),
-                        status = topic.status,
-                        updatedAt = topic.updatedAt.orEmpty(),
-                        onClick = {
-                            val topicInfo = TopicInfo(
-                                idAsString = topic.id,
-                                title = topic.title
-                            )
-                            onClick(topicInfo)
-                        },
-                        modifier = Modifier.padding(
-                            start = 8.dp,
-                            end = 8.dp,
-                            bottom = 8.dp
+    LazyColumn(
+        state = listState,
+        contentPadding = contentPadding,
+        modifier = modifier
+    ) {
+        items(lazyTopicsItems) { topic ->
+            topic?.let {
+                DefaultTopicItem(
+                    title = topic.title.orEmpty(),
+                    coverPhoto = topic.coverPhoto,
+                    totalPhotos = topic.totalPhotos ?: 0,
+                    curatorUsername = topic.owners?.first()?.username.orEmpty(),
+                    status = topic.status,
+                    updatedAt = topic.updatedAt.orEmpty(),
+                    onClick = {
+                        val topicInfo = TopicInfo(
+                            idAsString = topic.id,
+                            title = topic.title
                         )
+                        onClick(topicInfo)
+                    },
+                    modifier = Modifier.padding(
+                        start = 8.dp,
+                        end = 8.dp,
+                        bottom = 8.dp
                     )
-                }
+                )
             }
         }
     }

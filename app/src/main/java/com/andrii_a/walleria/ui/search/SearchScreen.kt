@@ -212,21 +212,37 @@ private fun SearchPages(
     ) { index ->
         when (index) {
             SearchScreenTabs.Photos.ordinal -> {
-                PhotosList(
-                    pagingDataFlow = photos,
-                    onPhotoClicked = {},
-                    onUserProfileClicked = {},
-                    contentPadding = PaddingValues(top = 8.dp, bottom = 160.dp)
-                )
+                val listState = rememberLazyListState()
+
+                ScrollToTopLayout(
+                    listState = listState,
+                    contentPadding = PaddingValues(bottom = 120.dp)
+                ) {
+                    PhotosList(
+                        pagingDataFlow = photos,
+                        onPhotoClicked = {},
+                        onUserProfileClicked = {},
+                        listState = listState,
+                        contentPadding = PaddingValues(top = 8.dp, bottom = 160.dp)
+                    )
+                }
             }
             SearchScreenTabs.Collections.ordinal -> {
-                CollectionsList(
-                    pagingDataFlow = collections,
-                    onCollectionClicked = {},
-                    onUserProfileClicked = {},
-                    onPhotoClicked = {},
-                    contentPadding = PaddingValues(top = 8.dp, bottom = 160.dp)
-                )
+                val listState = rememberLazyListState()
+
+                ScrollToTopLayout(
+                    listState = listState,
+                    contentPadding = PaddingValues(bottom = 120.dp)
+                ) {
+                    CollectionsList(
+                        pagingDataFlow = collections,
+                        onCollectionClicked = {},
+                        onUserProfileClicked = {},
+                        onPhotoClicked = {},
+                        listState = listState,
+                        contentPadding = PaddingValues(top = 8.dp, bottom = 160.dp)
+                    )
+                }
             }
             SearchScreenTabs.Users.ordinal -> {
                 val listState = rememberLazyListState()

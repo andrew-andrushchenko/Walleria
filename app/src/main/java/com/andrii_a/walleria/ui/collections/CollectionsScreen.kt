@@ -2,6 +2,7 @@ package com.andrii_a.walleria.ui.collections
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -13,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.models.collection.Collection
+import com.andrii_a.walleria.ui.common.ScrollToTopLayout
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -20,21 +22,30 @@ fun CollectionsScreen(collections: Flow<PagingData<Collection>>) {
     Box(
         modifier = Modifier.fillMaxWidth()
     ) {
-        CollectionsList(
-            pagingDataFlow = collections,
-            onCollectionClicked = {
+        val listState = rememberLazyListState()
 
-            },
-            onUserProfileClicked = {
+        ScrollToTopLayout(
+            listState = listState,
+            contentPadding = PaddingValues(bottom = 120.dp)
+        ) {
+            CollectionsList(
+                pagingDataFlow = collections,
+                onCollectionClicked = {
 
-            },
-            onPhotoClicked = {
+                },
+                onUserProfileClicked = {
 
-            },
-            contentPadding = PaddingValues(
-                top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 48.dp
+                },
+                onPhotoClicked = {
+
+                },
+                listState = listState,
+                contentPadding = PaddingValues(
+                    top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 48.dp
+                )
             )
-        )
+        }
+
 
         Row(
             modifier = Modifier

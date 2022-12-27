@@ -33,7 +33,6 @@ import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.ui.common.CollectionInfo
 import com.andrii_a.walleria.ui.common.PhotoId
-import com.andrii_a.walleria.ui.common.ScrollToTopLayout
 import com.andrii_a.walleria.ui.common.UserNickname
 import kotlinx.coroutines.flow.Flow
 
@@ -50,51 +49,46 @@ fun CollectionsList(
 ) {
     val lazyCollectionItems = pagingDataFlow.collectAsLazyPagingItems()
 
-    ScrollToTopLayout(
-        listState = listState,
-        contentPadding = PaddingValues(bottom = 120.dp)
+    LazyColumn(
+        state = listState,
+        contentPadding = contentPadding,
+        modifier = modifier
     ) {
-        LazyColumn(
-            state = listState,
-            contentPadding = contentPadding,
-            modifier = modifier
-        ) {
-            items(lazyCollectionItems) { collection ->
-                collection?.let {
-                    val previewPhotos = collection.previewPhotos?.take(3) ?: emptyList()
+        items(lazyCollectionItems) { collection ->
+            collection?.let {
+                val previewPhotos = collection.previewPhotos?.take(3) ?: emptyList()
 
-                    val onPhotoClickListeners = previewPhotos.map { photo ->
-                        val listener: () -> Unit = {
-                            onPhotoClicked(PhotoId(photo.id))
-                        }
-                        listener
+                val onPhotoClickListeners = previewPhotos.map { photo ->
+                    val listener: () -> Unit = {
+                        onPhotoClicked(PhotoId(photo.id))
                     }
-
-                    DefaultCollectionItem(
-                        title = collection.title,
-                        previewPhotos = previewPhotos,
-                        totalPhotos = collection.totalPhotos,
-                        curatorUsername = collection.user?.username.orEmpty(),
-                        onOpenCollectionClick = {
-                            val collectionInfo = CollectionInfo(
-                                idAsString = collection.id,
-                                title = collection.title,
-                                totalPhotos = collection.totalPhotos,
-                                userNickname = collection.user?.username.orEmpty(),
-                                userFullName = "${collection.user?.firstName.orEmpty()} ${collection.user?.lastName.orEmpty()}",
-                                description = collection.description.orEmpty(),
-                                isPrivate = collection.private ?: false
-                            )
-                            onCollectionClicked(collectionInfo)
-                        },
-                        onUserProfileClick = {
-                            val userNickname = UserNickname(collection.user?.username.orEmpty())
-                            onUserProfileClicked(userNickname)
-                        },
-                        onPhotoClickListeners = onPhotoClickListeners,
-                        modifier = Modifier.padding(bottom = 32.dp)
-                    )
+                    listener
                 }
+
+                DefaultCollectionItem(
+                    title = collection.title,
+                    previewPhotos = previewPhotos,
+                    totalPhotos = collection.totalPhotos,
+                    curatorUsername = collection.user?.username.orEmpty(),
+                    onOpenCollectionClick = {
+                        val collectionInfo = CollectionInfo(
+                            idAsString = collection.id,
+                            title = collection.title,
+                            totalPhotos = collection.totalPhotos,
+                            userNickname = collection.user?.username.orEmpty(),
+                            userFullName = "${collection.user?.firstName.orEmpty()} ${collection.user?.lastName.orEmpty()}",
+                            description = collection.description.orEmpty(),
+                            isPrivate = collection.private ?: false
+                        )
+                        onCollectionClicked(collectionInfo)
+                    },
+                    onUserProfileClick = {
+                        val userNickname = UserNickname(collection.user?.username.orEmpty())
+                        onUserProfileClicked(userNickname)
+                    },
+                    onPhotoClickListeners = onPhotoClickListeners,
+                    modifier = Modifier.padding(bottom = 32.dp)
+                )
             }
         }
     }

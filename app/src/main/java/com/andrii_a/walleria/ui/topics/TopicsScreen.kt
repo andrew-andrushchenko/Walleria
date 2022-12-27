@@ -2,6 +2,7 @@ package com.andrii_a.walleria.ui.topics
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -11,6 +12,7 @@ import androidx.paging.PagingData
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.core.TopicsDisplayOrder
 import com.andrii_a.walleria.domain.models.topic.Topic
+import com.andrii_a.walleria.ui.common.ScrollToTopLayout
 import com.andrii_a.walleria.ui.common.WTitleDropdown
 import com.andrii_a.walleria.ui.util.titleRes
 import kotlinx.coroutines.flow.Flow
@@ -22,14 +24,23 @@ fun TopicsScreen(
     orderBy: (Int) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxWidth()) {
-        TopicsList(
-            pagingDataFlow = topics,
-            onClick = {},
-            contentPadding = PaddingValues(
-                top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 48.dp,
-                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 200.dp
+        val listState = rememberLazyListState()
+
+        ScrollToTopLayout(
+            listState = listState,
+            contentPadding = PaddingValues(bottom = 120.dp)
+        ) {
+            TopicsList(
+                pagingDataFlow = topics,
+                onClick = {},
+                listState = listState,
+                contentPadding = PaddingValues(
+                    top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 48.dp,
+                    bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 200.dp
+                )
             )
-        )
+        }
+
 
         Row(
             modifier = Modifier

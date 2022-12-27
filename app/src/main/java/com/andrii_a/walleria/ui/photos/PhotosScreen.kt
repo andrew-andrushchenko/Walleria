@@ -2,6 +2,7 @@ package com.andrii_a.walleria.ui.photos
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -11,6 +12,7 @@ import androidx.paging.PagingData
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.core.PhotoListDisplayOrder
 import com.andrii_a.walleria.domain.models.photo.Photo
+import com.andrii_a.walleria.ui.common.ScrollToTopLayout
 import com.andrii_a.walleria.ui.common.WTitleDropdown
 import com.andrii_a.walleria.ui.util.titleRes
 import kotlinx.coroutines.flow.Flow
@@ -22,14 +24,22 @@ fun PhotosScreen(
     orderBy: (Int) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxWidth()) {
-        PhotosList(
-            pagingDataFlow = photos,
-            onPhotoClicked = {},
-            onUserProfileClicked = {},
-            contentPadding = PaddingValues(
-                top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 48.dp
+        val listState = rememberLazyListState()
+
+        ScrollToTopLayout(
+            listState = listState,
+            contentPadding = PaddingValues(bottom = 120.dp)
+        ) {
+            PhotosList(
+                pagingDataFlow = photos,
+                onPhotoClicked = {},
+                onUserProfileClicked = {},
+                listState = listState,
+                contentPadding = PaddingValues(
+                    top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 48.dp
+                )
             )
-        )
+        }
 
         Row(
             modifier = Modifier
