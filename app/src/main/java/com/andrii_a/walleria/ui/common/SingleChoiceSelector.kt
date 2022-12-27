@@ -1,13 +1,18 @@
 package com.andrii_a.walleria.ui.common
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -18,6 +23,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
@@ -39,7 +46,7 @@ interface SingleChoiceSelectorState {
 
 @Stable
 class SingleChoiceSelectorStateImpl(
-    options: List<String>,
+    options: List<SingleChoiceSelectorItem>,
     selectedOptionOrdinal: Int,
     private val selectedColor: Color,
     private val unselectedColor: Color,
@@ -146,7 +153,7 @@ class SingleChoiceSelectorStateImpl(
 
 @Composable
 fun rememberSingleChoiceSelectorState(
-    options: List<String>,
+    options: List<SingleChoiceSelectorItem>,
     selectedOptionOrdinal: Int,
     selectedColor: Color,
     unSelectedColor: Color,
@@ -159,6 +166,18 @@ fun rememberSingleChoiceSelectorState(
     )
 }
 
+enum class SelectorItemType {
+    IconAndText,
+    IconOnly,
+    TextOnly
+}
+
+data class SingleChoiceSelectorItem(
+    @StringRes val titleRes: Int = 0,
+    @DrawableRes val iconRes: Int = 0,
+    val type: SelectorItemType = SelectorItemType.TextOnly
+)
+
 private enum class SelectorOption {
     Option,
     Background
@@ -166,7 +185,7 @@ private enum class SelectorOption {
 
 @Composable
 fun SingleChoiceSelector(
-    options: List<String>,
+    options: List<SingleChoiceSelectorItem>,
     selectedOptionOrdinal: Int,
     onOptionSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -202,14 +221,46 @@ fun SingleChoiceSelector(
                         .clickable { onOptionSelect(index) },
                     contentAlignment = Alignment.Center,
                 ) {
-                    Text(
-                        text = option,
-                        style = MaterialTheme.typography.body1,
-                        color = colors[index],
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(horizontal = 4.dp),
-                    )
+                    when (option.type) {
+                        SelectorItemType.IconAndText -> {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceAround
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = option.iconRes),
+                                    tint = colors[index],
+                                    contentDescription = null
+                                )
+
+                                Text(
+                                    text = stringResource(id = option.titleRes),
+                                    style = MaterialTheme.typography.body1,
+                                    color = colors[index],
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.padding(horizontal = 4.dp),
+                                )
+                            }
+                        }
+                        SelectorItemType.IconOnly -> {
+                            Icon(
+                                painter = painterResource(id = option.iconRes),
+                                tint = colors[index],
+                                contentDescription = null
+                            )
+                        }
+                        SelectorItemType.TextOnly -> {
+                            Text(
+                                text = stringResource(id = option.titleRes),
+                                style = MaterialTheme.typography.body1,
+                                color = colors[index],
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.padding(horizontal = 4.dp),
+                            )
+                        }
+                    }
                 }
             }
 

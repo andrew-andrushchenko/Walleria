@@ -1,5 +1,6 @@
 package com.andrii_a.walleria.ui.util
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.core.*
@@ -15,15 +16,15 @@ val PhotoListDisplayOrder.titleRes: Int
 val SearchResultsDisplayOrder.titleRes: Int
     @StringRes
     get() = when (this) {
-        SearchResultsDisplayOrder.RELEVANT -> R.string.filter_relevance
-        SearchResultsDisplayOrder.LATEST -> R.string.filter_latest
+        SearchResultsDisplayOrder.RELEVANT -> R.string.filter_order_relevance
+        SearchResultsDisplayOrder.LATEST -> R.string.filter_order_latest
     }
 
 val SearchResultsContentFilter.titleRes: Int
     @StringRes
     get() = when (this) {
-        SearchResultsContentFilter.LOW -> R.string.filter_low
-        SearchResultsContentFilter.HIGH -> R.string.filter_high
+        SearchResultsContentFilter.LOW -> R.string.content_filter_low
+        SearchResultsContentFilter.HIGH -> R.string.content_filter_high
     }
 
 val SearchResultsPhotoColor.titleRes: Int
@@ -41,6 +42,24 @@ val SearchResultsPhotoColor.titleRes: Int
         SearchResultsPhotoColor.GREEN -> R.string.filter_color_green
         SearchResultsPhotoColor.TEAL -> R.string.filter_color_teal
         SearchResultsPhotoColor.BLUE -> R.string.filter_color_blue
+    }
+
+val SearchResultsPhotoOrientation.titleRes: Int
+    @StringRes
+    get() = when (this) {
+        SearchResultsPhotoOrientation.ANY -> R.string.orientation_any
+        SearchResultsPhotoOrientation.LANDSCAPE -> R.string.orientation_landscape
+        SearchResultsPhotoOrientation.PORTRAIT -> R.string.orientation_portrait
+        SearchResultsPhotoOrientation.SQUARISH -> R.string.orientation_squarish
+    }
+
+val SearchResultsPhotoOrientation.iconRes: Int
+    @DrawableRes
+    get() = when (this) {
+        SearchResultsPhotoOrientation.ANY -> 0
+        SearchResultsPhotoOrientation.LANDSCAPE -> R.drawable.ic_landscape
+        SearchResultsPhotoOrientation.PORTRAIT -> R.drawable.ic_portrait
+        SearchResultsPhotoOrientation.SQUARISH -> R.drawable.ic_squarish
     }
 
 val TopicsDisplayOrder.titleRes: Int

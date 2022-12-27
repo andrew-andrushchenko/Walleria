@@ -48,21 +48,21 @@
 
     <!-- Search -->
     <string name="apply">Apply</string>
-    <string name="search_for_something">Search for something</string>
-    <string name="nothing_found">Hmm, seems like it\'s nothing here.\nTry to search something</string>
+    <string name="type_something">Type something</string>
+    <string name="nothing_found">Seems like it\'s nothing here.\nTry to search something</string>
     <string name="no_search_results_subtitle">Try searching for something</string>
     <string name="filter">Filter</string>
-    <string name="photos_filter">Photos filter</string>
-    <string name="filter_relevance">Relevance</string>
-    <string name="filter_latest">Latest</string>
-    <string name="content_filter">Filter by:</string>
-    <string name="filter_low">Low</string>
-    <string name="filter_high">High</string>
+    <string name="photo_filters">Photo filters</string>
+    <string name="filter_order_relevance">Relevance</string>
+    <string name="filter_order_latest">Latest</string>
+    <string name="content_filter">Content filter</string>
+    <string name="content_filter_low">Low</string>
+    <string name="content_filter_high">High</string>
     <string name="orientation">Orientation</string>
-    <string name="filter_any">Any</string>
-    <string name="filter_portrait">Portrait</string>
-    <string name="filter_landscape">Landscape</string>
-    <string name="filter_square">Square</string>
+    <string name="orientation_any">Any</string>
+    <string name="orientation_landscape">Landscape</string>
+    <string name="orientation_portrait">Portrait</string>
+    <string name="orientation_squarish">Squarish</string>
     <string name="filter_color">Color</string>
     <string name="filter_color_any">Any</string>
     <string name="filter_color_black_white">Black and white</string>
@@ -76,6 +76,8 @@
     <string name="filter_color_green">Green</string>
     <string name="filter_color_teal">Teal</string>
     <string name="filter_color_blue">Blue</string>
+    <string name="order">Order</string>
+    <string name="clear_search_field">Clear search field</string>
     
     <!--Time-->
     <string name="just_now">just now</string>
@@ -86,5 +88,7 @@
     <string name="yesterday">yesterday</string>
     <string name="days_ago_formatted">%d days ago</string>
 
+    <string name="users">Users</string>
+    <string name="user_profile_image">User profile image</string>
 
 </resources>
