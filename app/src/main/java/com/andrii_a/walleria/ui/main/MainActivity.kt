@@ -17,6 +17,7 @@ import androidx.navigation.compose.rememberNavController
 import com.andrii_a.walleria.ui.navigation.MainNavHost
 import com.andrii_a.walleria.ui.navigation.NavigationScreen
 import com.andrii_a.walleria.ui.navigation.NavigationScreenRoutes
+import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.currentRoute
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -45,7 +46,7 @@ class MainActivity : ComponentActivity() {
                             systemUiController = systemUiController
                         )
 
-                        if (navController.currentRoute in NavigationScreenRoutes) {
+                        if (navController.currentRoute == Screen.Profile.route || navController.currentRoute in NavigationScreenRoutes) {
                             WNavigationBar(
                                 navScreenItems = NavigationScreen.values().toList(),
                                 onItemSelected = { navigationScreen ->

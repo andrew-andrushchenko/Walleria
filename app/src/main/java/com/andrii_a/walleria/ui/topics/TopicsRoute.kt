@@ -11,6 +11,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.andrii_a.walleria.ui.navigation.NavigationScreen
+import com.andrii_a.walleria.ui.profile.navigateToProfileScreen
 import com.google.accompanist.systemuicontroller.SystemUiController
 
 fun NavGraphBuilder.topicsBottomNavRoute(
@@ -40,6 +41,13 @@ fun NavGraphBuilder.topicsBottomNavRoute(
         val order by viewModel.order.collectAsState()
         val orderByFn = viewModel::orderBy
 
-        TopicsScreen(topics = topics, order = order, orderBy = orderByFn)
+        TopicsScreen(
+            topics = topics,
+            order = order,
+            orderBy = orderByFn,
+            navigateToProfileScreen = {
+                navController.navigateToProfileScreen()
+            }
+        )
     }
 }

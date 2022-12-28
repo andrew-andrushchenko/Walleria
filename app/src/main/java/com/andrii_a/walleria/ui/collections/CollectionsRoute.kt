@@ -9,6 +9,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.andrii_a.walleria.ui.navigation.NavigationScreen
+import com.andrii_a.walleria.ui.profile.navigateToProfileScreen
 import com.google.accompanist.systemuicontroller.SystemUiController
 
 fun NavGraphBuilder.collectionsBottomNavRoute(
@@ -33,6 +34,11 @@ fun NavGraphBuilder.collectionsBottomNavRoute(
 
         val viewModel: CollectionsViewModel = hiltViewModel()
 
-        CollectionsScreen(collections = viewModel.collections)
+        CollectionsScreen(
+            collections = viewModel.collections,
+            navigateToProfileScreen = {
+                navController.navigateToProfileScreen()
+            }
+        )
     }
 }

@@ -11,6 +11,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.andrii_a.walleria.ui.navigation.NavigationScreen
+import com.andrii_a.walleria.ui.profile.navigateToProfileScreen
 import com.google.accompanist.systemuicontroller.SystemUiController
 
 fun NavGraphBuilder.photosBottomNavRoute(
@@ -40,6 +41,13 @@ fun NavGraphBuilder.photosBottomNavRoute(
         val order by viewModel.order.collectAsState()
         val orderByFun = viewModel::orderBy
 
-        PhotosScreen(photos = photos, order = order, orderBy = orderByFun)
+        PhotosScreen(
+            photos = photos,
+            order = order,
+            orderBy = orderByFun,
+            navigateToProfileScreen = {
+                navController.navigateToProfileScreen()
+            }
+        )
     }
 }

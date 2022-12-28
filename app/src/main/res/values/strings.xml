@@ -78,7 +78,7 @@
     <string name="filter_color_blue">Blue</string>
     <string name="order">Order</string>
     <string name="clear_search_field">Clear search field</string>
-    
+
     <!--Time-->
     <string name="just_now">just now</string>
     <string name="minute_ago">a minute ago</string>
@@ -90,5 +90,13 @@
 
     <string name="users">Users</string>
     <string name="user_profile_image">User profile image</string>
+    <string name="user_profile_view">View</string>
+    <string name="user_profile_edit">Edit</string>
+    <string name="user_full_name_formatted" translatable="false">%s %s</string>
+    <string name="user_nickname_formatted" translatable="false">\@%s</string>
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
+    <string name="settings">Settings</string>
+    <string name="about">About</string>
 
 </resources>

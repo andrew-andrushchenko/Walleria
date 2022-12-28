@@ -9,6 +9,7 @@ import com.andrii_a.walleria.ui.collections.collectionsBottomNavRoute
 import com.andrii_a.walleria.ui.photos.photosBottomNavRoute
 import com.andrii_a.walleria.ui.search.searchBottomNavRoute
 import com.andrii_a.walleria.ui.topics.topicsBottomNavRoute
+import com.andrii_a.walleria.ui.profile.profileRoute
 import com.google.accompanist.systemuicontroller.SystemUiController
 
 @Composable
@@ -21,6 +22,8 @@ fun MainNavHost(
         startDestination = BottomNavigationGraphRoute
     ) {
         bottomNavigation(navHostController, systemUiController)
+
+        profileRoute(navHostController, systemUiController)
     }
 }
 
