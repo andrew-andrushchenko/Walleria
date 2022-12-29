@@ -111,14 +111,18 @@ fun ProfileScreen(
                 onClick = navigateToSettingsScreen,
                 iconPainter = painterResource(id = R.drawable.ic_settings_outlined),
                 text = stringResource(id = R.string.settings),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(64.dp)
             )
 
             WTextButton(
                 onClick = navigateToAboutScreen,
                 iconPainter = painterResource(id = R.drawable.ic_about_outlined),
                 text = stringResource(id = R.string.about),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(64.dp)
             )
         }
     }

@@ -79,6 +79,21 @@
     <string name="order">Order</string>
     <string name="clear_search_field">Clear search field</string>
 
+    <!--Authorization-->
+    <string name="add_account">Add an account</string>
+    <string name="user_authorization_title">Authorization</string>
+    <string name="join">Join</string>
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
+    <string name="logout_confirmation">Are you sure want to logout?</string>
+    <string name="login_prompt">Please login to %s</string>
+    <string name="like_photo">like photo</string>
+    <string name="save_photo">save photo</string>
+    <string name="login_successful">Login successful</string>
+    <string name="login_failed">Login failed</string>
+    <string name="user_full_name_with_nickname_formatted" translatable="false">%s %s (%s)</string>
+    <string name="dont_have_an_account">Don\'t have an account?</string>
+
     <!--Time-->
     <string name="just_now">just now</string>
     <string name="minute_ago">a minute ago</string>
@@ -94,8 +109,6 @@
     <string name="user_profile_edit">Edit</string>
     <string name="user_full_name_formatted" translatable="false">%s %s</string>
     <string name="user_nickname_formatted" translatable="false">\@%s</string>
-    <string name="login">Login</string>
-    <string name="logout">Logout</string>
     <string name="settings">Settings</string>
     <string name="about">About</string>
 

@@ -271,3 +271,16 @@ fun WTitleDropdown(
         }
     }
 }
+
+@Composable
+fun LoadingView(
+    modifier: Modifier = Modifier,
+    indicatorColor: Color = MaterialTheme.colors.onPrimary
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+    ) {
+        CircularProgressIndicator(color = indicatorColor)
+    }
+}
