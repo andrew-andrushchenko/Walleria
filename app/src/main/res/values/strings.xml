@@ -93,6 +93,8 @@
     <string name="login_failed">Login failed</string>
     <string name="user_full_name_with_nickname_formatted" translatable="false">%s %s (%s)</string>
     <string name="dont_have_an_account">Don\'t have an account?</string>
+    <string name="action_yes">Yes</string>
+    <string name="action_no">No</string>
 
     <!--Time-->
     <string name="just_now">just now</string>
@@ -103,13 +105,16 @@
     <string name="yesterday">yesterday</string>
     <string name="days_ago_formatted">%d days ago</string>
 
-    <string name="users">Users</string>
-    <string name="user_profile_image">User profile image</string>
+    <!--Profile screen-->
+    <string name="login_rationale">Access more functions of Walleria just by logging in</string>
     <string name="user_profile_view">View</string>
     <string name="user_profile_edit">Edit</string>
     <string name="user_full_name_formatted" translatable="false">%s %s</string>
     <string name="user_nickname_formatted" translatable="false">\@%s</string>
     <string name="settings">Settings</string>
     <string name="about">About</string>
+
+    <string name="users">Users</string>
+    <string name="user_profile_image">User profile image</string>
 
 </resources>

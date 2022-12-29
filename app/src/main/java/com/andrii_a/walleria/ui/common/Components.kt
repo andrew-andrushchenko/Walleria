@@ -83,7 +83,11 @@ fun WTextButton(
 
         Spacer(modifier = Modifier.padding(start = 4.dp, end = 4.dp))
 
-        Text(text = text)
+        Text(
+            text = text,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 
@@ -117,7 +121,11 @@ fun WTextButton(
             contentDescription = text
         )
 
-        Text(text = text)
+        Text(
+            text = text,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 

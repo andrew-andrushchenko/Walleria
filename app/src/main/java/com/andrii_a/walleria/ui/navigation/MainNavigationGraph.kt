@@ -5,26 +5,36 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navigation
+import androidx.navigation.plusAssign
 import com.andrii_a.walleria.ui.collections.collectionsBottomNavRoute
 import com.andrii_a.walleria.ui.photos.photosBottomNavRoute
+import com.andrii_a.walleria.ui.profile.profileRoute
 import com.andrii_a.walleria.ui.search.searchBottomNavRoute
 import com.andrii_a.walleria.ui.topics.topicsBottomNavRoute
-import com.andrii_a.walleria.ui.profile.profileRoute
+import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
+import com.google.accompanist.navigation.material.ModalBottomSheetLayout
+import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 import com.google.accompanist.systemuicontroller.SystemUiController
 
+@OptIn(ExperimentalMaterialNavigationApi::class)
 @Composable
 fun MainNavHost(
     navHostController: NavHostController,
     systemUiController: SystemUiController
 ) {
-    NavHost(
-        navController = navHostController,
-        startDestination = BottomNavigationGraphRoute
-    ) {
-        bottomNavigation(navHostController, systemUiController)
+    val bottomSheetNavigator = rememberBottomSheetNavigator()
+    navHostController.navigatorProvider += bottomSheetNavigator
+    ModalBottomSheetLayout(bottomSheetNavigator = bottomSheetNavigator) {
+        NavHost(
+            navController = navHostController,
+            startDestination = BottomNavigationGraphRoute
+        ) {
+            bottomNavigation(navHostController, systemUiController)
 
-        profileRoute(navHostController, systemUiController)
+            profileRoute(navHostController, systemUiController)
+        }
     }
+
 }
 
 fun NavGraphBuilder.bottomNavigation(

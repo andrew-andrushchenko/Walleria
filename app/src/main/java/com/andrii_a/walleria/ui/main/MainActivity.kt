@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
                             systemUiController = systemUiController
                         )
 
-                        if (navController.currentRoute == Screen.Profile.route || navController.currentRoute in NavigationScreenRoutes) {
+                        if (navController.currentRoute in NavigationScreenRoutes) {
                             WNavigationBar(
                                 navScreenItems = NavigationScreen.values().toList(),
                                 onItemSelected = { navigationScreen ->
