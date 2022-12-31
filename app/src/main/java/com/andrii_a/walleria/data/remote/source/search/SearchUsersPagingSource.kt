@@ -16,6 +16,14 @@ class SearchUsersPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, User> {
         val pageKey = params.key ?: INITIAL_PAGE_INDEX
 
+        if (query.isBlank()) {
+            return LoadResult.Page(
+                data = emptyList(),
+                prevKey = null,
+                nextKey = null
+            )
+        }
+
         return try {
             val response: SearchUsersResultDTO =
                 searchService.searchUsers(query, pageKey, PAGE_SIZE)

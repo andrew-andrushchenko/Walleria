@@ -51,9 +51,7 @@ class SearchViewModel @Inject constructor(
 
     init {
         savedStateHandle.get<String>("com.andrii_a.walleria::query")?.let { query ->
-            if (query.isNotBlank()) {
-                dispatchEvent(SearchScreenEvent.OnQueryChanged(query = query))
-            }
+            dispatchEvent(SearchScreenEvent.OnQueryChanged(query = query))
         }
     }
 
@@ -73,8 +71,6 @@ class SearchViewModel @Inject constructor(
     ) { searchQuery, filters ->
         Pair(searchQuery, filters)
     }.flatMapLatest { (searchQuery, filters) ->
-        if (searchQuery.isBlank()) return@flatMapLatest emptyFlow()
-
         searchRepository.searchPhotos(
             query = searchQuery,
             order = filters.order,
@@ -85,12 +81,10 @@ class SearchViewModel @Inject constructor(
     }
 
     val collections: Flow<PagingData<Collection>> = _query.flatMapLatest {
-        if (it.isBlank()) return@flatMapLatest emptyFlow()
         searchRepository.searchCollections(it).cachedIn(viewModelScope)
     }
 
     val users: Flow<PagingData<User>> = _query.flatMapLatest {
-        if (it.isBlank()) return@flatMapLatest emptyFlow()
         searchRepository.searchUsers(it).cachedIn(viewModelScope)
     }
 }

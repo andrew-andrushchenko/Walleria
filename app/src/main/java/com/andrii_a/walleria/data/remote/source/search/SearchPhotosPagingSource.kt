@@ -25,6 +25,14 @@ class SearchPhotosPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Photo> {
         val pageKey = params.key ?: INITIAL_PAGE_INDEX
 
+        if (query.isBlank()) {
+            return LoadResult.Page(
+                data = emptyList(),
+                prevKey = null,
+                nextKey = null
+            )
+        }
+
         return try {
             val response: SearchPhotosResultDTO = searchService.searchPhotos(
                 query = query,

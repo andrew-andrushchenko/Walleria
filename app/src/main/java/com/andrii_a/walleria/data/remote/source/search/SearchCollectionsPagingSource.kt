@@ -16,6 +16,14 @@ class SearchCollectionsPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Collection> {
         val pageKey = params.key ?: INITIAL_PAGE_INDEX
 
+        if (query.isBlank()) {
+            return LoadResult.Page(
+                data = emptyList(),
+                prevKey = null,
+                nextKey = null
+            )
+        }
+
         return try {
             val response: SearchCollectionsResultDTO =
                 searchService.searchCollections(query, pageKey, PAGE_SIZE)
