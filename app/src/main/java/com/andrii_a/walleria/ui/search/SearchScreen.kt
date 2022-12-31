@@ -259,20 +259,35 @@ private fun SearchPages(
                 }
             }
             SearchScreenTabs.Collections.ordinal -> {
-                val listState = rememberLazyListState()
+                val lazyCollectionItems = collections.collectAsLazyPagingItems()
 
-                ScrollToTopLayout(
-                    listState = listState,
-                    contentPadding = PaddingValues(bottom = 120.dp)
-                ) {
-                    CollectionsList(
-                        pagingDataFlow = collections,
-                        onCollectionClicked = {},
-                        onUserProfileClicked = {},
-                        onPhotoClicked = {},
+                val pullRefreshState = rememberPullRefreshState(
+                    refreshing = query.value.isNotEmpty() && lazyCollectionItems.loadState.refresh is LoadState.Loading,
+                    onRefresh = lazyCollectionItems::refresh
+                )
+
+                Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
+                    val listState = rememberLazyListState()
+
+                    ScrollToTopLayout(
                         listState = listState,
-                        contentPadding = PaddingValues(top = 8.dp, bottom = 160.dp)
-                    )
+                        contentPadding = PaddingValues(bottom = 120.dp)
+                    ) {
+                        CollectionsList(
+                            lazyCollectionItems = lazyCollectionItems,
+                            onCollectionClicked = {},
+                            onUserProfileClicked = {},
+                            onPhotoClicked = {},
+                            listState = listState,
+                            contentPadding = PaddingValues(top = 8.dp, bottom = 160.dp)
+                        )
+
+                        PullRefreshIndicator(
+                            refreshing = query.value.isNotEmpty() && lazyCollectionItems.loadState.refresh is LoadState.Loading,
+                            state = pullRefreshState,
+                            modifier = Modifier.align(Alignment.TopCenter)
+                        )
+                    }
                 }
             }
             SearchScreenTabs.Users.ordinal -> {

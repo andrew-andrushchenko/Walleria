@@ -14,6 +14,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,8 +23,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.paging.PagingData
-import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.items
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -31,64 +32,107 @@ import com.andrii_a.walleria.R
 import com.andrii_a.walleria.core.PhotoQuality
 import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.domain.models.photo.Photo
-import com.andrii_a.walleria.ui.common.CollectionInfo
-import com.andrii_a.walleria.ui.common.PhotoId
-import com.andrii_a.walleria.ui.common.UserNickname
-import kotlinx.coroutines.flow.Flow
+import com.andrii_a.walleria.ui.common.*
+import com.andrii_a.walleria.ui.util.*
 
 @Composable
 fun CollectionsList(
-    pagingDataFlow: Flow<PagingData<Collection>>,
+    lazyCollectionItems: LazyPagingItems<Collection>,
     onCollectionClicked: (CollectionInfo) -> Unit,
     onUserProfileClicked: (UserNickname) -> Unit,
     onPhotoClicked: (PhotoId) -> Unit,
     modifier: Modifier = Modifier,
-    photosPreviewQuality: PhotoQuality = PhotoQuality.MEDIUM,
+    previewPhotosQuality: PhotoQuality = PhotoQuality.MEDIUM,
     listState: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues()
 ) {
-    val lazyCollectionItems = pagingDataFlow.collectAsLazyPagingItems()
-
     LazyColumn(
         state = listState,
         contentPadding = contentPadding,
         modifier = modifier
     ) {
-        items(lazyCollectionItems) { collection ->
-            collection?.let {
-                val previewPhotos = collection.previewPhotos?.take(3) ?: emptyList()
+        when (lazyCollectionItems.loadState.refresh) {
+            is LoadState.NotLoading -> {
+                if (lazyCollectionItems.itemCount > 0) {
+                    items(lazyCollectionItems) { collection ->
+                        collection?.let {
+                            val previewPhotos = remember {
+                                collection.getPreviewPhotos()
+                            }
 
-                val onPhotoClickListeners = previewPhotos.map { photo ->
-                    val listener: () -> Unit = {
-                        onPhotoClicked(PhotoId(photo.id))
+                            val onPhotoClickListeners = remember {
+                                previewPhotos.map { photo ->
+                                    val listener: () -> Unit = {
+                                        onPhotoClicked(PhotoId(photo.id))
+                                    }
+                                    listener
+                                }
+                            }
+
+                            DefaultCollectionItem(
+                                title = collection.title,
+                                previewPhotos = previewPhotos,
+                                totalPhotos = collection.totalPhotos,
+                                previewPhotosQuality = previewPhotosQuality,
+                                curatorUsername = collection.username,
+                                onOpenCollectionClick = {
+                                    val collectionInfo = CollectionInfo(
+                                        idAsString = collection.id,
+                                        title = collection.title,
+                                        totalPhotos = collection.totalPhotos,
+                                        userNickname = collection.user?.username.orEmpty(),
+                                        userFullName = collection.userFullName,
+                                        description = collection.description.orEmpty(),
+                                        isPrivate = collection.private ?: false
+                                    )
+                                    onCollectionClicked(collectionInfo)
+                                },
+                                onUserProfileClick = {
+                                    val userNickname = UserNickname(collection.username)
+                                    onUserProfileClicked(userNickname)
+                                },
+                                onPhotoClickListeners = onPhotoClickListeners,
+                                modifier = Modifier.padding(bottom = 32.dp)
+                            )
+                        }
                     }
-                    listener
+                } else {
+                    item {
+                        EmptyContentBanner(modifier = Modifier.fillParentMaxSize())
+                    }
                 }
+            }
 
-                DefaultCollectionItem(
-                    title = collection.title,
-                    previewPhotos = previewPhotos,
-                    totalPhotos = collection.totalPhotos,
-                    curatorUsername = collection.user?.username.orEmpty(),
-                    onOpenCollectionClick = {
-                        val collectionInfo = CollectionInfo(
-                            idAsString = collection.id,
-                            title = collection.title,
-                            totalPhotos = collection.totalPhotos,
-                            userNickname = collection.user?.username.orEmpty(),
-                            userFullName = "${collection.user?.firstName.orEmpty()} ${collection.user?.lastName.orEmpty()}",
-                            description = collection.description.orEmpty(),
-                            isPrivate = collection.private ?: false
-                        )
-                        onCollectionClicked(collectionInfo)
-                    },
-                    onUserProfileClick = {
-                        val userNickname = UserNickname(collection.user?.username.orEmpty())
-                        onUserProfileClicked(userNickname)
-                    },
-                    onPhotoClickListeners = onPhotoClickListeners,
-                    modifier = Modifier.padding(bottom = 32.dp)
-                )
+            is LoadState.Loading -> Unit
+
+            is LoadState.Error -> {
+                item {
+                    ErrorBanner(
+                        onRetry = lazyCollectionItems::retry,
+                        modifier = Modifier.fillParentMaxSize()
+                    )
+                }
+            }
+        }
+
+        when (lazyCollectionItems.loadState.append) {
+            is LoadState.NotLoading -> Unit
+
+            is LoadState.Loading -> {
+                item {
+                    LoadingListItem(modifier = Modifier.fillParentMaxWidth())
+                }
+            }
+
+            is LoadState.Error -> {
+                item {
+                    ErrorItem(
+                        onRetry = lazyCollectionItems::retry,
+                        modifier = Modifier
+                            .fillParentMaxWidth()
+                            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                    )
+                }
             }
         }
     }
@@ -98,6 +142,7 @@ fun CollectionsList(
 fun DefaultCollectionItem(
     title: String,
     previewPhotos: List<Photo>,
+    previewPhotosQuality: PhotoQuality,
     totalPhotos: Int,
     curatorUsername: String,
     modifier: Modifier = Modifier,
@@ -113,6 +158,7 @@ fun DefaultCollectionItem(
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             CollectionPhotosLayout(
                 previewPhotos,
+                previewPhotosQuality,
                 onPhotoClickListeners,
                 constraints
             )
@@ -131,9 +177,18 @@ fun DefaultCollectionItem(
 @Composable
 private fun CollectionPhotosLayout(
     previewPhotos: List<Photo>,
+    previewPhotosQuality: PhotoQuality,
     onPhotoClickListeners: List<() -> Unit>,
     constraints: BoxWithConstraintsScope
 ) {
+    val previewPhotosUrls = remember {
+        previewPhotos.map { it.getUrlByQuality(previewPhotosQuality) }
+    }
+
+    val previewPhotoColors = remember {
+        previewPhotos.map { it.primaryColorInt }
+    }
+
     Row(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
@@ -143,11 +198,9 @@ private fun CollectionPhotosLayout(
             1 -> {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(previewPhotos[0].urls.regular)
+                        .data(previewPhotosUrls[0])
                         .crossfade(true)
-                        .placeholder(ColorDrawable(previewPhotos[0].color?.let {
-                            android.graphics.Color.parseColor(it)
-                        } ?: android.graphics.Color.GRAY))
+                        .placeholder(ColorDrawable(previewPhotoColors[0]))
                         .build(),
                     contentDescription = stringResource(id = R.string.description_first_photo),
                     contentScale = ContentScale.Crop,
@@ -162,11 +215,9 @@ private fun CollectionPhotosLayout(
             2 -> {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(previewPhotos[0].urls.regular)
+                        .data(previewPhotosUrls[0])
                         .crossfade(true)
-                        .placeholder(ColorDrawable(previewPhotos[0].color?.let {
-                            android.graphics.Color.parseColor(it)
-                        } ?: android.graphics.Color.GRAY))
+                        .placeholder(ColorDrawable(previewPhotoColors[0]))
                         .build(),
                     contentDescription = stringResource(id = R.string.description_first_photo),
                     contentScale = ContentScale.Crop,
@@ -180,11 +231,9 @@ private fun CollectionPhotosLayout(
 
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(previewPhotos[1].urls.regular)
+                        .data(previewPhotosUrls[1])
                         .crossfade(true)
-                        .placeholder(ColorDrawable(previewPhotos[1].color?.let {
-                            android.graphics.Color.parseColor(it)
-                        } ?: android.graphics.Color.GRAY))
+                        .placeholder(ColorDrawable(previewPhotoColors[1]))
                         .build(),
                     contentDescription = stringResource(id = R.string.description_second_photo),
                     contentScale = ContentScale.Crop,
@@ -198,11 +247,9 @@ private fun CollectionPhotosLayout(
             3 -> {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(previewPhotos[0].urls.regular)
+                        .data(previewPhotosUrls[0])
                         .crossfade(true)
-                        .placeholder(ColorDrawable(previewPhotos[0].color?.let {
-                            android.graphics.Color.parseColor(it)
-                        } ?: android.graphics.Color.GRAY))
+                        .placeholder(ColorDrawable(previewPhotoColors[0]))
                         .build(),
                     contentDescription = stringResource(id = R.string.description_first_photo),
                     contentScale = ContentScale.Crop,
@@ -211,15 +258,15 @@ private fun CollectionPhotosLayout(
                         .clip(RoundedCornerShape(36.dp))
                         .clickable(onClick = onPhotoClickListeners[0])
                 )
+
                 Spacer(modifier = Modifier.padding(start = 8.dp))
+
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data(previewPhotos[1].urls.regular)
+                            .data(previewPhotosUrls[1])
                             .crossfade(true)
-                            .placeholder(ColorDrawable(previewPhotos[1].color?.let {
-                                android.graphics.Color.parseColor(it)
-                            } ?: android.graphics.Color.GRAY))
+                            .placeholder(ColorDrawable(previewPhotoColors[1]))
                             .build(),
                         contentDescription = stringResource(id = R.string.description_second_photo),
                         contentScale = ContentScale.Crop,
@@ -231,13 +278,9 @@ private fun CollectionPhotosLayout(
 
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data(previewPhotos[2].urls.regular)
+                            .data(previewPhotosUrls[2])
                             .crossfade(true)
-                            .placeholder(ColorDrawable(previewPhotos[2].color?.let {
-                                android.graphics.Color.parseColor(
-                                    it
-                                )
-                            } ?: android.graphics.Color.GRAY))
+                            .placeholder(ColorDrawable(previewPhotoColors[2]))
                             .build(),
                         contentDescription = stringResource(id = R.string.description_third_photo),
                         contentScale = ContentScale.Crop,
