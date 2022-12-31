@@ -76,3 +76,9 @@ enum class PhotoQuality {
     LOW,
     THUMBNAIL
 }
+
+enum class UserProfileImageQuality {
+    LOW,
+    MEDIUM,
+    HIGH
+}

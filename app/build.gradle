@@ -129,6 +129,9 @@ dependencies {
     implementation "com.google.accompanist:accompanist-pager:$accompainst_version"
     implementation "com.google.accompanist:accompanist-permissions:$accompainst_version"
 
+    // Lottie
+    implementation "com.airbnb.android:lottie-compose:$lottieVersion"
+
     // Tests
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "androidx.test.ext:junit:$text_ext_junit_version"

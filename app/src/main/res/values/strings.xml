@@ -22,6 +22,7 @@
     <string name="order_latest">Latest</string>
     <string name="order_oldest">Oldest</string>
     <string name="order_popular">Popular</string>
+    <string name="photo">Photo</string>
 
     <!--Collections tab-->
     <string name="all_collections">All collections</string>
@@ -49,7 +50,7 @@
     <!-- Search -->
     <string name="apply">Apply</string>
     <string name="type_something">Type something</string>
-    <string name="nothing_found">Seems like it\'s nothing here.\nTry to search something</string>
+    <string name="empty_content_banner_text">Oh, crap! Looks like it\'s nothing here</string>
     <string name="no_search_results_subtitle">Try searching for something</string>
     <string name="filter">Filter</string>
     <string name="photo_filters">Photo filters</string>
@@ -116,5 +117,8 @@
 
     <string name="users">Users</string>
     <string name="user_profile_image">User profile image</string>
+    <string name="action_retry">Retry</string>
+    <string name="error_loading_items">Network error, check connection</string>
+    <string name="error_banner_text">Oops! Something went wrong, please check connection</string>
 
 </resources>

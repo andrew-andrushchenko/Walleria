@@ -21,22 +21,23 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.paging.PagingData
-import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.items
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.andrii_a.walleria.R
 import com.andrii_a.walleria.core.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
-import com.andrii_a.walleria.ui.common.PhotoId
-import com.andrii_a.walleria.ui.common.UserNickname
-import kotlinx.coroutines.flow.Flow
+import com.andrii_a.walleria.ui.common.*
+import com.andrii_a.walleria.ui.util.*
 
 @Composable
 fun PhotosList(
-    pagingDataFlow: Flow<PagingData<Photo>>,
+    lazyPhotoItems: LazyPagingItems<Photo>,
     onPhotoClicked: (PhotoId) -> Unit,
     onUserProfileClicked: (UserNickname) -> Unit,
     modifier: Modifier = Modifier,
@@ -44,30 +45,71 @@ fun PhotosList(
     listState: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues()
 ) {
-    val lazyPhotoItems = pagingDataFlow.collectAsLazyPagingItems()
-
     LazyColumn(
         state = listState,
         contentPadding = contentPadding,
         modifier = modifier
     ) {
-        items(lazyPhotoItems) { photo ->
-            photo?.let {
-                DefaultPhotoItem(
-                    width = it.width.toFloat(),
-                    height = it.height.toFloat(),
-                    photoUrl = it.urls.regular, // TODO: replace later
-                    photoPlaceholderColor = Color.Gray, // TODO: replace later
-                    userProfileImageUrl = it.user?.profileImage?.medium.orEmpty(),
-                    username = "${it.user?.firstName.orEmpty()} ${it.user?.lastName.orEmpty()}",
-                    onPhotoClicked = { onPhotoClicked(PhotoId(it.id)) },
-                    onUserClick = { onUserProfileClicked(UserNickname(photo.user?.username.orEmpty())) },
-                    modifier = Modifier.padding(
-                        start = 16.dp,
-                        end = 16.dp,
-                        bottom = 16.dp
+        when (lazyPhotoItems.loadState.refresh) {
+            is LoadState.NotLoading -> {
+                if (lazyPhotoItems.itemCount > 0) {
+                    items(lazyPhotoItems) { photo ->
+                        photo?.let {
+                            DefaultPhotoItem(
+                                width = photo.width.toFloat(),
+                                height = photo.height.toFloat(),
+                                photoUrl = photo.getUrlByQuality(photosQuality),
+                                photoPlaceholderColor = photo.primaryColorComposable,
+                                userProfileImageUrl = photo.getUserProfileImageUrlOrEmpty(),
+                                username = photo.userFullName,
+                                onPhotoClicked = { onPhotoClicked(PhotoId(it.id)) },
+                                onUserClick = { onUserProfileClicked(UserNickname(photo.userNickname)) },
+                                modifier = Modifier
+                                    .padding(
+                                        start = 16.dp,
+                                        end = 16.dp,
+                                        bottom = 16.dp
+                                    )
+                            )
+                        }
+                    }
+                } else {
+                    item {
+                        EmptyContentBanner(modifier = Modifier.fillParentMaxSize())
+                    }
+                }
+            }
+
+            is LoadState.Loading -> Unit
+
+            is LoadState.Error -> {
+                item {
+                    ErrorBanner(
+                        onRetry = lazyPhotoItems::retry,
+                        modifier = Modifier.fillParentMaxSize()
                     )
-                )
+                }
+            }
+        }
+
+        when (lazyPhotoItems.loadState.append) {
+            is LoadState.NotLoading -> Unit
+
+            is LoadState.Loading -> {
+                item {
+                    LoadingListItem(modifier = Modifier.fillParentMaxWidth())
+                }
+            }
+
+            is LoadState.Error -> {
+                item {
+                    ErrorItem(
+                        onRetry = lazyPhotoItems::retry,
+                        modifier = Modifier
+                            .fillParentMaxWidth()
+                            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                    )
+                }
             }
         }
     }
@@ -101,6 +143,7 @@ fun DefaultPhotoItem(
                 .data(photoUrl)
                 .crossfade(true)
                 .placeholder(ColorDrawable(photoPlaceholderColor.toArgb()))
+                .error(ColorDrawable(photoPlaceholderColor.toArgb()))
                 .build(),
             contentScale = ContentScale.Fit
         )
@@ -108,7 +151,7 @@ fun DefaultPhotoItem(
         AspectRatioImage(
             width = width,
             height = height,
-            description = "",
+            description = stringResource(id = R.string.photo),
             painter = painter,
             onClick = onPhotoClicked
         )
@@ -169,14 +212,14 @@ fun UserRow(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(userProfileImageUrl)
                 .crossfade(true)
-                .placeholder(ColorDrawable(Color.Gray.toArgb())) // TODO: replace later
+                .placeholder(ColorDrawable(Color.Gray.toArgb()))
                 .build(),
             contentScale = ContentScale.Fit
         )
 
         Image(
             painter = painter,
-            contentDescription = "User profile image",
+            contentDescription = stringResource(id = R.string.user_profile_image),
             modifier = Modifier
                 .size(46.dp)
                 .clip(CircleShape)

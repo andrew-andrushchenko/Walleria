@@ -12,6 +12,9 @@ import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -23,7 +26,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
 import androidx.paging.PagingData
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.domain.models.photo.Photo
@@ -53,24 +58,30 @@ fun SearchScreen(
 
     var showFilterDialog by rememberSaveable { mutableStateOf(false) }
 
-    Column(modifier = Modifier.fillMaxWidth()) {
-        val queryValue by query.collectAsState()
-
-        SearchRow(
-            query = queryValue,
-            pagerState = pagerState,
-            dispatchEvent = dispatchEvent,
-            onPhotoFiltersClick = { showFilterDialog = true }
-        )
-
-        SearchTabs(pagerState = pagerState)
+    Box(modifier = Modifier.fillMaxWidth()) {
+        val queryValue = query.collectAsState()
 
         SearchPages(
+            query = queryValue,
             pagerState = pagerState,
             photos = photos,
             collections = collections,
-            users = users
+            users = users,
+            contentPadding = PaddingValues(
+                top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 112.dp
+            )
         )
+
+        Column(modifier = Modifier.align(Alignment.TopCenter)) {
+            SearchRow(
+                query = queryValue,
+                pagerState = pagerState,
+                dispatchEvent = dispatchEvent,
+                onPhotoFiltersClick = { showFilterDialog = true }
+            )
+
+            SearchTabs(pagerState = pagerState)
+        }
 
         if (showFilterDialog) {
             SearchPhotoFilterDialog(
@@ -85,7 +96,7 @@ fun SearchScreen(
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 private fun SearchRow(
-    query: String,
+    query: State<String>,
     pagerState: PagerState,
     dispatchEvent: (SearchScreenEvent) -> Unit,
     onPhotoFiltersClick: () -> Unit
@@ -94,11 +105,12 @@ private fun SearchRow(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .statusBarsPadding()
+            .height(64.dp)
             .padding(start = 16.dp, end = 16.dp)
             .fillMaxWidth()
     ) {
         val focusManager = LocalFocusManager.current
-        var text by remember { mutableStateOf(query) }
+        var text by remember { mutableStateOf(query.value) }
 
         OutlinedTextField(
             value = text,
@@ -163,7 +175,7 @@ private fun SearchTabs(
 
     TabRow(
         selectedTabIndex = pagerState.currentPage,
-        backgroundColor = MaterialTheme.colors.primary.copy(alpha = 0.9f),
+        backgroundColor = MaterialTheme.colors.primary,
         contentColor = MaterialTheme.colors.onPrimary,
         indicator = { tabPositions ->
             Box(
@@ -176,7 +188,8 @@ private fun SearchTabs(
                         shape = RoundedCornerShape(16.dp)
                     )
             )
-        }
+        },
+        modifier = Modifier.height(48.dp)
     ) {
         SearchScreenTabs.values().forEachIndexed { index, tabPage ->
             Tab(
@@ -198,32 +211,50 @@ private fun SearchTabs(
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalPagerApi::class, ExperimentalMaterialApi::class)
 @Composable
 private fun SearchPages(
+    query: State<String>,
     pagerState: PagerState,
     photos: Flow<PagingData<Photo>>,
     collections: Flow<PagingData<Collection>>,
-    users: Flow<PagingData<User>>
+    users: Flow<PagingData<User>>,
+    contentPadding: PaddingValues = PaddingValues()
 ) {
     HorizontalPager(
         count = SearchScreenTabs.values().size,
-        state = pagerState
+        state = pagerState,
+        contentPadding = contentPadding
     ) { index ->
         when (index) {
             SearchScreenTabs.Photos.ordinal -> {
-                val listState = rememberLazyListState()
+                val lazyPhotoItems = photos.collectAsLazyPagingItems()
 
-                ScrollToTopLayout(
-                    listState = listState,
-                    contentPadding = PaddingValues(bottom = 120.dp)
-                ) {
-                    PhotosList(
-                        pagingDataFlow = photos,
-                        onPhotoClicked = {},
-                        onUserProfileClicked = {},
+                val pullRefreshState = rememberPullRefreshState(
+                    refreshing = query.value.isNotEmpty() && lazyPhotoItems.loadState.refresh is LoadState.Loading,
+                    onRefresh = lazyPhotoItems::refresh
+                )
+
+                Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
+                    val listState = rememberLazyListState()
+
+                    ScrollToTopLayout(
                         listState = listState,
-                        contentPadding = PaddingValues(top = 8.dp, bottom = 160.dp)
+                        contentPadding = PaddingValues(bottom = 120.dp)
+                    ) {
+                        PhotosList(
+                            lazyPhotoItems = lazyPhotoItems,
+                            onPhotoClicked = {},
+                            onUserProfileClicked = {},
+                            listState = listState,
+                            contentPadding = PaddingValues(top = 8.dp, bottom = 160.dp)
+                        )
+                    }
+
+                    PullRefreshIndicator(
+                        refreshing = query.value.isNotEmpty() && lazyPhotoItems.loadState.refresh is LoadState.Loading,
+                        state = pullRefreshState,
+                        modifier = Modifier.align(Alignment.TopCenter)
                     )
                 }
             }

@@ -50,6 +50,9 @@ buildscript {
         // Accompainst
         accompainst_version = '0.28.0'
 
+        // Lottie
+        lottieVersion = '5.2.0'
+
         // Tests
         junit_version = '4.13.2'
         text_ext_junit_version = '1.1.4'
@@ -61,6 +64,8 @@ buildscript {
         google()
         maven { url "https://www.jitpack.io" }
         mavenCentral()
+
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     }
 
     dependencies {

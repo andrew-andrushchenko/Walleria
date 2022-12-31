@@ -22,7 +22,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.models.login.AccessToken
-import com.andrii_a.walleria.ui.common.LoadingView
+import com.andrii_a.walleria.ui.common.LoadingBanner
 import com.andrii_a.walleria.ui.theme.LoginScreenAccentColor
 import com.andrii_a.walleria.ui.util.toast
 
@@ -55,7 +55,7 @@ fun LoginScreen(
         when (loginState) {
             is LoginState.Empty -> Unit
             is LoginState.Loading -> {
-                LoadingView(
+                LoadingBanner(
                     indicatorColor = Color.White,
                     modifier = Modifier
                         .fillMaxSize()
