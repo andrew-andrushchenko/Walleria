@@ -1,5 +1,6 @@
 package com.andrii_a.walleria.ui.navigation
 
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -23,8 +24,13 @@ fun MainNavHost(
     systemUiController: SystemUiController
 ) {
     val bottomSheetNavigator = rememberBottomSheetNavigator()
+
     navHostController.navigatorProvider += bottomSheetNavigator
-    ModalBottomSheetLayout(bottomSheetNavigator = bottomSheetNavigator) {
+
+    ModalBottomSheetLayout(
+        bottomSheetNavigator = bottomSheetNavigator,
+        scrimColor = MaterialTheme.colors.primary.copy(alpha = 0.5f)
+    ) {
         NavHost(
             navController = navHostController,
             startDestination = BottomNavigationGraphRoute
