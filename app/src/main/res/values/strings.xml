@@ -107,7 +107,7 @@
     <string name="days_ago_formatted">%d days ago</string>
 
     <!--Profile screen-->
-    <string name="login_rationale">Access more functions of Walleria just by logging in</string>
+    <string name="creation_starts_here">Creation starts here</string>
     <string name="user_profile_view">View</string>
     <string name="user_profile_edit">Edit</string>
     <string name="user_full_name_formatted" translatable="false">%s %s</string>
