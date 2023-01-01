@@ -22,65 +22,105 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.paging.PagingData
-import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.items
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.andrii_a.walleria.R
+import com.andrii_a.walleria.core.PhotoQuality
 import com.andrii_a.walleria.core.TopicStatus
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.topic.Topic
-import com.andrii_a.walleria.ui.common.TopicInfo
+import com.andrii_a.walleria.ui.common.*
 import com.andrii_a.walleria.ui.theme.TopicStatusClosedTextColorDark
 import com.andrii_a.walleria.ui.theme.TopicStatusClosedTextColorLight
 import com.andrii_a.walleria.ui.theme.TopicStatusOpenTextColorDark
 import com.andrii_a.walleria.ui.theme.TopicStatusOpenTextColorLight
-import com.andrii_a.walleria.ui.util.abbreviatedNumberString
-import com.andrii_a.walleria.ui.util.timeAgoLocalizedString
-import com.andrii_a.walleria.ui.util.titleRes
-import kotlinx.coroutines.flow.Flow
+import com.andrii_a.walleria.ui.util.*
 import java.util.*
 import android.graphics.Color as AndroidColor
 import androidx.compose.ui.graphics.Color as ComposeColor
 
 @Composable
 fun TopicsList(
-    pagingDataFlow: Flow<PagingData<Topic>>,
+    lazyTopicItems: LazyPagingItems<Topic>,
     modifier: Modifier = Modifier,
     onClick: (TopicInfo) -> Unit,
+    coverPhotoQuality: PhotoQuality = PhotoQuality.MEDIUM,
     listState: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues()
 ) {
-    val lazyTopicsItems = pagingDataFlow.collectAsLazyPagingItems()
-
     LazyColumn(
         state = listState,
         contentPadding = contentPadding,
         modifier = modifier
     ) {
-        items(lazyTopicsItems) { topic ->
-            topic?.let {
-                DefaultTopicItem(
-                    title = topic.title.orEmpty(),
-                    coverPhoto = topic.coverPhoto,
-                    totalPhotos = topic.totalPhotos ?: 0,
-                    curatorUsername = topic.owners?.first()?.username.orEmpty(),
-                    status = topic.status,
-                    updatedAt = topic.updatedAt.orEmpty(),
-                    onClick = {
-                        val topicInfo = TopicInfo(
-                            idAsString = topic.id,
-                            title = topic.title
-                        )
-                        onClick(topicInfo)
-                    },
-                    modifier = Modifier.padding(
-                        start = 8.dp,
-                        end = 8.dp,
-                        bottom = 8.dp
+        when (lazyTopicItems.loadState.refresh) {
+            is LoadState.NotLoading -> {
+                if (lazyTopicItems.itemCount > 0) {
+                    items(lazyTopicItems) { topic ->
+                        topic?.let {
+                            DefaultTopicItem(
+                                title = topic.title.orEmpty(),
+                                coverPhoto = topic.coverPhoto,
+                                coverPhotoQuality = coverPhotoQuality,
+                                totalPhotos = topic.totalPhotos ?: 0,
+                                curatorUsername = topic.ownerUsername,
+                                status = topic.status,
+                                updatedAt = topic.updatedAt.orEmpty(),
+                                onClick = {
+                                    val topicInfo = TopicInfo(
+                                        idAsString = topic.id,
+                                        title = topic.title
+                                    )
+                                    onClick(topicInfo)
+                                },
+                                modifier = Modifier.padding(
+                                    start = 8.dp,
+                                    end = 8.dp,
+                                    bottom = 8.dp
+                                )
+                            )
+                        }
+                    }
+                } else {
+                    item {
+                        EmptyContentBanner(modifier = Modifier.fillParentMaxSize())
+                    }
+                }
+            }
+
+            is LoadState.Loading -> Unit
+
+            is LoadState.Error -> {
+                item {
+                    ErrorBanner(
+                        onRetry = lazyTopicItems::retry,
+                        modifier = Modifier.fillParentMaxSize()
                     )
-                )
+                }
+            }
+        }
+
+        when (lazyTopicItems.loadState.append) {
+            is LoadState.NotLoading -> Unit
+
+            is LoadState.Loading -> {
+                item {
+                    LoadingListItem(modifier = Modifier.fillParentMaxWidth())
+                }
+            }
+
+            is LoadState.Error -> {
+                item {
+                    ErrorItem(
+                        onRetry = lazyTopicItems::retry,
+                        modifier = Modifier
+                            .fillParentMaxWidth()
+                            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                    )
+                }
             }
         }
     }
@@ -91,6 +131,7 @@ fun TopicsList(
 fun DefaultTopicItem(
     title: String,
     coverPhoto: Photo?,
+    coverPhotoQuality: PhotoQuality,
     totalPhotos: Int,
     curatorUsername: String,
     status: TopicStatus,
@@ -104,15 +145,16 @@ fun DefaultTopicItem(
         modifier = modifier
     ) {
         ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
-            val (titleText, coverPhotoAsyncImage, statusText, curatorUsernameText, lastUpdatedText, totalPhotosText) = createRefs()
+            val (
+                titleText, coverPhotoAsyncImage, statusText,
+                curatorUsernameText, lastUpdatedText, totalPhotosText
+            ) = createRefs()
 
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(coverPhoto?.urls?.regular.orEmpty())
+                    .data(coverPhoto?.getUrlByQuality(coverPhotoQuality))
                     .crossfade(durationMillis = 1000)
-                    .placeholder(ColorDrawable(coverPhoto?.color?.let {
-                        AndroidColor.parseColor(it)
-                    } ?: AndroidColor.GRAY))
+                    .placeholder(ColorDrawable(coverPhoto?.primaryColorInt ?: AndroidColor.GRAY))
                     .build(),
                 contentDescription = stringResource(id = R.string.topic_cover_photo),
                 contentScale = ContentScale.Crop,
@@ -146,7 +188,7 @@ fun DefaultTopicItem(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.constrainAs(curatorUsernameText) {
-                    top.linkTo(titleText.bottom, margin = 0.dp)
+                    top.linkTo(titleText.bottom)
                     start.linkTo(coverPhotoAsyncImage.end, margin = 12.dp)
                     width = Dimension.fillToConstraints
                 }
