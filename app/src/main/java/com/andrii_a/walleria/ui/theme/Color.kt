@@ -43,4 +43,4 @@ val TopicStatusOpenTextColorDark = Color(0xFF009AF6)
 val TopicStatusClosedTextColorLight = Color(0xFFEB5757)
 val TopicStatusClosedTextColorDark = Color(0xFFEB9797)
 
-val LoginScreenAccentColor = Color(0xFFA5923D)
+val LoginScreenAccentColor = Color(0xFFB08C67)

@@ -259,10 +259,7 @@ fun LoadingListItem(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun LoadingBanner(
-    modifier: Modifier = Modifier,
-    indicatorColor: Color = MaterialTheme.colors.secondary
-) {
+fun LoadingBanner(modifier: Modifier = Modifier) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier

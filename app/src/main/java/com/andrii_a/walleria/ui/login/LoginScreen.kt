@@ -9,8 +9,10 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -24,9 +26,10 @@ import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.models.login.AccessToken
 import com.andrii_a.walleria.ui.common.LoadingBanner
 import com.andrii_a.walleria.ui.theme.LoginScreenAccentColor
+import com.andrii_a.walleria.ui.theme.PrimaryDark
+import com.andrii_a.walleria.ui.theme.PrimaryLight
+import com.andrii_a.walleria.ui.theme.WalleriaLogoTextStyle
 import com.andrii_a.walleria.ui.util.toast
-
-private const val LOGIN_IMAGE_ASSET_URL = "file:///android_asset/login_screen_bg.jpg"
 
 @Composable
 fun LoginScreen(
@@ -39,27 +42,42 @@ fun LoginScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(LOGIN_IMAGE_ASSET_URL)
-                .crossfade(true)
-                .placeholder(ColorDrawable(android.graphics.Color.GRAY))
+                .data(stringResource(id = R.string.login_screen_image_asset_url))
+                .crossfade(durationMillis = 1000)
+                .placeholder(ColorDrawable(LoginScreenAccentColor.toArgb()))
                 .build(),
             contentDescription = stringResource(id = R.string.topic_cover_photo),
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
 
-        TopSection(onNavigateBack = onNavigateBack)
+        Gradient()
 
-        BottomSection(onLoginClicked = onLoginClicked, onJoinClicked = onJoinClicked)
+        TopSection(
+            onNavigateBack = onNavigateBack,
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.TopCenter)
+                .statusBarsPadding()
+                .padding(8.dp)
+        )
+
+        BottomSection(
+            onLoginClicked = onLoginClicked,
+            onJoinClicked = onJoinClicked,
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .navigationBarsPadding()
+        )
 
         when (loginState) {
             is LoginState.Empty -> Unit
             is LoginState.Loading -> {
                 LoadingBanner(
-                    indicatorColor = Color.White,
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(MaterialTheme.colors.primary.copy(alpha = 0.4f))
+                        .background(PrimaryDark.copy(alpha = 0.4f))
                 )
             }
             is LoginState.Error -> {
@@ -67,7 +85,6 @@ fun LoginScreen(
             }
             is LoginState.Success -> {
                 retrieveUserData(loginState.accessToken)
-
                 LocalContext.current.toast(R.string.login_successful)
                 onNavigateBack()
             }
@@ -76,45 +93,40 @@ fun LoginScreen(
 }
 
 @Composable
-fun TopSection(onNavigateBack: () -> Unit) {
+private fun TopSection(
+    onNavigateBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier
-            .fillMaxWidth()
-            .statusBarsPadding()
-            .padding(top = 8.dp, bottom = 8.dp, start = 8.dp, end = 8.dp)
+        modifier = modifier
     ) {
         IconButton(onClick = onNavigateBack) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_arrow_back),
                 contentDescription = null,
-                tint = MaterialTheme.colors.primary
+                tint = PrimaryLight
             )
         }
 
         Text(
-            text = "Walleria",
-            style = MaterialTheme.typography.h5,
-            color = MaterialTheme.colors.primary
+            text = stringResource(id = R.string.app_name),
+            style = WalleriaLogoTextStyle,
+            color = PrimaryLight
         )
     }
 }
 
 @Composable
-fun BottomSection(
+private fun BottomSection(
     onLoginClicked: () -> Unit,
-    onJoinClicked: () -> Unit
+    onJoinClicked: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Box(
         contentAlignment = Alignment.BottomCenter,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.7f))
-                )
-            )
+        modifier = modifier
     ) {
         Column(
             verticalArrangement = Arrangement.Center,
@@ -122,13 +134,13 @@ fun BottomSection(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "Capture love, joy and",
-                color = Color.White,
+                text = stringResource(id = R.string.login_screen_slogan_p1),
+                color = PrimaryLight,
                 style = MaterialTheme.typography.h4
             )
 
             Text(
-                text = "everything in between",
+                text = stringResource(id = R.string.login_screen_slogan_p2),
                 color = LoginScreenAccentColor,
                 style = MaterialTheme.typography.h4
             )
@@ -145,32 +157,52 @@ fun BottomSection(
             ) {
                 Text(
                     text = stringResource(id = R.string.login),
-                    color = Color.White,
+                    color = PrimaryLight,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )
             }
 
             Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
                 modifier = Modifier
-                    .padding(top = 24.dp, bottom = 24.dp)
-                    .navigationBarsPadding()
+                    .padding(top = 12.dp, bottom = 24.dp)
             ) {
                 Text(
                     text = stringResource(id = R.string.dont_have_an_account),
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = PrimaryLight
                 )
 
-                Spacer(modifier = Modifier.padding(start = 4.dp, end = 4.dp))
+                Spacer(modifier = Modifier.padding(end = 4.dp))
 
                 Text(
                     text = stringResource(id = R.string.join),
                     fontWeight = FontWeight.Bold,
                     color = LoginScreenAccentColor,
-                    modifier = Modifier.clickable { onJoinClicked() }
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(16.dp))
+                        .clickable { onJoinClicked() }
                 )
             }
         }
     }
+}
+
+@Composable
+private fun Gradient() {
+    Spacer(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color.Black.copy(alpha = 0.5f),
+                        Color.Transparent,
+                        Color.Black.copy(alpha = 0.8f)
+                    )
+                )
+            )
+    )
 }

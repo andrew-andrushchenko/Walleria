@@ -14,6 +14,10 @@ private val Sailec = FontFamily(
     Font(R.font.sailec_bold, FontWeight.Bold)
 )
 
+private val DancingScript = FontFamily(
+    Font(R.font.dancing_script_bold, FontWeight.Bold)
+)
+
 // Set of Material typography styles to start with
 val Typography = Typography(
     h4 = TextStyle(
@@ -67,4 +71,10 @@ val Typography = Typography(
         fontSize = 12.sp
 
     )
+)
+
+val WalleriaLogoTextStyle = TextStyle(
+    fontFamily = DancingScript,
+    fontWeight = FontWeight.W700,
+    fontSize = 36.sp
 )
