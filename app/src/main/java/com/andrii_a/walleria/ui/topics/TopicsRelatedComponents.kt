@@ -109,7 +109,7 @@ fun DefaultTopicItem(
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(coverPhoto?.urls?.regular.orEmpty())
-                    .crossfade(true)
+                    .crossfade(durationMillis = 1000)
                     .placeholder(ColorDrawable(coverPhoto?.color?.let {
                         AndroidColor.parseColor(it)
                     } ?: AndroidColor.GRAY))

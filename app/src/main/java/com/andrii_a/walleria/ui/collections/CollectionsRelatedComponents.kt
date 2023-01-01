@@ -199,7 +199,7 @@ private fun CollectionPhotosLayout(
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(previewPhotosUrls[0])
-                        .crossfade(true)
+                        .crossfade(durationMillis = 1000)
                         .placeholder(ColorDrawable(previewPhotoColors[0]))
                         .build(),
                     contentDescription = stringResource(id = R.string.description_first_photo),
@@ -216,7 +216,7 @@ private fun CollectionPhotosLayout(
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(previewPhotosUrls[0])
-                        .crossfade(true)
+                        .crossfade(durationMillis = 1000)
                         .placeholder(ColorDrawable(previewPhotoColors[0]))
                         .build(),
                     contentDescription = stringResource(id = R.string.description_first_photo),
@@ -232,7 +232,7 @@ private fun CollectionPhotosLayout(
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(previewPhotosUrls[1])
-                        .crossfade(true)
+                        .crossfade(durationMillis = 1000)
                         .placeholder(ColorDrawable(previewPhotoColors[1]))
                         .build(),
                     contentDescription = stringResource(id = R.string.description_second_photo),
@@ -248,7 +248,7 @@ private fun CollectionPhotosLayout(
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(previewPhotosUrls[0])
-                        .crossfade(true)
+                        .crossfade(durationMillis = 1000)
                         .placeholder(ColorDrawable(previewPhotoColors[0]))
                         .build(),
                     contentDescription = stringResource(id = R.string.description_first_photo),
@@ -265,7 +265,7 @@ private fun CollectionPhotosLayout(
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(previewPhotosUrls[1])
-                            .crossfade(true)
+                            .crossfade(durationMillis = 1000)
                             .placeholder(ColorDrawable(previewPhotoColors[1]))
                             .build(),
                         contentDescription = stringResource(id = R.string.description_second_photo),
@@ -279,7 +279,7 @@ private fun CollectionPhotosLayout(
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(previewPhotosUrls[2])
-                            .crossfade(true)
+                            .crossfade(durationMillis = 1000)
                             .placeholder(ColorDrawable(previewPhotoColors[2]))
                             .build(),
                         contentDescription = stringResource(id = R.string.description_third_photo),

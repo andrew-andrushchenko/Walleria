@@ -93,7 +93,7 @@ fun DefaultUserItem(
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(profileImageUrl)
-                    .crossfade(true)
+                    .crossfade(durationMillis = 1000)
                     .placeholder(ColorDrawable(Color.GRAY))
                     .build(),
                 contentDescription = stringResource(id = R.string.user_profile_image),
@@ -141,7 +141,7 @@ fun DefaultUserItem(
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(previewPhotos[0].urls.small)
-                        .crossfade(true)
+                        .crossfade(durationMillis = 1000)
                         .placeholder(ColorDrawable(previewPhotos[0].color?.let { Color.parseColor(it) }
                             ?: Color.GRAY))
                         .build(),
@@ -161,7 +161,7 @@ fun DefaultUserItem(
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(previewPhotos[1].urls.small)
-                        .crossfade(true)
+                        .crossfade(durationMillis = 1000)
                         .placeholder(ColorDrawable(previewPhotos[1].color?.let { Color.parseColor(it) }
                             ?: Color.GRAY))
                         .build(),
@@ -181,7 +181,7 @@ fun DefaultUserItem(
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(previewPhotos[2].urls.small)
-                        .crossfade(true)
+                        .crossfade(durationMillis = 1000)
                         .placeholder(ColorDrawable(previewPhotos[2].color?.let { Color.parseColor(it) }
                             ?: Color.GRAY))
                         .build(),

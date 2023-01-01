@@ -141,7 +141,7 @@ fun DefaultPhotoItem(
         val painter = rememberAsyncImagePainter(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(photoUrl)
-                .crossfade(true)
+                .crossfade(durationMillis = 1000)
                 .placeholder(ColorDrawable(photoPlaceholderColor.toArgb()))
                 .error(ColorDrawable(photoPlaceholderColor.toArgb()))
                 .build(),
@@ -211,7 +211,7 @@ fun UserRow(
         val painter = rememberAsyncImagePainter(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(userProfileImageUrl)
-                .crossfade(true)
+                .crossfade(durationMillis = 1000)
                 .placeholder(ColorDrawable(Color.Gray.toArgb()))
                 .build(),
             contentScale = ContentScale.Fit
