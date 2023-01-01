@@ -50,7 +50,7 @@
     <!-- Search -->
     <string name="apply">Apply</string>
     <string name="type_something">Type something</string>
-    <string name="empty_content_banner_text">Oh, crap! Looks like it\'s nothing here</string>
+    <string name="empty_content_banner_text">Uh oh…\n Looks like it\'s nothing here</string>
     <string name="no_search_results_subtitle">Try searching for something</string>
     <string name="filter">Filter</string>
     <string name="photo_filters">Photo filters</string>
