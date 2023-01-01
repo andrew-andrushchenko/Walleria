@@ -20,48 +20,89 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.paging.PagingData
-import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.items
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.andrii_a.walleria.R
+import com.andrii_a.walleria.core.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.photo.PhotoUrls
 import com.andrii_a.walleria.domain.models.user.User
-import com.andrii_a.walleria.ui.common.UserNickname
+import com.andrii_a.walleria.ui.common.*
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
-import kotlinx.coroutines.flow.Flow
+import com.andrii_a.walleria.ui.util.*
 
 @Composable
 fun UsersList(
-    pagingDataFlow: Flow<PagingData<User>>,
+    lazyUserItems: LazyPagingItems<User>,
     modifier: Modifier = Modifier,
     onUserClick: (UserNickname) -> Unit,
     listState: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues()
 ) {
-    val lazyUserItems = pagingDataFlow.collectAsLazyPagingItems()
-
     LazyColumn(
         state = listState,
         contentPadding = contentPadding,
         modifier = modifier
     ) {
-        items(lazyUserItems) { user ->
-            user?.let {
-                DefaultUserItem(
-                    nickname = user.username.orEmpty(),
-                    username = "${user.firstName.orEmpty()} ${user.lastName.orEmpty()}",
-                    profileImageUrl = user.profileImage?.large.orEmpty(),
-                    previewPhotos = user.photos?.takeIf { it.size > 2 }?.take(3) ?: emptyList(),
-                    onUserClick = onUserClick,
-                    modifier = Modifier.padding(
-                        start = 8.dp,
-                        end = 8.dp,
-                        bottom = 8.dp
+        when (lazyUserItems.loadState.refresh) {
+            is LoadState.NotLoading -> {
+                if (lazyUserItems.itemCount > 0) {
+                    items(lazyUserItems) { user ->
+                        user?.let {
+                            DefaultUserItem(
+                                nickname = user.username.orEmpty(),
+                                username = user.userFullName,
+                                profileImageUrl = user.getProfileImageUrlOrEmpty(),
+                                previewPhotos = user.getPreviewPhotos(),
+                                onUserClick = onUserClick,
+                                modifier = Modifier.padding(
+                                    start = 8.dp,
+                                    end = 8.dp,
+                                    bottom = 8.dp
+                                )
+                            )
+                        }
+                    }
+                } else {
+                    item {
+                        EmptyContentBanner(modifier = Modifier.fillParentMaxSize())
+                    }
+                }
+            }
+
+            is LoadState.Loading -> Unit
+
+            is LoadState.Error -> {
+                item {
+                    ErrorBanner(
+                        onRetry = lazyUserItems::retry,
+                        modifier = Modifier.fillParentMaxSize()
                     )
-                )
+                }
+            }
+        }
+
+        when (lazyUserItems.loadState.append) {
+            is LoadState.NotLoading -> Unit
+
+            is LoadState.Loading -> {
+                item {
+                    LoadingListItem(modifier = Modifier.fillParentMaxWidth())
+                }
+            }
+
+            is LoadState.Error -> {
+                item {
+                    ErrorItem(
+                        onRetry = lazyUserItems::retry,
+                        modifier = Modifier
+                            .fillParentMaxWidth()
+                            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                    )
+                }
             }
         }
     }
@@ -125,7 +166,7 @@ fun DefaultUserItem(
             )
 
             Text(
-                text = "@$nickname",
+                text = stringResource(id = R.string.user_nickname_formatted, nickname),
                 style = MaterialTheme.typography.subtitle2,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -140,10 +181,9 @@ fun DefaultUserItem(
             if (previewPhotos.isNotEmpty()) {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(previewPhotos[0].urls.small)
+                        .data(previewPhotos[0].getUrlByQuality(quality = PhotoQuality.LOW))
                         .crossfade(durationMillis = 1000)
-                        .placeholder(ColorDrawable(previewPhotos[0].color?.let { Color.parseColor(it) }
-                            ?: Color.GRAY))
+                        .placeholder(ColorDrawable(previewPhotos[0].primaryColorInt))
                         .build(),
                     contentScale = ContentScale.Crop,
                     contentDescription = null,
@@ -160,10 +200,9 @@ fun DefaultUserItem(
 
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(previewPhotos[1].urls.small)
+                        .data(previewPhotos[1].getUrlByQuality(quality = PhotoQuality.LOW))
                         .crossfade(durationMillis = 1000)
-                        .placeholder(ColorDrawable(previewPhotos[1].color?.let { Color.parseColor(it) }
-                            ?: Color.GRAY))
+                        .placeholder(ColorDrawable(previewPhotos[1].primaryColorInt))
                         .build(),
                     contentScale = ContentScale.Crop,
                     contentDescription = null,
@@ -180,10 +219,9 @@ fun DefaultUserItem(
 
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(previewPhotos[2].urls.small)
+                        .data(previewPhotos[2].getUrlByQuality(quality = PhotoQuality.LOW))
                         .crossfade(durationMillis = 1000)
-                        .placeholder(ColorDrawable(previewPhotos[2].color?.let { Color.parseColor(it) }
-                            ?: Color.GRAY))
+                        .placeholder(ColorDrawable(previewPhotos[2].primaryColorInt))
                         .build(),
                     contentScale = ContentScale.Crop,
                     contentDescription = null,

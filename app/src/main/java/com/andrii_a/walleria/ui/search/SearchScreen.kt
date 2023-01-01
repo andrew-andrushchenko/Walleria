@@ -291,18 +291,33 @@ private fun SearchPages(
                 }
             }
             SearchScreenTabs.Users.ordinal -> {
-                val listState = rememberLazyListState()
+                val lazyUserItems = users.collectAsLazyPagingItems()
 
-                ScrollToTopLayout(
-                    listState = listState,
-                    contentPadding = PaddingValues(bottom = 120.dp)
-                ) {
-                    UsersList(
-                        pagingDataFlow = users,
-                        onUserClick = {},
-                        contentPadding = PaddingValues(top = 8.dp, bottom = 160.dp),
-                        listState = listState
-                    )
+                val pullRefreshState = rememberPullRefreshState(
+                    refreshing = query.value.isNotEmpty() && lazyUserItems.loadState.refresh is LoadState.Loading,
+                    onRefresh = lazyUserItems::refresh
+                )
+
+                Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
+                    val listState = rememberLazyListState()
+
+                    ScrollToTopLayout(
+                        listState = listState,
+                        contentPadding = PaddingValues(bottom = 120.dp)
+                    ) {
+                        UsersList(
+                            lazyUserItems = lazyUserItems,
+                            onUserClick = {},
+                            contentPadding = PaddingValues(top = 8.dp, bottom = 160.dp),
+                            listState = listState
+                        )
+
+                        PullRefreshIndicator(
+                            refreshing = query.value.isNotEmpty() && lazyUserItems.loadState.refresh is LoadState.Loading,
+                            state = pullRefreshState,
+                            modifier = Modifier.align(Alignment.TopCenter)
+                        )
+                    }
                 }
             }
             else -> throw IllegalStateException("Tab screen was not declared!")
