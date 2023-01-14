@@ -22,6 +22,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.core.PhotoListDisplayOrder
 import com.andrii_a.walleria.domain.models.photo.Photo
+import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.common.ScrollToTopLayout
 import com.andrii_a.walleria.ui.common.WTitleDropdown
 import com.andrii_a.walleria.ui.util.titleRes
@@ -33,7 +34,8 @@ fun PhotosScreen(
     photos: Flow<PagingData<Photo>>,
     order: PhotoListDisplayOrder,
     orderBy: (Int) -> Unit,
-    navigateToProfileScreen: () -> Unit
+    navigateToProfileScreen: () -> Unit,
+    navigateToPhotoDetailsScreen: (PhotoId) -> Unit
 ) {
     val lazyPhotoItems = photos.collectAsLazyPagingItems()
 
@@ -58,7 +60,9 @@ fun PhotosScreen(
         ) {
             PhotosList(
                 lazyPhotoItems = lazyPhotoItems,
-                onPhotoClicked = {},
+                onPhotoClicked = { photoId ->
+                    navigateToPhotoDetailsScreen(photoId)
+                },
                 onUserProfileClicked = {},
                 listState = listState,
                 contentPadding = PaddingValues(

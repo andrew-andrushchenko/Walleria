@@ -118,10 +118,37 @@
     <string name="settings">Settings</string>
     <string name="about">About</string>
 
+    <!--Photo details-->
+    <string name="photo_info">Info</string>
+    <string name="location_template" translatable="false">%s, %s</string>
+    <string name="open_in_browser">Open in browser</string>
+    <string name="share">Share</string>
+    <string name="camera">Camera</string>
+    <string name="aperture">Aperture</string>
+    <string name="unknown">Unknown</string>
+    <string name="focal_length">Focal length</string>
+    <string name="shutter_speed">Shutter speed</string>
+    <string name="exposure_time">Exposure time</string>
+    <string name="iso" translatable="false">ISO</string>
+    <string name="resolution">Resolution</string>
+    <string name="resolution_formatted" translatable="false">%d × %d</string>
+    <string name="like">Like</string>
+    <string name="download">Download</string>
+    <string name="collect">Collect</string>
+    <string name="drop">Drop</string>
+    <string name="gmaps_does_not_installed">Google Maps does not installed on this device</string>
+    <string name="related_collections">Related collections:</string>
+    <string name="views">Views</string>
+    <string name="likes">Likes</string>
+    <string name="downloads">Downloads</string>
+    <string name="description">Description:</string>
+
     <string name="users">Users</string>
     <string name="user_profile_image">User profile image</string>
     <string name="action_retry">Retry</string>
     <string name="error_loading_items">Network error, check connection</string>
     <string name="error_banner_text">Oops! Something went wrong, please check connection</string>
+    <string name="login_to_like_photo">Please login to like photo</string>
+    <string name="login_to_collect_photo">Please login to collect photo</string>
 
 </resources>
