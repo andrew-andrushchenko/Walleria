@@ -132,7 +132,7 @@ fun BigUserRow(
 
 @Composable
 fun LikeAndBookmarkRow(
-    likes: Int,
+    likes: Long,
     isPhotoLiked: Boolean,
     isPhotoBookmarked: Boolean,
     onLikeButtonClick: () -> LikeCount?,
@@ -413,7 +413,7 @@ fun TagsRow(
 fun StatsItem(
     @DrawableRes drawableRes: Int,
     @StringRes titleRes: Int,
-    value: Int,
+    value: Long,
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier.padding(16.dp)) {
@@ -449,9 +449,9 @@ fun StatsItem(
 
 @Composable
 fun StatsRow(
-    views: Int,
-    likes: Int,
-    downloads: Int,
+    views: Long,
+    likes: Long,
+    downloads: Long,
     modifier: Modifier = Modifier,
 ) {
     Row(

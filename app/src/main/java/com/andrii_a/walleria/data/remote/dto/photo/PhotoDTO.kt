@@ -13,9 +13,9 @@ data class PhotoDTO(
     @SerializedName("blur_hash")
     val blurHash: String?,
     val color: String? = "#E0E0E0",
-    val views: Int?,
-    val downloads: Int?,
-    val likes: Int?,
+    val views: Long?,
+    val downloads: Long?,
+    val likes: Long?,
     @SerializedName("liked_by_user")
     val likedByUser: Boolean,
     val description: String?,

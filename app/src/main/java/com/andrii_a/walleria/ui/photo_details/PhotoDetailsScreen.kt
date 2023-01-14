@@ -90,7 +90,7 @@ fun PhotoDetailsScreen(
 }
 
 @JvmInline
-value class LikeCount(val value: Int)
+value class LikeCount(val value: Long)
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -376,7 +376,7 @@ fun TopSection(
 
 @Composable
 fun BottomSection(
-    likes: Int,
+    likes: Long,
     photoOwner: User?,
     isPhotoLiked: Boolean,
     isPhotoBookmarked: Boolean,
