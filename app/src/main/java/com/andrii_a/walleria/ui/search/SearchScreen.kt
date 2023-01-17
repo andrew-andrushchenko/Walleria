@@ -240,14 +240,20 @@ private fun SearchPages(
 
                     ScrollToTopLayout(
                         listState = listState,
-                        contentPadding = PaddingValues(bottom = 120.dp)
+                        contentPadding = PaddingValues(
+                            bottom = WindowInsets.navigationBars.asPaddingValues()
+                                .calculateBottomPadding() + 8.dp
+                        )
                     ) {
                         PhotosList(
                             lazyPhotoItems = lazyPhotoItems,
                             onPhotoClicked = {},
                             onUserProfileClicked = {},
                             listState = listState,
-                            contentPadding = PaddingValues(top = 8.dp, bottom = 160.dp)
+                            contentPadding = PaddingValues(
+                                top = 8.dp,
+                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 64.dp
+                            )
                         )
                     }
 
@@ -271,7 +277,10 @@ private fun SearchPages(
 
                     ScrollToTopLayout(
                         listState = listState,
-                        contentPadding = PaddingValues(bottom = 120.dp)
+                        contentPadding = PaddingValues(
+                            bottom = WindowInsets.navigationBars.asPaddingValues()
+                                .calculateBottomPadding() + 8.dp
+                        )
                     ) {
                         CollectionsList(
                             lazyCollectionItems = lazyCollectionItems,
@@ -279,7 +288,10 @@ private fun SearchPages(
                             onUserProfileClicked = {},
                             onPhotoClicked = {},
                             listState = listState,
-                            contentPadding = PaddingValues(top = 8.dp, bottom = 160.dp)
+                            contentPadding = PaddingValues(
+                                top = 8.dp,
+                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 64.dp
+                            )
                         )
 
                         PullRefreshIndicator(
@@ -303,13 +315,19 @@ private fun SearchPages(
 
                     ScrollToTopLayout(
                         listState = listState,
-                        contentPadding = PaddingValues(bottom = 120.dp)
+                        contentPadding = PaddingValues(
+                            bottom = WindowInsets.navigationBars.asPaddingValues()
+                                .calculateBottomPadding() + 8.dp
+                        )
                     ) {
                         UsersList(
                             lazyUserItems = lazyUserItems,
                             onUserClick = {},
-                            contentPadding = PaddingValues(top = 8.dp, bottom = 160.dp),
-                            listState = listState
+                            listState = listState,
+                            contentPadding = PaddingValues(
+                                top = 8.dp,
+                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 64.dp
+                            )
                         )
 
                         PullRefreshIndicator(
