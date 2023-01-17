@@ -50,7 +50,7 @@ class SearchViewModel @Inject constructor(
     val photoFilters: StateFlow<PhotoFilters> = _photoFilters.asStateFlow()
 
     init {
-        savedStateHandle.get<String>("com.andrii_a.walleria::query")?.let { query ->
+        savedStateHandle.get<String>(SearchArgs.QUERY)?.let { query ->
             dispatchEvent(SearchScreenEvent.OnQueryChanged(query = query))
         }
     }

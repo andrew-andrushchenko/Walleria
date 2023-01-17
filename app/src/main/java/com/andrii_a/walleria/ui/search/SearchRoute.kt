@@ -7,7 +7,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.andrii_a.walleria.ui.common.SearchQuery
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.google.accompanist.systemuicontroller.SystemUiController
 
@@ -15,7 +18,16 @@ fun NavGraphBuilder.searchBottomNavRoute(
     navController: NavController,
     systemUiController: SystemUiController
 ) {
-    composable(route = Screen.Search.route) {
+    composable(
+        route = "${Screen.Search.route}?${SearchArgs.QUERY}={${SearchArgs.QUERY}}",
+        arguments = listOf(
+            navArgument(SearchArgs.QUERY) {
+                type = NavType.StringType
+                nullable = false
+                defaultValue = ""
+            }
+        )
+    ) {
         val statusBarColor = MaterialTheme.colors.primary.copy(alpha = 0.9f)
         val navigationBarColor = Color.Transparent
         val isDark = isSystemInDarkTheme()
@@ -50,4 +62,13 @@ fun NavGraphBuilder.searchBottomNavRoute(
             dispatchEvent = dispatchEvent
         )
     }
+}
+
+fun NavController.navigateToSearch(query: SearchQuery? = null) {
+    val route = query?.let { "${Screen.Search.route}?${SearchArgs.QUERY}=${it.value}" } ?: Screen.Search.route
+    this.navigate(route)
+}
+
+object SearchArgs {
+    const val QUERY = "query"
 }
