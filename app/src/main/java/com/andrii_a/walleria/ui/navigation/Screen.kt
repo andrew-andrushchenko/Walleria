@@ -6,7 +6,7 @@ enum class Screen(val route: String) {
     TopicDetails("topic_details"),
     Search("search"),
     UserDetails("user_details"),
-    AddPhotoToCollection("add_photo_to_collection"),
+    CollectPhoto("collect_photo"),
     EditUserProfile("edit_user_profile"),
     Profile("profile"),
     Settings("settings"),
