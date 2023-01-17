@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.navigation.Screen
+import com.andrii_a.walleria.ui.search.navigateToSearch
 import com.google.accompanist.systemuicontroller.SystemUiController
 
 fun NavGraphBuilder.photoDetailsRoute(
@@ -60,7 +61,7 @@ fun NavGraphBuilder.photoDetailsRoute(
             navigateBack = navController::navigateUp,
             navigateToUserDetails = {},
             navigateToBookmarkPhoto = { _, _ -> },
-            navigateToSearch = {}
+            navigateToSearch = navController::navigateToSearch
         )
     }
 }
