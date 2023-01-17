@@ -14,7 +14,7 @@ import com.andrii_a.walleria.ui.common.SearchQuery
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.google.accompanist.systemuicontroller.SystemUiController
 
-fun NavGraphBuilder.searchBottomNavRoute(
+fun NavGraphBuilder.searchRoute(
     navController: NavController,
     systemUiController: SystemUiController
 ) {

@@ -11,7 +11,7 @@ import com.andrii_a.walleria.ui.collections.collectionsBottomNavRoute
 import com.andrii_a.walleria.ui.photo_details.photoDetailsRoute
 import com.andrii_a.walleria.ui.photos.photosBottomNavRoute
 import com.andrii_a.walleria.ui.profile.profileRoute
-import com.andrii_a.walleria.ui.search.searchBottomNavRoute
+import com.andrii_a.walleria.ui.search.searchRoute
 import com.andrii_a.walleria.ui.topics.topicsBottomNavRoute
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
@@ -38,6 +38,8 @@ fun MainNavHost(
         ) {
             bottomNavigation(navHostController, systemUiController)
 
+            searchRoute(navHostController, systemUiController)
+
             profileRoute(navHostController, systemUiController)
 
             photoDetailsRoute(navHostController, systemUiController)
@@ -57,7 +59,6 @@ fun NavGraphBuilder.bottomNavigation(
         photosBottomNavRoute(navHostController, systemUiController)
         collectionsBottomNavRoute(navHostController, systemUiController)
         topicsBottomNavRoute(navHostController, systemUiController)
-        searchBottomNavRoute(navHostController, systemUiController)
     }
 }
 
