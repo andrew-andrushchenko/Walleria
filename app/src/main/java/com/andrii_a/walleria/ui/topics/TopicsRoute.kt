@@ -12,6 +12,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.andrii_a.walleria.ui.navigation.NavigationScreen
 import com.andrii_a.walleria.ui.profile.navigateToProfileScreen
+import com.andrii_a.walleria.ui.search.navigateToSearch
 import com.google.accompanist.systemuicontroller.SystemUiController
 
 fun NavGraphBuilder.topicsBottomNavRoute(
@@ -45,9 +46,8 @@ fun NavGraphBuilder.topicsBottomNavRoute(
             topics = topics,
             order = order,
             orderBy = orderByFn,
-            navigateToProfileScreen = {
-                navController.navigateToProfileScreen()
-            }
+            navigateToProfileScreen = navController::navigateToProfileScreen,
+            navigateToSearchScreen = navController::navigateToSearch
         )
     }
 }

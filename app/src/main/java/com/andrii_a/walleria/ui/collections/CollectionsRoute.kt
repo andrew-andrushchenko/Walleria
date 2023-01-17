@@ -10,6 +10,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.andrii_a.walleria.ui.navigation.NavigationScreen
 import com.andrii_a.walleria.ui.profile.navigateToProfileScreen
+import com.andrii_a.walleria.ui.search.navigateToSearch
 import com.google.accompanist.systemuicontroller.SystemUiController
 
 fun NavGraphBuilder.collectionsBottomNavRoute(
@@ -36,9 +37,8 @@ fun NavGraphBuilder.collectionsBottomNavRoute(
 
         CollectionsScreen(
             collections = viewModel.collections,
-            navigateToProfileScreen = {
-                navController.navigateToProfileScreen()
-            }
+            navigateToProfileScreen = navController::navigateToProfileScreen,
+            navigateToSearchScreen = navController::navigateToSearch
         )
     }
 }

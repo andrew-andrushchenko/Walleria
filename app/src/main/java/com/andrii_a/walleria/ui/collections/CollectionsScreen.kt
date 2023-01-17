@@ -20,13 +20,15 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.ui.common.ScrollToTopLayout
+import com.andrii_a.walleria.ui.common.SearchQuery
 import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CollectionsScreen(
     collections: Flow<PagingData<Collection>>,
-    navigateToProfileScreen: () -> Unit
+    navigateToProfileScreen: () -> Unit,
+    navigateToSearchScreen: (SearchQuery?) -> Unit
 ) {
     val lazyCollectionItems = collections.collectAsLazyPagingItems()
 
@@ -93,13 +95,27 @@ fun CollectionsScreen(
                 overflow = TextOverflow.Ellipsis,
             )
 
-            IconButton(onClick = navigateToProfileScreen) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_user_outlined),
-                    contentDescription = stringResource(
-                        id = R.string.user_profile_image
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { navigateToSearchScreen(null) }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_search_outlined),
+                        contentDescription = stringResource(
+                            id = R.string.search
+                        )
                     )
-                )
+                }
+
+                IconButton(onClick = navigateToProfileScreen) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_user_outlined),
+                        contentDescription = stringResource(
+                            id = R.string.user_profile_image
+                        )
+                    )
+                }
             }
         }
     }
