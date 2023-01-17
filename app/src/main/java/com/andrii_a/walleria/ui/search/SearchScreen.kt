@@ -34,6 +34,7 @@ import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.ui.collections.CollectionsList
+import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.common.ScrollToTopLayout
 import com.andrii_a.walleria.ui.photos.PhotosList
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -52,7 +53,8 @@ fun SearchScreen(
     collections: Flow<PagingData<Collection>>,
     users: Flow<PagingData<User>>,
     photoFilters: StateFlow<PhotoFilters>,
-    dispatchEvent: (SearchScreenEvent) -> Unit
+    dispatchEvent: (SearchScreenEvent) -> Unit,
+    navigateToPhotoDetails: (PhotoId) -> Unit
 ) {
     val pagerState = rememberPagerState()
 
@@ -69,7 +71,8 @@ fun SearchScreen(
             users = users,
             contentPadding = PaddingValues(
                 top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 112.dp
-            )
+            ),
+            navigateToPhotoDetails = navigateToPhotoDetails
         )
 
         Column(modifier = Modifier.align(Alignment.TopCenter)) {
@@ -219,7 +222,8 @@ private fun SearchPages(
     photos: Flow<PagingData<Photo>>,
     collections: Flow<PagingData<Collection>>,
     users: Flow<PagingData<User>>,
-    contentPadding: PaddingValues = PaddingValues()
+    contentPadding: PaddingValues = PaddingValues(),
+    navigateToPhotoDetails: (PhotoId) -> Unit
 ) {
     HorizontalPager(
         count = SearchScreenTabs.values().size,
@@ -247,7 +251,7 @@ private fun SearchPages(
                     ) {
                         PhotosList(
                             lazyPhotoItems = lazyPhotoItems,
-                            onPhotoClicked = {},
+                            onPhotoClicked = navigateToPhotoDetails,
                             onUserProfileClicked = {},
                             listState = listState,
                             contentPadding = PaddingValues(
