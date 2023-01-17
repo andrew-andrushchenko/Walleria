@@ -8,14 +8,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.andrii_a.walleria.ui.navigation.NavigationScreen
+import com.andrii_a.walleria.ui.navigation.Screen
 import com.google.accompanist.systemuicontroller.SystemUiController
 
 fun NavGraphBuilder.searchBottomNavRoute(
     navController: NavController,
     systemUiController: SystemUiController
 ) {
-    composable(route = NavigationScreen.Search.route) {
+    composable(route = Screen.Search.route) {
         val statusBarColor = MaterialTheme.colors.primary.copy(alpha = 0.9f)
         val navigationBarColor = Color.Transparent
         val isDark = isSystemInDarkTheme()

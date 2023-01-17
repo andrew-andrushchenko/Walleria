@@ -27,12 +27,6 @@ enum class NavigationScreen(
         titleRes = R.string.topics,
         iconUnselected = R.drawable.ic_topic_outlined,
         iconSelected = R.drawable.ic_topic_filled
-    ),
-    Search(
-        route = "search",
-        titleRes = R.string.search,
-        iconUnselected = R.drawable.ic_search_outlined,
-        iconSelected = R.drawable.ic_search_filled
     )
 }
 
