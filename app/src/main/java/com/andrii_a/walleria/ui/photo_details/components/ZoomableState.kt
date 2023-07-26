@@ -1,11 +1,24 @@
 package com.andrii_a.walleria.ui.photo_details.components
 
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.DecayAnimationSpec
+import androidx.compose.animation.core.VectorConverter
+import androidx.compose.animation.core.animate
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.rememberSplineBasedDecay
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.center
@@ -18,7 +31,11 @@ import androidx.compose.ui.unit.toSize
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlin.math.*
+import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.roundToInt
+import kotlin.math.sin
 
 /**
  * Create a [ZoomableState] that is remembered across compositions.
@@ -107,7 +124,7 @@ class ZoomableState(
     }
 
     private val velocityTracker = VelocityTracker()
-    private var _scale by mutableStateOf(initialScale)
+    private var _scale by mutableFloatStateOf(initialScale)
     private var _translationX = Animatable(initialTranslationX, PxVisibilityThreshold)
     private var _translationY = Animatable(initialTranslationY, PxVisibilityThreshold)
     private var _size by mutableStateOf(IntSize.Zero)
@@ -116,7 +133,7 @@ class ZoomableState(
     var boundOffset by mutableStateOf(IntOffset.Zero)
         private set
 
-    var dismissDragAbsoluteOffsetY by mutableStateOf(0f)
+    var dismissDragAbsoluteOffsetY by mutableFloatStateOf(0f)
         private set
 
     val dismissDragOffsetY: Float by derivedStateOf {
