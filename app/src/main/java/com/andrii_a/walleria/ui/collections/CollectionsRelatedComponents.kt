@@ -3,17 +3,13 @@ package com.andrii_a.walleria.ui.collections
 import android.graphics.drawable.ColorDrawable
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -30,10 +26,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
@@ -43,6 +43,7 @@ import com.andrii_a.walleria.R
 import com.andrii_a.walleria.core.PhotoQuality
 import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.domain.models.photo.Photo
+import com.andrii_a.walleria.domain.models.photo.PhotoUrls
 import com.andrii_a.walleria.ui.common.CollectionInfo
 import com.andrii_a.walleria.ui.common.EmptyContentBanner
 import com.andrii_a.walleria.ui.common.ErrorBanner
@@ -50,6 +51,8 @@ import com.andrii_a.walleria.ui.common.ErrorItem
 import com.andrii_a.walleria.ui.common.LoadingListItem
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.common.UserNickname
+import com.andrii_a.walleria.ui.theme.WalleriaTheme
+import com.andrii_a.walleria.ui.util.abbreviatedNumberString
 import com.andrii_a.walleria.ui.util.getPreviewPhotos
 import com.andrii_a.walleria.ui.util.getUrlByQuality
 import com.andrii_a.walleria.ui.util.primaryColorInt
@@ -117,7 +120,8 @@ fun CollectionsList(
                                     onUserProfileClicked(userNickname)
                                 },
                                 onPhotoClickListeners = onPhotoClickListeners,
-                                modifier = Modifier.padding(bottom = 32.dp)
+                                modifier = Modifier
+                                    .padding(top = 8.dp, start = 16.dp, end = 16.dp, bottom = 48.dp)
                             )
                         }
                     }
@@ -175,188 +179,184 @@ fun DefaultCollectionItem(
     onUserProfileClick: () -> Unit,
     onPhotoClickListeners: List<() -> Unit>
 ) {
-    require(previewPhotos.size <= 3) { "This composable requires at most 3 photos" }
+    require(previewPhotos.size <= 3) { "Requires at most 3 photos." }
 
-    BoxWithConstraints(modifier = modifier) {
-        val constraints = this
+    Column(
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = modifier
+    ) {
+        PhotosGrid(
+            previewPhotos = previewPhotos,
+            previewPhotosQuality = previewPhotosQuality,
+            onPhotoClickListeners = onPhotoClickListeners
+        )
 
-        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            CollectionPhotosLayout(
-                previewPhotos,
-                previewPhotosQuality,
-                onPhotoClickListeners,
-                constraints
-            )
-
-            DefaultDetailsRow(
-                title,
-                curatorUsername,
-                totalPhotos,
-                onUserProfileClick,
-                onOpenCollectionClick
-            )
-        }
+        DetailsRow(
+            title = title,
+            curatorUsername = curatorUsername,
+            totalPhotos = totalPhotos,
+            onUserProfileClick = onUserProfileClick,
+            onOpenCollectionClick = onOpenCollectionClick,
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }
 
 @Composable
-private fun CollectionPhotosLayout(
+fun PhotosGrid(
     previewPhotos: List<Photo>,
     previewPhotosQuality: PhotoQuality,
     onPhotoClickListeners: List<() -> Unit>,
-    constraints: BoxWithConstraintsScope
+    modifier: Modifier = Modifier
 ) {
-    val previewPhotosUrls = remember {
-        previewPhotos.map { it.getUrlByQuality(previewPhotosQuality) }
-    }
+    Layout(
+        content = {
+            require(previewPhotos.size <= 3) { "Requires at most 3 photos for the grid." }
 
-    val previewPhotoColors = remember {
-        previewPhotos.map { it.primaryColorInt }
-    }
-
-    Row(
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        when (previewPhotos.size) {
-            1 -> {
+            previewPhotos.forEachIndexed { index, photo ->
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(previewPhotosUrls[0])
+                        .data(photo.getUrlByQuality(previewPhotosQuality))
                         .crossfade(durationMillis = 1000)
-                        .placeholder(ColorDrawable(previewPhotoColors[0]))
+                        .placeholder(ColorDrawable(photo.primaryColorInt))
                         .build(),
                     contentDescription = stringResource(id = R.string.description_first_photo),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .width(constraints.maxWidth)
-                        .height(300.dp)
-                        .padding(start = 8.dp, end = 8.dp, top = 8.dp)
-                        .clip(RoundedCornerShape(36.dp))
-                        .clickable(onClick = onPhotoClickListeners[0])
+                        .aspectRatio(1f)
+                        .clip(RoundedCornerShape(16.dp))
+                        .clickable(onClick = onPhotoClickListeners[index])
                 )
+            }
+        },
+        modifier = modifier
+            .fillMaxWidth()
+            .wrapContentWidth(Alignment.CenterHorizontally)
+    ) { measurables, constraints ->
+        val padding = 8.dp.roundToPx()
+        // to cover small screens
+        val minDimension = minOf(constraints.maxHeight, constraints.maxWidth)
+
+        when (measurables.size) {
+            1 -> {
+                val placeable = measurables[0].measure(constraints)
+                // calculate size of the layout
+                val height = placeable.height
+                val width = constraints.maxWidth
+
+                layout(width, height) {
+                    placeable.place(0, 0)
+                }
             }
 
             2 -> {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(previewPhotosUrls[0])
-                        .crossfade(durationMillis = 1000)
-                        .placeholder(ColorDrawable(previewPhotoColors[0]))
-                        .build(),
-                    contentDescription = stringResource(id = R.string.description_first_photo),
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size((constraints.maxWidth.value * 0.5).dp - 8.dp)
-                        .clip(RoundedCornerShape(36.dp))
-                        .clickable(onClick = onPhotoClickListeners[0])
+                val smallImageConstraints = constraints.copy(
+                    minWidth = (minDimension - padding * 2) / 2,
+                    maxWidth = (minDimension - padding * 2) / 2
                 )
 
-                Spacer(modifier = Modifier.padding(start = 8.dp))
+                val placeables = measurables.map {
+                    it.measure(smallImageConstraints)
+                }
 
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(previewPhotosUrls[1])
-                        .crossfade(durationMillis = 1000)
-                        .placeholder(ColorDrawable(previewPhotoColors[1]))
-                        .build(),
-                    contentDescription = stringResource(id = R.string.description_second_photo),
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size((constraints.maxWidth.value * 0.5).dp - 8.dp)
-                        .clip(RoundedCornerShape(36.dp))
-                        .clickable(onClick = onPhotoClickListeners[1])
-                )
+                // calculate size of the layout
+                val height = placeables[0].height
+                val width = placeables[0].width * 2 + padding * 2
 
+                layout(width, height) {
+                    var positionX = 0
+
+                    placeables.forEach { placeable ->
+                        placeable.place(positionX, 0)
+                        positionX += placeable.width + padding
+                    }
+                }
             }
 
             3 -> {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(previewPhotosUrls[0])
-                        .crossfade(durationMillis = 1000)
-                        .placeholder(ColorDrawable(previewPhotoColors[0]))
-                        .build(),
-                    contentDescription = stringResource(id = R.string.description_first_photo),
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size((constraints.maxWidth.value * 0.66).dp - 16.dp)
-                        .clip(RoundedCornerShape(36.dp))
-                        .clickable(onClick = onPhotoClickListeners[0])
+                val smallImageConstraints = constraints.copy(
+                    minWidth = (minDimension - padding * 2) / 3,
+                    maxWidth = (minDimension - padding * 2) / 3
                 )
 
-                Spacer(modifier = Modifier.padding(start = 8.dp))
+                val placeables = measurables
+                    .subList(fromIndex = 1, toIndex = measurables.size)
+                    .map {
+                        it.measure(smallImageConstraints)
+                    }
 
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(previewPhotosUrls[1])
-                            .crossfade(durationMillis = 1000)
-                            .placeholder(ColorDrawable(previewPhotoColors[1]))
-                            .build(),
-                        contentDescription = stringResource(id = R.string.description_second_photo),
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size((constraints.maxWidth.value * 0.33).dp - 12.dp)
-                            .clip(RoundedCornerShape(36.dp))
-                            .clickable(onClick = onPhotoClickListeners[1])
-                    )
+                val bigImageConstraints = constraints.copy(
+                    minWidth = minDimension - padding - placeables[0].width,
+                    maxWidth = minDimension - padding - placeables[0].width
+                )
 
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(previewPhotosUrls[2])
-                            .crossfade(durationMillis = 1000)
-                            .placeholder(ColorDrawable(previewPhotoColors[2]))
-                            .build(),
-                        contentDescription = stringResource(id = R.string.description_third_photo),
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size((constraints.maxWidth.value * 0.33).dp - 12.dp)
-                            .clip(RoundedCornerShape(36.dp))
-                            .clickable(onClick = onPhotoClickListeners[2])
-                    )
+                val bigImagePlaceable = measurables.first().measure(bigImageConstraints)
+
+                // calculate size of the layout
+                val height = placeables[0].height * 2 + padding * 2
+                val width = placeables[0].width * 3 + padding * 2
+
+                layout(width, height) {
+                    var positionY = 0
+
+                    bigImagePlaceable.place(0, positionY)
+
+                    placeables.forEach { placeable ->
+                        // to the right from the big image
+                        placeable.place(bigImagePlaceable.width + padding, positionY)
+                        positionY += placeable.height + padding
+                    }
                 }
             }
+
+            else -> throw IllegalStateException("Requires at most 3 photos for the grid.")
         }
     }
 }
 
 @Composable
-private fun DefaultDetailsRow(
+private fun DetailsRow(
     title: String,
     curatorUsername: String,
     totalPhotos: Long,
     onUserProfileClick: () -> Unit,
-    onOpenCollectionClick: () -> Unit
+    onOpenCollectionClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp)
-    ) {
-        Column(verticalArrangement = Arrangement.SpaceBetween) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.h6,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+    ConstraintLayout(modifier = modifier) {
+        val (titleText, infoText, openButton) = createRefs()
 
-            Text(
-                text = stringResource(
-                    id = R.string.bullet_template,
-                    curatorUsername,
-                    totalPhotos
-                ),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.clickable(onClick = onUserProfileClick)
-            )
+        Text(
+            text = title,
+            style = MaterialTheme.typography.h6,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.constrainAs(titleText) {
+                top.linkTo(parent.top)
+                start.linkTo(parent.start)
+                end.linkTo(openButton.start, 8.dp)
+                width = Dimension.fillToConstraints
+            }
+        )
 
-        }
+        Text(
+            text = stringResource(
+                id = R.string.bullet_template,
+                curatorUsername,
+                totalPhotos.abbreviatedNumberString
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
+                .constrainAs(infoText) {
+                    top.linkTo(titleText.bottom, 4.dp)
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(titleText.start)
+                    end.linkTo(openButton.start, 8.dp)
+                    width = Dimension.fillToConstraints
+                }
+                .clickable(onClick = onUserProfileClick)
+        )
 
         FloatingActionButton(
             onClick = onOpenCollectionClick,
@@ -366,7 +366,120 @@ private fun DefaultDetailsRow(
                     imageVector = Icons.Default.ArrowForwardIos,
                     contentDescription = stringResource(id = R.string.description_open_collection)
                 )
+            },
+            modifier = Modifier.constrainAs(openButton) {
+                top.linkTo(titleText.top)
+                bottom.linkTo(infoText.bottom)
+                end.linkTo(parent.end, 4.dp)
+                start.linkTo(infoText.end)
             }
+        )
+    }
+
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp)
+    ) {
+        Column(verticalArrangement = Arrangement.SpaceBetween) {
+
+
+        }
+
+
+    }
+}
+
+@Preview
+@Composable
+fun PhotosGridPreview() {
+    WalleriaTheme {
+        PhotosGrid(
+            previewPhotos = listOf(
+                Photo(
+                    id = "",
+                    width = 200,
+                    height = 300,
+                    color = "#E0E0E0",
+                    blurHash = "",
+                    views = 200,
+                    downloads = 200,
+                    likes = 10,
+                    likedByUser = false,
+                    description = "",
+                    exif = null,
+                    location = null,
+                    tags = null,
+                    relatedCollections = null,
+                    currentUserCollections = null,
+                    sponsorship = null,
+                    urls = PhotoUrls("", "", "", "", ""),
+                    links = null,
+                    user = null
+                ),
+                Photo(
+                    id = "",
+                    width = 200,
+                    height = 300,
+                    blurHash = "",
+                    color = "#E0E0E0",
+                    views = 200,
+                    downloads = 200,
+                    likes = 10,
+                    likedByUser = false,
+                    description = "",
+                    exif = null,
+                    location = null,
+                    tags = null,
+                    relatedCollections = null,
+                    currentUserCollections = null,
+                    sponsorship = null,
+                    urls = PhotoUrls("", "", "", "", ""),
+                    links = null,
+                    user = null
+                ),
+                /*Photo(
+                    id = "",
+                    width = 200,
+                    height = 300,
+                    blurHash = "",
+                    views = 200,
+                    downloads = 200,
+                    likes = 10,
+                    color = "#E0E0E0",
+                    likedByUser = false,
+                    description = "",
+                    exif = null,
+                    location = null,
+                    tags = null,
+                    relatedCollections = null,
+                    currentUserCollections = null,
+                    sponsorship = null,
+                    urls = PhotoUrls("", "", "", "", ""),
+                    links = null,
+                    user = null
+                )*/
+            ),
+            previewPhotosQuality = PhotoQuality.MEDIUM,
+            onPhotoClickListeners = listOf({}, {}, {}),
+            //modifier = Modifier.padding(8.dp)
+        )
+    }
+}
+
+@Preview
+@Composable
+fun DetailsRowPreview() {
+    WalleriaTheme {
+        DetailsRow(
+            title = "Title very very looooooooooooong title",
+            curatorUsername = "John very very very long name Smith",
+            totalPhotos = 100_000,
+            onUserProfileClick = {},
+            onOpenCollectionClick = {},
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
