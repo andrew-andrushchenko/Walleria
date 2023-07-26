@@ -13,10 +13,10 @@ import androidx.browser.customtabs.CustomTabsService
 import androidx.browser.customtabs.CustomTabsServiceConnection
 import androidx.browser.customtabs.CustomTabsSession
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.andrii_a.walleria.data.util.UNSPLASH_AUTH_CALLBACK
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
@@ -58,7 +58,7 @@ class LoginActivity : ComponentActivity() {
             }
 
             WalleriaTheme {
-                val state by viewModel.loginState.collectAsState()
+                val state by viewModel.loginState.collectAsStateWithLifecycle()
 
                 LoginScreen(
                     loginState = state,

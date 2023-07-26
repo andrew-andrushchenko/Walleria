@@ -30,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -61,7 +62,7 @@ fun SearchScreen(
     var showFilterDialog by rememberSaveable { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxWidth()) {
-        val queryValue = query.collectAsState()
+        val queryValue = query.collectAsStateWithLifecycle()
 
         SearchPages(
             query = queryValue,
@@ -88,7 +89,7 @@ fun SearchScreen(
 
         if (showFilterDialog) {
             SearchPhotoFilterDialog(
-                photoFilters = photoFilters.collectAsState(),
+                photoFilters = photoFilters.collectAsStateWithLifecycle(),
                 onApplyClick = dispatchEvent,
                 onDismiss = { showFilterDialog = false }
             )

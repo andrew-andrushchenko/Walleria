@@ -1,9 +1,9 @@
 package com.andrii_a.walleria.ui.photo_details
 
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -41,15 +41,15 @@ fun NavGraphBuilder.photoDetailsRoute(
         val viewModel: PhotoDetailsViewModel = hiltViewModel()
 
         val photoId = PhotoId(navBackStackEntry.arguments?.getString(PhotoDetailsArgs.ID).orEmpty())
-        val loadResultState = viewModel.loadResult.collectAsState()
-        val isUserLoggedIn = viewModel.isUserLoggedIn.collectAsState()
-        val isPhotoLiked = viewModel.isLiked.collectAsState()
-        val isPhotoBookmarked = viewModel.isBookmarked.collectAsState()
+        val loadResultState = viewModel.loadResult.collectAsStateWithLifecycle()
+        val isUserLoggedIn = viewModel.isUserLoggedIn.collectAsStateWithLifecycle()
+        val isPhotoLiked = viewModel.isLiked.collectAsStateWithLifecycle()
+        val isPhotoBookmarked = viewModel.isBookmarked.collectAsStateWithLifecycle()
 
         val collectResult = navController.currentBackStackEntry
             ?.savedStateHandle
             ?.getStateFlow("collect_result_key", isPhotoBookmarked.value)
-            ?.collectAsState()
+            ?.collectAsStateWithLifecycle()
 
         collectResult?.value?.let { isCollected ->
             viewModel.dispatchEvent(

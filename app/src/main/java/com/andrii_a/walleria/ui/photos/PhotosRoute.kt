@@ -3,10 +3,10 @@ package com.andrii_a.walleria.ui.photos
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -40,7 +40,7 @@ fun NavGraphBuilder.photosBottomNavRoute(
         val viewModel: PhotosViewModel = hiltViewModel()
 
         val photos = viewModel.photos
-        val order by viewModel.order.collectAsState()
+        val order by viewModel.order.collectAsStateWithLifecycle()
         val orderByFun = viewModel::orderBy
 
         PhotosScreen(
