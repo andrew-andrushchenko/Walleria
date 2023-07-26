@@ -144,7 +144,7 @@ fun LikeAndBookmarkRow(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         modifier = modifier
     ) {
-        var photoLikes by rememberSaveable { mutableStateOf(likes) }
+        var photoLikes by rememberSaveable { mutableLongStateOf(likes) }
 
         ExtendedFloatingActionButton(
             text = {
