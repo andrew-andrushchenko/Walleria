@@ -3,7 +3,15 @@ package com.andrii_a.walleria.ui.photos
 import android.graphics.drawable.ColorDrawable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -26,14 +34,23 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.items
+import androidx.paging.compose.itemKey
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.core.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
-import com.andrii_a.walleria.ui.common.*
-import com.andrii_a.walleria.ui.util.*
+import com.andrii_a.walleria.ui.common.EmptyContentBanner
+import com.andrii_a.walleria.ui.common.ErrorBanner
+import com.andrii_a.walleria.ui.common.ErrorItem
+import com.andrii_a.walleria.ui.common.LoadingListItem
+import com.andrii_a.walleria.ui.common.PhotoId
+import com.andrii_a.walleria.ui.common.UserNickname
+import com.andrii_a.walleria.ui.util.getUrlByQuality
+import com.andrii_a.walleria.ui.util.getUserProfileImageUrlOrEmpty
+import com.andrii_a.walleria.ui.util.primaryColorComposable
+import com.andrii_a.walleria.ui.util.userFullName
+import com.andrii_a.walleria.ui.util.userNickname
 
 @Composable
 fun PhotosList(
@@ -53,7 +70,11 @@ fun PhotosList(
         when (lazyPhotoItems.loadState.refresh) {
             is LoadState.NotLoading -> {
                 if (lazyPhotoItems.itemCount > 0) {
-                    items(lazyPhotoItems) { photo ->
+                    items(
+                        count = lazyPhotoItems.itemCount,
+                        key = lazyPhotoItems.itemKey { it.id }
+                    ) { index ->
+                        val photo = lazyPhotoItems[index]
                         photo?.let {
                             DefaultPhotoItem(
                                 width = photo.width.toFloat(),

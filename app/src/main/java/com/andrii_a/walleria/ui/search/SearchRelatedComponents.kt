@@ -22,7 +22,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.items
+import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.andrii_a.walleria.R
@@ -50,7 +50,11 @@ fun UsersList(
         when (lazyUserItems.loadState.refresh) {
             is LoadState.NotLoading -> {
                 if (lazyUserItems.itemCount > 0) {
-                    items(lazyUserItems) { user ->
+                    items(
+                        count = lazyUserItems.itemCount,
+                        key = lazyUserItems.itemKey { it.id }
+                    ) { index ->
+                        val user = lazyUserItems[index]
                         user?.let {
                             DefaultUserItem(
                                 nickname = user.username.orEmpty(),

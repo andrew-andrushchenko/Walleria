@@ -24,7 +24,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.items
+import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.andrii_a.walleria.R
@@ -59,7 +59,11 @@ fun TopicsList(
         when (lazyTopicItems.loadState.refresh) {
             is LoadState.NotLoading -> {
                 if (lazyTopicItems.itemCount > 0) {
-                    items(lazyTopicItems) { topic ->
+                    items(
+                        count = lazyTopicItems.itemCount,
+                        key = lazyTopicItems.itemKey { it.id }
+                    ) { index ->
+                        val topic = lazyTopicItems[index]
                         topic?.let {
                             DefaultTopicItem(
                                 title = topic.title.orEmpty(),

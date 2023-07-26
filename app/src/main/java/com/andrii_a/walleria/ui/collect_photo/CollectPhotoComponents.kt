@@ -57,7 +57,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.items
+import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.andrii_a.walleria.R
@@ -123,7 +123,11 @@ fun UserCollectionsList(
             )
         }
 
-        items(lazyCollectionItems) { collection ->
+        items(
+            count = lazyCollectionItems.itemCount,
+            key = lazyCollectionItems.itemKey { it.id }
+        ) { index ->
+            val collection = lazyCollectionItems[index]
             collection?.let {
                 var collectState by remember {
                     mutableStateOf(

@@ -42,7 +42,7 @@ fun PhotoDetailsScreen(
     dispatchPhotoDetailsEvent: (PhotoDetailsEvent) -> Unit,
     navigateBack: () -> Unit,
     navigateToUserDetails: (UserNickname) -> Unit,
-    navigateToBookmarkPhoto: (PhotoId, PhotoUrl) -> Unit,
+    navigateToBookmarkPhoto: (PhotoId) -> Unit,
     navigateToSearch: (SearchQuery) -> Unit
 ) {
     Box(
@@ -102,7 +102,7 @@ fun ContentSection(
     modifier: Modifier = Modifier,
     navigateBack: () -> Unit,
     navigateToUserDetails: (UserNickname) -> Unit,
-    navigateToCollectPhoto: (PhotoId, PhotoUrl) -> Unit,
+    navigateToCollectPhoto: (PhotoId) -> Unit,
     navigateToSearch: (SearchQuery) -> Unit,
     dispatchPhotoDetailsEvent: (PhotoDetailsEvent) -> Unit
 ) {
@@ -222,10 +222,7 @@ fun ContentSection(
                         navigateToUserDetails(UserNickname(photo.userNickname))
                     },
                     onNavigateToCollectPhoto = {
-                        navigateToCollectPhoto(
-                            PhotoId(photo.id),
-                            PhotoUrl(photo.getUrlByQuality(quality = PhotoQuality.MEDIUM))
-                        )
+                        navigateToCollectPhoto(PhotoId(photo.id))
                     },
                     onLikeButtonClick = {
                         if (isUserLoggedIn) {
