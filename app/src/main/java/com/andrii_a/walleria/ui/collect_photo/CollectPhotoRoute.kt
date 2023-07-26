@@ -81,10 +81,7 @@ fun NavGraphBuilder.collectPhotoRoute(
     }
 }
 
-fun NavController.navigateToCollectPhoto(
-    photoId: PhotoId,
-    newCoverPhotoUrl: PhotoUrl // TODO: remove in the next commit. Reason: don't need anymore
-) {
+fun NavController.navigateToCollectPhoto(photoId: PhotoId) {
     this.navigate("${Screen.CollectPhoto.route}/${photoId.value}")
 }
 
