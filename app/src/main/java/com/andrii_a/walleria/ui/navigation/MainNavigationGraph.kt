@@ -46,7 +46,7 @@ fun MainNavHost(
     ) {
         NavHost(
             navController = navHostController,
-            startDestination = BottomNavigationGraphRoute
+            startDestination = NAVIGATION_BAR_GRAPH_ROUTE
         ) {
             bottomNavigation(navHostController, systemUiController)
 
@@ -67,7 +67,7 @@ fun NavGraphBuilder.bottomNavigation(
     systemUiController: SystemUiController
 ) {
     navigation(
-        route = BottomNavigationGraphRoute,
+        route = NAVIGATION_BAR_GRAPH_ROUTE,
         startDestination = NavigationScreen.Photos.route
     ) {
         photosBottomNavRoute(navHostController, systemUiController)
@@ -76,4 +76,4 @@ fun NavGraphBuilder.bottomNavigation(
     }
 }
 
-private const val BottomNavigationGraphRoute = "walleria_bottom_navigation_graph"
+private const val NAVIGATION_BAR_GRAPH_ROUTE = "walleria_navigation_bar_graph_route"
