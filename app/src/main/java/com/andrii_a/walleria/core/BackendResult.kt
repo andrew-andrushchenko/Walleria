@@ -1,4 +1,4 @@
-package com.andrii_a.walleria.data.util.network
+package com.andrii_a.walleria.core
 
 sealed class BackendResult<out T> {
 

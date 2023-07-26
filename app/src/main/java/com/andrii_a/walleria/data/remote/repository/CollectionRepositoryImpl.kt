@@ -7,7 +7,7 @@ import com.andrii_a.walleria.data.remote.source.collection.CollectionsPagingSour
 import com.andrii_a.walleria.data.remote.source.collection.CollectionsService
 import com.andrii_a.walleria.data.remote.source.collection.UserCollectionsPagingSource
 import com.andrii_a.walleria.data.util.PAGE_SIZE
-import com.andrii_a.walleria.data.util.network.BackendResult
+import com.andrii_a.walleria.core.BackendResult
 import com.andrii_a.walleria.data.util.network.backendRequest
 import com.andrii_a.walleria.domain.models.collect_photo.CollectionPhotoResult
 import com.andrii_a.walleria.domain.models.collection.Collection
