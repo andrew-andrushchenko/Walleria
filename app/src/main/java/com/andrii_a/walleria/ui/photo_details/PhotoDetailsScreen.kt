@@ -123,7 +123,7 @@ fun ContentSection(
             val constraints = this
 
             var areControlsVisible by rememberSaveable { mutableStateOf(true) }
-            var zoomToFillCoefficient by rememberSaveable { mutableStateOf(1f) }
+            var zoomToFillCoefficient by rememberSaveable { mutableFloatStateOf(1f) }
 
             val state = rememberZoomableState(
                 minScale = 0.5f,
