@@ -4,7 +4,6 @@ import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.graphics.drawable.ColorDrawable
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -177,7 +176,6 @@ fun UserCollectionsList(
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun UserCollectionItem(
     title: String,
@@ -283,6 +281,7 @@ fun UserCollectionItem(
 
         AnimatedContent(
             targetState = collectState,
+            label = stringResource(id = R.string.collect_button_animated_content_label),
             modifier = Modifier.constrainAs(actionButton) {
                 start.linkTo(titleText.end)
                 end.linkTo(parent.end, margin = 8.dp)

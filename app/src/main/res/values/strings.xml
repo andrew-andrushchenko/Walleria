@@ -161,5 +161,6 @@
     <string name="error_banner_text">Oops! Something went wrong, please check connection</string>
     <string name="login_to_like_photo">Please login to like photo</string>
     <string name="login_to_collect_photo">Please login to collect photo</string>
+    <string name="collect_button_animated_content_label">collect_button_animated_content_label</string>
 
 </resources>
