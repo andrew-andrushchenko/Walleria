@@ -5,6 +5,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -34,14 +36,92 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.andrii_a.walleria.R
+import com.andrii_a.walleria.ui.navigation.NavigationScreen
 import com.andrii_a.walleria.ui.theme.OnButtonDark
 import com.andrii_a.walleria.ui.theme.OnButtonLight
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import kotlinx.coroutines.launch
+
+@Composable
+fun WNavigationBar(
+    navScreenItems: List<NavigationScreen>,
+    onItemSelected: (NavigationScreen) -> Unit,
+    navController: NavController,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        elevation = 16.dp,
+        shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+        backgroundColor = MaterialTheme.colors.primary,
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .padding(start = 18.dp, end = 18.dp, top = 24.dp, bottom = 18.dp)
+                .navigationBarsPadding()
+        ) {
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentDestination = navBackStackEntry?.destination
+
+            navScreenItems.forEach { item ->
+                val selected = currentDestination?.hierarchy?.any { it.route == item.route } == true
+
+                WNavigationBarItem(
+                    item = item,
+                    isSelected = selected,
+                    onClick = { onItemSelected(item) },
+                    backgroundColor = if (selected) MaterialTheme.colors.onPrimary else Color.Transparent,
+                    contentColor = if (selected) MaterialTheme.colors.primary else MaterialTheme.colors.onPrimary
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun WNavigationBarItem(
+    item: NavigationScreen,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    backgroundColor: Color,
+    contentColor: Color
+) {
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(12.dp))
+            .background(backgroundColor)
+            .clickable(onClick = onClick)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = Modifier.padding(12.dp)
+        ) {
+
+            Icon(
+                painter = painterResource(id = if (isSelected) item.iconSelected else item.iconUnselected),
+                contentDescription = null,
+                tint = contentColor
+            )
+
+            AnimatedVisibility(visible = isSelected) {
+                Text(
+                    text = stringResource(id = item.titleRes),
+                    color = contentColor
+                )
+            }
+        }
+    }
+}
 
 @Composable
 fun WRegularAppBar(
