@@ -17,14 +17,14 @@ sealed interface PhotoDetailsEvent {
     data class PhotoRequested(val photoId: String) : PhotoDetailsEvent
     data class PhotoLiked(val photoId: String) : PhotoDetailsEvent
     data class PhotoDisliked(val photoId: String) : PhotoDetailsEvent
-    object PhotoBookmarked : PhotoDetailsEvent
-    object PhotoDropped : PhotoDetailsEvent
+    data object PhotoBookmarked : PhotoDetailsEvent
+    data object PhotoDropped : PhotoDetailsEvent
 }
 
 sealed interface PhotoLoadResult {
-    object Empty : PhotoLoadResult
-    object Loading : PhotoLoadResult
-    object Error : PhotoLoadResult
+    data object Empty : PhotoLoadResult
+    data object Loading : PhotoLoadResult
+    data object Error : PhotoLoadResult
     data class Success(val photo: Photo) : PhotoLoadResult
 }
 
