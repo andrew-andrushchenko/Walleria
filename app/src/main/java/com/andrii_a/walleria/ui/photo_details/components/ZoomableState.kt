@@ -125,8 +125,8 @@ class ZoomableState(
 
     private val velocityTracker = VelocityTracker()
     private var _scale by mutableFloatStateOf(initialScale)
-    private var _translationX = Animatable(initialTranslationX, PxVisibilityThreshold)
-    private var _translationY = Animatable(initialTranslationY, PxVisibilityThreshold)
+    private var _translationX = Animatable(initialTranslationX, PX_VISIBILITY_THRESHOLD)
+    private var _translationY = Animatable(initialTranslationY, PX_VISIBILITY_THRESHOLD)
     private var _size by mutableStateOf(IntSize.Zero)
     private var _childSize by mutableStateOf(Size.Zero)
 
@@ -200,8 +200,8 @@ class ZoomableState(
     val horizontalEdge: HorizontalEdge
         get() = when {
             _translationX.upperBound == _translationX.lowerBound -> HorizontalEdge.Both
-            _translationX.run { value >= upperBound!! - PxVisibilityThreshold } -> HorizontalEdge.Left
-            _translationX.run { value <= lowerBound!! + PxVisibilityThreshold } -> HorizontalEdge.Right
+            _translationX.run { value >= upperBound!! - PX_VISIBILITY_THRESHOLD } -> HorizontalEdge.Left
+            _translationX.run { value <= lowerBound!! + PX_VISIBILITY_THRESHOLD } -> HorizontalEdge.Right
             else -> HorizontalEdge.None
         }
 
@@ -285,10 +285,16 @@ class ZoomableState(
         coroutineScope {
             flingJob = coroutineContext[Job]
             launch {
-                _translationX.animateDecay(initialVelocity = velocity.x, animationSpec = decayAnimationSpec)
+                _translationX.animateDecay(
+                    initialVelocity = velocity.x,
+                    animationSpec = decayAnimationSpec
+                )
             }
             launch {
-                _translationY.animateDecay(initialVelocity = velocity.y, animationSpec = decayAnimationSpec)
+                _translationY.animateDecay(
+                    initialVelocity = velocity.y,
+                    animationSpec = decayAnimationSpec
+                )
             }
         }
 
@@ -353,23 +359,24 @@ class ZoomableState(
         /**
          * The default [Saver] implementation for [ZoomableState].
          */
-        fun saver(decayAnimationSpec: DecayAnimationSpec<Float>): Saver<ZoomableState, *> = listSaver(
-            save = {
-                listOf(
-                    it.translationX,
-                    it.translationY,
-                    it.scale
-                )
-            },
-            restore = {
-                ZoomableState(
-                    decayAnimationSpec = decayAnimationSpec,
-                    initialTranslationX = it[0],
-                    initialTranslationY = it[1],
-                    initialScale = it[2]
-                )
-            }
-        )
+        fun saver(decayAnimationSpec: DecayAnimationSpec<Float>): Saver<ZoomableState, *> =
+            listSaver(
+                save = {
+                    listOf(
+                        it.translationX,
+                        it.translationY,
+                        it.scale
+                    )
+                },
+                restore = {
+                    ZoomableState(
+                        decayAnimationSpec = decayAnimationSpec,
+                        initialTranslationX = it[0],
+                        initialTranslationY = it[1],
+                        initialScale = it[2]
+                    )
+                }
+            )
     }
 }
 
@@ -390,7 +397,7 @@ value class HorizontalEdge private constructor(private val value: Int) {
     }
 }
 
-private const val PxVisibilityThreshold = 0.5f
+private const val PX_VISIBILITY_THRESHOLD = 0.5f
 
 const val DismissDragResistanceFactor = 2f
 const val DismissDragThreshold = 0.25f
