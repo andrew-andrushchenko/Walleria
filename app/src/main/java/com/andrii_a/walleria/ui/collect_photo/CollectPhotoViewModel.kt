@@ -29,16 +29,14 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed class CollectState(val newCoverPhoto: Photo?) {
-    object Loading : CollectState(null)
-
+    data object Loading : CollectState(null)
     data class Collected(val coverPhoto: Photo?) : CollectState(coverPhoto)
-
     data class NotCollected(val coverPhoto: Photo?) : CollectState(coverPhoto)
 }
 
 sealed interface CollectionCreationResult {
-    object Loading : CollectionCreationResult
-    object Error : CollectionCreationResult
+    data object Loading : CollectionCreationResult
+    data object Error : CollectionCreationResult
     data class Success(val coverPhoto: Photo?) : CollectionCreationResult
 }
 
