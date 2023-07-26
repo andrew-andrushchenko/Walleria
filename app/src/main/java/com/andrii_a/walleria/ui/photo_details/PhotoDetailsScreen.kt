@@ -14,7 +14,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
@@ -23,11 +27,14 @@ import com.andrii_a.walleria.R
 import com.andrii_a.walleria.core.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.user.User
+import com.andrii_a.walleria.domain.models.user.UserProfileImage
 import com.andrii_a.walleria.ui.common.*
 import com.andrii_a.walleria.ui.login.LoginActivity
 import com.andrii_a.walleria.ui.photo_details.components.*
+import com.andrii_a.walleria.ui.theme.OnPrimaryLight
 import com.andrii_a.walleria.ui.theme.PrimaryDark
 import com.andrii_a.walleria.ui.theme.PrimaryLight
+import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.*
 import kotlinx.coroutines.launch
 import kotlin.math.max
@@ -60,6 +67,7 @@ fun PhotoDetailsScreen(
                         .statusBarsPadding()
                 )
             }
+
             is PhotoLoadResult.Error -> {
                 ErrorSection(
                     onRetry = {
@@ -71,6 +79,7 @@ fun PhotoDetailsScreen(
                         .statusBarsPadding()
                 )
             }
+
             is PhotoLoadResult.Success -> {
                 ContentSection(
                     photo = loadResult.photo,
@@ -250,7 +259,7 @@ fun ContentSection(
                             photo.description.orEmpty()
                         )
                     },
-                    onDownloadButtonClick = { /*TODO*/ },
+                    onDownloadButtonClick = {},
                     onZoomToFillClick = {
                         scope.launch {
                             state.animateScaleTo(
@@ -386,49 +395,177 @@ fun BottomSection(
     onZoomToFillClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = modifier
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            LikeAndBookmarkRow(
-                likes = likes,
-                isPhotoLiked = isPhotoLiked,
-                isPhotoBookmarked = isPhotoBookmarked,
-                onLikeButtonClick = onLikeButtonClick,
-                onNavigateToCollectPhoto = onNavigateToCollectPhoto
-            )
+    ConstraintLayout(modifier = modifier) {
+        val (likeButton, collectButton, userRow,
+            zoomToFillButton, infoButton, shareButton, downloadButton) = createRefs()
 
-            IconButton(onClick = onZoomToFillClick) {
+        var photoLikes by rememberSaveable { mutableLongStateOf(likes) }
+
+        ExtendedFloatingActionButton(
+            text = {
+                Text(text = photoLikes.abbreviatedNumberString)
+            },
+            icon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_zoom_to_fill_outlined),
-                    contentDescription = null,
-                    tint = PrimaryLight
+                    painter = painterResource(
+                        id = if (isPhotoLiked) R.drawable.ic_like_filled
+                        else R.drawable.ic_like_outlined
+                    ),
+                    contentDescription = null
                 )
+            },
+            onClick = {
+                val likeCount = onLikeButtonClick()
+                likeCount?.let { photoLikes = it.value }
+            },
+            backgroundColor = PrimaryLight,
+            contentColor = OnPrimaryLight,
+            modifier = Modifier.constrainAs(likeButton) {
+                top.linkTo(parent.top, 4.dp)
+                start.linkTo(parent.start, 8.dp)
             }
-        }
+        )
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
+        ExtendedFloatingActionButton(
+            text = {
+                Text(
+                    text = stringResource(
+                        id = if (isPhotoBookmarked) R.string.drop
+                        else R.string.collect
+                    )
+                )
+            },
+            icon = {
+                Icon(
+                    painter = painterResource(
+                        id = if (isPhotoBookmarked) R.drawable.ic_bookmark_remove_filled
+                        else R.drawable.ic_bookmark_add_outlined
+                    ),
+                    contentDescription = null
+                )
+            },
+            onClick = onNavigateToCollectPhoto,
+            backgroundColor = PrimaryLight,
+            contentColor = OnPrimaryLight,
+            modifier = Modifier.constrainAs(collectButton) {
+                top.linkTo(likeButton.top)
+                start.linkTo(likeButton.end, 4.dp)
+                bottom.linkTo(likeButton.bottom)
+            }
+        )
+
+        IconButton(
+            onClick = onZoomToFillClick,
+            modifier = Modifier.constrainAs(zoomToFillButton) {
+                top.linkTo(parent.top)
+                end.linkTo(parent.end)
+            }
         ) {
-            UserRow(
-                userProfileImageUrl = photoOwner?.getProfileImageUrlOrEmpty().orEmpty(),
-                username = photoOwner?.userFullName.orEmpty(),
-                onUserClick = onNavigateToUserDetails,
-            )
-
-            InfoShareAndDownloadRow(
-                onShareClick = onShareButtonClick,
-                onInfoButtonClick = onInfoButtonClick,
-                onDownloadButtonClick = onDownloadButtonClick
+            Icon(
+                painter = painterResource(id = R.drawable.ic_zoom_to_fill_outlined),
+                contentDescription = null,
+                tint = PrimaryLight
             )
         }
+
+        UserRow(
+            userProfileImageUrl = photoOwner?.getProfileImageUrlOrEmpty().orEmpty(),
+            username = photoOwner?.userFullName.orEmpty(),
+            onUserClick = onNavigateToUserDetails,
+            modifier = Modifier.constrainAs(userRow) {
+                top.linkTo(likeButton.bottom, 4.dp)
+                bottom.linkTo(parent.bottom, 4.dp)
+                start.linkTo(parent.start)
+                end.linkTo(infoButton.start)
+                width = Dimension.fillToConstraints
+            }
+        )
+
+        IconButton(
+            onClick = onInfoButtonClick,
+            modifier = Modifier.constrainAs(infoButton) {
+                top.linkTo(userRow.top)
+                bottom.linkTo(userRow.bottom)
+                end.linkTo(shareButton.start, 4.dp)
+            }
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_about_outlined),
+                contentDescription = null,
+                tint = PrimaryLight
+            )
+        }
+
+        IconButton(
+            onClick = onShareButtonClick,
+            modifier = Modifier.constrainAs(shareButton) {
+                top.linkTo(infoButton.top)
+                bottom.linkTo(infoButton.bottom)
+                end.linkTo(downloadButton.start, 4.dp)
+            }
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_share_outlined),
+                contentDescription = null,
+                tint = PrimaryLight
+            )
+        }
+
+        IconButton(
+            onClick = onDownloadButtonClick,
+            modifier = Modifier.constrainAs(downloadButton) {
+                end.linkTo(parent.end)
+                bottom.linkTo(shareButton.bottom)
+            }
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_download_outlined),
+                contentDescription = null,
+                tint = PrimaryLight
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun BottomSectionPreview() {
+    WalleriaTheme {
+        BottomSection(
+            likes = 10,
+            photoOwner = User(
+                id = "",
+                username = "",
+                firstName = "Very very very long name",
+                lastName = "Smith",
+                bio = null,
+                location = null,
+                totalLikes = 0,
+                totalPhotos = 0,
+                totalCollections = 0,
+                followersCount = 0,
+                followingCount = 0,
+                downloads = 0,
+                profileImage = UserProfileImage(
+                    small = "",
+                    medium = "",
+                    large = ""
+                ),
+                social = null,
+                tags = null,
+                photos = null
+            ),
+            isPhotoLiked = true,
+            isPhotoBookmarked = false,
+            onNavigateToUserDetails = {},
+            onNavigateToCollectPhoto = {},
+            onLikeButtonClick = { LikeCount(0) },
+            onInfoButtonClick = {},
+            onShareButtonClick = {},
+            onDownloadButtonClick = {},
+            onZoomToFillClick = {},
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }
 

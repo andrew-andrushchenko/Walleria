@@ -19,7 +19,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,8 +39,6 @@ import com.andrii_a.walleria.core.PhotoQuality
 import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.domain.models.common.Tag
 import com.andrii_a.walleria.domain.models.photo.PhotoExif
-import com.andrii_a.walleria.ui.photo_details.LikeCount
-import com.andrii_a.walleria.ui.theme.OnPrimaryLight
 import com.andrii_a.walleria.ui.theme.PrimaryDark
 import com.andrii_a.walleria.ui.theme.PrimaryLight
 import com.andrii_a.walleria.ui.util.abbreviatedNumberString
@@ -127,106 +124,6 @@ fun BigUserRow(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
-    }
-}
-
-@Composable
-fun LikeAndBookmarkRow(
-    likes: Long,
-    isPhotoLiked: Boolean,
-    isPhotoBookmarked: Boolean,
-    onLikeButtonClick: () -> LikeCount?,
-    onNavigateToCollectPhoto: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        modifier = modifier
-    ) {
-        var photoLikes by rememberSaveable { mutableLongStateOf(likes) }
-
-        ExtendedFloatingActionButton(
-            text = {
-                Text(text = photoLikes.abbreviatedNumberString)
-            },
-            icon = {
-                Icon(
-                    painter = painterResource(
-                        id = if (isPhotoLiked) R.drawable.ic_like_filled
-                        else R.drawable.ic_like_outlined
-                    ),
-                    contentDescription = null
-                )
-            },
-            onClick = {
-                val likeCount = onLikeButtonClick()
-                likeCount?.let { photoLikes = it.value }
-            },
-            backgroundColor = PrimaryLight,
-            contentColor = OnPrimaryLight
-        )
-
-        ExtendedFloatingActionButton(
-            text = {
-                Text(
-                    text = stringResource(
-                        id = if (isPhotoBookmarked) R.string.drop
-                        else R.string.collect
-                    )
-                )
-            },
-            icon = {
-                Icon(
-                    painter = painterResource(
-                        id = if (isPhotoBookmarked) R.drawable.ic_bookmark_remove_filled
-                        else R.drawable.ic_bookmark_add_outlined
-                    ),
-                    contentDescription = null
-                )
-            },
-            onClick = onNavigateToCollectPhoto,
-            backgroundColor = PrimaryLight,
-            contentColor = OnPrimaryLight
-        )
-    }
-}
-
-@Composable
-fun InfoShareAndDownloadRow(
-    onShareClick: () -> Unit,
-    onInfoButtonClick: () -> Unit,
-    onDownloadButtonClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        modifier = modifier
-    ) {
-        IconButton(onClick = onInfoButtonClick) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_about_outlined),
-                contentDescription = null,
-                tint = PrimaryLight
-            )
-        }
-
-        IconButton(onClick = onShareClick) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_share_outlined),
-                contentDescription = null,
-                tint = PrimaryLight
-            )
-        }
-
-        IconButton(onClick = onDownloadButtonClick) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_download_outlined),
-                contentDescription = null,
-                tint = PrimaryLight
-            )
-        }
     }
 }
 
