@@ -2,9 +2,13 @@ package com.andrii_a.walleria.ui.search
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -37,15 +41,11 @@ import com.andrii_a.walleria.ui.collections.CollectionsList
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.common.ScrollToTopLayout
 import com.andrii_a.walleria.ui.photos.PhotosList
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.PagerState
-import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SearchScreen(
     query: StateFlow<String>,
@@ -56,7 +56,7 @@ fun SearchScreen(
     dispatchEvent: (SearchScreenEvent) -> Unit,
     navigateToPhotoDetails: (PhotoId) -> Unit
 ) {
-    val pagerState = rememberPagerState()
+    val pagerState = rememberPagerState(initialPage = 0) { SearchScreenTabs.values().size }
 
     var showFilterDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -96,7 +96,7 @@ fun SearchScreen(
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SearchRow(
     query: State<String>,
@@ -169,7 +169,7 @@ private fun SearchRow(
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SearchTabs(
     pagerState: PagerState
@@ -214,7 +214,7 @@ private fun SearchTabs(
     }
 }
 
-@OptIn(ExperimentalPagerApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
 private fun SearchPages(
     query: State<String>,
@@ -226,7 +226,6 @@ private fun SearchPages(
     navigateToPhotoDetails: (PhotoId) -> Unit
 ) {
     HorizontalPager(
-        count = SearchScreenTabs.values().size,
         state = pagerState,
         contentPadding = contentPadding
     ) { index ->
@@ -239,7 +238,11 @@ private fun SearchPages(
                     onRefresh = lazyPhotoItems::refresh
                 )
 
-                Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .pullRefresh(pullRefreshState)
+                ) {
                     val listState = rememberLazyListState()
 
                     ScrollToTopLayout(
@@ -256,7 +259,8 @@ private fun SearchPages(
                             listState = listState,
                             contentPadding = PaddingValues(
                                 top = 8.dp,
-                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 64.dp
+                                bottom = WindowInsets.navigationBars.asPaddingValues()
+                                    .calculateBottomPadding() + 64.dp
                             )
                         )
                     }
@@ -268,6 +272,7 @@ private fun SearchPages(
                     )
                 }
             }
+
             SearchScreenTabs.Collections.ordinal -> {
                 val lazyCollectionItems = collections.collectAsLazyPagingItems()
 
@@ -276,7 +281,11 @@ private fun SearchPages(
                     onRefresh = lazyCollectionItems::refresh
                 )
 
-                Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .pullRefresh(pullRefreshState)
+                ) {
                     val listState = rememberLazyListState()
 
                     ScrollToTopLayout(
@@ -294,7 +303,8 @@ private fun SearchPages(
                             listState = listState,
                             contentPadding = PaddingValues(
                                 top = 8.dp,
-                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 64.dp
+                                bottom = WindowInsets.navigationBars.asPaddingValues()
+                                    .calculateBottomPadding() + 64.dp
                             )
                         )
 
@@ -306,6 +316,7 @@ private fun SearchPages(
                     }
                 }
             }
+
             SearchScreenTabs.Users.ordinal -> {
                 val lazyUserItems = users.collectAsLazyPagingItems()
 
@@ -314,7 +325,11 @@ private fun SearchPages(
                     onRefresh = lazyUserItems::refresh
                 )
 
-                Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .pullRefresh(pullRefreshState)
+                ) {
                     val listState = rememberLazyListState()
 
                     ScrollToTopLayout(
@@ -330,7 +345,8 @@ private fun SearchPages(
                             listState = listState,
                             contentPadding = PaddingValues(
                                 top = 8.dp,
-                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 64.dp
+                                bottom = WindowInsets.navigationBars.asPaddingValues()
+                                    .calculateBottomPadding() + 64.dp
                             )
                         )
 
@@ -342,6 +358,7 @@ private fun SearchPages(
                     }
                 }
             }
+
             else -> throw IllegalStateException("Tab screen was not declared!")
         }
     }

@@ -123,11 +123,10 @@ dependencies {
     implementation("io.coil-kt:coil:2.4.0")
     implementation("io.coil-kt:coil-compose:2.4.0")
 
-    // Accompainst libs
+    // Accompanist libs
     implementation("com.google.accompanist:accompanist-navigation-material:0.30.1")
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
     implementation("com.google.accompanist:accompanist-permissions:0.30.1")
-    implementation("com.google.accompanist:accompanist-pager:0.30.1")
 
     // Dagger Hilt
     implementation("com.google.dagger:hilt-android:2.47")
