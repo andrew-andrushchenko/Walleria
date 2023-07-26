@@ -186,7 +186,7 @@ fun AspectRatioImage(
     description: String,
     painter: Painter,
     modifier: Modifier = Modifier,
-    shape: Shape = RoundedCornerShape(36.dp),
+    shape: Shape = RoundedCornerShape(16.dp),
     clickable: Boolean = true,
     onClick: () -> Unit = {}
 ) {
