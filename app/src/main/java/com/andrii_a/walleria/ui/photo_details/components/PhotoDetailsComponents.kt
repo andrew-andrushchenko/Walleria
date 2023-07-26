@@ -398,7 +398,7 @@ fun TagsRow(
     LazyRow(modifier = modifier) {
         itemsIndexed(tags) { index, item ->
             TagItem(
-                title = item.title.orEmpty(),
+                title = item.title,
                 onClick = onTagClicked,
                 modifier = Modifier.padding(
                     start = if (index == 0) 8.dp else 0.dp,
