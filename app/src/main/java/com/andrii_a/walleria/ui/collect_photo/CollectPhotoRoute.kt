@@ -13,7 +13,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.andrii_a.walleria.ui.common.PhotoId
-import com.andrii_a.walleria.ui.common.PhotoUrl
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.bottomSheet

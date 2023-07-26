@@ -9,9 +9,9 @@ data class CollectionLinksDTO(
     val related: String?
 ) {
     fun toCollectionLinks(): CollectionLinks = CollectionLinks(
-        self = self,
-        html = html,
-        photos = photos,
-        related = related
+        self = self.orEmpty(),
+        html = html.orEmpty(),
+        photos = photos.orEmpty(),
+        related = related.orEmpty()
     )
 }

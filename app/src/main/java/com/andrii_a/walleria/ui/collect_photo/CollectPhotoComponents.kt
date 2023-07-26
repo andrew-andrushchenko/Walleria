@@ -166,7 +166,7 @@ fun UserCollectionsList(
                 UserCollectionItem(
                     title = collection.title,
                     totalPhotos = collection.totalPhotos,
-                    isPrivate = collection.private ?: false,
+                    isPrivate = collection.isPrivate,
                     collectState = collectState,
                     onClick = onClick,
                     modifier = Modifier.padding(horizontal = 16.dp)
@@ -179,7 +179,7 @@ fun UserCollectionsList(
 @Composable
 fun UserCollectionItem(
     title: String,
-    totalPhotos: Int,
+    totalPhotos: Long,
     isPrivate: Boolean,
     collectState: CollectState,
     onClick: () -> Unit,

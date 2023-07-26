@@ -11,8 +11,8 @@ val User.userFullName: String
     @Composable
     get() = stringResource(
         id = R.string.user_full_name_formatted,
-        this.firstName.orEmpty(),
-        this.lastName.orEmpty()
+        this.firstName,
+        this.lastName
     )
 
 fun User.getProfileImageUrlOrEmpty(quality: UserProfileImageQuality = UserProfileImageQuality.MEDIUM): String =

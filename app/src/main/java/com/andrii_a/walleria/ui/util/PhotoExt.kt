@@ -37,7 +37,7 @@ val Photo.userNickname: String
     get() = this.user?.username.orEmpty()
 
 val Photo.primaryColorInt: Int
-    get() = this.color?.let { AndroidColor.parseColor(it) } ?: AndroidColor.GRAY
+    get() = AndroidColor.parseColor(this.color)
 
 val Photo.primaryColorComposable: ComposeColor
     get() = ComposeColor(this.primaryColorInt)

@@ -81,9 +81,9 @@ fun PhotoInfoBottomSheet(
         }
 
         StatsRow(
-            views = photo.views ?: 0,
-            likes = photo.likes ?: 0,
-            downloads = photo.downloads ?: 0,
+            views = photo.views,
+            likes = photo.likes,
+            downloads = photo.downloads,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)

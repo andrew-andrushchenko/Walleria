@@ -491,7 +491,7 @@ fun StatsRow(
 fun RelatedCollectionsItem(
     title: String,
     coverPhotoUrl: String,
-    totalPhotos: Int,
+    totalPhotos: Long,
     modifier: Modifier = Modifier
 ) {
     Card(

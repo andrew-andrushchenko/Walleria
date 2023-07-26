@@ -8,8 +8,8 @@ data class TopicLinksDTO(
     val photos: String?
 ) {
     fun toTopicLinks(): TopicLinks = TopicLinks(
-        self = self,
-        html = html,
-        photos = photos
+        self = self.orEmpty(),
+        html = html.orEmpty(),
+        photos = photos.orEmpty()
     )
 }

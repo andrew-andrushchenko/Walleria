@@ -12,7 +12,7 @@ value class UserNickname(val value: String)
 data class CollectionInfo(
     val idAsString: String,
     val title: String,
-    val totalPhotos: Int,
+    val totalPhotos: Long,
     val userNickname: String,
     val userFullName: String,
     val description: String?,

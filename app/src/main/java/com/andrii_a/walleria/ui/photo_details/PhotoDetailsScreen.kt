@@ -214,7 +214,7 @@ fun ContentSection(
                     }
             ) {
                 BottomSection(
-                    likes = photo.likes ?: 0,
+                    likes = photo.likes,
                     photoOwner = photo.user,
                     isPhotoLiked = isPhotoLiked,
                     isPhotoBookmarked = isPhotoBookmarked,
@@ -228,10 +228,10 @@ fun ContentSection(
                         if (isUserLoggedIn) {
                             if (isPhotoLiked) {
                                 dispatchPhotoDetailsEvent(PhotoDetailsEvent.PhotoDisliked(photo.id))
-                                LikeCount(value = photo.likes ?: 1)
+                                LikeCount(value = photo.likes)
                             } else {
                                 dispatchPhotoDetailsEvent(PhotoDetailsEvent.PhotoLiked(photo.id))
-                                LikeCount(value = photo.likes?.plus(1) ?: 0)
+                                LikeCount(value = photo.likes + 1)
                             }
                         } else {
                             context.toast(stringRes = R.string.login_to_like_photo)

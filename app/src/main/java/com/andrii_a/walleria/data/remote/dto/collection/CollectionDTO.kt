@@ -17,7 +17,7 @@ data class CollectionDTO(
     val curated: Boolean?,
     val featured: Boolean?,
     @SerializedName("total_photos")
-    val totalPhotos: Int,
+    val totalPhotos: Long,
     val private: Boolean?,
     @SerializedName("share_key")
     val shareKey: String?,
@@ -33,10 +33,10 @@ data class CollectionDTO(
         id = id,
         title = title,
         description = description,
-        curated = curated,
-        featured = featured,
+        curated = curated ?: false,
+        featured = featured ?: false,
         totalPhotos = totalPhotos,
-        private = private,
+        isPrivate = private ?: false,
         tags = tags?.map { it.toTag() },
         coverPhoto = coverPhoto?.toPhoto(),
         previewPhotos = previewPhotos?.map { it.toPhoto() },

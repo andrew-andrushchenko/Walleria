@@ -12,10 +12,5 @@ data class AccessTokenDTO(
     @SerializedName("create_at")
     val createAt: Int?
 ) {
-    fun toAccessToken(): AccessToken = AccessToken(
-        accessToken = accessToken,
-        tokenType = tokenType,
-        scope = scope,
-        createAt = createAt
-    )
+    fun toAccessToken(): AccessToken = AccessToken(value = accessToken)
 }

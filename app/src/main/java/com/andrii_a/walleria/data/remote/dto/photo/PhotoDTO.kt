@@ -2,9 +2,9 @@ package com.andrii_a.walleria.data.remote.dto.photo
 
 import com.andrii_a.walleria.data.remote.dto.collection.CollectionDTO
 import com.andrii_a.walleria.data.remote.dto.common.TagDTO
+import com.andrii_a.walleria.data.remote.dto.user.UserDTO
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.google.gson.annotations.SerializedName
-import com.andrii_a.walleria.data.remote.dto.user.UserDTO
 
 data class PhotoDTO(
     val id: String,
@@ -12,7 +12,7 @@ data class PhotoDTO(
     val height: Int,
     @SerializedName("blur_hash")
     val blurHash: String?,
-    val color: String? = "#E0E0E0",
+    val color: String?,
     val views: Long?,
     val downloads: Long?,
     val likes: Long?,
@@ -39,10 +39,10 @@ data class PhotoDTO(
         width = width,
         height = height,
         blurHash = blurHash,
-        color = color,
-        views = views,
-        downloads = downloads,
-        likes = likes,
+        color = color ?: "#E0E0E0",
+        views = views ?: 0,
+        downloads = downloads ?: 0,
+        likes = likes ?: 0,
         likedByUser = likedByUser,
         description = description,
         exif = exif?.toExif(),

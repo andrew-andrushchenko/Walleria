@@ -71,15 +71,14 @@ class LocalUserAccountPreferencesRepositoryImpl(context: Context) : LocalUserAcc
 
     override suspend fun saveAccessToken(accessToken: AccessToken) {
         localUserAccountDataStore.edit { preferences ->
-            preferences[UserAccountPreferencesKeys.ACCESS_TOKEN_KEY] = accessToken.accessToken
+            preferences[UserAccountPreferencesKeys.ACCESS_TOKEN_KEY] = accessToken.value
         }
     }
 
     override suspend fun saveMyProfileInfo(myProfile: MyProfile) {
         localUserAccountDataStore.edit { preferences ->
-            preferences[UserAccountPreferencesKeys.USER_NICKNAME_KEY] = myProfile.username.toString()
-            preferences[UserAccountPreferencesKeys.USER_FIRST_NAME_KEY] = myProfile.firstName.toString()
-            preferences[UserAccountPreferencesKeys.USER_LAST_NAME_KEY] = myProfile.lastName.toString()
+            preferences[UserAccountPreferencesKeys.USER_FIRST_NAME_KEY] = myProfile.firstName
+            preferences[UserAccountPreferencesKeys.USER_LAST_NAME_KEY] = myProfile.lastName
             preferences[UserAccountPreferencesKeys.USER_PROFILE_PHOTO_URL_KEY] = myProfile.profileImage?.medium.toString()
             preferences[UserAccountPreferencesKeys.USER_EMAIL_KEY] = myProfile.email.toString()
             preferences[UserAccountPreferencesKeys.USER_PORTFOLIO_LINK_KEY] = myProfile.portfolioUrl.toString()

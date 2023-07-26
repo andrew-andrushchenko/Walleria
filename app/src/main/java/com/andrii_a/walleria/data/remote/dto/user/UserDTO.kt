@@ -17,18 +17,18 @@ data class UserDTO(
     val bio: String?,
     val location: String?,
     @SerializedName("total_likes")
-    val totalLikes: Int?,
+    val totalLikes: Long?,
     @SerializedName("total_photos")
-    val totalPhotos: Int?,
+    val totalPhotos: Long?,
     @SerializedName("total_collections")
-    val totalCollections: Int?,
+    val totalCollections: Long?,
     @SerializedName("followed_by_user")
     val followedByUser: Boolean?,
     @SerializedName("followers_count")
-    val followersCount: Int?,
+    val followersCount: Long?,
     @SerializedName("following_count")
-    val followingCount: Int?,
-    val downloads: Int?,
+    val followingCount: Long?,
+    val downloads: Long?,
     @SerializedName("profile_image")
     val profileImage: UserProfileImageDTO?,
     val social: UserSocialMediaLinksDTO?,
@@ -39,20 +39,18 @@ data class UserDTO(
     fun toUser(): User = User(
         id = id,
         username = username,
-        name = name,
-        firstName = firstName,
-        lastName = lastName,
+        firstName = firstName.orEmpty(),
+        lastName = lastName.orEmpty(),
         bio = bio,
         location = location,
-        totalLikes = totalLikes,
-        totalPhotos = totalPhotos,
-        totalCollections = totalCollections,
-        followersCount = followersCount,
-        followingCount = followingCount,
-        downloads = downloads,
+        totalLikes = totalLikes ?: 0,
+        totalPhotos = totalPhotos ?: 0,
+        totalCollections = totalCollections ?: 0,
+        followersCount = followersCount ?: 0,
+        followingCount = followingCount ?: 0,
+        downloads = downloads ?: 0,
         profileImage = profileImage?.toUserProfileImage(),
         social = social?.toUserSocial(),
-        badge = badge?.toUserBadge(),
         tags = tags?.toUserTags(),
         photos = photos?.map { it.toPhoto() }
     )

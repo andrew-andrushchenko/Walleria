@@ -66,10 +66,10 @@ fun TopicsList(
                         val topic = lazyTopicItems[index]
                         topic?.let {
                             DefaultTopicItem(
-                                title = topic.title.orEmpty(),
+                                title = topic.title,
                                 coverPhoto = topic.coverPhoto,
                                 coverPhotoQuality = coverPhotoQuality,
-                                totalPhotos = topic.totalPhotos ?: 0,
+                                totalPhotos = topic.totalPhotos,
                                 curatorUsername = topic.ownerUsername,
                                 status = topic.status,
                                 updatedAt = topic.updatedAt.orEmpty(),
@@ -136,7 +136,7 @@ fun DefaultTopicItem(
     title: String,
     coverPhoto: Photo?,
     coverPhotoQuality: PhotoQuality,
-    totalPhotos: Int,
+    totalPhotos: Long,
     curatorUsername: String,
     status: TopicStatus,
     updatedAt: String,

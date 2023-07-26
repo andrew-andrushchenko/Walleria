@@ -108,7 +108,7 @@ fun CollectionsList(
                                         userNickname = collection.user?.username.orEmpty(),
                                         userFullName = collection.userFullName,
                                         description = collection.description.orEmpty(),
-                                        isPrivate = collection.private ?: false
+                                        isPrivate = collection.isPrivate
                                     )
                                     onCollectionClicked(collectionInfo)
                                 },
@@ -168,7 +168,7 @@ fun DefaultCollectionItem(
     title: String,
     previewPhotos: List<Photo>,
     previewPhotosQuality: PhotoQuality,
-    totalPhotos: Int,
+    totalPhotos: Long,
     curatorUsername: String,
     modifier: Modifier = Modifier,
     onOpenCollectionClick: () -> Unit,
@@ -237,6 +237,7 @@ private fun CollectionPhotosLayout(
                         .clickable(onClick = onPhotoClickListeners[0])
                 )
             }
+
             2 -> {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
@@ -269,6 +270,7 @@ private fun CollectionPhotosLayout(
                 )
 
             }
+
             3 -> {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
@@ -324,7 +326,7 @@ private fun CollectionPhotosLayout(
 private fun DefaultDetailsRow(
     title: String,
     curatorUsername: String,
-    totalPhotos: Int,
+    totalPhotos: Long,
     onUserProfileClick: () -> Unit,
     onOpenCollectionClick: () -> Unit
 ) {

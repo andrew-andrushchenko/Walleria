@@ -21,7 +21,7 @@ data class TopicDTO(
     @SerializedName("ends_at")
     val endsAt: String?,
     @SerializedName("total_photos")
-    val totalPhotos: Int?,
+    val totalPhotos: Long?,
     val links: TopicLinksDTO?,
     val status: String?,
     val owners: List<UserDTO>?,
@@ -39,14 +39,13 @@ data class TopicDTO(
 
         return Topic(
             id = id,
-            slug = slug,
-            title = title,
+            title = title.orEmpty(),
             description = description,
-            featured = featured,
-            startsAt = startsAt,
+            featured = featured ?: false,
+            startsAt = startsAt.orEmpty(),
             endsAt = endsAt,
             updatedAt = updatedAt,
-            totalPhotos = totalPhotos,
+            totalPhotos = totalPhotos ?: 0,
             links = links?.toTopicLinks(),
             status = domainTopicStatus,
             owners = owners?.map { it.toUser() },
