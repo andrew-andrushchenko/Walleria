@@ -38,11 +38,13 @@ class LoginViewModel @Inject constructor(
             val accessTokenResult = loginRepository.getAccessToken(code)
             emit(accessTokenResult)
         }.onEach { backendResult ->
-            _loginState.value = when (backendResult) {
-                is BackendResult.Empty -> LoginState.Empty
-                is BackendResult.Loading -> LoginState.Loading
-                is BackendResult.Error -> LoginState.Error
-                is BackendResult.Success -> LoginState.Success(backendResult.value)
+            _loginState.update {
+                when (backendResult) {
+                    is BackendResult.Empty -> LoginState.Empty
+                    is BackendResult.Loading -> LoginState.Loading
+                    is BackendResult.Error -> LoginState.Error
+                    is BackendResult.Success -> LoginState.Success(backendResult.value)
+                }
             }
         }.stateIn(
             scope = viewModelScope,

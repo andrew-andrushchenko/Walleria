@@ -9,7 +9,14 @@ import com.andrii_a.walleria.domain.repository.LocalUserAccountPreferencesReposi
 import com.andrii_a.walleria.domain.repository.PhotoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -61,7 +68,7 @@ class PhotoDetailsViewModel @Inject constructor(
             is PhotoDetailsEvent.PhotoRequested -> getPhoto(event.photoId)
             is PhotoDetailsEvent.PhotoLiked -> likePhoto(event.photoId)
             is PhotoDetailsEvent.PhotoDisliked -> dislikePhoto(event.photoId)
-            is PhotoDetailsEvent.PhotoBookmarked -> _isBookmarked.value = true
+            is PhotoDetailsEvent.PhotoBookmarked -> _isBookmarked.update { true }
             is PhotoDetailsEvent.PhotoDropped -> _isBookmarked.update { false }
         }
     }
@@ -70,16 +77,16 @@ class PhotoDetailsViewModel @Inject constructor(
         photoRepository.getPhoto(photoId).onEach { result ->
             when (result) {
                 is BackendResult.Loading -> {
-                    _loadResult.value = PhotoLoadResult.Loading
+                    _loadResult.update { PhotoLoadResult.Loading }
                 }
                 is BackendResult.Success -> {
                     val photo = result.value
-                    _loadResult.value = PhotoLoadResult.Success(photo)
-                    _isLiked.value = photo.likedByUser
-                    _isBookmarked.value = photo.currentUserCollections?.map { it.id }?.isNotEmpty() ?: false
+                    _loadResult.update { PhotoLoadResult.Success(photo) }
+                    _isLiked.update { photo.likedByUser }
+                    _isBookmarked.update { photo.currentUserCollections?.map { it.id }?.isNotEmpty() ?: false }
                 }
                 is BackendResult.Error -> {
-                    _loadResult.value = PhotoLoadResult.Error
+                    _loadResult.update { PhotoLoadResult.Error }
                 }
                 is BackendResult.Empty -> Unit
             }
@@ -93,7 +100,7 @@ class PhotoDetailsViewModel @Inject constructor(
         likePhotoJob?.cancel()
         likePhotoJob = viewModelScope.launch {
             photoRepository.likePhoto(photoId)
-            _isLiked.value = true
+            _isLiked.update { true }
         }
     }
 
@@ -101,7 +108,7 @@ class PhotoDetailsViewModel @Inject constructor(
         dislikePhotoJob?.cancel()
         dislikePhotoJob = viewModelScope.launch {
             photoRepository.dislikePhoto(photoId)
-            _isLiked.value = false
+            _isLiked.update { false }
         }
     }
 }

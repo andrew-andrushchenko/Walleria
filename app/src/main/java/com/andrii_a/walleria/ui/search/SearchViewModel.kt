@@ -58,10 +58,10 @@ class SearchViewModel @Inject constructor(
     fun dispatchEvent(event: SearchScreenEvent) {
         when (event) {
             is SearchScreenEvent.OnQueryChanged -> {
-                _query.value = event.query
+                _query.update { event.query }
             }
             is SearchScreenEvent.OnPhotoFiltersChanged -> {
-                _photoFilters.value = event.photoFilters
+                _photoFilters.update { event.photoFilters }
             }
         }
     }
