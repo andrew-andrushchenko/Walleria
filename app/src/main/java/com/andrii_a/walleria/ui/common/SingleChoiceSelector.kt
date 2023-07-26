@@ -15,7 +15,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,7 +37,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
-private const val AnimationDurationMillis = 500
+private const val ANIMATION_DURATION_MILLIS = 500
 
 @Stable
 interface SingleChoiceSelectorState {
@@ -95,7 +100,7 @@ class SingleChoiceSelectorStateImpl(
     private val numOptions = options.size
 
     private val animationSpec = tween<Float>(
-        durationMillis = AnimationDurationMillis,
+        durationMillis = ANIMATION_DURATION_MILLIS,
         easing = FastOutSlowInEasing,
     )
 
@@ -243,6 +248,7 @@ fun SingleChoiceSelector(
                                 )
                             }
                         }
+
                         SelectorItemType.IconOnly -> {
                             Icon(
                                 painter = painterResource(id = option.iconRes),
@@ -250,6 +256,7 @@ fun SingleChoiceSelector(
                                 contentDescription = null
                             )
                         }
+
                         SelectorItemType.TextOnly -> {
                             Text(
                                 text = stringResource(id = option.titleRes),
