@@ -1,6 +1,6 @@
 package com.andrii_a.walleria.data.remote.source.collection
 
-import com.andrii_a.walleria.data.remote.dto.add_photo_to_collection.CollectionPhotoResultDTO
+import com.andrii_a.walleria.data.remote.dto.collect_photo.CollectionPhotoResultDTO
 import com.andrii_a.walleria.data.remote.dto.collection.CollectionDTO
 import retrofit2.Response
 import retrofit2.http.*

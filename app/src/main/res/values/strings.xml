@@ -143,6 +143,17 @@
     <string name="downloads">Downloads</string>
     <string name="description">Description:</string>
 
+    <!-- Collect photo-->
+    <string name="select_collections">Select collections</string>
+    <string name="create_new_and_add">Create new and add</string>
+    <string name="done_collection_creation">Done</string>
+    <string name="collection_name_hint">Name</string>
+    <string name="collection_description_hint">Description (optional)</string>
+    <string name="collection_private">Private collection</string>
+    <string name="unable_to_create_collection">Unable to create collection. Try again</string>
+    <string name="unable_to_collect_photo">Unable to collect photo. Try again</string>
+    <string name="unable_to_drop_photo">Unable to drop photo from collection. Try again</string>
+
     <string name="users">Users</string>
     <string name="user_profile_image">User profile image</string>
     <string name="action_retry">Retry</string>

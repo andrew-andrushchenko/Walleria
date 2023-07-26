@@ -1,6 +1,6 @@
-package com.andrii_a.walleria.data.remote.dto.add_photo_to_collection
+package com.andrii_a.walleria.data.remote.dto.collect_photo
 
-import com.andrii_a.walleria.domain.models.add_photo_to_collection.CollectionPhotoResult
+import com.andrii_a.walleria.domain.models.collect_photo.CollectionPhotoResult
 import com.andrii_a.walleria.data.remote.dto.collection.CollectionDTO
 import com.andrii_a.walleria.data.remote.dto.photo.PhotoDTO
 

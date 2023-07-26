@@ -18,6 +18,7 @@ sealed interface PhotoDetailsEvent {
     data class PhotoLiked(val photoId: String) : PhotoDetailsEvent
     data class PhotoDisliked(val photoId: String) : PhotoDetailsEvent
     object PhotoBookmarked : PhotoDetailsEvent
+    object PhotoDropped : PhotoDetailsEvent
 }
 
 sealed interface PhotoLoadResult {
@@ -61,6 +62,7 @@ class PhotoDetailsViewModel @Inject constructor(
             is PhotoDetailsEvent.PhotoLiked -> likePhoto(event.photoId)
             is PhotoDetailsEvent.PhotoDisliked -> dislikePhoto(event.photoId)
             is PhotoDetailsEvent.PhotoBookmarked -> _isBookmarked.value = true
+            is PhotoDetailsEvent.PhotoDropped -> _isBookmarked.update { false }
         }
     }
 

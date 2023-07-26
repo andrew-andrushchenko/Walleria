@@ -15,6 +15,10 @@ fun Context.toast(@StringRes stringRes: Int, duration: Int = Toast.LENGTH_SHORT)
     Toast.makeText(this, getString(stringRes), duration).show()
 }
 
+fun Context.toast(message: String, duration: Int = Toast.LENGTH_SHORT) {
+    Toast.makeText(this, message, duration).show()
+}
+
 fun Context.sharePhoto(photoLink: String?, photoDescription: String?) {
     if (photoLink == null) return
 

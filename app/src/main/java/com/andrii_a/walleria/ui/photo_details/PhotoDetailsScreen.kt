@@ -224,7 +224,7 @@ fun ContentSection(
                     onNavigateToCollectPhoto = {
                         navigateToCollectPhoto(
                             PhotoId(photo.id),
-                            PhotoUrl(photo.getUrlByQuality(quality = PhotoQuality.LOW))
+                            PhotoUrl(photo.getUrlByQuality(quality = PhotoQuality.MEDIUM))
                         )
                     },
                     onLikeButtonClick = {

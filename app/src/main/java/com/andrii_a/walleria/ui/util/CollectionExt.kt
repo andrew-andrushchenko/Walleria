@@ -13,3 +13,7 @@ fun Collection.getPreviewPhotos(
     maxPhotos: Int = 3,
     quality: PhotoQuality = PhotoQuality.MEDIUM
 ) = this.previewPhotos?.take(maxPhotos) ?: emptyList()
+
+fun Collection?.getCoverPhotoUrl(
+    quality: PhotoQuality = PhotoQuality.MEDIUM
+) = this?.coverPhoto?.getUrlByQuality(quality).orEmpty()

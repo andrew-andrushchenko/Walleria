@@ -9,6 +9,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.andrii_a.walleria.ui.collect_photo.navigateToCollectPhoto
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.search.navigateToSearch
@@ -51,6 +52,18 @@ fun NavGraphBuilder.photoDetailsRoute(
         val isPhotoLiked = viewModel.isLiked.collectAsState()
         val isPhotoBookmarked = viewModel.isBookmarked.collectAsState()
 
+        val collectResult = navController.currentBackStackEntry
+            ?.savedStateHandle
+            ?.getStateFlow("collect_result_key", isPhotoBookmarked.value)
+            ?.collectAsState()
+
+        collectResult?.value?.let { isCollected ->
+            viewModel.dispatchEvent(
+                if (isCollected) PhotoDetailsEvent.PhotoBookmarked
+                else PhotoDetailsEvent.PhotoDropped
+            )
+        }
+
         PhotoDetailsScreen(
             photoId = photoId,
             loadResult = loadResultState.value,
@@ -60,7 +73,7 @@ fun NavGraphBuilder.photoDetailsRoute(
             dispatchPhotoDetailsEvent = viewModel::dispatchEvent,
             navigateBack = navController::navigateUp,
             navigateToUserDetails = {},
-            navigateToBookmarkPhoto = { _, _ -> },
+            navigateToBookmarkPhoto = navController::navigateToCollectPhoto,
             navigateToSearch = navController::navigateToSearch
         )
     }
