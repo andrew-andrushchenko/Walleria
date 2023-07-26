@@ -19,6 +19,7 @@ import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.models.collection.Collection
+import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.common.ScrollToTopLayout
 import com.andrii_a.walleria.ui.common.SearchQuery
 import kotlinx.coroutines.flow.Flow
@@ -28,7 +29,8 @@ import kotlinx.coroutines.flow.Flow
 fun CollectionsScreen(
     collections: Flow<PagingData<Collection>>,
     navigateToProfileScreen: () -> Unit,
-    navigateToSearchScreen: (SearchQuery?) -> Unit
+    navigateToSearchScreen: (SearchQuery?) -> Unit,
+    navigateToPhotoDetails: (PhotoId) -> Unit
 ) {
     val lazyCollectionItems = collections.collectAsLazyPagingItems()
 
@@ -60,9 +62,7 @@ fun CollectionsScreen(
                 onUserProfileClicked = {
 
                 },
-                onPhotoClicked = {
-
-                },
+                onPhotoClicked = navigateToPhotoDetails,
                 listState = listState,
                 contentPadding = PaddingValues(
                     top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 64.dp,
