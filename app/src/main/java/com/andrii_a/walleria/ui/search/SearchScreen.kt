@@ -2,6 +2,10 @@ package com.andrii_a.walleria.ui.search
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -29,7 +33,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.PagingData
@@ -41,7 +48,9 @@ import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.ui.collections.CollectionsList
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.common.ScrollToTopLayout
+import com.andrii_a.walleria.ui.common.WOutlinedTextField
 import com.andrii_a.walleria.ui.photos.PhotosList
+import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -55,7 +64,8 @@ fun SearchScreen(
     users: Flow<PagingData<User>>,
     photoFilters: StateFlow<PhotoFilters>,
     dispatchEvent: (SearchScreenEvent) -> Unit,
-    navigateToPhotoDetails: (PhotoId) -> Unit
+    navigateToPhotoDetails: (PhotoId) -> Unit,
+    navigateBack: () -> Unit
 ) {
     val pagerState = rememberPagerState(initialPage = 0) { SearchScreenTabs.values().size }
 
@@ -78,10 +88,12 @@ fun SearchScreen(
 
         Column(modifier = Modifier.align(Alignment.TopCenter)) {
             SearchRow(
-                query = queryValue,
+                query = queryValue.value,
                 pagerState = pagerState,
                 dispatchEvent = dispatchEvent,
-                onPhotoFiltersClick = { showFilterDialog = true }
+                onPhotoFiltersClick = { showFilterDialog = true },
+                onNavigateBack = navigateBack,
+                modifier = Modifier.statusBarsPadding()
             )
 
             SearchTabs(pagerState = pagerState)
@@ -100,23 +112,38 @@ fun SearchScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SearchRow(
-    query: State<String>,
+    query: String,
     pagerState: PagerState,
     dispatchEvent: (SearchScreenEvent) -> Unit,
-    onPhotoFiltersClick: () -> Unit
+    onPhotoFiltersClick: () -> Unit,
+    onNavigateBack: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .statusBarsPadding()
-            .height(64.dp)
-            .padding(start = 16.dp, end = 16.dp)
+    ConstraintLayout(
+        modifier = modifier
             .fillMaxWidth()
+            .height(64.dp)
     ) {
-        val focusManager = LocalFocusManager.current
-        var text by remember { mutableStateOf(query.value) }
+        val (backButton, queryTextField, filterButton) = createRefs()
 
-        OutlinedTextField(
+        IconButton(
+            onClick = onNavigateBack,
+            modifier = Modifier.constrainAs(backButton) {
+                top.linkTo(parent.top)
+                bottom.linkTo(parent.bottom)
+                start.linkTo(parent.start, 16.dp)
+            }
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_arrow_back),
+                contentDescription = stringResource(id = R.string.photo_filters)
+            )
+        }
+
+        val focusManager = LocalFocusManager.current
+        var text by remember { mutableStateOf(query) }
+
+        WOutlinedTextField(
             value = text,
             placeholder = {
                 Text(
@@ -133,7 +160,7 @@ private fun SearchRow(
                 textColor = MaterialTheme.colors.onPrimary
             ),
             onValueChange = { text = it },
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(8.dp),
             singleLine = true,
             trailingIcon = {
                 if (text.isNotEmpty()) {
@@ -155,15 +182,33 @@ private fun SearchRow(
                 }
             ),
             textStyle = MaterialTheme.typography.subtitle1,
-            modifier = Modifier.weight(2f)
+            modifier = Modifier.constrainAs(queryTextField) {
+                top.linkTo(backButton.top)
+                bottom.linkTo(backButton.bottom)
+                start.linkTo(backButton.end)
+                if (pagerState.currentPage == SearchScreenTabs.Photos.ordinal) {
+                    end.linkTo(filterButton.start)
+                } else {
+                    end.linkTo(parent.end, 8.dp)
+                }
+                width = Dimension.fillToConstraints
+            }
         )
 
-        AnimatedVisibility(visible = pagerState.currentPage == SearchScreenTabs.Photos.ordinal) {
+        AnimatedVisibility(
+            visible = pagerState.currentPage == SearchScreenTabs.Photos.ordinal,
+            enter = slideInHorizontally(initialOffsetX = { it }) + fadeIn(),
+            exit = slideOutHorizontally(targetOffsetX = { it }) + fadeOut(),
+            modifier = Modifier.constrainAs(filterButton) {
+                top.linkTo(queryTextField.top)
+                bottom.linkTo(queryTextField.bottom)
+                end.linkTo(parent.end, 16.dp)
+            }
+        ) {
             IconButton(onClick = onPhotoFiltersClick) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_filter_outlined),
-                    contentDescription = stringResource(id = R.string.photo_filters),
-                    modifier = Modifier.weight(1f)
+                    contentDescription = stringResource(id = R.string.photo_filters)
                 )
             }
         }
@@ -362,6 +407,21 @@ private fun SearchPages(
 
             else -> throw IllegalStateException("Tab screen was not declared!")
         }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Preview
+@Composable
+fun SearchRowPreview() {
+    WalleriaTheme {
+        SearchRow(
+            query = "",
+            pagerState = rememberPagerState(initialPage = 0) { SearchScreenTabs.values().size },
+            dispatchEvent = {},
+            onPhotoFiltersClick = {},
+            onNavigateBack = {}
+        )
     }
 }
 

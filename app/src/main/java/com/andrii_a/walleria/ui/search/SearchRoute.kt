@@ -61,7 +61,8 @@ fun NavGraphBuilder.searchRoute(
             users = users,
             photoFilters = photoFilters,
             dispatchEvent = dispatchEvent,
-            navigateToPhotoDetails = navController::navigateToPhotoDetails
+            navigateToPhotoDetails = navController::navigateToPhotoDetails,
+            navigateBack = navController::navigateUp
         )
     }
 }
