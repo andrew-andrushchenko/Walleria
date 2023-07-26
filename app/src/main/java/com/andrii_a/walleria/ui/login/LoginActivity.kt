@@ -16,13 +16,16 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.andrii_a.walleria.data.util.UNSPLASH_AUTH_CALLBACK
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.CustomTabsHelper
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LoginActivity : ComponentActivity() {
@@ -76,8 +79,10 @@ class LoginActivity : ComponentActivity() {
         intent?.data?.let { uri ->
             if (uri.authority.equals(UNSPLASH_AUTH_CALLBACK)) {
                 uri.getQueryParameter("code")?.let { code ->
-                    lifecycleScope.launchWhenResumed {
-                        viewModel.getAccessToken(code = code)
+                    lifecycleScope.launch {
+                        repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                            viewModel.getAccessToken(code = code)
+                        }
                     }
                 }
             }
