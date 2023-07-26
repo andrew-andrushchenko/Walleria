@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,10 +32,10 @@ fun SearchPhotoFilterDialog(
     onApplyClick: (SearchScreenEvent) -> Unit,
     onDismiss: () -> Unit
 ) {
-    var order by remember { mutableStateOf(photoFilters.value.order) }
-    var contentFilter by remember { mutableStateOf(photoFilters.value.contentFilter) }
-    var color by remember { mutableStateOf(photoFilters.value.color) }
-    var orientation by remember { mutableStateOf(photoFilters.value.orientation) }
+    var order by rememberSaveable { mutableStateOf(photoFilters.value.order) }
+    var contentFilter by rememberSaveable { mutableStateOf(photoFilters.value.contentFilter) }
+    var color by rememberSaveable { mutableStateOf(photoFilters.value.color) }
+    var orientation by rememberSaveable { mutableStateOf(photoFilters.value.orientation) }
 
     Dialog(onDismissRequest = onDismiss) {
         Surface(
