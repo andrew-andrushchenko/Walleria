@@ -1,15 +1,18 @@
 package com.andrii_a.walleria.ui.login
 
-import androidx.activity.ComponentActivity
-import dagger.hilt.android.AndroidEntryPoint
 import android.content.ComponentName
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.browser.customtabs.*
-import androidx.compose.runtime.SideEffect
+import androidx.browser.customtabs.CustomTabsCallback
+import androidx.browser.customtabs.CustomTabsClient
+import androidx.browser.customtabs.CustomTabsService
+import androidx.browser.customtabs.CustomTabsServiceConnection
+import androidx.browser.customtabs.CustomTabsSession
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
@@ -19,6 +22,7 @@ import com.andrii_a.walleria.data.util.UNSPLASH_AUTH_CALLBACK
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.CustomTabsHelper
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class LoginActivity : ComponentActivity() {
@@ -49,11 +53,11 @@ class LoginActivity : ComponentActivity() {
         setContent {
             val systemUiController = rememberSystemUiController()
 
-            SideEffect {
+            LaunchedEffect(key1 = true) {
                 systemUiController.setSystemBarsColor(color = Color.Transparent)
             }
 
-            WalleriaTheme() {
+            WalleriaTheme {
                 val state by viewModel.loginState.collectAsState()
 
                 LoginScreen(

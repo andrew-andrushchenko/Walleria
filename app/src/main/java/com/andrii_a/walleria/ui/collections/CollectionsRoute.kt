@@ -2,7 +2,7 @@ package com.andrii_a.walleria.ui.collections
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -22,7 +22,7 @@ fun NavGraphBuilder.collectionsBottomNavRoute(
         val navigationBarColor = Color.Transparent
         val isDark = isSystemInDarkTheme()
 
-        SideEffect {
+        LaunchedEffect(key1 = true) {
             systemUiController.setStatusBarColor(
                 color = statusBarColor,
                 darkIcons = !isDark

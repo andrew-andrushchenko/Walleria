@@ -1,6 +1,6 @@
 package com.andrii_a.walleria.ui.photo_details
 
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -28,18 +28,12 @@ fun NavGraphBuilder.photoDetailsRoute(
             }
         )
     ) { navBackStackEntry ->
-        val statusBarColor = Color.Transparent
-        val navigationBarColor = Color.Transparent
+        val systemBarsColors = Color.Transparent
         val isDark = false
 
-        SideEffect {
-            systemUiController.setStatusBarColor(
-                color = statusBarColor,
-                darkIcons = isDark
-            )
-
-            systemUiController.setNavigationBarColor(
-                color = navigationBarColor,
+        LaunchedEffect(key1 = true) {
+            systemUiController.setSystemBarsColor(
+                color = systemBarsColors,
                 darkIcons = isDark
             )
         }
