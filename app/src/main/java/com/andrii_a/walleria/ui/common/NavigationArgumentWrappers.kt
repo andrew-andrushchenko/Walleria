@@ -4,9 +4,6 @@ package com.andrii_a.walleria.ui.common
 value class PhotoId(val value: String)
 
 @JvmInline
-value class PhotoUrl(val value: String)
-
-@JvmInline
 value class SearchQuery(val value: String)
 
 @JvmInline
