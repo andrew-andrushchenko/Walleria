@@ -36,8 +36,9 @@ fun Walleria() {
 
                 if (navController.currentRoute in NavigationScreenRoutes) {
                     WNavigationBar(
-                        navScreenItems = NavigationScreen.values().toList(),
-                        onItemSelected = { navigationScreen ->
+                        navScreenItems = NavigationScreen.values(),
+                        currentRoute = navController.currentRoute ?: NavigationScreen.Photos.route,
+                        navigateToRoute = { navigationScreen ->
                             navController.navigate(navigationScreen.route) {
                                 launchSingleTop = true
                                 restoreState = true
@@ -46,7 +47,6 @@ fun Walleria() {
                                 }
                             }
                         },
-                        navController = navController,
                         modifier = Modifier.align(Alignment.BottomCenter)
                     )
                 }
