@@ -13,9 +13,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed interface LoginState {
-    object Empty : LoginState
-    object Loading : LoginState
-    object Error : LoginState
+    data object Empty : LoginState
+    data object Loading : LoginState
+    data object Error : LoginState
     data class Success(val accessToken: AccessToken) : LoginState
 }
 
