@@ -10,7 +10,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
@@ -200,14 +199,7 @@ fun ContentSection(
                     onOpenInBrowser = { context.openPhotoInBrowser(photo.links?.html) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(
-                            brush = Brush.verticalGradient(
-                                colors = listOf(
-                                    Color.Black.copy(alpha = 0.6f),
-                                    Color.Transparent
-                                )
-                            )
-                        )
+                        .background(color = Color.Black.copy(alpha = 0.5f))
                         .statusBarsPadding()
                         .padding(8.dp)
                 )
@@ -271,14 +263,7 @@ fun ContentSection(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(
-                            brush = Brush.verticalGradient(
-                                colors = listOf(
-                                    Color.Transparent,
-                                    Color.Black.copy(alpha = 0.8f)
-                                )
-                            )
-                        )
+                        .background(color = Color.Black.copy(alpha = 0.5f))
                         .navigationBarsPadding()
                         .padding(12.dp)
                 )
