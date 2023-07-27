@@ -1,11 +1,13 @@
 package com.andrii_a.walleria.ui.navigation
 
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -42,7 +44,8 @@ fun MainNavHost(
 
     ModalBottomSheetLayout(
         bottomSheetNavigator = bottomSheetNavigator,
-        scrimColor = MaterialTheme.colors.primary.copy(alpha = 0.5f)
+        scrimColor = MaterialTheme.colors.primary.copy(alpha = 0.5f),
+        sheetShape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
     ) {
         NavHost(
             navController = navHostController,
