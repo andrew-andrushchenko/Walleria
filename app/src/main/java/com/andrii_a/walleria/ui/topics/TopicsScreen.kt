@@ -83,7 +83,7 @@ fun TopicsScreen(
             modifier = Modifier
                 .statusBarsPadding()
                 .background(color = MaterialTheme.colors.primary.copy(alpha = 0.9f))
-                .height(64.dp)
+                .height(dimensionResource(id = R.dimen.top_bar_height))
                 .padding(start = 16.dp, end = 16.dp)
                 .fillMaxWidth()
                 .align(Alignment.TopCenter)
