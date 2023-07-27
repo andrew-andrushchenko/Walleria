@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -57,18 +58,25 @@ fun ProfileScreen(
 ) {
     val isUserLoggedIn by isUserLoggedInStateFlow.collectAsStateWithLifecycle()
 
-    Surface(
-        color = MaterialTheme.colors.primary,
-        shape = RoundedCornerShape(16.dp)
-    ) {
+    Surface(color = MaterialTheme.colors.primary) {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .navigationBarsPadding()
-                .padding(12.dp)
                 .animateContentSize()
         ) {
+            Spacer(
+                modifier = Modifier
+                    .padding(vertical = 22.dp)
+                    .size(width = 32.dp, height = 4.dp)
+                    .background(
+                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.4f),
+                        shape = RoundedCornerShape(50)
+                    )
+                    .align(Alignment.CenterHorizontally)
+            )
+
             if (isUserLoggedIn) {
                 var showLogoutConfirmationDialog by remember { mutableStateOf(false) }
 
@@ -101,7 +109,7 @@ fun ProfileScreen(
             Divider(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(12.dp)
+                    .padding(horizontal = 24.dp, vertical = 8.dp)
             )
 
             WTextButton(
@@ -144,7 +152,7 @@ fun LoggedOutUserSection(navigateToLoginScreen: () -> Unit) {
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 8.dp, bottom = 8.dp)
+                .padding(vertical = 8.dp)
                 .clip(RoundedCornerShape(16.dp))
                 .clickable(onClick = { showAddAccountSection = !showAddAccountSection })
                 .padding(8.dp)
