@@ -78,7 +78,6 @@ fun WNavigationBar(
     Surface(
         color = color,
         contentColor = contentColor,
-        shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
         modifier = modifier
     ) {
         val springSpec = SpringSpec<Float>(
