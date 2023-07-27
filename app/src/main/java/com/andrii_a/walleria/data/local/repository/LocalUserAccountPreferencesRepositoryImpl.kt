@@ -77,6 +77,7 @@ class LocalUserAccountPreferencesRepositoryImpl(context: Context) : LocalUserAcc
 
     override suspend fun saveMyProfileInfo(myProfile: MyProfile) {
         localUserAccountDataStore.edit { preferences ->
+            preferences[UserAccountPreferencesKeys.USER_NICKNAME_KEY] = myProfile.username
             preferences[UserAccountPreferencesKeys.USER_FIRST_NAME_KEY] = myProfile.firstName
             preferences[UserAccountPreferencesKeys.USER_LAST_NAME_KEY] = myProfile.lastName
             preferences[UserAccountPreferencesKeys.USER_PROFILE_PHOTO_URL_KEY] = myProfile.profileImage?.medium.toString()

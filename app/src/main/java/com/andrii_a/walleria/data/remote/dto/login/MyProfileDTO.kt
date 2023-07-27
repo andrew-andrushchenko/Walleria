@@ -47,6 +47,7 @@ data class MyProfileDTO(
     fun toMyProfile(): MyProfile = MyProfile(
         id = id,
         updatedAt = updatedAt,
+        username = username.orEmpty(),
         firstName = firstName.orEmpty(),
         lastName = lastName.orEmpty(),
         twitterUsername = twitterUsername,

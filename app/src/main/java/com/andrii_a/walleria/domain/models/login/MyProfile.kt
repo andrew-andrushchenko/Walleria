@@ -7,6 +7,7 @@ import com.andrii_a.walleria.domain.models.user.UserProfileImage
 data class MyProfile(
     val id: String,
     val updatedAt: String?,
+    val username: String,
     val firstName: String,
     val lastName: String,
     val twitterUsername: String?,
