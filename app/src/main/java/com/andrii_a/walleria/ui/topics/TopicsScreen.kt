@@ -13,6 +13,7 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -56,7 +57,7 @@ fun TopicsScreen(
             listState = listState,
             contentPadding = PaddingValues(
                 bottom = WindowInsets.navigationBars.asPaddingValues()
-                    .calculateBottomPadding() + 100.dp
+                    .calculateBottomPadding() + dimensionResource(id = R.dimen.navigation_bar_height) + 8.dp
             )
         ) {
             TopicsList(
