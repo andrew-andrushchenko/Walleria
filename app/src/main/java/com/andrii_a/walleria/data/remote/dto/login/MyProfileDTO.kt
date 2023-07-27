@@ -27,21 +27,21 @@ data class MyProfileDTO(
     @SerializedName("instagram_username")
     val instagramUsername: String?,
     @SerializedName("total_likes")
-    val totalLikes: Int?,
+    val totalLikes: Long?,
     @SerializedName("total_photos")
-    val totalPhotos: Int?,
+    val totalPhotos: Long?,
     @SerializedName("total_collections")
-    val totalCollections: Int?,
+    val totalCollections: Long?,
     val photos: List<PhotoDTO>?,
     @SerializedName("followed_by_user")
     val followedByUser: Boolean?,
     @SerializedName("followers_count")
-    val followersCount: Int?,
+    val followersCount: Long?,
     @SerializedName("following_count")
-    val followingCount: Int?,
-    val downloads: Int?,
+    val followingCount: Long?,
+    val downloads: Long?,
     @SerializedName("uploads_remaining")
-    val uploadsRemaining: Int?,
+    val uploadsRemaining: Long?,
     val email: String?
 ) {
     fun toMyProfile(): MyProfile = MyProfile(
