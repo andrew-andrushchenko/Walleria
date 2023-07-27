@@ -143,7 +143,7 @@ dependencies {
     implementation("androidx.core:core-splashscreen:1.0.1")
 
     // Lottie
-    implementation("com.airbnb.android:lottie-compose:5.2.0")
+    implementation("com.airbnb.android:lottie-compose:6.1.0")
 
     // DataStore
     implementation("androidx.datastore:datastore-preferences:1.0.0")
