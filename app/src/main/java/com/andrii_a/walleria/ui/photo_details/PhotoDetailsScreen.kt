@@ -224,7 +224,12 @@ fun ContentSection(
                         navigateToUserDetails(UserNickname(photo.userNickname))
                     },
                     onNavigateToCollectPhoto = {
-                        navigateToCollectPhoto(PhotoId(photo.id))
+                        if (isUserLoggedIn) {
+                            navigateToCollectPhoto(PhotoId(photo.id))
+                        } else {
+                            context.toast(stringRes = R.string.login_to_collect_photo)
+                            context.startActivity(LoginActivity::class.java)
+                        }
                     },
                     onLikeButtonClick = {
                         if (isUserLoggedIn) {
