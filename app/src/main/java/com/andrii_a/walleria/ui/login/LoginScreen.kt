@@ -3,9 +3,25 @@ package com.andrii_a.walleria.ui.login
 import android.graphics.drawable.ColorDrawable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,8 +34,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.andrii_a.walleria.R
@@ -29,6 +47,7 @@ import com.andrii_a.walleria.ui.theme.LoginScreenAccentColor
 import com.andrii_a.walleria.ui.theme.PrimaryDark
 import com.andrii_a.walleria.ui.theme.PrimaryLight
 import com.andrii_a.walleria.ui.theme.WalleriaLogoTextStyle
+import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.toast
 
 @Composable
@@ -59,7 +78,6 @@ fun LoginScreen(
                 .fillMaxWidth()
                 .align(Alignment.TopCenter)
                 .statusBarsPadding()
-                .padding(8.dp)
         )
 
         BottomSection(
@@ -80,9 +98,11 @@ fun LoginScreen(
                         .background(PrimaryDark.copy(alpha = 0.4f))
                 )
             }
+
             is LoginState.Error -> {
                 LocalContext.current.toast(R.string.login_failed)
             }
+
             is LoginState.Success -> {
                 retrieveUserData(loginState.accessToken)
                 LocalContext.current.toast(R.string.login_successful)
@@ -97,12 +117,17 @@ private fun TopSection(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = modifier
-    ) {
-        IconButton(onClick = onNavigateBack) {
+    ConstraintLayout(modifier = modifier) {
+        val (backButton, appLogoText) = createRefs()
+
+        IconButton(
+            onClick = onNavigateBack,
+            modifier = Modifier.constrainAs(backButton) {
+                top.linkTo(parent.top)
+                bottom.linkTo(parent.bottom)
+                start.linkTo(parent.start, 8.dp)
+            }
+        ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_arrow_back),
                 contentDescription = null,
@@ -113,8 +138,26 @@ private fun TopSection(
         Text(
             text = stringResource(id = R.string.app_name),
             style = WalleriaLogoTextStyle,
-            color = PrimaryLight
+            color = PrimaryLight,
+            modifier = Modifier.constrainAs(appLogoText) {
+                top.linkTo(parent.top)
+                bottom.linkTo(parent.bottom)
+                end.linkTo(parent.end, 18.dp)
+            }
         )
+    }
+}
+
+@Preview
+@Composable
+fun TopSectionPreview() {
+    WalleriaTheme {
+        Surface(color = Color.Black.copy(alpha = 0.5f)) {
+            TopSection(
+                onNavigateBack = {},
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
 }
 
