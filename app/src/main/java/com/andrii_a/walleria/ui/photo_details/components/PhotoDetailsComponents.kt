@@ -4,7 +4,6 @@ import android.graphics.drawable.ColorDrawable
 import android.text.SpannableStringBuilder
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -87,47 +86,6 @@ fun UserRow(
 }
 
 @Composable
-fun BigUserRow(
-    userProfileImageUrl: String,
-    username: String,
-    onUserClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = modifier
-            .clip(RoundedCornerShape(16.dp))
-            .clickable(onClick = onUserClick)
-            .padding(8.dp)
-    ) {
-        val painter = rememberAsyncImagePainter(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(userProfileImageUrl)
-                .crossfade(durationMillis = 1000)
-                .placeholder(ColorDrawable(Color.Gray.toArgb()))
-                .build(),
-            contentScale = ContentScale.Fit
-        )
-
-        Image(
-            painter = painter,
-            contentDescription = stringResource(id = R.string.user_profile_image),
-            modifier = Modifier
-                .size(48.dp)
-                .clip(CircleShape)
-        )
-
-        Text(
-            text = username,
-            style = MaterialTheme.typography.subtitle1,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-    }
-}
-
-@Composable
 fun LocationRow(
     locationString: String,
     onLocationClick: () -> Unit,
@@ -144,40 +102,9 @@ fun LocationRow(
 
         Text(
             text = locationString,
-            style = MaterialTheme.typography.subtitle2,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-    }
-}
-
-@Composable
-fun DescriptionColumn(
-    description: String,
-    modifier: Modifier = Modifier
-) {
-    Column(modifier = modifier) {
-        Text(
-            text = stringResource(id = R.string.description),
             style = MaterialTheme.typography.subtitle1,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        var isExpanded by remember { mutableStateOf(false) }
-
-        Text(
-            text = description,
-            style = MaterialTheme.typography.subtitle2,
-            maxLines = if (isExpanded) Int.MAX_VALUE else 2,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.CenterHorizontally)
-                .animateContentSize()
-                .clip(RoundedCornerShape(16.dp))
-                .clickable { isExpanded = !isExpanded }
+            overflow = TextOverflow.Ellipsis
         )
     }
 }

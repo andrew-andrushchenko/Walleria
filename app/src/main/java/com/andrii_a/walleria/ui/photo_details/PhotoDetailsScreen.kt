@@ -4,6 +4,7 @@ import androidx.compose.animation.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -122,11 +123,11 @@ fun ContentSection(
         sheetContent = {
             PhotoInfoBottomSheet(
                 photo = photo,
-                navigateToUserDetails = navigateToUserDetails,
                 navigateToSearch = navigateToSearch
             )
         },
-        sheetState = modalBottomSheetState
+        sheetState = modalBottomSheetState,
+        sheetShape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
     ) {
         BoxWithConstraints(modifier = modifier) {
             val constraints = this
