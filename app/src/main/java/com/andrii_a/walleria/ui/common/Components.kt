@@ -39,6 +39,7 @@ import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -61,8 +62,6 @@ import com.andrii_a.walleria.ui.theme.OnButtonLight
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import kotlinx.coroutines.launch
 import java.util.Locale
-
-val NavBarHeight = 72.dp
 
 @Composable
 fun WNavigationBar(
@@ -159,7 +158,7 @@ private fun WNavigationBarLayout(
     }
 
     Layout(
-        modifier = modifier.height(NavBarHeight),
+        modifier = modifier.height(dimensionResource(id = R.dimen.navigation_bar_height)),
         content = {
             content()
             Box(Modifier.layoutId("indicator"), content = indicator)
