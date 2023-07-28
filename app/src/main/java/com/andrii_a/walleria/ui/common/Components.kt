@@ -297,7 +297,7 @@ private fun MeasureScope.placeTextAndIcon(
 private fun WBottomNavigationBarIndicator(
     strokeWidth: Dp = 2.dp,
     color: Color = MaterialTheme.colors.onPrimary,
-    shape: Shape = RoundedCornerShape(18.dp)
+    shape: Shape = RoundedCornerShape(50)
 ) {
     Spacer(
         modifier = Modifier
