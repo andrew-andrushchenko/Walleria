@@ -87,7 +87,7 @@ fun WNavigationBar(
         WNavigationBarLayout(
             selectedIndex = currentScreen.ordinal,
             itemCount = navScreenItems.size,
-            indicator = { WBottomNavigationBarIndicator() },
+            indicator = { WNavigationBarIndicator() },
             animSpec = springSpec,
             modifier = Modifier.navigationBarsPadding()
         ) {
@@ -294,7 +294,7 @@ private fun MeasureScope.placeTextAndIcon(
 }
 
 @Composable
-private fun WBottomNavigationBarIndicator(
+private fun WNavigationBarIndicator(
     strokeWidth: Dp = 2.dp,
     color: Color = MaterialTheme.colors.onPrimary,
     shape: Shape = RoundedCornerShape(50)
