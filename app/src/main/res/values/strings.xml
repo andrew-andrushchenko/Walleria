@@ -3,6 +3,7 @@
 
     <!--Common-->
     <string name="to_top">To top</string>
+    <string name="navigate_back">Navigate back</string>
 
     <string name="photo_quality_raw">Raw</string>
     <string name="photo_quality_high">High</string>
@@ -162,5 +163,13 @@
     <string name="login_to_like_photo">Please login to like photo</string>
     <string name="login_to_collect_photo">Please login to collect photo</string>
     <string name="collect_button_animated_content_label">collect_button_animated_content_label</string>
+
+    <!-- Collection details-->
+    <string name="edit_collection">Edit collection</string>
+    <string name="update_collection_action">Update</string>
+    <string name="delete_collection">Delete collection</string>
+    <string name="delete_collection_confirmation">Are you sure?</string>
+    <string name="delete_collection_action">Delete</string>
+    <string name="collection_details_screen_top_bar_color_animation_label">collection_details_screen_top_bar_color_animation_label</string>
 
 </resources>

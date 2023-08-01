@@ -13,6 +13,9 @@ interface CollectionsService {
         @Query("per_page") perPage: Int?
     ): List<CollectionDTO>
 
+    @GET("collections/{id}")
+    suspend fun getCollection(@Path("id") id: String): CollectionDTO
+
     @GET("users/{username}/collections")
     suspend fun getUserCollections(
         @Path("username") username: String,

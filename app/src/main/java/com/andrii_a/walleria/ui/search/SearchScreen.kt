@@ -46,6 +46,7 @@ import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.ui.collections.CollectionsList
+import com.andrii_a.walleria.ui.common.CollectionId
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.common.ScrollToTopLayout
 import com.andrii_a.walleria.ui.common.WOutlinedTextField
@@ -65,6 +66,7 @@ fun SearchScreen(
     photoFilters: StateFlow<PhotoFilters>,
     dispatchEvent: (SearchScreenEvent) -> Unit,
     navigateToPhotoDetails: (PhotoId) -> Unit,
+    navigateToCollectionDetails: (CollectionId) -> Unit,
     navigateBack: () -> Unit
 ) {
     val pagerState = rememberPagerState(initialPage = 0) { SearchScreenTabs.values().size }
@@ -83,7 +85,8 @@ fun SearchScreen(
             contentPadding = PaddingValues(
                 top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 112.dp
             ),
-            navigateToPhotoDetails = navigateToPhotoDetails
+            navigateToPhotoDetails = navigateToPhotoDetails,
+            navigateToCollectionDetails = navigateToCollectionDetails
         )
 
         Column(modifier = Modifier.align(Alignment.TopCenter)) {
@@ -269,7 +272,8 @@ private fun SearchPages(
     collections: Flow<PagingData<Collection>>,
     users: Flow<PagingData<User>>,
     contentPadding: PaddingValues = PaddingValues(),
-    navigateToPhotoDetails: (PhotoId) -> Unit
+    navigateToPhotoDetails: (PhotoId) -> Unit,
+    navigateToCollectionDetails: (CollectionId) -> Unit
 ) {
     HorizontalPager(
         state = pagerState,
@@ -343,7 +347,7 @@ private fun SearchPages(
                     ) {
                         CollectionsList(
                             lazyCollectionItems = lazyCollectionItems,
-                            onCollectionClicked = {},
+                            onCollectionClicked = navigateToCollectionDetails,
                             onUserProfileClicked = {},
                             onPhotoClicked = {},
                             listState = listState,

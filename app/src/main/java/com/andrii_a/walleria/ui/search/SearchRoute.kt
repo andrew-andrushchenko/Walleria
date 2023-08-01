@@ -10,6 +10,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.andrii_a.walleria.ui.collection_details.navigateToCollectionDetails
 import com.andrii_a.walleria.ui.common.SearchQuery
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.photo_details.navigateToPhotoDetails
@@ -62,6 +63,7 @@ fun NavGraphBuilder.searchRoute(
             photoFilters = photoFilters,
             dispatchEvent = dispatchEvent,
             navigateToPhotoDetails = navController::navigateToPhotoDetails,
+            navigateToCollectionDetails = navController::navigateToCollectionDetails,
             navigateBack = navController::navigateUp
         )
     }

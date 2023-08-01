@@ -44,7 +44,7 @@ import com.andrii_a.walleria.core.PhotoQuality
 import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.photo.PhotoUrls
-import com.andrii_a.walleria.ui.common.CollectionInfo
+import com.andrii_a.walleria.ui.common.CollectionId
 import com.andrii_a.walleria.ui.common.EmptyContentBanner
 import com.andrii_a.walleria.ui.common.ErrorBanner
 import com.andrii_a.walleria.ui.common.ErrorItem
@@ -56,13 +56,12 @@ import com.andrii_a.walleria.ui.util.abbreviatedNumberString
 import com.andrii_a.walleria.ui.util.getPreviewPhotos
 import com.andrii_a.walleria.ui.util.getUrlByQuality
 import com.andrii_a.walleria.ui.util.primaryColorInt
-import com.andrii_a.walleria.ui.util.userFullName
 import com.andrii_a.walleria.ui.util.username
 
 @Composable
 fun CollectionsList(
     lazyCollectionItems: LazyPagingItems<Collection>,
-    onCollectionClicked: (CollectionInfo) -> Unit,
+    onCollectionClicked: (CollectionId) -> Unit,
     onUserProfileClicked: (UserNickname) -> Unit,
     onPhotoClicked: (PhotoId) -> Unit,
     modifier: Modifier = Modifier,
@@ -104,16 +103,7 @@ fun CollectionsList(
                                 previewPhotosQuality = previewPhotosQuality,
                                 curatorUsername = collection.username,
                                 onOpenCollectionClick = {
-                                    val collectionInfo = CollectionInfo(
-                                        idAsString = collection.id,
-                                        title = collection.title,
-                                        totalPhotos = collection.totalPhotos,
-                                        userNickname = collection.user?.username.orEmpty(),
-                                        userFullName = collection.userFullName,
-                                        description = collection.description.orEmpty(),
-                                        isPrivate = collection.isPrivate
-                                    )
-                                    onCollectionClicked(collectionInfo)
+                                    onCollectionClicked(CollectionId(collection.id))
                                 },
                                 onUserProfileClick = {
                                     val userNickname = UserNickname(collection.username)

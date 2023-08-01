@@ -8,6 +8,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.andrii_a.walleria.ui.collection_details.navigateToCollectionDetails
 import com.andrii_a.walleria.ui.navigation.NavigationScreen
 import com.andrii_a.walleria.ui.photo_details.navigateToPhotoDetails
 import com.andrii_a.walleria.ui.profile.navigateToProfileScreen
@@ -40,7 +41,8 @@ fun NavGraphBuilder.collectionsBottomNavRoute(
             collections = viewModel.collections,
             navigateToProfileScreen = navController::navigateToProfileScreen,
             navigateToSearchScreen = navController::navigateToSearch,
-            navigateToPhotoDetails = navController::navigateToPhotoDetails
+            navigateToPhotoDetails = navController::navigateToPhotoDetails,
+            navigateToCollectionDetails = navController::navigateToCollectionDetails
         )
     }
 }

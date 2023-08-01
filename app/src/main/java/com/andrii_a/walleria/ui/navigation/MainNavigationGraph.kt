@@ -14,6 +14,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.navigation
 import androidx.navigation.plusAssign
 import com.andrii_a.walleria.ui.collect_photo.collectPhotoRoute
+import com.andrii_a.walleria.ui.collection_details.collectionDetailsRoute
 import com.andrii_a.walleria.ui.collections.collectionsBottomNavRoute
 import com.andrii_a.walleria.ui.photo_details.photoDetailsRoute
 import com.andrii_a.walleria.ui.photos.photosBottomNavRoute
@@ -60,6 +61,8 @@ fun MainNavHost(
             photoDetailsRoute(navHostController, systemUiController)
 
             collectPhotoRoute(navHostController, systemUiController, bottomSheetState)
+
+            collectionDetailsRoute(navHostController, systemUiController)
         }
     }
 

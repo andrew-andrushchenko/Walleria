@@ -10,6 +10,8 @@ interface CollectionRepository {
 
     fun getCollections(): Flow<PagingData<Collection>>
 
+    fun getCollection(id: String): Flow<BackendResult<Collection>>
+
     fun getUserCollections(username: String): Flow<PagingData<Collection>>
 
     suspend fun createCollection(
