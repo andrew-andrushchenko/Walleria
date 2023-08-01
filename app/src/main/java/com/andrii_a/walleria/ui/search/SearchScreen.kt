@@ -64,7 +64,7 @@ fun SearchScreen(
     collections: Flow<PagingData<Collection>>,
     users: Flow<PagingData<User>>,
     photoFilters: StateFlow<PhotoFilters>,
-    dispatchEvent: (SearchScreenEvent) -> Unit,
+    onEvent: (SearchScreenEvent) -> Unit,
     navigateToPhotoDetails: (PhotoId) -> Unit,
     navigateToCollectionDetails: (CollectionId) -> Unit,
     navigateBack: () -> Unit
@@ -93,7 +93,7 @@ fun SearchScreen(
             SearchRow(
                 query = queryValue.value,
                 pagerState = pagerState,
-                dispatchEvent = dispatchEvent,
+                onEvent = onEvent,
                 onPhotoFiltersClick = { showFilterDialog = true },
                 onNavigateBack = navigateBack,
                 modifier = Modifier.statusBarsPadding()
@@ -105,7 +105,7 @@ fun SearchScreen(
         if (showFilterDialog) {
             SearchPhotoFilterDialog(
                 photoFilters = photoFilters.collectAsStateWithLifecycle(),
-                onApplyClick = dispatchEvent,
+                onApplyClick = onEvent,
                 onDismiss = { showFilterDialog = false }
             )
         }
@@ -117,7 +117,7 @@ fun SearchScreen(
 private fun SearchRow(
     query: String,
     pagerState: PagerState,
-    dispatchEvent: (SearchScreenEvent) -> Unit,
+    onEvent: (SearchScreenEvent) -> Unit,
     onPhotoFiltersClick: () -> Unit,
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
@@ -180,7 +180,7 @@ private fun SearchRow(
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(
                 onSearch = {
-                    dispatchEvent(SearchScreenEvent.OnQueryChanged(query = text))
+                    onEvent(SearchScreenEvent.OnQueryChanged(query = text))
                     focusManager.clearFocus()
                 }
             ),
@@ -422,7 +422,7 @@ fun SearchRowPreview() {
         SearchRow(
             query = "",
             pagerState = rememberPagerState(initialPage = 0) { SearchScreenTabs.values().size },
-            dispatchEvent = {},
+            onEvent = {},
             onPhotoFiltersClick = {},
             onNavigateBack = {}
         )

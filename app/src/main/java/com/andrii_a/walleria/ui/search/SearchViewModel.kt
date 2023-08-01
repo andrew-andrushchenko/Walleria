@@ -51,11 +51,11 @@ class SearchViewModel @Inject constructor(
 
     init {
         savedStateHandle.get<String>(SearchArgs.QUERY)?.let { query ->
-            dispatchEvent(SearchScreenEvent.OnQueryChanged(query = query))
+            onEvent(SearchScreenEvent.OnQueryChanged(query = query))
         }
     }
 
-    fun dispatchEvent(event: SearchScreenEvent) {
+    fun onEvent(event: SearchScreenEvent) {
         when (event) {
             is SearchScreenEvent.OnQueryChanged -> {
                 _query.update { event.query }

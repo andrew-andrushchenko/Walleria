@@ -53,7 +53,6 @@ fun NavGraphBuilder.searchRoute(
         val collections = viewModel.collections
         val users = viewModel.users
         val photoFilters = viewModel.photoFilters
-        val dispatchEvent = viewModel::dispatchEvent
 
         SearchScreen(
             query = query,
@@ -61,7 +60,7 @@ fun NavGraphBuilder.searchRoute(
             collections = collections,
             users = users,
             photoFilters = photoFilters,
-            dispatchEvent = dispatchEvent,
+            onEvent = viewModel::onEvent,
             navigateToPhotoDetails = navController::navigateToPhotoDetails,
             navigateToCollectionDetails = navController::navigateToCollectionDetails,
             navigateBack = navController::navigateUp
