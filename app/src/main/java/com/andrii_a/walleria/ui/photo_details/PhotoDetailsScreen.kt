@@ -90,7 +90,7 @@ fun PhotoDetailsScreen(
                     navigateToUserDetails = navigateToUserDetails,
                     navigateToCollectPhoto = navigateToBookmarkPhoto,
                     navigateToSearch = navigateToSearch,
-                    dispatchPhotoDetailsEvent = onEvent,
+                    onEvent = onEvent,
                     modifier = Modifier.fillMaxSize()
                 )
             }
@@ -113,7 +113,7 @@ private fun SuccessStateContent(
     navigateToUserDetails: (UserNickname) -> Unit,
     navigateToCollectPhoto: (PhotoId) -> Unit,
     navigateToSearch: (SearchQuery) -> Unit,
-    dispatchPhotoDetailsEvent: (PhotoDetailsEvent) -> Unit
+    onEvent: (PhotoDetailsEvent) -> Unit
 ) {
     val context = LocalContext.current
     val modalBottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
@@ -234,10 +234,10 @@ private fun SuccessStateContent(
                     onLikeButtonClick = {
                         if (isUserLoggedIn) {
                             if (isPhotoLiked) {
-                                dispatchPhotoDetailsEvent(PhotoDetailsEvent.PhotoDisliked(photo.id))
+                                onEvent(PhotoDetailsEvent.PhotoDisliked(photo.id))
                                 LikeCount(value = photo.likes)
                             } else {
-                                dispatchPhotoDetailsEvent(PhotoDetailsEvent.PhotoLiked(photo.id))
+                                onEvent(PhotoDetailsEvent.PhotoLiked(photo.id))
                                 LikeCount(value = photo.likes + 1)
                             }
                         } else {
