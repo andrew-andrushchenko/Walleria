@@ -1,5 +1,7 @@
 package com.andrii_a.walleria.ui.search
 
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -73,48 +75,44 @@ fun SearchScreen(
 
     var showFilterDialog by rememberSaveable { mutableStateOf(false) }
 
-    Box(modifier = Modifier.fillMaxWidth()) {
+    Column(
+        modifier = Modifier
+            .statusBarsPadding()
+            .fillMaxWidth()
+    ) {
         val queryValue = query.collectAsStateWithLifecycle()
 
-        SearchPages(
+        TopBar(
+            query = queryValue.value,
+            pagerState = pagerState,
+            onEvent = onEvent,
+            onPhotoFiltersClick = { showFilterDialog = true },
+            onNavigateBack = navigateBack
+        )
+
+        Pages(
             query = queryValue,
             pagerState = pagerState,
             photos = photos,
             collections = collections,
             users = users,
-            contentPadding = PaddingValues(
-                top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 112.dp
-            ),
             navigateToPhotoDetails = navigateToPhotoDetails,
             navigateToCollectionDetails = navigateToCollectionDetails
         )
+    }
 
-        Column(modifier = Modifier.align(Alignment.TopCenter)) {
-            SearchRow(
-                query = queryValue.value,
-                pagerState = pagerState,
-                onEvent = onEvent,
-                onPhotoFiltersClick = { showFilterDialog = true },
-                onNavigateBack = navigateBack,
-                modifier = Modifier.statusBarsPadding()
-            )
-
-            SearchTabs(pagerState = pagerState)
-        }
-
-        if (showFilterDialog) {
-            SearchPhotoFilterDialog(
-                photoFilters = photoFilters.collectAsStateWithLifecycle(),
-                onApplyClick = onEvent,
-                onDismiss = { showFilterDialog = false }
-            )
-        }
+    if (showFilterDialog) {
+        SearchPhotoFilterDialog(
+            photoFilters = photoFilters.collectAsStateWithLifecycle(),
+            onApplyClick = onEvent,
+            onDismiss = { showFilterDialog = false }
+        )
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun SearchRow(
+private fun TopBar(
     query: String,
     pagerState: PagerState,
     onEvent: (SearchScreenEvent) -> Unit,
@@ -122,150 +120,147 @@ private fun SearchRow(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    ConstraintLayout(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(64.dp)
-    ) {
-        val (backButton, queryTextField, filterButton) = createRefs()
+    Surface {
+        ConstraintLayout(modifier = modifier.fillMaxWidth()) {
+            val scope = rememberCoroutineScope()
 
-        IconButton(
-            onClick = onNavigateBack,
-            modifier = Modifier.constrainAs(backButton) {
-                top.linkTo(parent.top)
-                bottom.linkTo(parent.bottom)
-                start.linkTo(parent.start, 16.dp)
-            }
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_arrow_back),
-                contentDescription = stringResource(id = R.string.photo_filters)
-            )
-        }
+            val (backButton, queryTextField, filterButton, tabs) = createRefs()
 
-        val focusManager = LocalFocusManager.current
-        var text by remember { mutableStateOf(query) }
-
-        WOutlinedTextField(
-            value = text,
-            placeholder = {
-                Text(
-                    text = stringResource(id = R.string.type_something),
-                    style = MaterialTheme.typography.subtitle1
-                )
-            },
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.Transparent,
-                cursorColor = MaterialTheme.colors.onPrimary,
-                disabledLabelColor = Color.LightGray,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                textColor = MaterialTheme.colors.onPrimary
-            ),
-            onValueChange = { text = it },
-            shape = RoundedCornerShape(8.dp),
-            singleLine = true,
-            trailingIcon = {
-                if (text.isNotEmpty()) {
-                    IconButton(
-                        onClick = { text = "" }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = stringResource(id = R.string.clear_search_field)
-                        )
-                    }
+            IconButton(
+                onClick = onNavigateBack,
+                modifier = Modifier.constrainAs(backButton) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(tabs.top)
+                    start.linkTo(parent.start, 16.dp)
                 }
-            },
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-            keyboardActions = KeyboardActions(
-                onSearch = {
-                    onEvent(SearchScreenEvent.OnQueryChanged(query = text))
-                    focusManager.clearFocus()
-                }
-            ),
-            textStyle = MaterialTheme.typography.subtitle1,
-            modifier = Modifier.constrainAs(queryTextField) {
-                top.linkTo(backButton.top)
-                bottom.linkTo(backButton.bottom)
-                start.linkTo(backButton.end)
-                if (pagerState.currentPage == SearchScreenTabs.Photos.ordinal) {
-                    end.linkTo(filterButton.start)
-                } else {
-                    end.linkTo(parent.end, 8.dp)
-                }
-                width = Dimension.fillToConstraints
-            }
-        )
-
-        AnimatedVisibility(
-            visible = pagerState.currentPage == SearchScreenTabs.Photos.ordinal,
-            enter = slideInHorizontally(initialOffsetX = { it }) + fadeIn(),
-            exit = slideOutHorizontally(targetOffsetX = { it }) + fadeOut(),
-            modifier = Modifier.constrainAs(filterButton) {
-                top.linkTo(queryTextField.top)
-                bottom.linkTo(queryTextField.bottom)
-                end.linkTo(parent.end, 16.dp)
-            }
-        ) {
-            IconButton(onClick = onPhotoFiltersClick) {
+            ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_filter_outlined),
+                    painter = painterResource(id = R.drawable.ic_arrow_back),
                     contentDescription = stringResource(id = R.string.photo_filters)
                 )
             }
-        }
-    }
-}
 
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-private fun SearchTabs(
-    pagerState: PagerState
-) {
-    val coroutineScope = rememberCoroutineScope()
+            val focusManager = LocalFocusManager.current
+            var text by rememberSaveable { mutableStateOf(query) }
 
-    TabRow(
-        selectedTabIndex = pagerState.currentPage,
-        backgroundColor = MaterialTheme.colors.primary,
-        contentColor = MaterialTheme.colors.onPrimary,
-        indicator = { tabPositions ->
-            Box(
-                modifier = Modifier
-                    .tabIndicatorOffset(tabPositions[pagerState.currentPage])
-                    .height(4.dp)
-                    .padding(horizontal = 28.dp)
-                    .background(
-                        color = MaterialTheme.colors.onPrimary,
-                        shape = RoundedCornerShape(16.dp)
+            WOutlinedTextField(
+                value = text,
+                placeholder = {
+                    Text(
+                        text = stringResource(id = R.string.type_something),
+                        style = MaterialTheme.typography.subtitle1
                     )
-            )
-        },
-        modifier = Modifier.height(48.dp)
-    ) {
-        SearchScreenTabs.values().forEachIndexed { index, tabPage ->
-            Tab(
-                selected = index == pagerState.currentPage,
-                onClick = {
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(index)
+                },
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Color.Transparent,
+                    cursorColor = MaterialTheme.colors.onPrimary,
+                    disabledLabelColor = Color.LightGray,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    textColor = MaterialTheme.colors.onPrimary
+                ),
+                onValueChange = { text = it },
+                shape = RoundedCornerShape(8.dp),
+                singleLine = true,
+                trailingIcon = {
+                    if (text.isNotEmpty()) {
+                        IconButton(onClick = { text = "" }) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = stringResource(id = R.string.clear_search_field)
+                            )
+                        }
                     }
                 },
-                text = {
-                    Text(
-                        text = stringResource(id = tabPage.titleRes),
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1
-                    )
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                keyboardActions = KeyboardActions(
+                    onSearch = {
+                        onEvent(SearchScreenEvent.OnQueryChanged(query = text))
+                        focusManager.clearFocus()
+                    }
+                ),
+                textStyle = MaterialTheme.typography.subtitle1,
+                modifier = Modifier.constrainAs(queryTextField) {
+                    top.linkTo(backButton.top)
+                    bottom.linkTo(backButton.bottom)
+                    start.linkTo(backButton.end)
+                    if (pagerState.currentPage == SearchScreenTabs.Photos.ordinal) {
+                        end.linkTo(filterButton.start)
+                    } else {
+                        end.linkTo(parent.end, 8.dp)
+                    }
+                    width = Dimension.fillToConstraints
                 }
             )
+
+            AnimatedVisibility(
+                visible = pagerState.currentPage == SearchScreenTabs.Photos.ordinal,
+                enter = slideInHorizontally(initialOffsetX = { it }) + fadeIn(),
+                exit = slideOutHorizontally(targetOffsetX = { it }) + fadeOut(),
+                modifier = Modifier.constrainAs(filterButton) {
+                    top.linkTo(queryTextField.top)
+                    bottom.linkTo(queryTextField.bottom)
+                    end.linkTo(parent.end, 16.dp)
+                }
+            ) {
+                IconButton(onClick = onPhotoFiltersClick) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_filter_outlined),
+                        contentDescription = stringResource(id = R.string.photo_filters)
+                    )
+                }
+            }
+
+            TabRow(
+                selectedTabIndex = pagerState.currentPage,
+                backgroundColor = MaterialTheme.colors.surface,
+                contentColor = MaterialTheme.colors.onSurface,
+                indicator = { tabPositions ->
+                    Box(
+                        modifier = Modifier
+                            .tabIndicatorOffset(tabPositions[pagerState.currentPage])
+                            .height(4.dp)
+                            .padding(horizontal = 28.dp)
+                            .background(
+                                color = MaterialTheme.colors.onSurface,
+                                shape = RoundedCornerShape(16.dp)
+                            )
+                    )
+                },
+                modifier = Modifier
+                    .constrainAs(tabs) {
+                        top.linkTo(queryTextField.bottom)
+                        bottom.linkTo(parent.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        width = Dimension.fillToConstraints
+                    }
+            ) {
+                SearchScreenTabs.values().forEachIndexed { index, tabPage ->
+                    Tab(
+                        selected = index == pagerState.currentPage,
+                        onClick = {
+                            scope.launch {
+                                pagerState.animateScrollToPage(index)
+                            }
+                        },
+                        text = {
+                            Text(
+                                text = stringResource(id = tabPage.titleRes),
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1
+                            )
+                        }
+                    )
+                }
+            }
         }
     }
 }
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
-private fun SearchPages(
+private fun Pages(
     query: State<String>,
     pagerState: PagerState,
     photos: Flow<PagingData<Photo>>,
@@ -415,11 +410,12 @@ private fun SearchPages(
 }
 
 @OptIn(ExperimentalFoundationApi::class)
-@Preview
+@Preview(uiMode = UI_MODE_NIGHT_NO)
+@Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
-fun SearchRowPreview() {
+fun TopBarPreview() {
     WalleriaTheme {
-        SearchRow(
+        TopBar(
             query = "",
             pagerState = rememberPagerState(initialPage = 0) { SearchScreenTabs.values().size },
             onEvent = {},
