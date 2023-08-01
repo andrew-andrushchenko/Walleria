@@ -59,11 +59,11 @@ class PhotoDetailsViewModel @Inject constructor(
 
     init {
         savedStateHandle.get<String>(PhotoDetailsArgs.ID)?.let { photoId ->
-            dispatchEvent(PhotoDetailsEvent.PhotoRequested(photoId))
+            onEvent(PhotoDetailsEvent.PhotoRequested(photoId))
         }
     }
 
-    fun dispatchEvent(event: PhotoDetailsEvent) {
+    fun onEvent(event: PhotoDetailsEvent) {
         when (event) {
             is PhotoDetailsEvent.PhotoRequested -> getPhoto(event.photoId)
             is PhotoDetailsEvent.PhotoLiked -> likePhoto(event.photoId)

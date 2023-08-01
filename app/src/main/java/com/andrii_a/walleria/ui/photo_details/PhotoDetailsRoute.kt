@@ -52,7 +52,7 @@ fun NavGraphBuilder.photoDetailsRoute(
             ?.collectAsStateWithLifecycle()
 
         collectResult?.value?.let { isCollected ->
-            viewModel.dispatchEvent(
+            viewModel.onEvent(
                 if (isCollected) PhotoDetailsEvent.PhotoBookmarked
                 else PhotoDetailsEvent.PhotoDropped
             )
@@ -64,7 +64,7 @@ fun NavGraphBuilder.photoDetailsRoute(
             isUserLoggedIn = isUserLoggedIn.value,
             isPhotoLiked = isPhotoLiked.value,
             isPhotoBookmarked = isPhotoBookmarked.value,
-            dispatchPhotoDetailsEvent = viewModel::dispatchEvent,
+            onEvent = viewModel::onEvent,
             navigateBack = navController::navigateUp,
             navigateToUserDetails = {},
             navigateToBookmarkPhoto = navController::navigateToCollectPhoto,

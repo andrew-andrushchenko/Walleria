@@ -46,7 +46,7 @@ fun PhotoDetailsScreen(
     isUserLoggedIn: Boolean,
     isPhotoLiked: Boolean,
     isPhotoBookmarked: Boolean,
-    dispatchPhotoDetailsEvent: (PhotoDetailsEvent) -> Unit,
+    onEvent: (PhotoDetailsEvent) -> Unit,
     navigateBack: () -> Unit,
     navigateToUserDetails: (UserNickname) -> Unit,
     navigateToBookmarkPhoto: (PhotoId) -> Unit,
@@ -71,7 +71,7 @@ fun PhotoDetailsScreen(
             is PhotoLoadResult.Error -> {
                 ErrorStateContent(
                     onRetry = {
-                        dispatchPhotoDetailsEvent(PhotoDetailsEvent.PhotoRequested(photoId.value))
+                        onEvent(PhotoDetailsEvent.PhotoRequested(photoId.value))
                     },
                     onNavigateBack = navigateBack,
                     modifier = Modifier
@@ -90,7 +90,7 @@ fun PhotoDetailsScreen(
                     navigateToUserDetails = navigateToUserDetails,
                     navigateToCollectPhoto = navigateToBookmarkPhoto,
                     navigateToSearch = navigateToSearch,
-                    dispatchPhotoDetailsEvent = dispatchPhotoDetailsEvent,
+                    dispatchPhotoDetailsEvent = onEvent,
                     modifier = Modifier.fillMaxSize()
                 )
             }
