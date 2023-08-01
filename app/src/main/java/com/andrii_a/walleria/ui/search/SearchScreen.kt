@@ -353,7 +353,7 @@ private fun Pages(
                             lazyCollectionItems = lazyCollectionItems,
                             onCollectionClicked = navigateToCollectionDetails,
                             onUserProfileClicked = {},
-                            onPhotoClicked = {},
+                            onPhotoClicked = navigateToPhotoDetails,
                             listState = listState,
                             contentPadding = PaddingValues(
                                 top = 8.dp,
