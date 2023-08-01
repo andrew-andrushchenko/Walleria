@@ -58,7 +58,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun SearchScreen(
     query: StateFlow<String>,
@@ -71,42 +71,51 @@ fun SearchScreen(
     navigateToCollectionDetails: (CollectionId) -> Unit,
     navigateBack: () -> Unit
 ) {
+    val scope = rememberCoroutineScope()
+    val modalBottomSheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        skipHalfExpanded = true
+    )
     val pagerState = rememberPagerState(initialPage = 0) { SearchScreenTabs.values().size }
 
-    var showFilterDialog by rememberSaveable { mutableStateOf(false) }
+    val filters by photoFilters.collectAsStateWithLifecycle()
 
-    Column(
-        modifier = Modifier
-            .statusBarsPadding()
-            .fillMaxWidth()
+    ModalBottomSheetLayout(
+        sheetContent = {
+            SearchPhotoFiltersBottomSheet(
+                photoFilters = filters,
+                onApplyClick = onEvent,
+                onDismiss = { scope.launch { modalBottomSheetState.hide() } }
+            )
+        },
+        sheetState = modalBottomSheetState,
+        sheetShape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
     ) {
-        val queryValue = query.collectAsStateWithLifecycle()
+        Column(
+            modifier = Modifier
+                .statusBarsPadding()
+                .fillMaxWidth()
+        ) {
+            val queryValue = query.collectAsStateWithLifecycle()
 
-        TopBar(
-            query = queryValue.value,
-            pagerState = pagerState,
-            onEvent = onEvent,
-            onPhotoFiltersClick = { showFilterDialog = true },
-            onNavigateBack = navigateBack
-        )
+            TopBar(
+                query = queryValue.value,
+                pagerState = pagerState,
+                onEvent = onEvent,
+                onPhotoFiltersClick = { scope.launch { modalBottomSheetState.show() } },
+                onNavigateBack = navigateBack
+            )
 
-        Pages(
-            query = queryValue,
-            pagerState = pagerState,
-            photos = photos,
-            collections = collections,
-            users = users,
-            navigateToPhotoDetails = navigateToPhotoDetails,
-            navigateToCollectionDetails = navigateToCollectionDetails
-        )
-    }
-
-    if (showFilterDialog) {
-        SearchPhotoFilterDialog(
-            photoFilters = photoFilters.collectAsStateWithLifecycle(),
-            onApplyClick = onEvent,
-            onDismiss = { showFilterDialog = false }
-        )
+            Pages(
+                query = queryValue,
+                pagerState = pagerState,
+                photos = photos,
+                collections = collections,
+                users = users,
+                navigateToPhotoDetails = navigateToPhotoDetails,
+                navigateToCollectionDetails = navigateToCollectionDetails
+            )
+        }
     }
 }
 

@@ -194,7 +194,7 @@ fun SingleChoiceSelector(
     selectedOptionOrdinal: Int,
     onOptionSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    selectedColor: Color = MaterialTheme.colors.primary,
+    selectedColor: Color = MaterialTheme.colors.surface,
     unselectedColor: Color = MaterialTheme.colors.onSurface,
     state: SingleChoiceSelectorState = rememberSingleChoiceSelectorState(
         options = options,
@@ -215,7 +215,7 @@ fun SingleChoiceSelector(
             .clip(
                 shape = RoundedCornerShape(percent = 50)
             )
-            .background(MaterialTheme.colors.surface),
+            .background(Color.Transparent),
         content = {
             val colors = state.textColors
 
@@ -282,7 +282,7 @@ fun SingleChoiceSelector(
                             bottomEndPercent = state.endCornerPercent,
                         )
                     )
-                    .background(MaterialTheme.colors.onBackground),
+                    .background(MaterialTheme.colors.onSurface),
             )
         }
     ) { measurables, constraints ->
