@@ -60,7 +60,7 @@ fun PhotoDetailsScreen(
         when (loadResult) {
             is PhotoLoadResult.Empty -> Unit
             is PhotoLoadResult.Loading -> {
-                LoadingSection(
+                LoadingStateContent(
                     onNavigateBack = navigateBack,
                     modifier = Modifier
                         .fillMaxSize()
@@ -69,7 +69,7 @@ fun PhotoDetailsScreen(
             }
 
             is PhotoLoadResult.Error -> {
-                ErrorSection(
+                ErrorStateContent(
                     onRetry = {
                         dispatchPhotoDetailsEvent(PhotoDetailsEvent.PhotoRequested(photoId.value))
                     },
@@ -81,7 +81,7 @@ fun PhotoDetailsScreen(
             }
 
             is PhotoLoadResult.Success -> {
-                ContentSection(
+                SuccessStateContent(
                     photo = loadResult.photo,
                     isUserLoggedIn = isUserLoggedIn,
                     isPhotoLiked = isPhotoLiked,
@@ -103,7 +103,7 @@ value class LikeCount(val value: Long)
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ContentSection(
+private fun SuccessStateContent(
     photo: Photo,
     isUserLoggedIn: Boolean,
     isPhotoLiked: Boolean,
@@ -194,7 +194,7 @@ fun ContentSection(
                         alpha = 1 - state.dismissDragProgress
                     }
             ) {
-                TopSection(
+                TopBar(
                     onNavigateBack = navigateBack,
                     onOpenInBrowser = { context.openPhotoInBrowser(photo.links?.html) },
                     modifier = Modifier
@@ -215,7 +215,7 @@ fun ContentSection(
                         alpha = 1 - state.dismissDragProgress
                     }
             ) {
-                BottomSection(
+                BottomControls(
                     likes = photo.likes,
                     photoOwner = photo.user,
                     isPhotoLiked = isPhotoLiked,
@@ -278,7 +278,7 @@ fun ContentSection(
 }
 
 @Composable
-fun LoadingSection(
+private fun LoadingStateContent(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -290,7 +290,7 @@ fun LoadingSection(
                 .statusBarsPadding()
         )
 
-        TopSection(
+        TopBar(
             onNavigateBack = onNavigateBack,
             modifier = Modifier
                 .fillMaxWidth()
@@ -301,7 +301,7 @@ fun LoadingSection(
 }
 
 @Composable
-fun ErrorSection(
+private fun ErrorStateContent(
     onRetry: () -> Unit,
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
@@ -312,7 +312,7 @@ fun ErrorSection(
             modifier = Modifier.fillMaxSize()
         )
 
-        TopSection(
+        TopBar(
             onNavigateBack = onNavigateBack,
             modifier = Modifier
                 .fillMaxWidth()
@@ -323,7 +323,7 @@ fun ErrorSection(
 }
 
 @Composable
-fun TopSection(
+private fun TopBar(
     onNavigateBack: () -> Unit,
     onOpenInBrowser: () -> Unit,
     modifier: Modifier = Modifier
@@ -352,7 +352,7 @@ fun TopSection(
 }
 
 @Composable
-fun TopSection(
+private fun TopBar(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -372,7 +372,7 @@ fun TopSection(
 }
 
 @Composable
-fun BottomSection(
+private fun BottomControls(
     likes: Long,
     photoOwner: User?,
     isPhotoLiked: Boolean,
@@ -520,9 +520,9 @@ fun BottomSection(
 
 @Preview
 @Composable
-fun BottomSectionPreview() {
+fun BottomControlsPreview() {
     WalleriaTheme {
-        BottomSection(
+        BottomControls(
             likes = 10,
             photoOwner = User(
                 id = "",
