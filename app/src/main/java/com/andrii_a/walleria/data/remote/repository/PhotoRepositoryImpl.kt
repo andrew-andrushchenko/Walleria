@@ -8,6 +8,7 @@ import com.andrii_a.walleria.core.TopicPhotosOrientation
 import com.andrii_a.walleria.data.remote.source.photo.*
 import com.andrii_a.walleria.data.util.PAGE_SIZE
 import com.andrii_a.walleria.core.BackendResult
+import com.andrii_a.walleria.data.remote.service.PhotoService
 import com.andrii_a.walleria.data.util.network.backendRequest
 import com.andrii_a.walleria.data.util.network.backendRequestFlow
 import com.andrii_a.walleria.domain.models.photo.Photo

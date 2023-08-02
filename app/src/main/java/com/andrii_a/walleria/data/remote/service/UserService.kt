@@ -1,4 +1,4 @@
-package com.andrii_a.walleria.data.remote.source.user
+package com.andrii_a.walleria.data.remote.service
 
 import com.andrii_a.walleria.data.remote.dto.login.MyProfileDTO
 import com.andrii_a.walleria.data.remote.dto.user.UserDTO

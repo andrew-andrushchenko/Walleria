@@ -1,4 +1,4 @@
-package com.andrii_a.walleria.data.remote.source.photo
+package com.andrii_a.walleria.data.remote.service
 
 import com.andrii_a.walleria.data.remote.dto.photo.PhotoDTO
 import okhttp3.ResponseBody

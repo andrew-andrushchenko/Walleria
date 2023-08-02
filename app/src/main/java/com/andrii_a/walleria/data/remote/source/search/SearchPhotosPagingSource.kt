@@ -5,6 +5,7 @@ import com.andrii_a.walleria.core.SearchResultsDisplayOrder
 import com.andrii_a.walleria.core.SearchResultsPhotoColor
 import com.andrii_a.walleria.core.SearchResultsPhotoOrientation
 import com.andrii_a.walleria.data.remote.dto.search.SearchPhotosResultDTO
+import com.andrii_a.walleria.data.remote.service.SearchService
 import com.andrii_a.walleria.data.remote.source.base.BasePagingSource
 import com.andrii_a.walleria.data.util.INITIAL_PAGE_INDEX
 import com.andrii_a.walleria.data.util.PAGE_SIZE

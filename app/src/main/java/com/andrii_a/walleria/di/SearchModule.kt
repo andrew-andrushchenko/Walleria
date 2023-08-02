@@ -1,7 +1,7 @@
 package com.andrii_a.walleria.di
 
 import com.andrii_a.walleria.data.remote.repository.SearchRepositoryImpl
-import com.andrii_a.walleria.data.remote.source.search.SearchService
+import com.andrii_a.walleria.data.remote.service.SearchService
 import com.andrii_a.walleria.data.util.BASE_API_URL
 import com.andrii_a.walleria.domain.repository.SearchRepository
 import dagger.Module

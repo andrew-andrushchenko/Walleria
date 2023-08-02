@@ -1,7 +1,7 @@
 package com.andrii_a.walleria.di
 
 import com.andrii_a.walleria.data.remote.repository.PhotoRepositoryImpl
-import com.andrii_a.walleria.data.remote.source.photo.PhotoService
+import com.andrii_a.walleria.data.remote.service.PhotoService
 import com.andrii_a.walleria.data.util.BASE_API_URL
 import com.andrii_a.walleria.domain.repository.PhotoRepository
 import dagger.Module

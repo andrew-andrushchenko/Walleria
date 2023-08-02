@@ -9,7 +9,7 @@ import com.andrii_a.walleria.core.SearchResultsPhotoColor
 import com.andrii_a.walleria.core.SearchResultsPhotoOrientation
 import com.andrii_a.walleria.data.remote.source.search.SearchCollectionsPagingSource
 import com.andrii_a.walleria.data.remote.source.search.SearchPhotosPagingSource
-import com.andrii_a.walleria.data.remote.source.search.SearchService
+import com.andrii_a.walleria.data.remote.service.SearchService
 import com.andrii_a.walleria.data.remote.source.search.SearchUsersPagingSource
 import com.andrii_a.walleria.data.util.PAGE_SIZE
 import com.andrii_a.walleria.domain.models.collection.Collection

@@ -1,7 +1,7 @@
 package com.andrii_a.walleria.di
 
 import com.andrii_a.walleria.data.remote.repository.TopicRepositoryImpl
-import com.andrii_a.walleria.data.remote.source.topic.TopicService
+import com.andrii_a.walleria.data.remote.service.TopicService
 import com.andrii_a.walleria.data.util.BASE_API_URL
 import com.andrii_a.walleria.domain.repository.TopicRepository
 import dagger.Module

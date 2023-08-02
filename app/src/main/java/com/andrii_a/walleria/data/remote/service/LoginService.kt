@@ -1,4 +1,4 @@
-package com.andrii_a.walleria.data.remote.source.login
+package com.andrii_a.walleria.data.remote.service
 
 import com.andrii_a.walleria.data.remote.dto.login.AccessTokenDTO
 import retrofit2.http.POST

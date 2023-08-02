@@ -1,4 +1,4 @@
-package com.andrii_a.walleria.data.remote.source.topic
+package com.andrii_a.walleria.data.remote.service
 
 import com.andrii_a.walleria.data.remote.dto.topic.TopicDTO
 import retrofit2.http.GET

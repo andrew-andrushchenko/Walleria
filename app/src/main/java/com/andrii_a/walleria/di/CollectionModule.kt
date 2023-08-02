@@ -1,7 +1,7 @@
 package com.andrii_a.walleria.di
 
 import com.andrii_a.walleria.data.remote.repository.CollectionRepositoryImpl
-import com.andrii_a.walleria.data.remote.source.collection.CollectionsService
+import com.andrii_a.walleria.data.remote.service.CollectionsService
 import com.andrii_a.walleria.data.util.BASE_API_URL
 import com.andrii_a.walleria.domain.repository.CollectionRepository
 import dagger.Module
