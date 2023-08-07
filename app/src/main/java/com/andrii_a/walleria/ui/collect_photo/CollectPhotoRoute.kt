@@ -14,6 +14,7 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.navigation.Screen
+import com.andrii_a.walleria.ui.util.InterScreenCommunicationKeys
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.bottomSheet
 import com.google.accompanist.systemuicontroller.SystemUiController
@@ -45,7 +46,7 @@ fun NavGraphBuilder.collectPhotoRoute(
             onBack = {
                 navController.previousBackStackEntry
                     ?.savedStateHandle
-                    ?.set("collect_result_key", viewModel.isPhotoCollected)
+                    ?.set(InterScreenCommunicationKeys.COLLECT_SCREEN_RESULT_KEY, viewModel.isPhotoCollected)
 
                 navController.popBackStack()
             }
@@ -59,7 +60,7 @@ fun NavGraphBuilder.collectPhotoRoute(
                     ) {
                         navController.previousBackStackEntry
                             ?.savedStateHandle
-                            ?.set("collect_result_key", viewModel.isPhotoCollected)
+                            ?.set(InterScreenCommunicationKeys.COLLECT_SCREEN_RESULT_KEY, viewModel.isPhotoCollected)
                         Log.d(
                             TAG,
                             "collectPhotoRoute: snapshotFlow: backStackEntry updated. TargetValue = ${targetValue.name}"

@@ -13,6 +13,7 @@ import com.andrii_a.walleria.ui.collect_photo.navigateToCollectPhoto
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.search.navigateToSearch
+import com.andrii_a.walleria.ui.util.InterScreenCommunicationKeys
 import com.google.accompanist.systemuicontroller.SystemUiController
 
 fun NavGraphBuilder.photoDetailsRoute(
@@ -48,7 +49,7 @@ fun NavGraphBuilder.photoDetailsRoute(
 
         val collectResult = navController.currentBackStackEntry
             ?.savedStateHandle
-            ?.getStateFlow("collect_result_key", isPhotoCollected.value)
+            ?.getStateFlow(InterScreenCommunicationKeys.COLLECT_SCREEN_RESULT_KEY, isPhotoCollected.value)
             ?.collectAsStateWithLifecycle()
 
         collectResult?.value?.let { isCollected ->
