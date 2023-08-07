@@ -44,11 +44,11 @@ fun NavGraphBuilder.photoDetailsRoute(
         val loadResultState = viewModel.loadResult.collectAsStateWithLifecycle()
         val isUserLoggedIn = viewModel.isUserLoggedIn.collectAsStateWithLifecycle()
         val isPhotoLiked = viewModel.isLiked.collectAsStateWithLifecycle()
-        val isPhotoBookmarked = viewModel.isBookmarked.collectAsStateWithLifecycle()
+        val isPhotoCollected = viewModel.isCollected.collectAsStateWithLifecycle()
 
         val collectResult = navController.currentBackStackEntry
             ?.savedStateHandle
-            ?.getStateFlow("collect_result_key", isPhotoBookmarked.value)
+            ?.getStateFlow("collect_result_key", isPhotoCollected.value)
             ?.collectAsStateWithLifecycle()
 
         collectResult?.value?.let { isCollected ->
@@ -63,11 +63,11 @@ fun NavGraphBuilder.photoDetailsRoute(
             loadResult = loadResultState.value,
             isUserLoggedIn = isUserLoggedIn.value,
             isPhotoLiked = isPhotoLiked.value,
-            isPhotoBookmarked = isPhotoBookmarked.value,
+            isPhotoCollected = isPhotoCollected.value,
             onEvent = viewModel::onEvent,
             navigateBack = navController::navigateUp,
             navigateToUserDetails = {},
-            navigateToBookmarkPhoto = navController::navigateToCollectPhoto,
+            navigateToCollectPhoto = navController::navigateToCollectPhoto,
             navigateToSearch = navController::navigateToSearch
         )
     }

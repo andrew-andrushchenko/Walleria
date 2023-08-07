@@ -61,8 +61,8 @@ class PhotoDetailsViewModel @Inject constructor(
     private val _isLiked: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isLiked: StateFlow<Boolean> = _isLiked.asStateFlow()
 
-    private val _isBookmarked: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val isBookmarked: StateFlow<Boolean> = _isBookmarked.asStateFlow()
+    private val _isCollected: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isCollected: StateFlow<Boolean> = _isCollected.asStateFlow()
 
     init {
         savedStateHandle.get<String>(PhotoDetailsArgs.ID)?.let { photoId ->
@@ -75,8 +75,8 @@ class PhotoDetailsViewModel @Inject constructor(
             is PhotoDetailsEvent.RequestPhoto -> getPhoto(event.photoId)
             is PhotoDetailsEvent.LikePhoto -> likePhoto(event.photoId)
             is PhotoDetailsEvent.DislikePhoto -> dislikePhoto(event.photoId)
-            is PhotoDetailsEvent.CollectPhoto -> _isBookmarked.update { true }
-            is PhotoDetailsEvent.DropPhoto -> _isBookmarked.update { false }
+            is PhotoDetailsEvent.CollectPhoto -> _isCollected.update { true }
+            is PhotoDetailsEvent.DropPhoto -> _isCollected.update { false }
             is PhotoDetailsEvent.DownloadPhoto -> downloadPhoto(event.photo, event.quality)
         }
     }
@@ -91,7 +91,7 @@ class PhotoDetailsViewModel @Inject constructor(
                     val photo = result.value
                     _loadResult.update { PhotoLoadResult.Success(photo) }
                     _isLiked.update { photo.likedByUser }
-                    _isBookmarked.update { photo.currentUserCollections?.map { it.id }?.isNotEmpty() ?: false }
+                    _isCollected.update { photo.currentUserCollections?.map { it.id }?.isNotEmpty() ?: false }
                 }
                 is BackendResult.Error -> {
                     _loadResult.update { PhotoLoadResult.Error }

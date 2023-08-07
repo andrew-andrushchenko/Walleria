@@ -51,11 +51,11 @@ fun PhotoDetailsScreen(
     loadResult: PhotoLoadResult,
     isUserLoggedIn: Boolean,
     isPhotoLiked: Boolean,
-    isPhotoBookmarked: Boolean,
+    isPhotoCollected: Boolean,
     onEvent: (PhotoDetailsEvent) -> Unit,
     navigateBack: () -> Unit,
     navigateToUserDetails: (UserNickname) -> Unit,
-    navigateToBookmarkPhoto: (PhotoId) -> Unit,
+    navigateToCollectPhoto: (PhotoId) -> Unit,
     navigateToSearch: (SearchQuery) -> Unit
 ) {
     Box(
@@ -91,10 +91,10 @@ fun PhotoDetailsScreen(
                     photo = loadResult.photo,
                     isUserLoggedIn = isUserLoggedIn,
                     isPhotoLiked = isPhotoLiked,
-                    isPhotoBookmarked = isPhotoBookmarked,
+                    isPhotoCollected = isPhotoCollected,
                     navigateBack = navigateBack,
                     navigateToUserDetails = navigateToUserDetails,
-                    navigateToCollectPhoto = navigateToBookmarkPhoto,
+                    navigateToCollectPhoto = navigateToCollectPhoto,
                     navigateToSearch = navigateToSearch,
                     onEvent = onEvent,
                     modifier = Modifier.fillMaxSize()
@@ -113,7 +113,7 @@ private fun SuccessStateContent(
     photo: Photo,
     isUserLoggedIn: Boolean,
     isPhotoLiked: Boolean,
-    isPhotoBookmarked: Boolean,
+    isPhotoCollected: Boolean,
     modifier: Modifier = Modifier,
     navigateBack: () -> Unit,
     navigateToUserDetails: (UserNickname) -> Unit,
@@ -229,7 +229,7 @@ private fun SuccessStateContent(
                     likes = photo.likes,
                     photoOwner = photo.user,
                     isPhotoLiked = isPhotoLiked,
-                    isPhotoBookmarked = isPhotoBookmarked,
+                    isPhotoCollected = isPhotoCollected,
                     onNavigateToUserDetails = {
                         navigateToUserDetails(UserNickname(photo.userNickname))
                     },
@@ -402,7 +402,7 @@ private fun BottomControls(
     likes: Long,
     photoOwner: User?,
     isPhotoLiked: Boolean,
-    isPhotoBookmarked: Boolean,
+    isPhotoCollected: Boolean,
     onNavigateToUserDetails: () -> Unit,
     onNavigateToCollectPhoto: () -> Unit,
     onLikeButtonClick: () -> LikeCount?,
@@ -447,7 +447,7 @@ private fun BottomControls(
             text = {
                 Text(
                     text = stringResource(
-                        id = if (isPhotoBookmarked) R.string.drop
+                        id = if (isPhotoCollected) R.string.drop
                         else R.string.collect
                     )
                 )
@@ -455,7 +455,7 @@ private fun BottomControls(
             icon = {
                 Icon(
                     painter = painterResource(
-                        id = if (isPhotoBookmarked) R.drawable.ic_bookmark_remove_filled
+                        id = if (isPhotoCollected) R.drawable.ic_bookmark_remove_filled
                         else R.drawable.ic_bookmark_add_outlined
                     ),
                     contentDescription = null
@@ -573,7 +573,7 @@ fun BottomControlsPreview() {
                 photos = null
             ),
             isPhotoLiked = true,
-            isPhotoBookmarked = false,
+            isPhotoCollected = false,
             onNavigateToUserDetails = {},
             onNavigateToCollectPhoto = {},
             onLikeButtonClick = { LikeCount(0) },
