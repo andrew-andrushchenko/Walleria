@@ -53,8 +53,8 @@ fun NavGraphBuilder.photoDetailsRoute(
 
         collectResult?.value?.let { isCollected ->
             viewModel.onEvent(
-                if (isCollected) PhotoDetailsEvent.PhotoBookmarked
-                else PhotoDetailsEvent.PhotoDropped
+                if (isCollected) PhotoDetailsEvent.CollectPhoto
+                else PhotoDetailsEvent.DropPhoto
             )
         }
 

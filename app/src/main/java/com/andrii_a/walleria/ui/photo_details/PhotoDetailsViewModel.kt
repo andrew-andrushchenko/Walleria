@@ -23,11 +23,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed interface PhotoDetailsEvent {
-    data class PhotoRequested(val photoId: String) : PhotoDetailsEvent
-    data class PhotoLiked(val photoId: String) : PhotoDetailsEvent
-    data class PhotoDisliked(val photoId: String) : PhotoDetailsEvent
-    data object PhotoBookmarked : PhotoDetailsEvent
-    data object PhotoDropped : PhotoDetailsEvent
+    data class RequestPhoto(val photoId: String) : PhotoDetailsEvent
+    data class LikePhoto(val photoId: String) : PhotoDetailsEvent
+    data class DislikePhoto(val photoId: String) : PhotoDetailsEvent
+    data object CollectPhoto : PhotoDetailsEvent
+    data object DropPhoto : PhotoDetailsEvent
     data class DownloadPhoto(
         val photo: Photo,
         val quality: PhotoQuality = PhotoQuality.HIGH
@@ -66,17 +66,17 @@ class PhotoDetailsViewModel @Inject constructor(
 
     init {
         savedStateHandle.get<String>(PhotoDetailsArgs.ID)?.let { photoId ->
-            onEvent(PhotoDetailsEvent.PhotoRequested(photoId))
+            onEvent(PhotoDetailsEvent.RequestPhoto(photoId))
         }
     }
 
     fun onEvent(event: PhotoDetailsEvent) {
         when (event) {
-            is PhotoDetailsEvent.PhotoRequested -> getPhoto(event.photoId)
-            is PhotoDetailsEvent.PhotoLiked -> likePhoto(event.photoId)
-            is PhotoDetailsEvent.PhotoDisliked -> dislikePhoto(event.photoId)
-            is PhotoDetailsEvent.PhotoBookmarked -> _isBookmarked.update { true }
-            is PhotoDetailsEvent.PhotoDropped -> _isBookmarked.update { false }
+            is PhotoDetailsEvent.RequestPhoto -> getPhoto(event.photoId)
+            is PhotoDetailsEvent.LikePhoto -> likePhoto(event.photoId)
+            is PhotoDetailsEvent.DislikePhoto -> dislikePhoto(event.photoId)
+            is PhotoDetailsEvent.CollectPhoto -> _isBookmarked.update { true }
+            is PhotoDetailsEvent.DropPhoto -> _isBookmarked.update { false }
             is PhotoDetailsEvent.DownloadPhoto -> downloadPhoto(event.photo, event.quality)
         }
     }

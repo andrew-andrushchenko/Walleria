@@ -77,7 +77,7 @@ fun PhotoDetailsScreen(
             is PhotoLoadResult.Error -> {
                 ErrorStateContent(
                     onRetry = {
-                        onEvent(PhotoDetailsEvent.PhotoRequested(photoId.value))
+                        onEvent(PhotoDetailsEvent.RequestPhoto(photoId.value))
                     },
                     onNavigateBack = navigateBack,
                     modifier = Modifier
@@ -244,10 +244,10 @@ private fun SuccessStateContent(
                     onLikeButtonClick = {
                         if (isUserLoggedIn) {
                             if (isPhotoLiked) {
-                                onEvent(PhotoDetailsEvent.PhotoDisliked(photo.id))
+                                onEvent(PhotoDetailsEvent.DislikePhoto(photo.id))
                                 LikeCount(value = photo.likes)
                             } else {
-                                onEvent(PhotoDetailsEvent.PhotoLiked(photo.id))
+                                onEvent(PhotoDetailsEvent.LikePhoto(photo.id))
                                 LikeCount(value = photo.likes + 1)
                             }
                         } else {
