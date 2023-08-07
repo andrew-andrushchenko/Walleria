@@ -1,12 +1,16 @@
 package com.andrii_a.walleria.di
 
+import android.content.Context
 import com.andrii_a.walleria.data.remote.repository.PhotoRepositoryImpl
+import com.andrii_a.walleria.data.remote.service.AndroidPhotoDownloader
 import com.andrii_a.walleria.data.remote.service.PhotoService
 import com.andrii_a.walleria.data.util.BASE_API_URL
 import com.andrii_a.walleria.domain.repository.PhotoRepository
+import com.andrii_a.walleria.domain.service.PhotoDownloader
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import javax.inject.Singleton
@@ -24,5 +28,10 @@ object PhotoModule {
     @Singleton
     fun providePhotoRepository(photoService: PhotoService): PhotoRepository =
         PhotoRepositoryImpl(photoService)
+
+    @Provides
+    @Singleton
+    fun providePhotoDownloader(@ApplicationContext context: Context): PhotoDownloader =
+        AndroidPhotoDownloader(context)
 
 }

@@ -30,4 +30,6 @@ interface PhotoRepository {
     suspend fun dislikePhoto(id: String): BackendResult<Unit>
 
     suspend fun getUserCollectionIdsForPhoto(photoId: String): MutableList<String>
+
+    suspend fun trackPhotoDownload(photoId: String)
 }

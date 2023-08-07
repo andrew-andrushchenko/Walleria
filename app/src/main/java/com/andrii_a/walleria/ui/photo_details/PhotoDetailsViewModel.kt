@@ -4,9 +4,11 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.andrii_a.walleria.core.BackendResult
+import com.andrii_a.walleria.core.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.repository.LocalUserAccountPreferencesRepository
 import com.andrii_a.walleria.domain.repository.PhotoRepository
+import com.andrii_a.walleria.domain.service.PhotoDownloader
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,6 +28,10 @@ sealed interface PhotoDetailsEvent {
     data class PhotoDisliked(val photoId: String) : PhotoDetailsEvent
     data object PhotoBookmarked : PhotoDetailsEvent
     data object PhotoDropped : PhotoDetailsEvent
+    data class DownloadPhoto(
+        val photo: Photo,
+        val quality: PhotoQuality = PhotoQuality.HIGH
+    ) : PhotoDetailsEvent
 }
 
 sealed interface PhotoLoadResult {
@@ -39,6 +45,7 @@ sealed interface PhotoLoadResult {
 class PhotoDetailsViewModel @Inject constructor(
     private val photoRepository: PhotoRepository,
     localUserAccountPreferencesRepository: LocalUserAccountPreferencesRepository,
+    private val photoDownloader: PhotoDownloader,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     val isUserLoggedIn: StateFlow<Boolean> = localUserAccountPreferencesRepository.isUserAuthorized
@@ -70,6 +77,7 @@ class PhotoDetailsViewModel @Inject constructor(
             is PhotoDetailsEvent.PhotoDisliked -> dislikePhoto(event.photoId)
             is PhotoDetailsEvent.PhotoBookmarked -> _isBookmarked.update { true }
             is PhotoDetailsEvent.PhotoDropped -> _isBookmarked.update { false }
+            is PhotoDetailsEvent.DownloadPhoto -> downloadPhoto(event.photo, event.quality)
         }
     }
 
@@ -110,5 +118,9 @@ class PhotoDetailsViewModel @Inject constructor(
             photoRepository.dislikePhoto(photoId)
             _isLiked.update { false }
         }
+    }
+
+    private fun downloadPhoto(photo: Photo, quality: PhotoQuality) {
+        photoDownloader.downloadPhoto(photo, quality)
     }
 }

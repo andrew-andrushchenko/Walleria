@@ -3,12 +3,16 @@ package com.andrii_a.walleria.data.remote.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.andrii_a.walleria.core.BackendResult
 import com.andrii_a.walleria.core.PhotoListDisplayOrder
 import com.andrii_a.walleria.core.TopicPhotosOrientation
-import com.andrii_a.walleria.data.remote.source.photo.*
-import com.andrii_a.walleria.data.util.PAGE_SIZE
-import com.andrii_a.walleria.core.BackendResult
 import com.andrii_a.walleria.data.remote.service.PhotoService
+import com.andrii_a.walleria.data.remote.source.photo.CollectionPhotosPagingSource
+import com.andrii_a.walleria.data.remote.source.photo.PhotosPagingSource
+import com.andrii_a.walleria.data.remote.source.photo.TopicPhotosPagingSource
+import com.andrii_a.walleria.data.remote.source.photo.UserLikedPhotosPagingSource
+import com.andrii_a.walleria.data.remote.source.photo.UserPhotosPagingSource
+import com.andrii_a.walleria.data.util.PAGE_SIZE
 import com.andrii_a.walleria.data.util.network.backendRequest
 import com.andrii_a.walleria.data.util.network.backendRequestFlow
 import com.andrii_a.walleria.domain.models.photo.Photo
@@ -93,5 +97,11 @@ class PhotoRepositoryImpl(private val photoService: PhotoService) : PhotoReposit
             list = photo.currentUserCollections?.map { it.id }?.toList() ?: emptyList()
         }
         return list.toMutableList()
+    }
+
+    override suspend fun trackPhotoDownload(photoId: String) {
+        backendRequest {
+            photoService.trackDownload(photoId)
+        }
     }
 }

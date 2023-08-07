@@ -172,4 +172,10 @@
     <string name="delete_collection_action">Delete</string>
     <string name="collection_details_screen_top_bar_color_animation_label">collection_details_screen_top_bar_color_animation_label</string>
 
+    <!-- Photo download-->
+    <string name="download_started">Download started!</string>
+    <string name="download_complete">Download complete!</string>
+    <string name="download_failed">Download failed!</string>
+    <string name="downloading_photo">Downloading photo…</string>
+
 </resources>

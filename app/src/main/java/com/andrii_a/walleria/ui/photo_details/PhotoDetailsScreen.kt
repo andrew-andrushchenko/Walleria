@@ -1,5 +1,10 @@
 package com.andrii_a.walleria.ui.photo_details
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.core.content.ContextCompat
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
@@ -205,6 +211,10 @@ private fun SuccessStateContent(
                 )
             }
 
+            val launcher = rememberLauncherForActivityResult(
+                ActivityResultContracts.RequestPermission()
+            ) { /* Unused */ }
+
             AnimatedVisibility(
                 visible = areControlsVisible,
                 enter = fadeIn(),
@@ -257,7 +267,23 @@ private fun SuccessStateContent(
                             photo.description.orEmpty()
                         )
                     },
-                    onDownloadButtonClick = {},
+                    onDownloadButtonClick = {
+                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                            if (ContextCompat.checkSelfPermission(
+                                    context,
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                                ) == PackageManager.PERMISSION_GRANTED
+                            ) {
+                                context.toast(context.getString(R.string.download_started))
+                                onEvent(PhotoDetailsEvent.DownloadPhoto(photo))
+                            } else {
+                                launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            }
+                        } else {
+                            context.toast(context.getString(R.string.download_started))
+                            onEvent(PhotoDetailsEvent.DownloadPhoto(photo))
+                        }
+                    },
                     onZoomToFillClick = {
                         scope.launch {
                             state.animateScaleTo(

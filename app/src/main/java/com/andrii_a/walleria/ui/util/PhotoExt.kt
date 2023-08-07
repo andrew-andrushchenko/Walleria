@@ -41,3 +41,6 @@ val Photo.primaryColorInt: Int
 
 val Photo.primaryColorComposable: ComposeColor
     get() = ComposeColor(this.primaryColorInt)
+
+val Photo.downloadFilename: String
+    get() = "${this.id}_${this.userNickname}_unsplash.jpg"

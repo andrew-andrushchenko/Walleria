@@ -65,4 +65,7 @@ interface PhotoService {
     suspend fun dislikePhoto(
         @Path("id") id: String
     ): Response<Unit>
+
+    @GET("photos/{id}/download")
+    suspend fun trackDownload(@Path("id") photoId: String): ResponseBody
 }
