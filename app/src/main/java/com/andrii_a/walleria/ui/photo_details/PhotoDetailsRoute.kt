@@ -1,6 +1,7 @@
 package com.andrii_a.walleria.ui.photo_details
 
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -42,14 +43,14 @@ fun NavGraphBuilder.photoDetailsRoute(
         val viewModel: PhotoDetailsViewModel = hiltViewModel()
 
         val photoId = PhotoId(navBackStackEntry.arguments?.getString(PhotoDetailsArgs.ID).orEmpty())
-        val loadResultState = viewModel.loadResult.collectAsStateWithLifecycle()
-        val isUserLoggedIn = viewModel.isUserLoggedIn.collectAsStateWithLifecycle()
-        val isPhotoLiked = viewModel.isLiked.collectAsStateWithLifecycle()
-        val isPhotoCollected = viewModel.isCollected.collectAsStateWithLifecycle()
+        val loadResultState by viewModel.loadResult.collectAsStateWithLifecycle()
+        val isUserLoggedIn by viewModel.isUserLoggedIn.collectAsStateWithLifecycle()
+        val isPhotoLiked by viewModel.isLiked.collectAsStateWithLifecycle()
+        val isPhotoCollected by viewModel.isCollected.collectAsStateWithLifecycle()
 
         val collectResult = navController.currentBackStackEntry
             ?.savedStateHandle
-            ?.getStateFlow(InterScreenCommunicationKeys.COLLECT_SCREEN_RESULT_KEY, isPhotoCollected.value)
+            ?.getStateFlow(InterScreenCommunicationKeys.COLLECT_SCREEN_RESULT_KEY, isPhotoCollected)
             ?.collectAsStateWithLifecycle()
 
         collectResult?.value?.let { isCollected ->
@@ -61,10 +62,10 @@ fun NavGraphBuilder.photoDetailsRoute(
 
         PhotoDetailsScreen(
             photoId = photoId,
-            loadResult = loadResultState.value,
-            isUserLoggedIn = isUserLoggedIn.value,
-            isPhotoLiked = isPhotoLiked.value,
-            isPhotoCollected = isPhotoCollected.value,
+            loadResult = loadResultState,
+            isUserLoggedIn = isUserLoggedIn,
+            isPhotoLiked = isPhotoLiked,
+            isPhotoCollected = isPhotoCollected,
             onEvent = viewModel::onEvent,
             navigateBack = navController::navigateUp,
             navigateToUserDetails = {},
