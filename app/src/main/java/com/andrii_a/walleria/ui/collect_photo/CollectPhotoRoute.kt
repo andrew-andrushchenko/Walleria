@@ -16,13 +16,11 @@ import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.util.InterScreenCommunicationKeys
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.bottomSheet
-import com.google.accompanist.systemuicontroller.SystemUiController
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalMaterialApi::class)
 fun NavGraphBuilder.collectPhotoRoute(
     navController: NavController,
-    systemUiController: SystemUiController,
     bottomSheetState: ModalBottomSheetState
 ) {
     bottomSheet(

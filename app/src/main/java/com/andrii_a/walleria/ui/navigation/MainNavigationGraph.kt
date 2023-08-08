@@ -60,7 +60,7 @@ fun MainNavHost(
 
             photoDetailsRoute(navHostController, systemUiController)
 
-            collectPhotoRoute(navHostController, systemUiController, bottomSheetState)
+            collectPhotoRoute(navHostController, bottomSheetState)
 
             collectionDetailsRoute(navHostController, systemUiController)
         }
