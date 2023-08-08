@@ -67,7 +67,7 @@ class CollectPhotoViewModel @Inject constructor(
         savedStateHandle.get<String>(CollectPhotoArgs.PHOTO_ID)?.let { photoId ->
             viewModelScope.launch {
                 _userCollectionsContainingPhoto.update {
-                    photoRepository.getUserCollectionIdsForPhoto(photoId)
+                    photoRepository.getUserCollectionIdsForPhoto(photoId).toMutableList()
                 }
             }
         }

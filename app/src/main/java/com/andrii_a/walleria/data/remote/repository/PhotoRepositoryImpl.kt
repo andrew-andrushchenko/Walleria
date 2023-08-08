@@ -90,13 +90,16 @@ class PhotoRepositoryImpl(private val photoService: PhotoService) : PhotoReposit
         photoService.dislikePhoto(id)
     }
 
-    override suspend fun getUserCollectionIdsForPhoto(photoId: String): MutableList<String> {
-        var list: List<String> = listOf()
-        backendRequest {
+    override suspend fun getUserCollectionIdsForPhoto(photoId: String): List<String> {
+        val result = backendRequest {
             val photo = photoService.getPhoto(photoId).toPhoto()
-            list = photo.currentUserCollections?.map { it.id }?.toList() ?: emptyList()
+            photo.currentUserCollections?.map { it.id }?.toList()
         }
-        return list.toMutableList()
+
+        return when (result) {
+            is BackendResult.Empty, is BackendResult.Loading, is BackendResult.Error -> emptyList()
+            is BackendResult.Success -> result.value ?: emptyList()
+        }
     }
 
     override suspend fun trackPhotoDownload(photoId: String) {
