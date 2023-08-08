@@ -184,7 +184,7 @@ private fun TopBar(
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                 keyboardActions = KeyboardActions(
                     onSearch = {
-                        onEvent(SearchScreenEvent.OnQueryChanged(query = text))
+                        onEvent(SearchScreenEvent.ChangeQuery(query = text))
                         focusManager.clearFocus()
                     }
                 ),

@@ -231,7 +231,7 @@ fun SearchPhotoFiltersBottomSheet(
                         orientation = orientation
                     )
 
-                    onApplyClick(SearchScreenEvent.OnPhotoFiltersChanged(filters))
+                    onApplyClick(SearchScreenEvent.ChangePhotoFilters(filters))
                     onDismiss()
                 },
                 colors = ButtonDefaults.buttonColors(

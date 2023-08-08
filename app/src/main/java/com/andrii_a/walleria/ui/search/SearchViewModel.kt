@@ -18,9 +18,9 @@ import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 sealed interface SearchScreenEvent {
-    data class OnQueryChanged(val query: String) : SearchScreenEvent
+    data class ChangeQuery(val query: String) : SearchScreenEvent
 
-    data class OnPhotoFiltersChanged(val photoFilters: PhotoFilters) : SearchScreenEvent
+    data class ChangePhotoFilters(val photoFilters: PhotoFilters) : SearchScreenEvent
 }
 
 data class PhotoFilters(
@@ -51,16 +51,16 @@ class SearchViewModel @Inject constructor(
 
     init {
         savedStateHandle.get<String>(SearchArgs.QUERY)?.let { query ->
-            onEvent(SearchScreenEvent.OnQueryChanged(query = query))
+            onEvent(SearchScreenEvent.ChangeQuery(query = query))
         }
     }
 
     fun onEvent(event: SearchScreenEvent) {
         when (event) {
-            is SearchScreenEvent.OnQueryChanged -> {
+            is SearchScreenEvent.ChangeQuery -> {
                 _query.update { event.query }
             }
-            is SearchScreenEvent.OnPhotoFiltersChanged -> {
+            is SearchScreenEvent.ChangePhotoFilters -> {
                 _photoFilters.update { event.photoFilters }
             }
         }
