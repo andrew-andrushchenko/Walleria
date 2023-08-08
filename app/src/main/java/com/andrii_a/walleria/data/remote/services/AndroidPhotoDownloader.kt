@@ -1,4 +1,4 @@
-package com.andrii_a.walleria.data.remote.service
+package com.andrii_a.walleria.data.remote.services
 
 import android.app.DownloadManager
 import android.content.Context
@@ -7,7 +7,7 @@ import androidx.core.net.toUri
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.core.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
-import com.andrii_a.walleria.domain.service.PhotoDownloader
+import com.andrii_a.walleria.domain.services.PhotoDownloader
 import com.andrii_a.walleria.ui.util.downloadFilename
 import com.andrii_a.walleria.ui.util.getUrlByQuality
 

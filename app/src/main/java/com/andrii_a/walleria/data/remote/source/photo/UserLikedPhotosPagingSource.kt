@@ -1,6 +1,6 @@
 package com.andrii_a.walleria.data.remote.source.photo
 
-import com.andrii_a.walleria.data.remote.service.PhotoService
+import com.andrii_a.walleria.data.remote.services.PhotoService
 import com.andrii_a.walleria.data.remote.source.base.BasePagingSource
 import com.andrii_a.walleria.data.util.INITIAL_PAGE_INDEX
 import com.andrii_a.walleria.data.util.PAGE_SIZE

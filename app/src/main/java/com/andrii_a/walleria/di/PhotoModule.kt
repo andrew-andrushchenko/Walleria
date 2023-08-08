@@ -2,11 +2,11 @@ package com.andrii_a.walleria.di
 
 import android.content.Context
 import com.andrii_a.walleria.data.remote.repository.PhotoRepositoryImpl
-import com.andrii_a.walleria.data.remote.service.AndroidPhotoDownloader
-import com.andrii_a.walleria.data.remote.service.PhotoService
+import com.andrii_a.walleria.data.remote.services.AndroidPhotoDownloader
+import com.andrii_a.walleria.data.remote.services.PhotoService
 import com.andrii_a.walleria.data.util.BASE_API_URL
 import com.andrii_a.walleria.domain.repository.PhotoRepository
-import com.andrii_a.walleria.domain.service.PhotoDownloader
+import com.andrii_a.walleria.domain.services.PhotoDownloader
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

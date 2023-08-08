@@ -53,10 +53,13 @@ fun NavGraphBuilder.photoDetailsRoute(
             ?.getStateFlow(InterScreenCommunicationKeys.COLLECT_SCREEN_RESULT_KEY, isPhotoCollected)
             ?.collectAsStateWithLifecycle()
 
-        collectResult?.value?.let { isCollected ->
+        LaunchedEffect(key1 = collectResult?.value) {
             viewModel.onEvent(
-                if (isCollected) PhotoDetailsEvent.CollectPhoto
-                else PhotoDetailsEvent.DropPhoto
+                if (collectResult?.value == true) {
+                    PhotoDetailsEvent.CollectPhoto
+                } else {
+                    PhotoDetailsEvent.DropPhoto
+                }
             )
         }
 

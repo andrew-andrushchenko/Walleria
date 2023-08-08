@@ -5,7 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.andrii_a.walleria.core.BackendResult
 import com.andrii_a.walleria.data.remote.source.collection.CollectionsPagingSource
-import com.andrii_a.walleria.data.remote.service.CollectionsService
+import com.andrii_a.walleria.data.remote.services.CollectionsService
 import com.andrii_a.walleria.data.remote.source.collection.UserCollectionsPagingSource
 import com.andrii_a.walleria.data.util.PAGE_SIZE
 import com.andrii_a.walleria.data.util.network.backendRequest

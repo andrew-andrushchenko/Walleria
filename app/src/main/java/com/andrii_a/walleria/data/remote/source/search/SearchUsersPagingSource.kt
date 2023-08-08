@@ -1,7 +1,7 @@
 package com.andrii_a.walleria.data.remote.source.search
 
 import com.andrii_a.walleria.data.remote.dto.search.SearchUsersResultDTO
-import com.andrii_a.walleria.data.remote.service.SearchService
+import com.andrii_a.walleria.data.remote.services.SearchService
 import com.andrii_a.walleria.data.remote.source.base.BasePagingSource
 import com.andrii_a.walleria.data.util.INITIAL_PAGE_INDEX
 import com.andrii_a.walleria.data.util.PAGE_SIZE

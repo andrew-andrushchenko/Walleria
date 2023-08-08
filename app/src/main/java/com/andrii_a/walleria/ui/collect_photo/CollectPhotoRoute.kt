@@ -1,6 +1,5 @@
 package com.andrii_a.walleria.ui.collect_photo
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
@@ -19,8 +18,6 @@ import com.google.accompanist.navigation.material.ExperimentalMaterialNavigation
 import com.google.accompanist.navigation.material.bottomSheet
 import com.google.accompanist.systemuicontroller.SystemUiController
 import kotlinx.coroutines.flow.collectLatest
-
-private const val TAG = "CollectPhotoRoute"
 
 @OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalMaterialApi::class)
 fun NavGraphBuilder.collectPhotoRoute(
@@ -55,16 +52,15 @@ fun NavGraphBuilder.collectPhotoRoute(
         LaunchedEffect(Unit) {
             snapshotFlow { bottomSheetState.targetValue }
                 .collectLatest { targetValue ->
-                    if (bottomSheetState.currentValue == ModalBottomSheetValue.Expanded
-                        && targetValue == ModalBottomSheetValue.Hidden
-                    ) {
+                    val setIsPhotoCollectedCondition =
+                        (bottomSheetState.currentValue == ModalBottomSheetValue.Expanded ||
+                                bottomSheetState.currentValue == ModalBottomSheetValue.HalfExpanded)
+                                && targetValue == ModalBottomSheetValue.Hidden
+
+                    if (setIsPhotoCollectedCondition) {
                         navController.previousBackStackEntry
                             ?.savedStateHandle
                             ?.set(InterScreenCommunicationKeys.COLLECT_SCREEN_RESULT_KEY, viewModel.isPhotoCollected)
-                        Log.d(
-                            TAG,
-                            "collectPhotoRoute: snapshotFlow: backStackEntry updated. TargetValue = ${targetValue.name}"
-                        )
                     }
                 }
         }

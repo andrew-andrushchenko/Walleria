@@ -8,7 +8,7 @@ import com.andrii_a.walleria.core.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.repository.LocalUserAccountPreferencesRepository
 import com.andrii_a.walleria.domain.repository.PhotoRepository
-import com.andrii_a.walleria.domain.service.PhotoDownloader
+import com.andrii_a.walleria.domain.services.PhotoDownloader
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow

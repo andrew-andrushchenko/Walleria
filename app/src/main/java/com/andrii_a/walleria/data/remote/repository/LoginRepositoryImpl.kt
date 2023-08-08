@@ -1,7 +1,7 @@
 package com.andrii_a.walleria.data.remote.repository
 
-import com.andrii_a.walleria.data.remote.service.LoginService
-import com.andrii_a.walleria.data.remote.service.UserService
+import com.andrii_a.walleria.data.remote.services.LoginService
+import com.andrii_a.walleria.data.remote.services.UserService
 import com.andrii_a.walleria.data.util.CLIENT_ID
 import com.andrii_a.walleria.data.util.CLIENT_SECRET
 import com.andrii_a.walleria.data.util.UNSPLASH_AUTH_CALLBACK

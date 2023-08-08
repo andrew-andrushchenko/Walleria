@@ -4,7 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.andrii_a.walleria.core.TopicsDisplayOrder
-import com.andrii_a.walleria.data.remote.service.TopicService
+import com.andrii_a.walleria.data.remote.services.TopicService
 import com.andrii_a.walleria.data.remote.source.topic.TopicsPagingSource
 import com.andrii_a.walleria.data.util.PAGE_SIZE
 import com.andrii_a.walleria.core.BackendResult

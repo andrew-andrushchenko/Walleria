@@ -1,8 +1,8 @@
 package com.andrii_a.walleria.di
 
 import com.andrii_a.walleria.data.remote.repository.LoginRepositoryImpl
-import com.andrii_a.walleria.data.remote.service.LoginService
-import com.andrii_a.walleria.data.remote.service.UserService
+import com.andrii_a.walleria.data.remote.services.LoginService
+import com.andrii_a.walleria.data.remote.services.UserService
 import com.andrii_a.walleria.data.util.BASE_URL
 import com.andrii_a.walleria.domain.repository.LocalUserAccountPreferencesRepository
 import com.andrii_a.walleria.domain.repository.LoginRepository

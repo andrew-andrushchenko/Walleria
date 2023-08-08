@@ -1,4 +1,4 @@
-package com.andrii_a.walleria.data.remote.service
+package com.andrii_a.walleria.data.remote.services
 
 import com.andrii_a.walleria.data.remote.dto.collect_photo.CollectionPhotoResultDTO
 import com.andrii_a.walleria.data.remote.dto.collection.CollectionDTO
