@@ -1,7 +1,9 @@
 package com.andrii_a.walleria.ui.profile
 
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import com.andrii_a.walleria.ui.login.LoginActivity
@@ -21,18 +23,16 @@ fun NavGraphBuilder.profileRoute(
 
         val viewModel: ProfileViewModel = hiltViewModel()
 
-        val isUserLoggedInState = viewModel.isUserLoggedIn
-        val userProfileData = viewModel.myProfileData
-
-        val logout = viewModel::logout
+        val isUserLoggedIn by viewModel.isUserLoggedIn.collectAsStateWithLifecycle()
+        val userProfileData by viewModel.myProfileData.collectAsStateWithLifecycle()
 
         ProfileScreen(
-            isUserLoggedInStateFlow = isUserLoggedInState,
-            userProfileDataStateFlow = userProfileData,
+            isUserLoggedIn = isUserLoggedIn,
+            userProfileData = userProfileData,
             navigateToLoginScreen = {
                 context.startActivity(LoginActivity::class.java)
             },
-            logout = logout,
+            logout = viewModel::logout,
             navigateToViewProfileScreen = {},
             navigateToEditProfileScreen = {},
             navigateToSettingsScreen = {},

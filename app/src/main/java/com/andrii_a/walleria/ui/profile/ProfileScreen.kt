@@ -37,18 +37,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.models.preferences.MyProfileData
 import com.andrii_a.walleria.ui.common.WTextButton
-import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun ProfileScreen(
-    isUserLoggedInStateFlow: StateFlow<Boolean>,
-    userProfileDataStateFlow: StateFlow<MyProfileData>,
+    isUserLoggedIn: Boolean,
+    userProfileData: MyProfileData,
     navigateToLoginScreen: () -> Unit,
     logout: () -> Unit,
     navigateToViewProfileScreen: () -> Unit,
@@ -56,7 +54,6 @@ fun ProfileScreen(
     navigateToSettingsScreen: () -> Unit,
     navigateToAboutScreen: () -> Unit
 ) {
-    val isUserLoggedIn by isUserLoggedInStateFlow.collectAsStateWithLifecycle()
 
     Surface(color = MaterialTheme.colors.primary) {
         Column(
@@ -79,8 +76,6 @@ fun ProfileScreen(
 
             if (isUserLoggedIn) {
                 var showLogoutConfirmationDialog by remember { mutableStateOf(false) }
-
-                val userProfileData by userProfileDataStateFlow.collectAsStateWithLifecycle()
 
                 LoggedInUserSection(
                     userProfilePhotoUrl = userProfileData.profilePhotoUrl,
