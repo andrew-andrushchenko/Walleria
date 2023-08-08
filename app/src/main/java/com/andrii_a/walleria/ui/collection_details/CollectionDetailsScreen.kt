@@ -93,7 +93,7 @@ fun CollectionDetailsScreen(
             is CollectionLoadResult.Error -> {
                 ErrorStateContent(
                     onRetry = {
-                        onEvent(CollectionDetailsEvent.CollectionRequested(collectionId))
+                        onEvent(CollectionDetailsEvent.RequestCollection(collectionId))
                     },
                     onNavigateBack = navigateBack,
                     modifier = Modifier

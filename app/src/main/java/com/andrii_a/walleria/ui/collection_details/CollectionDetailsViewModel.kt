@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed interface CollectionDetailsEvent {
-    data class CollectionRequested(val collectionId: CollectionId) : CollectionDetailsEvent
+    data class RequestCollection(val collectionId: CollectionId) : CollectionDetailsEvent
 
     data class UpdateCollection(
         val collectionId: CollectionId,
@@ -78,7 +78,7 @@ class CollectionDetailsViewModel @Inject constructor(
 
     fun onEvent(event: CollectionDetailsEvent) {
         when (event) {
-            is CollectionDetailsEvent.CollectionRequested -> {
+            is CollectionDetailsEvent.RequestCollection -> {
                 getCollection(event.collectionId.value)
             }
 
