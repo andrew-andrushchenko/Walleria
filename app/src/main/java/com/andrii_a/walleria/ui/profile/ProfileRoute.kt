@@ -11,13 +11,9 @@ import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.util.startActivity
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.bottomSheet
-import com.google.accompanist.systemuicontroller.SystemUiController
 
 @OptIn(ExperimentalMaterialNavigationApi::class)
-fun NavGraphBuilder.profileRoute(
-    navController: NavController,
-    systemUiController: SystemUiController
-) {
+fun NavGraphBuilder.profileRoute(navController: NavController) {
     bottomSheet(route = Screen.Profile.route) {
         val context = LocalContext.current
 
@@ -32,7 +28,7 @@ fun NavGraphBuilder.profileRoute(
             navigateToLoginScreen = {
                 context.startActivity(LoginActivity::class.java)
             },
-            logout = viewModel::logout,
+            onLogout = viewModel::logout,
             navigateToViewProfileScreen = {},
             navigateToEditProfileScreen = {},
             navigateToSettingsScreen = {},

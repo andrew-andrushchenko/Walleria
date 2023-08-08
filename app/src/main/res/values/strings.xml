@@ -87,7 +87,7 @@
     <string name="join">Join</string>
     <string name="login">Login</string>
     <string name="logout">Logout</string>
-    <string name="logout_confirmation">Are you sure want to logout?</string>
+    <string name="logout_confirmation">Are you sure?</string>
     <string name="login_prompt">Please login to %s</string>
     <string name="like_photo">like photo</string>
     <string name="save_photo">save photo</string>

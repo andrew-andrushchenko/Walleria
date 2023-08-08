@@ -56,7 +56,7 @@ fun MainNavHost(
 
             searchRoute(navHostController, systemUiController)
 
-            profileRoute(navHostController, systemUiController)
+            profileRoute(navHostController)
 
             photoDetailsRoute(navHostController, systemUiController)
 

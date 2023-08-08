@@ -1,7 +1,10 @@
 package com.andrii_a.walleria.ui.profile
 
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
@@ -15,14 +18,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AlertDialog
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,26 +40,34 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.models.preferences.MyProfileData
+import com.andrii_a.walleria.ui.common.WButton
 import com.andrii_a.walleria.ui.common.WTextButton
+import com.andrii_a.walleria.ui.theme.WalleriaTheme
 
 @Composable
 fun ProfileScreen(
     isUserLoggedIn: Boolean,
     userProfileData: MyProfileData,
     navigateToLoginScreen: () -> Unit,
-    logout: () -> Unit,
+    onLogout: () -> Unit,
     navigateToViewProfileScreen: () -> Unit,
     navigateToEditProfileScreen: () -> Unit,
     navigateToSettingsScreen: () -> Unit,
     navigateToAboutScreen: () -> Unit
 ) {
-
-    Surface(color = MaterialTheme.colors.primary) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .navigationBarsPadding()
+    ) {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -75,11 +87,9 @@ fun ProfileScreen(
             )
 
             if (isUserLoggedIn) {
-                var showLogoutConfirmationDialog by remember { mutableStateOf(false) }
-
                 LoggedInUserSection(
                     userProfilePhotoUrl = userProfileData.profilePhotoUrl,
-                    username = stringResource(
+                    userFullName = stringResource(
                         id = R.string.user_full_name_formatted,
                         userProfileData.firstName,
                         userProfileData.lastName
@@ -88,17 +98,14 @@ fun ProfileScreen(
                     userEmail = userProfileData.email,
                     navigateToViewProfileScreen = navigateToViewProfileScreen,
                     navigateToEditProfileScreen = navigateToEditProfileScreen,
-                    onLogoutClick = { showLogoutConfirmationDialog = true }
+                    onLogout = onLogout
                 )
 
-                if (showLogoutConfirmationDialog) {
-                    LogoutConfirmationDialog(
-                        onLogout = logout,
-                        onDismiss = { showLogoutConfirmationDialog = false }
-                    )
-                }
             } else {
-                LoggedOutUserSection(navigateToLoginScreen = navigateToLoginScreen)
+                LoggedOutUserSection(
+                    navigateToLoginScreen = navigateToLoginScreen,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
             }
 
             Divider(
@@ -115,9 +122,10 @@ fun ProfileScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(64.dp)
+                    .padding(horizontal = 16.dp)
             )
 
-            Spacer(modifier = Modifier.padding(bottom = 4.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
             WTextButton(
                 onClick = navigateToAboutScreen,
@@ -127,16 +135,23 @@ fun ProfileScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(64.dp)
+                    .padding(horizontal = 16.dp)
             )
+
+            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }
 
 @Composable
-fun LoggedOutUserSection(navigateToLoginScreen: () -> Unit) {
+private fun LoggedOutUserSection(
+    navigateToLoginScreen: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
     ) {
         var showAddAccountSection by remember {
             mutableStateOf(false)
@@ -155,11 +170,11 @@ fun LoggedOutUserSection(navigateToLoginScreen: () -> Unit) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_launcher_foreground),
                 contentDescription = stringResource(id = R.string.app_name),
-                tint = MaterialTheme.colors.onPrimary,
+                tint = MaterialTheme.colors.onSurface,
                 modifier = Modifier.size(64.dp)
             )
 
-            Spacer(modifier = Modifier.padding(4.dp))
+            Spacer(modifier = Modifier.width(4.dp))
 
             Column {
                 Text(
@@ -209,14 +224,14 @@ fun LoggedOutUserSection(navigateToLoginScreen: () -> Unit) {
 }
 
 @Composable
-fun LoggedInUserSection(
+private fun LoggedInUserSection(
     userProfilePhotoUrl: String,
-    username: String,
+    userFullName: String,
     userNickname: String,
     userEmail: String,
     navigateToViewProfileScreen: () -> Unit,
     navigateToEditProfileScreen: () -> Unit,
-    onLogoutClick: () -> Unit
+    onLogout: () -> Unit
 ) {
     Column(
         verticalArrangement = Arrangement.SpaceAround,
@@ -238,7 +253,7 @@ fun LoggedInUserSection(
         )
 
         Text(
-            text = username,
+            text = userFullName,
             style = MaterialTheme.typography.h6,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
@@ -259,9 +274,43 @@ fun LoggedInUserSection(
         )
     }
 
+    var showConfirmationRow by remember {
+        mutableStateOf(false)
+    }
+
+    AnimatedContent(
+        targetState = showConfirmationRow,
+        label = "",
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        if (it) {
+            LogoutConfirmationRow(
+                onConfirm = onLogout,
+                onDismiss = { showConfirmationRow = false },
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+        } else {
+            ProfileActionRow(
+                navigateToViewProfileScreen = navigateToViewProfileScreen,
+                navigateToEditProfileScreen = navigateToEditProfileScreen,
+                onLogoutClick = { showConfirmationRow = true },
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun ProfileActionRow(
+    navigateToViewProfileScreen: () -> Unit,
+    navigateToEditProfileScreen: () -> Unit,
+    onLogoutClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Row(
         horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
     ) {
         WTextButton(
             onClick = navigateToViewProfileScreen,
@@ -271,7 +320,7 @@ fun LoggedInUserSection(
             modifier = Modifier.weight(0.33f)
         )
 
-        Spacer(modifier = Modifier.padding(end = 4.dp))
+        Spacer(modifier = Modifier.width(4.dp))
 
         WTextButton(
             onClick = navigateToEditProfileScreen,
@@ -281,7 +330,7 @@ fun LoggedInUserSection(
             modifier = Modifier.weight(0.33f)
         )
 
-        Spacer(modifier = Modifier.padding(end = 4.dp))
+        Spacer(modifier = Modifier.width(4.dp))
 
         WTextButton(
             onClick = onLogoutClick,
@@ -294,26 +343,82 @@ fun LoggedInUserSection(
 }
 
 @Composable
-fun LogoutConfirmationDialog(
-    onLogout: () -> Unit,
-    onDismiss: () -> Unit
+private fun LogoutConfirmationRow(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    AlertDialog(
-        title = { Text(text = stringResource(id = R.string.logout)) },
-        text = { Text(text = stringResource(id = R.string.logout_confirmation)) },
-        shape = RoundedCornerShape(16.dp),
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            WTextButton(
-                onClick = onLogout,
-                text = stringResource(id = R.string.action_yes)
-            )
-        },
-        dismissButton = {
-            WTextButton(
-                onClick = onDismiss,
-                text = stringResource(id = R.string.action_no)
+    ConstraintLayout(modifier = modifier) {
+        val (confirmationText, confirmButton, dismissButton) = createRefs()
+
+        Text(
+            text = stringResource(id = R.string.logout_confirmation),
+            style = MaterialTheme.typography.subtitle1,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.constrainAs(confirmationText) {
+                top.linkTo(parent.top)
+                bottom.linkTo(parent.bottom)
+                start.linkTo(parent.start)
+                end.linkTo(confirmButton.start)
+                width = Dimension.fillToConstraints
+            }
+        )
+
+        TextButton(
+            onClick = onConfirm,
+            modifier = Modifier.constrainAs(confirmButton) {
+                top.linkTo(dismissButton.top)
+                bottom.linkTo(dismissButton.bottom)
+                end.linkTo(dismissButton.start)
+            }
+        ) {
+            Text(
+                text = stringResource(id = R.string.action_yes),
+                style = MaterialTheme.typography.subtitle1,
+                color = MaterialTheme.colors.onSurface
             )
         }
-    )
+
+        WButton(
+            onClick = onDismiss,
+            modifier = Modifier.constrainAs(dismissButton) {
+                top.linkTo(parent.top)
+                bottom.linkTo(parent.bottom)
+                end.linkTo(parent.end)
+            }
+        ) {
+            Text(
+                stringResource(id = R.string.action_no),
+                style = MaterialTheme.typography.subtitle1
+            )
+        }
+    }
+}
+
+@Preview(uiMode = UI_MODE_NIGHT_NO)
+@Preview(uiMode = UI_MODE_NIGHT_YES)
+@Composable
+fun ProfileScreenPreview() {
+    WalleriaTheme {
+        var isUserLoggedIn by remember {
+            mutableStateOf(false)
+        }
+
+        ProfileScreen(
+            isUserLoggedIn = isUserLoggedIn,
+            userProfileData = MyProfileData(
+                nickname = "john",
+                firstName = "John",
+                lastName = "Smith",
+                email = "john.smith@example.com"
+            ),
+            navigateToLoginScreen = { isUserLoggedIn = true },
+            onLogout = { isUserLoggedIn = false },
+            navigateToViewProfileScreen = {},
+            navigateToEditProfileScreen = {},
+            navigateToSettingsScreen = {},
+            navigateToAboutScreen = {}
+        )
+    }
 }
