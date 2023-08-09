@@ -11,6 +11,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.andrii_a.walleria.ui.collect_photo.navigateToCollectPhoto
+import com.andrii_a.walleria.ui.collection_details.navigateToCollectionDetails
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.search.navigateToSearch
@@ -73,7 +74,8 @@ fun NavGraphBuilder.photoDetailsRoute(
             navigateBack = navController::navigateUp,
             navigateToUserDetails = {},
             navigateToCollectPhoto = navController::navigateToCollectPhoto,
-            navigateToSearch = navController::navigateToSearch
+            navigateToSearch = navController::navigateToSearch,
+            navigateToCollectionDetails = navController::navigateToCollectionDetails
         )
     }
 }

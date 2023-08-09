@@ -56,7 +56,8 @@ fun PhotoDetailsScreen(
     navigateBack: () -> Unit,
     navigateToUserDetails: (UserNickname) -> Unit,
     navigateToCollectPhoto: (PhotoId) -> Unit,
-    navigateToSearch: (SearchQuery) -> Unit
+    navigateToSearch: (SearchQuery) -> Unit,
+    navigateToCollectionDetails: (CollectionId) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -96,6 +97,7 @@ fun PhotoDetailsScreen(
                     navigateToUserDetails = navigateToUserDetails,
                     navigateToCollectPhoto = navigateToCollectPhoto,
                     navigateToSearch = navigateToSearch,
+                    navigateToCollectionDetails = navigateToCollectionDetails,
                     onEvent = onEvent,
                     modifier = Modifier.fillMaxSize()
                 )
@@ -119,6 +121,7 @@ private fun SuccessStateContent(
     navigateToUserDetails: (UserNickname) -> Unit,
     navigateToCollectPhoto: (PhotoId) -> Unit,
     navigateToSearch: (SearchQuery) -> Unit,
+    navigateToCollectionDetails: (CollectionId) -> Unit,
     onEvent: (PhotoDetailsEvent) -> Unit
 ) {
     val context = LocalContext.current
@@ -128,7 +131,8 @@ private fun SuccessStateContent(
         sheetContent = {
             PhotoInfoBottomSheet(
                 photo = photo,
-                navigateToSearch = navigateToSearch
+                navigateToSearch = navigateToSearch,
+                navigateToCollectionDetails = navigateToCollectionDetails
             )
         },
         sheetState = modalBottomSheetState,

@@ -38,6 +38,7 @@ import com.andrii_a.walleria.core.PhotoQuality
 import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.domain.models.common.Tag
 import com.andrii_a.walleria.domain.models.photo.PhotoExif
+import com.andrii_a.walleria.ui.common.CollectionId
 import com.andrii_a.walleria.ui.theme.PrimaryDark
 import com.andrii_a.walleria.ui.theme.PrimaryLight
 import com.andrii_a.walleria.ui.util.abbreviatedNumberString
@@ -316,11 +317,12 @@ fun RelatedCollectionsItem(
     title: String,
     coverPhotoUrl: String,
     totalPhotos: Long,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
         shape = RoundedCornerShape(16.dp),
-        onClick = {},
+        onClick = onClick,
         modifier = modifier
     ) {
         Box(
@@ -373,6 +375,7 @@ fun RelatedCollectionsItem(
 @Composable
 fun RelatedCollectionsRow(
     collections: List<Collection>,
+    onCollectionSelected: (CollectionId) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyRow(modifier = modifier) {
@@ -381,6 +384,9 @@ fun RelatedCollectionsRow(
                 title = item.title,
                 coverPhotoUrl = item.coverPhoto?.getUrlByQuality(PhotoQuality.MEDIUM).orEmpty(),
                 totalPhotos = item.totalPhotos,
+                onClick = {
+                    onCollectionSelected(CollectionId(item.id))
+                },
                 modifier = Modifier.padding(
                     start = if (index == 0) 8.dp else 0.dp,
                     end = 8.dp
