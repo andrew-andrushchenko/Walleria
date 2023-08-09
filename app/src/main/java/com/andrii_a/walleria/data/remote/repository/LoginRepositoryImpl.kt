@@ -10,6 +10,7 @@ import com.andrii_a.walleria.core.BackendResult
 import com.andrii_a.walleria.data.util.network.backendRequest
 import com.andrii_a.walleria.domain.models.login.AccessToken
 import com.andrii_a.walleria.domain.models.login.MyProfile
+import com.andrii_a.walleria.domain.models.preferences.MyProfileData
 import com.andrii_a.walleria.domain.repository.LocalUserAccountPreferencesRepository
 import com.andrii_a.walleria.domain.repository.LoginRepository
 import kotlinx.coroutines.flow.Flow
@@ -65,26 +66,17 @@ class LoginRepositoryImpl(
         localUserAccountPreferencesRepository.saveMyProfileInfo(myProfile)
     }
 
-    override suspend fun updateMyProfile(
-        username: String?,
-        firstName: String?,
-        lastName: String?,
-        email: String?,
-        url: String?,
-        instagramUsername: String?,
-        location: String?,
-        bio: String?
-    ): BackendResult<MyProfile> =
+    override suspend fun updateMyProfile(myProfileData: MyProfileData): BackendResult<MyProfile> =
         backendRequest {
             userService.updateMyProfile(
-                username,
-                firstName,
-                lastName,
-                email,
-                url,
-                instagramUsername,
-                location,
-                bio
+                username = myProfileData.nickname,
+                firstName = myProfileData.firstName,
+                lastName = myProfileData.lastName,
+                email = myProfileData.email,
+                url = myProfileData.portfolioLink,
+                instagramUsername = myProfileData.instagramUsername,
+                location = myProfileData.location,
+                bio = myProfileData.bio
             ).toMyProfile()
         }
 

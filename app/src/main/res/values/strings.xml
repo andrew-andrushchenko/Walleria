@@ -119,6 +119,22 @@
     <string name="settings">Settings</string>
     <string name="about">About</string>
 
+    <!--Edit user profile-->
+    <string name="edit_my_profile">Edit my profile</string>
+    <string name="save_my_profile_data">Save</string>
+    <string name="profile_data_updated_successfully">Profile data updated successfully!</string>
+    <string name="profile_data_not_updated">An error occurred. Profile data not updated.</string>
+    <string name="user_nickname_hint">Nickname</string>
+    <string name="user_nickname_error_text">(Only letters, numbers and underscores)</string>
+    <string name="first_name_hint">First name</string>
+    <string name="last_name_hint">Last name</string>
+    <string name="email_hint">Email</string>
+    <string name="portfolio_hint">Personal site/portfolio</string>
+    <string name="instagram_username_hint">Instagram username</string>
+    <string name="location_hint">Location</string>
+    <string name="bio_hint">Bio</string>
+    <string name="enter_valid_email">Please enter an email address.</string>
+
     <!--Photo details-->
     <string name="photo_info">Info</string>
     <string name="location_template" translatable="false">%s, %s</string>

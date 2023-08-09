@@ -80,12 +80,12 @@ class LocalUserAccountPreferencesRepositoryImpl(context: Context) : LocalUserAcc
             preferences[UserAccountPreferencesKeys.USER_NICKNAME_KEY] = myProfile.username
             preferences[UserAccountPreferencesKeys.USER_FIRST_NAME_KEY] = myProfile.firstName
             preferences[UserAccountPreferencesKeys.USER_LAST_NAME_KEY] = myProfile.lastName
-            preferences[UserAccountPreferencesKeys.USER_PROFILE_PHOTO_URL_KEY] = myProfile.profileImage?.medium.toString()
-            preferences[UserAccountPreferencesKeys.USER_EMAIL_KEY] = myProfile.email.toString()
-            preferences[UserAccountPreferencesKeys.USER_PORTFOLIO_LINK_KEY] = myProfile.portfolioUrl.toString()
-            preferences[UserAccountPreferencesKeys.USER_INSTAGRAM_USERNAME_KEY] = myProfile.instagramUsername.toString()
-            preferences[UserAccountPreferencesKeys.USER_LOCATION_KEY] = myProfile.location.toString()
-            preferences[UserAccountPreferencesKeys.USER_BIO_KEY] = myProfile.bio.toString()
+            preferences[UserAccountPreferencesKeys.USER_PROFILE_PHOTO_URL_KEY] = myProfile.profileImage?.medium.orEmpty()
+            preferences[UserAccountPreferencesKeys.USER_EMAIL_KEY] = myProfile.email.orEmpty()
+            preferences[UserAccountPreferencesKeys.USER_PORTFOLIO_LINK_KEY] = myProfile.portfolioUrl.orEmpty()
+            preferences[UserAccountPreferencesKeys.USER_INSTAGRAM_USERNAME_KEY] = myProfile.instagramUsername.orEmpty()
+            preferences[UserAccountPreferencesKeys.USER_LOCATION_KEY] = myProfile.location.orEmpty()
+            preferences[UserAccountPreferencesKeys.USER_BIO_KEY] = myProfile.bio.orEmpty()
         }
     }
 
