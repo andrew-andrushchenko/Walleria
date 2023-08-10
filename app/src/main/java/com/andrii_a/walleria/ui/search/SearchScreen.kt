@@ -49,6 +49,7 @@ import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.ui.common.CollectionId
 import com.andrii_a.walleria.ui.common.PhotoId
+import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.common.components.ScrollToTopLayout
 import com.andrii_a.walleria.ui.common.components.WOutlinedTextField
 import com.andrii_a.walleria.ui.common.components.lists.CollectionsList
@@ -70,6 +71,7 @@ fun SearchScreen(
     onEvent: (SearchScreenEvent) -> Unit,
     navigateToPhotoDetails: (PhotoId) -> Unit,
     navigateToCollectionDetails: (CollectionId) -> Unit,
+    navigateToUserDetails: (UserNickname) -> Unit,
     navigateBack: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -114,7 +116,8 @@ fun SearchScreen(
                 collections = collections,
                 users = users,
                 navigateToPhotoDetails = navigateToPhotoDetails,
-                navigateToCollectionDetails = navigateToCollectionDetails
+                navigateToCollectionDetails = navigateToCollectionDetails,
+                navigateToUserDetails = navigateToUserDetails
             )
         }
     }
@@ -278,7 +281,8 @@ private fun Pages(
     users: Flow<PagingData<User>>,
     contentPadding: PaddingValues = PaddingValues(),
     navigateToPhotoDetails: (PhotoId) -> Unit,
-    navigateToCollectionDetails: (CollectionId) -> Unit
+    navigateToCollectionDetails: (CollectionId) -> Unit,
+    navigateToUserDetails: (UserNickname) -> Unit
 ) {
     HorizontalPager(
         state = pagerState,
@@ -310,7 +314,7 @@ private fun Pages(
                         PhotosList(
                             lazyPhotoItems = lazyPhotoItems,
                             onPhotoClicked = navigateToPhotoDetails,
-                            onUserProfileClicked = {},
+                            onUserProfileClicked = navigateToUserDetails,
                             listState = listState,
                             contentPadding = PaddingValues(
                                 top = 8.dp,
@@ -353,7 +357,7 @@ private fun Pages(
                         CollectionsList(
                             lazyCollectionItems = lazyCollectionItems,
                             onCollectionClicked = navigateToCollectionDetails,
-                            onUserProfileClicked = {},
+                            onUserProfileClicked = navigateToUserDetails,
                             onPhotoClicked = navigateToPhotoDetails,
                             listState = listState,
                             contentPadding = PaddingValues(
@@ -396,7 +400,7 @@ private fun Pages(
                     ) {
                         UsersList(
                             lazyUserItems = lazyUserItems,
-                            onUserClick = {},
+                            onUserClick = navigateToUserDetails,
                             listState = listState,
                             contentPadding = PaddingValues(
                                 top = 8.dp,

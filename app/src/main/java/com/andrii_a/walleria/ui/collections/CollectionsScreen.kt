@@ -24,6 +24,7 @@ import com.andrii_a.walleria.ui.common.CollectionId
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.common.components.ScrollToTopLayout
 import com.andrii_a.walleria.ui.common.SearchQuery
+import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.common.components.lists.CollectionsList
 import kotlinx.coroutines.flow.Flow
 
@@ -34,7 +35,8 @@ fun CollectionsScreen(
     navigateToProfileScreen: () -> Unit,
     navigateToSearchScreen: (SearchQuery?) -> Unit,
     navigateToPhotoDetails: (PhotoId) -> Unit,
-    navigateToCollectionDetails: (CollectionId) -> Unit
+    navigateToCollectionDetails: (CollectionId) -> Unit,
+    navigateToUserDetails: (UserNickname) -> Unit
 ) {
     val lazyCollectionItems = collections.collectAsLazyPagingItems()
 
@@ -60,12 +62,8 @@ fun CollectionsScreen(
         ) {
             CollectionsList(
                 lazyCollectionItems = lazyCollectionItems,
-                onCollectionClicked = {
-                    navigateToCollectionDetails(it)
-                },
-                onUserProfileClicked = {
-
-                },
+                onCollectionClicked = navigateToCollectionDetails,
+                onUserProfileClicked = navigateToUserDetails,
                 onPhotoClicked = navigateToPhotoDetails,
                 listState = listState,
                 contentPadding = PaddingValues(

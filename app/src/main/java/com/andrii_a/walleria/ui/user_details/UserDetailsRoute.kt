@@ -59,7 +59,8 @@ fun NavGraphBuilder.userDetailsRoute(
             navigateToPhotoDetails = navController::navigateToPhotoDetails,
             navigateToCollectionDetails = navController::navigateToCollectionDetails,
             navigateToEditUserProfile = navController::navigateToEditUserProfile,
-            navigateToSearch = navController::navigateToSearch
+            navigateToSearch = navController::navigateToSearch,
+            navigateToUserDetails = navController::navigateToUserDetails
         )
     }
 }

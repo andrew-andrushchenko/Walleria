@@ -46,6 +46,7 @@ import com.andrii_a.walleria.ui.common.CollectionId
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.common.components.ScrollToTopLayout
 import com.andrii_a.walleria.ui.common.SearchQuery
+import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
 import com.andrii_a.walleria.ui.common.components.LoadingBanner
 import com.andrii_a.walleria.ui.common.components.lists.CollectionsList
@@ -66,6 +67,7 @@ fun UserDetailsScreen(
     navigateToCollectionDetails: (CollectionId) -> Unit,
     navigateToEditUserProfile: () -> Unit,
     navigateToSearch: (SearchQuery) -> Unit,
+    navigateToUserDetails: (UserNickname) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         when (loadResult) {
@@ -100,7 +102,8 @@ fun UserDetailsScreen(
                     navigateToPhotoDetails = navigateToPhotoDetails,
                     navigateToCollectionDetails = navigateToCollectionDetails,
                     navigateToSearch = navigateToSearch,
-                    navigateToEditUserProfile = navigateToEditUserProfile
+                    navigateToEditUserProfile = navigateToEditUserProfile,
+                    navigateToUserDetails = navigateToUserDetails
                 )
             }
         }
@@ -163,6 +166,7 @@ fun SuccessStateContent(
     navigateToCollectionDetails: (CollectionId) -> Unit,
     navigateToEditUserProfile: () -> Unit,
     navigateToSearch: (SearchQuery) -> Unit,
+    navigateToUserDetails: (UserNickname) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val modalBottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
@@ -236,7 +240,8 @@ fun SuccessStateContent(
                         lazyLikedPhotoItems = userLikedPhotosLazyItems,
                         lazyCollectionItems = userCollectionsLazyItems,
                         navigateToPhotoDetails = navigateToPhotoDetails,
-                        navigateToCollectionDetails = navigateToCollectionDetails
+                        navigateToCollectionDetails = navigateToCollectionDetails,
+                        navigateToUserDetails = navigateToUserDetails
                     )
                 }
             }
@@ -262,6 +267,7 @@ private fun Pages(
     lazyCollectionItems: LazyPagingItems<Collection>,
     navigateToPhotoDetails: (PhotoId) -> Unit,
     navigateToCollectionDetails: (CollectionId) -> Unit,
+    navigateToUserDetails: (UserNickname) -> Unit,
     contentPadding: PaddingValues = PaddingValues()
 ) {
     HorizontalPager(
@@ -282,7 +288,7 @@ private fun Pages(
                     PhotosList(
                         lazyPhotoItems = lazyPhotoItems,
                         onPhotoClicked = navigateToPhotoDetails,
-                        onUserProfileClicked = {},
+                        onUserProfileClicked = navigateToUserDetails,
                         listState = listState,
                         contentPadding = PaddingValues(
                             top = 8.dp,
@@ -306,7 +312,7 @@ private fun Pages(
                     PhotosList(
                         lazyPhotoItems = lazyLikedPhotoItems,
                         onPhotoClicked = navigateToPhotoDetails,
-                        onUserProfileClicked = {},
+                        onUserProfileClicked = navigateToUserDetails,
                         listState = listState,
                         contentPadding = PaddingValues(
                             top = 8.dp,
@@ -330,7 +336,7 @@ private fun Pages(
                     CollectionsList(
                         lazyCollectionItems = lazyCollectionItems,
                         onCollectionClicked = navigateToCollectionDetails,
-                        onUserProfileClicked = {},
+                        onUserProfileClicked = navigateToUserDetails,
                         onPhotoClicked = navigateToPhotoDetails,
                         listState = listState,
                         contentPadding = PaddingValues(

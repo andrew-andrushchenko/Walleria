@@ -14,6 +14,7 @@ import com.andrii_a.walleria.ui.collection_details.navigateToCollectionDetails
 import com.andrii_a.walleria.ui.common.SearchQuery
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.photo_details.navigateToPhotoDetails
+import com.andrii_a.walleria.ui.user_details.navigateToUserDetails
 import com.google.accompanist.systemuicontroller.SystemUiController
 
 fun NavGraphBuilder.searchRoute(
@@ -57,6 +58,7 @@ fun NavGraphBuilder.searchRoute(
             onEvent = viewModel::onEvent,
             navigateToPhotoDetails = navController::navigateToPhotoDetails,
             navigateToCollectionDetails = navController::navigateToCollectionDetails,
+            navigateToUserDetails = navController::navigateToUserDetails,
             navigateBack = navController::navigateUp
         )
     }

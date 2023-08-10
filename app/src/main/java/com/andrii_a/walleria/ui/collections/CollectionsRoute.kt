@@ -13,6 +13,7 @@ import com.andrii_a.walleria.ui.navigation.NavigationScreen
 import com.andrii_a.walleria.ui.photo_details.navigateToPhotoDetails
 import com.andrii_a.walleria.ui.profile.navigateToProfileScreen
 import com.andrii_a.walleria.ui.search.navigateToSearch
+import com.andrii_a.walleria.ui.user_details.navigateToUserDetails
 import com.google.accompanist.systemuicontroller.SystemUiController
 
 fun NavGraphBuilder.collectionsBottomNavRoute(
@@ -42,7 +43,8 @@ fun NavGraphBuilder.collectionsBottomNavRoute(
             navigateToProfileScreen = navController::navigateToProfileScreen,
             navigateToSearchScreen = navController::navigateToSearch,
             navigateToPhotoDetails = navController::navigateToPhotoDetails,
-            navigateToCollectionDetails = navController::navigateToCollectionDetails
+            navigateToCollectionDetails = navController::navigateToCollectionDetails,
+            navigateToUserDetails = navController::navigateToUserDetails
         )
     }
 }
