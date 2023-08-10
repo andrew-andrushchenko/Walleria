@@ -38,7 +38,8 @@ fun PhotosScreen(
     orderBy: (Int) -> Unit,
     navigateToProfileScreen: () -> Unit,
     navigateToSearchScreen: (SearchQuery?) -> Unit,
-    navigateToPhotoDetailsScreen: (PhotoId) -> Unit
+    navigateToPhotoDetailsScreen: (PhotoId) -> Unit,
+    navigateToUserDetails: (UserNickname) -> Unit
 ) {
     val lazyPhotoItems = photos.collectAsLazyPagingItems()
 
@@ -67,7 +68,7 @@ fun PhotosScreen(
                 onPhotoClicked = { photoId ->
                     navigateToPhotoDetailsScreen(photoId)
                 },
-                onUserProfileClicked = {},
+                onUserProfileClicked = navigateToUserDetails,
                 listState = listState,
                 contentPadding = PaddingValues(
                     top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 64.dp,
