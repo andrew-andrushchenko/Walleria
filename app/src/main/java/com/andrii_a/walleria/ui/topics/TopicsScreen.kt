@@ -21,7 +21,7 @@ import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
-import com.andrii_a.walleria.core.TopicsDisplayOrder
+import com.andrii_a.walleria.domain.TopicsDisplayOrder
 import com.andrii_a.walleria.domain.models.topic.Topic
 import com.andrii_a.walleria.ui.common.components.ScrollToTopLayout
 import com.andrii_a.walleria.ui.common.SearchQuery

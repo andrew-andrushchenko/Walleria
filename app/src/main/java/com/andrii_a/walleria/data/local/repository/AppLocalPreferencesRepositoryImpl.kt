@@ -8,9 +8,9 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.andrii_a.walleria.core.CollectionListLayoutType
-import com.andrii_a.walleria.core.PhotoQuality
-import com.andrii_a.walleria.core.PhotosListLayoutType
+import com.andrii_a.walleria.domain.CollectionListLayoutType
+import com.andrii_a.walleria.domain.PhotoQuality
+import com.andrii_a.walleria.domain.PhotosListLayoutType
 import com.andrii_a.walleria.domain.repository.AppLocalPreferencesRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

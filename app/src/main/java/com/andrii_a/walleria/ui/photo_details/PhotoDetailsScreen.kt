@@ -30,7 +30,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.andrii_a.walleria.R
-import com.andrii_a.walleria.core.PhotoQuality
+import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.domain.models.user.UserProfileImage

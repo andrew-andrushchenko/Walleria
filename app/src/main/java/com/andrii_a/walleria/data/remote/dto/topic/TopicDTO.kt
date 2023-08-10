@@ -1,6 +1,6 @@
 package com.andrii_a.walleria.data.remote.dto.topic
 
-import com.andrii_a.walleria.core.TopicStatus
+import com.andrii_a.walleria.domain.TopicStatus
 import com.andrii_a.walleria.data.remote.dto.photo.PhotoDTO
 import com.andrii_a.walleria.data.remote.dto.user.UserDTO
 import com.andrii_a.walleria.domain.models.topic.Topic

@@ -3,7 +3,7 @@ package com.andrii_a.walleria.ui.topics
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
-import com.andrii_a.walleria.core.TopicsDisplayOrder
+import com.andrii_a.walleria.domain.TopicsDisplayOrder
 import com.andrii_a.walleria.domain.repository.TopicRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

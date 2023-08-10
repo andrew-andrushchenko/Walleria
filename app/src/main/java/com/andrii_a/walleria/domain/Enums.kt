@@ -1,4 +1,4 @@
-package com.andrii_a.walleria.core
+package com.andrii_a.walleria.domain
 
 enum class PhotoListDisplayOrder(val value: String) {
     LATEST("latest"),

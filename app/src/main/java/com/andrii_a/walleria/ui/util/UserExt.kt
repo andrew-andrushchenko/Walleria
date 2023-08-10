@@ -3,7 +3,7 @@ package com.andrii_a.walleria.ui.util
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.andrii_a.walleria.R
-import com.andrii_a.walleria.core.UserProfileImageQuality
+import com.andrii_a.walleria.domain.UserProfileImageQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.user.User
 

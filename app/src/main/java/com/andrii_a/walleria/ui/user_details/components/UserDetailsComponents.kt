@@ -50,7 +50,7 @@ import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.andrii_a.walleria.R
-import com.andrii_a.walleria.core.UserProfileImageQuality
+import com.andrii_a.walleria.domain.UserProfileImageQuality
 import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.domain.models.user.UserSocialMediaLinks
 import com.andrii_a.walleria.ui.common.UserNickname

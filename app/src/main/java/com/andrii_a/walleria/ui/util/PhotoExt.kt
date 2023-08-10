@@ -5,8 +5,8 @@ import androidx.compose.ui.res.stringResource
 import com.andrii_a.walleria.R
 import androidx.compose.ui.graphics.Color as ComposeColor
 import android.graphics.Color as AndroidColor
-import com.andrii_a.walleria.core.PhotoQuality
-import com.andrii_a.walleria.core.UserProfileImageQuality
+import com.andrii_a.walleria.domain.PhotoQuality
+import com.andrii_a.walleria.domain.UserProfileImageQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
 
 fun Photo.getUrlByQuality(quality: PhotoQuality = PhotoQuality.HIGH): String =

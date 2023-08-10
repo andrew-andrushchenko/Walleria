@@ -60,7 +60,7 @@ import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.andrii_a.walleria.R
-import com.andrii_a.walleria.core.PhotoQuality
+import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.ui.common.components.CheckBoxRow
 import com.andrii_a.walleria.ui.common.PhotoId

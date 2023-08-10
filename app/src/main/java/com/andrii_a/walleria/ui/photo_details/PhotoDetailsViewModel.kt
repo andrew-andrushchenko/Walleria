@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.andrii_a.walleria.core.BackendResult
-import com.andrii_a.walleria.core.PhotoQuality
+import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.repository.LocalUserAccountPreferencesRepository
 import com.andrii_a.walleria.domain.repository.PhotoRepository

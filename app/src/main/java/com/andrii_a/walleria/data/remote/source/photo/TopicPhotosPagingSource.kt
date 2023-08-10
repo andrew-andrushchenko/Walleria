@@ -1,7 +1,7 @@
 package com.andrii_a.walleria.data.remote.source.photo
 
-import com.andrii_a.walleria.core.PhotoListDisplayOrder
-import com.andrii_a.walleria.core.TopicPhotosOrientation
+import com.andrii_a.walleria.domain.PhotoListDisplayOrder
+import com.andrii_a.walleria.domain.TopicPhotosOrientation
 import com.andrii_a.walleria.data.remote.services.PhotoService
 import com.andrii_a.walleria.data.remote.source.base.BasePagingSource
 import com.andrii_a.walleria.data.util.INITIAL_PAGE_INDEX

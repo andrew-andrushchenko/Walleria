@@ -38,7 +38,7 @@ import androidx.paging.compose.itemKey
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.andrii_a.walleria.R
-import com.andrii_a.walleria.core.PhotoQuality
+import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.common.UserNickname

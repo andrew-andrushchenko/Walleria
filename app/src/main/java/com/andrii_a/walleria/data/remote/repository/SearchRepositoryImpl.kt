@@ -3,10 +3,10 @@ package com.andrii_a.walleria.data.remote.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.andrii_a.walleria.core.SearchResultsContentFilter
-import com.andrii_a.walleria.core.SearchResultsDisplayOrder
-import com.andrii_a.walleria.core.SearchResultsPhotoColor
-import com.andrii_a.walleria.core.SearchResultsPhotoOrientation
+import com.andrii_a.walleria.domain.SearchResultsContentFilter
+import com.andrii_a.walleria.domain.SearchResultsDisplayOrder
+import com.andrii_a.walleria.domain.SearchResultsPhotoColor
+import com.andrii_a.walleria.domain.SearchResultsPhotoOrientation
 import com.andrii_a.walleria.data.remote.source.search.SearchCollectionsPagingSource
 import com.andrii_a.walleria.data.remote.source.search.SearchPhotosPagingSource
 import com.andrii_a.walleria.data.remote.services.SearchService

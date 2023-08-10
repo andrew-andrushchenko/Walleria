@@ -3,7 +3,14 @@ package com.andrii_a.walleria.ui.util
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.andrii_a.walleria.R
-import com.andrii_a.walleria.core.*
+import com.andrii_a.walleria.domain.PhotoListDisplayOrder
+import com.andrii_a.walleria.domain.PhotoQuality
+import com.andrii_a.walleria.domain.SearchResultsContentFilter
+import com.andrii_a.walleria.domain.SearchResultsDisplayOrder
+import com.andrii_a.walleria.domain.SearchResultsPhotoColor
+import com.andrii_a.walleria.domain.SearchResultsPhotoOrientation
+import com.andrii_a.walleria.domain.TopicStatus
+import com.andrii_a.walleria.domain.TopicsDisplayOrder
 
 val PhotoListDisplayOrder.titleRes: Int
     @StringRes

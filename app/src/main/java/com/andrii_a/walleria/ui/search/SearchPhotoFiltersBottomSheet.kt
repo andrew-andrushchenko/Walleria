@@ -18,10 +18,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.andrii_a.walleria.R
-import com.andrii_a.walleria.core.SearchResultsContentFilter
-import com.andrii_a.walleria.core.SearchResultsDisplayOrder
-import com.andrii_a.walleria.core.SearchResultsPhotoColor
-import com.andrii_a.walleria.core.SearchResultsPhotoOrientation
+import com.andrii_a.walleria.domain.SearchResultsContentFilter
+import com.andrii_a.walleria.domain.SearchResultsDisplayOrder
+import com.andrii_a.walleria.domain.SearchResultsPhotoColor
+import com.andrii_a.walleria.domain.SearchResultsPhotoOrientation
 import com.andrii_a.walleria.ui.common.components.SelectorItemType
 import com.andrii_a.walleria.ui.common.components.SingleChoiceSelector
 import com.andrii_a.walleria.ui.common.components.SingleChoiceSelectorItem

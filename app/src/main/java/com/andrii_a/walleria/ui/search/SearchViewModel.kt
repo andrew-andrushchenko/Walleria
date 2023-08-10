@@ -5,10 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.andrii_a.walleria.core.SearchResultsContentFilter
-import com.andrii_a.walleria.core.SearchResultsDisplayOrder
-import com.andrii_a.walleria.core.SearchResultsPhotoColor
-import com.andrii_a.walleria.core.SearchResultsPhotoOrientation
+import com.andrii_a.walleria.domain.SearchResultsContentFilter
+import com.andrii_a.walleria.domain.SearchResultsDisplayOrder
+import com.andrii_a.walleria.domain.SearchResultsPhotoColor
+import com.andrii_a.walleria.domain.SearchResultsPhotoOrientation
 import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.user.User

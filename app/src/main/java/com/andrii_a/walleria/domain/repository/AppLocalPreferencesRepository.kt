@@ -1,9 +1,9 @@
 package com.andrii_a.walleria.domain.repository
 
 import kotlinx.coroutines.flow.Flow
-import com.andrii_a.walleria.core.CollectionListLayoutType
-import com.andrii_a.walleria.core.PhotoQuality
-import com.andrii_a.walleria.core.PhotosListLayoutType
+import com.andrii_a.walleria.domain.CollectionListLayoutType
+import com.andrii_a.walleria.domain.PhotoQuality
+import com.andrii_a.walleria.domain.PhotosListLayoutType
 
 interface AppLocalPreferencesRepository {
 

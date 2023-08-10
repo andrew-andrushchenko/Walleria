@@ -1,6 +1,6 @@
 package com.andrii_a.walleria.ui.util
 
-import com.andrii_a.walleria.core.PhotoQuality
+import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.collection.Collection
 
 val Collection.username: String

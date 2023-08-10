@@ -21,7 +21,7 @@ import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
-import com.andrii_a.walleria.core.PhotoListDisplayOrder
+import com.andrii_a.walleria.domain.PhotoListDisplayOrder
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.ui.common.*
 import com.andrii_a.walleria.ui.common.components.ScrollToTopLayout

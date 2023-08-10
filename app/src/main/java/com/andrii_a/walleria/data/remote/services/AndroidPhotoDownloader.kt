@@ -5,7 +5,7 @@ import android.content.Context
 import android.os.Environment
 import androidx.core.net.toUri
 import com.andrii_a.walleria.R
-import com.andrii_a.walleria.core.PhotoQuality
+import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.services.PhotoDownloader
 import com.andrii_a.walleria.ui.util.downloadFilename

@@ -1,9 +1,9 @@
 package com.andrii_a.walleria.data.remote.source.search
 
-import com.andrii_a.walleria.core.SearchResultsContentFilter
-import com.andrii_a.walleria.core.SearchResultsDisplayOrder
-import com.andrii_a.walleria.core.SearchResultsPhotoColor
-import com.andrii_a.walleria.core.SearchResultsPhotoOrientation
+import com.andrii_a.walleria.domain.SearchResultsContentFilter
+import com.andrii_a.walleria.domain.SearchResultsDisplayOrder
+import com.andrii_a.walleria.domain.SearchResultsPhotoColor
+import com.andrii_a.walleria.domain.SearchResultsPhotoOrientation
 import com.andrii_a.walleria.data.remote.dto.search.SearchPhotosResultDTO
 import com.andrii_a.walleria.data.remote.services.SearchService
 import com.andrii_a.walleria.data.remote.source.base.BasePagingSource
