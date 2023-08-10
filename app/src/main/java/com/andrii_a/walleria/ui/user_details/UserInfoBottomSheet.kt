@@ -42,7 +42,7 @@ import com.andrii_a.walleria.domain.models.common.Tag
 import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.domain.models.user.UserTags
 import com.andrii_a.walleria.ui.common.SearchQuery
-import com.andrii_a.walleria.ui.photo_details.components.TagsRow
+import com.andrii_a.walleria.ui.common.components.TagsRow
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.abbreviatedNumberString
 
@@ -88,7 +88,6 @@ fun UserInfoBottomSheet(
             }
 
             user.tags?.custom?.let {
-                // TODO(Andrii): Move to common components
                 TagsRow(
                     tags = it,
                     onTagClicked = { query ->

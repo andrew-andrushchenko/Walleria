@@ -62,10 +62,10 @@ import coil.request.ImageRequest
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.core.PhotoQuality
 import com.andrii_a.walleria.domain.models.collection.Collection
-import com.andrii_a.walleria.ui.common.CheckBoxRow
+import com.andrii_a.walleria.ui.common.components.CheckBoxRow
 import com.andrii_a.walleria.ui.common.PhotoId
-import com.andrii_a.walleria.ui.common.WButton
-import com.andrii_a.walleria.ui.common.WOutlinedTextField
+import com.andrii_a.walleria.ui.common.components.WButton
+import com.andrii_a.walleria.ui.common.components.WOutlinedTextField
 import com.andrii_a.walleria.ui.theme.PrimaryLight
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.abbreviatedNumberString

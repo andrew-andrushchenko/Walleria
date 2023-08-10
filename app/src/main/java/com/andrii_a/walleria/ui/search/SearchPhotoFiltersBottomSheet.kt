@@ -22,10 +22,10 @@ import com.andrii_a.walleria.core.SearchResultsContentFilter
 import com.andrii_a.walleria.core.SearchResultsDisplayOrder
 import com.andrii_a.walleria.core.SearchResultsPhotoColor
 import com.andrii_a.walleria.core.SearchResultsPhotoOrientation
-import com.andrii_a.walleria.ui.common.SelectorItemType
-import com.andrii_a.walleria.ui.common.SingleChoiceSelector
-import com.andrii_a.walleria.ui.common.SingleChoiceSelectorItem
-import com.andrii_a.walleria.ui.common.WButton
+import com.andrii_a.walleria.ui.common.components.SelectorItemType
+import com.andrii_a.walleria.ui.common.components.SingleChoiceSelector
+import com.andrii_a.walleria.ui.common.components.SingleChoiceSelectorItem
+import com.andrii_a.walleria.ui.common.components.WButton
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.iconRes
 import com.andrii_a.walleria.ui.util.titleRes

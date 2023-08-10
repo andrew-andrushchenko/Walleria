@@ -49,8 +49,8 @@ import coil.request.ImageRequest
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.models.preferences.MyProfileData
 import com.andrii_a.walleria.ui.common.UserNickname
-import com.andrii_a.walleria.ui.common.WButton
-import com.andrii_a.walleria.ui.common.WTextButton
+import com.andrii_a.walleria.ui.common.components.WButton
+import com.andrii_a.walleria.ui.common.components.WTextButton
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 
 @Composable

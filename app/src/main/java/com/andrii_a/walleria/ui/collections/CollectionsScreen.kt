@@ -22,8 +22,9 @@ import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.ui.common.CollectionId
 import com.andrii_a.walleria.ui.common.PhotoId
-import com.andrii_a.walleria.ui.common.ScrollToTopLayout
+import com.andrii_a.walleria.ui.common.components.ScrollToTopLayout
 import com.andrii_a.walleria.ui.common.SearchQuery
+import com.andrii_a.walleria.ui.common.components.lists.CollectionsList
 import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalMaterialApi::class)

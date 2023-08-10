@@ -39,8 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.andrii_a.walleria.R
-import com.andrii_a.walleria.ui.common.WButton
-import com.andrii_a.walleria.ui.common.WOutlinedTextField
+import com.andrii_a.walleria.ui.common.components.WButton
+import com.andrii_a.walleria.ui.common.components.WOutlinedTextField
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 
 @Composable

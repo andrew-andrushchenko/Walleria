@@ -6,7 +6,6 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -36,7 +35,6 @@ import coil.request.ImageRequest
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.core.PhotoQuality
 import com.andrii_a.walleria.domain.models.collection.Collection
-import com.andrii_a.walleria.domain.models.common.Tag
 import com.andrii_a.walleria.domain.models.photo.PhotoExif
 import com.andrii_a.walleria.ui.common.CollectionId
 import com.andrii_a.walleria.ui.theme.PrimaryDark
@@ -184,52 +182,6 @@ fun ExifGrid(
     ) {
         items(gridItems) { (categoryName, categoryValue) ->
             ExifItem(title = categoryName, text = categoryValue.toString())
-        }
-    }
-}
-
-@Composable
-fun TagItem(
-    modifier: Modifier = Modifier,
-    title: String,
-    onClick: (String) -> Unit
-) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier
-            .clip(RoundedCornerShape(50))
-            .border(
-                width = 1.dp,
-                shape = RoundedCornerShape(50),
-                color = MaterialTheme.colors.onPrimary
-            )
-            .clickable { onClick(title) }
-            .padding(8.dp)
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.subtitle2,
-            modifier = Modifier.padding(horizontal = 4.dp)
-        )
-    }
-}
-
-@Composable
-fun TagsRow(
-    tags: List<Tag>,
-    onTagClicked: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    LazyRow(modifier = modifier) {
-        itemsIndexed(tags) { index, item ->
-            TagItem(
-                title = item.title,
-                onClick = onTagClicked,
-                modifier = Modifier.padding(
-                    start = if (index == 0) 8.dp else 0.dp,
-                    end = 8.dp
-                )
-            )
         }
     }
 }

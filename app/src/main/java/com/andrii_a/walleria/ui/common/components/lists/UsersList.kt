@@ -1,14 +1,20 @@
-package com.andrii_a.walleria.ui.search
+package com.andrii_a.walleria.ui.common.components.lists
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,9 +36,17 @@ import com.andrii_a.walleria.core.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.photo.PhotoUrls
 import com.andrii_a.walleria.domain.models.user.User
-import com.andrii_a.walleria.ui.common.*
+import com.andrii_a.walleria.ui.common.UserNickname
+import com.andrii_a.walleria.ui.common.components.EmptyContentBanner
+import com.andrii_a.walleria.ui.common.components.ErrorBanner
+import com.andrii_a.walleria.ui.common.components.ErrorItem
+import com.andrii_a.walleria.ui.common.components.LoadingListItem
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
-import com.andrii_a.walleria.ui.util.*
+import com.andrii_a.walleria.ui.util.getPreviewPhotos
+import com.andrii_a.walleria.ui.util.getProfileImageUrlOrEmpty
+import com.andrii_a.walleria.ui.util.getUrlByQuality
+import com.andrii_a.walleria.ui.util.primaryColorInt
+import com.andrii_a.walleria.ui.util.userFullName
 
 @Composable
 fun UsersList(
@@ -57,7 +71,7 @@ fun UsersList(
                         val user = lazyUserItems[index]
                         user?.let {
                             DefaultUserItem(
-                                nickname = user.username.orEmpty(),
+                                nickname = user.username,
                                 username = user.userFullName,
                                 profileImageUrl = user.getProfileImageUrlOrEmpty(),
                                 previewPhotos = user.getPreviewPhotos(),

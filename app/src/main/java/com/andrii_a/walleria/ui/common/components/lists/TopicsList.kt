@@ -1,4 +1,4 @@
-package com.andrii_a.walleria.ui.topics
+package com.andrii_a.walleria.ui.common.components.lists
 
 import android.graphics.drawable.ColorDrawable
 import androidx.compose.foundation.background
@@ -11,10 +11,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -32,15 +36,21 @@ import com.andrii_a.walleria.core.PhotoQuality
 import com.andrii_a.walleria.core.TopicStatus
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.topic.Topic
-import com.andrii_a.walleria.ui.common.*
+import com.andrii_a.walleria.ui.common.TopicInfo
+import com.andrii_a.walleria.ui.common.components.EmptyContentBanner
+import com.andrii_a.walleria.ui.common.components.ErrorBanner
+import com.andrii_a.walleria.ui.common.components.ErrorItem
+import com.andrii_a.walleria.ui.common.components.LoadingListItem
 import com.andrii_a.walleria.ui.theme.TopicStatusClosedTextColorDark
 import com.andrii_a.walleria.ui.theme.TopicStatusClosedTextColorLight
 import com.andrii_a.walleria.ui.theme.TopicStatusOpenTextColorDark
 import com.andrii_a.walleria.ui.theme.TopicStatusOpenTextColorLight
-import com.andrii_a.walleria.ui.util.*
-import java.util.*
-import android.graphics.Color as AndroidColor
-import androidx.compose.ui.graphics.Color as ComposeColor
+import com.andrii_a.walleria.ui.util.abbreviatedNumberString
+import com.andrii_a.walleria.ui.util.getUrlByQuality
+import com.andrii_a.walleria.ui.util.ownerUsername
+import com.andrii_a.walleria.ui.util.primaryColorInt
+import com.andrii_a.walleria.ui.util.timeAgoLocalizedString
+import com.andrii_a.walleria.ui.util.titleRes
 
 @Composable
 fun TopicsList(
@@ -158,7 +168,7 @@ fun DefaultTopicItem(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(coverPhoto?.getUrlByQuality(coverPhotoQuality))
                     .crossfade(durationMillis = 1000)
-                    .placeholder(ColorDrawable(coverPhoto?.primaryColorInt ?: AndroidColor.GRAY))
+                    .placeholder(ColorDrawable(coverPhoto?.primaryColorInt ?: android.graphics.Color.GRAY))
                     .build(),
                 contentDescription = stringResource(id = R.string.topic_cover_photo),
                 contentScale = ContentScale.Crop,
@@ -253,7 +263,7 @@ private fun StatusIndicatorText(status: TopicStatus, modifier: Modifier = Modifi
     )
 }
 
-private val TopicStatus.color: ComposeColor
+private val TopicStatus.color: Color
     @Composable
     get() = if (isSystemInDarkTheme()) {
         when (this) {
@@ -268,4 +278,3 @@ private val TopicStatus.color: ComposeColor
             else -> MaterialTheme.colors.onPrimary
         }
     }
-

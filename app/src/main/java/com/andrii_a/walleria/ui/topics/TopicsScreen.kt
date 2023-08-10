@@ -23,9 +23,10 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.core.TopicsDisplayOrder
 import com.andrii_a.walleria.domain.models.topic.Topic
-import com.andrii_a.walleria.ui.common.ScrollToTopLayout
+import com.andrii_a.walleria.ui.common.components.ScrollToTopLayout
 import com.andrii_a.walleria.ui.common.SearchQuery
-import com.andrii_a.walleria.ui.common.WTitleDropdown
+import com.andrii_a.walleria.ui.common.components.WTitleDropdown
+import com.andrii_a.walleria.ui.common.components.lists.TopicsList
 import com.andrii_a.walleria.ui.util.titleRes
 import kotlinx.coroutines.flow.Flow
 

@@ -42,14 +42,14 @@ import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.user.User
-import com.andrii_a.walleria.ui.collections.CollectionsList
 import com.andrii_a.walleria.ui.common.CollectionId
-import com.andrii_a.walleria.ui.common.ErrorBanner
-import com.andrii_a.walleria.ui.common.LoadingBanner
 import com.andrii_a.walleria.ui.common.PhotoId
-import com.andrii_a.walleria.ui.common.ScrollToTopLayout
+import com.andrii_a.walleria.ui.common.components.ScrollToTopLayout
 import com.andrii_a.walleria.ui.common.SearchQuery
-import com.andrii_a.walleria.ui.photos.PhotosList
+import com.andrii_a.walleria.ui.common.components.ErrorBanner
+import com.andrii_a.walleria.ui.common.components.LoadingBanner
+import com.andrii_a.walleria.ui.common.components.lists.CollectionsList
+import com.andrii_a.walleria.ui.common.components.lists.PhotosList
 import com.andrii_a.walleria.ui.theme.PrimaryDark
 import com.andrii_a.walleria.ui.user_details.components.NestedScrollLayout
 import com.andrii_a.walleria.ui.user_details.components.UserDetailsTopBar
@@ -179,7 +179,8 @@ fun SuccessStateContent(
     ) {
         Box(modifier = modifier) {
             val scope = rememberCoroutineScope()
-            val pagerState = rememberPagerState(initialPage = 0) { UserDetailsScreenTabs.values().size }
+            val pagerState =
+                rememberPagerState(initialPage = 0) { UserDetailsScreenTabs.values().size }
 
             val nestedScrollLayoutState = rememberNestedScrollLayoutState()
 

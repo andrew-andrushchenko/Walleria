@@ -42,7 +42,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.models.login.AccessToken
-import com.andrii_a.walleria.ui.common.LoadingBanner
+import com.andrii_a.walleria.ui.common.components.LoadingBanner
 import com.andrii_a.walleria.ui.theme.LoginScreenAccentColor
 import com.andrii_a.walleria.ui.theme.PrimaryDark
 import com.andrii_a.walleria.ui.theme.PrimaryLight

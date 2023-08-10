@@ -10,7 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
-import com.andrii_a.walleria.ui.common.WNavigationBar
+import com.andrii_a.walleria.ui.common.components.WNavigationBar
 import com.andrii_a.walleria.ui.navigation.MainNavHost
 import com.andrii_a.walleria.ui.navigation.NavigationScreen
 import com.andrii_a.walleria.ui.navigation.NavigationScreenRoutes

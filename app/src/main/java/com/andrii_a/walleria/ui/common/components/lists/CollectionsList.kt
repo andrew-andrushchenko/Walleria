@@ -1,4 +1,4 @@
-package com.andrii_a.walleria.ui.collections
+package com.andrii_a.walleria.ui.common.components.lists
 
 import android.graphics.drawable.ColorDrawable
 import androidx.compose.foundation.clickable
@@ -45,12 +45,12 @@ import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.photo.PhotoUrls
 import com.andrii_a.walleria.ui.common.CollectionId
-import com.andrii_a.walleria.ui.common.EmptyContentBanner
-import com.andrii_a.walleria.ui.common.ErrorBanner
-import com.andrii_a.walleria.ui.common.ErrorItem
-import com.andrii_a.walleria.ui.common.LoadingListItem
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.common.UserNickname
+import com.andrii_a.walleria.ui.common.components.EmptyContentBanner
+import com.andrii_a.walleria.ui.common.components.ErrorBanner
+import com.andrii_a.walleria.ui.common.components.ErrorItem
+import com.andrii_a.walleria.ui.common.components.LoadingListItem
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.abbreviatedNumberString
 import com.andrii_a.walleria.ui.util.getPreviewPhotos
@@ -193,7 +193,7 @@ fun DefaultCollectionItem(
 }
 
 @Composable
-fun PhotosGrid(
+private fun PhotosGrid(
     previewPhotos: List<Photo>,
     previewPhotosQuality: PhotoQuality,
     onPhotoClickListeners: List<() -> Unit>,
@@ -304,84 +304,6 @@ fun PhotosGrid(
     }
 }
 
-@Composable
-private fun DetailsRow(
-    title: String,
-    curatorUsername: String,
-    totalPhotos: Long,
-    onUserProfileClick: () -> Unit,
-    onOpenCollectionClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    ConstraintLayout(modifier = modifier) {
-        val (titleText, infoText, openButton) = createRefs()
-
-        Text(
-            text = title,
-            style = MaterialTheme.typography.h6,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.constrainAs(titleText) {
-                top.linkTo(parent.top)
-                start.linkTo(parent.start)
-                end.linkTo(openButton.start, 8.dp)
-                width = Dimension.fillToConstraints
-            }
-        )
-
-        Text(
-            text = stringResource(
-                id = R.string.bullet_template,
-                curatorUsername,
-                totalPhotos.abbreviatedNumberString
-            ),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier
-                .constrainAs(infoText) {
-                    top.linkTo(titleText.bottom, 4.dp)
-                    bottom.linkTo(parent.bottom)
-                    start.linkTo(titleText.start)
-                    end.linkTo(openButton.start, 8.dp)
-                    width = Dimension.fillToConstraints
-                }
-                .clickable(onClick = onUserProfileClick)
-        )
-
-        FloatingActionButton(
-            onClick = onOpenCollectionClick,
-            shape = RoundedCornerShape(16.dp),
-            content = {
-                Icon(
-                    imageVector = Icons.Default.ArrowForwardIos,
-                    contentDescription = stringResource(id = R.string.description_open_collection)
-                )
-            },
-            modifier = Modifier.constrainAs(openButton) {
-                top.linkTo(titleText.top)
-                bottom.linkTo(infoText.bottom)
-                end.linkTo(parent.end, 4.dp)
-                start.linkTo(infoText.end)
-            }
-        )
-    }
-
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp)
-    ) {
-        Column(verticalArrangement = Arrangement.SpaceBetween) {
-
-
-        }
-
-
-    }
-}
-
 @Preview
 @Composable
 fun PhotosGridPreview() {
@@ -471,5 +393,83 @@ fun DetailsRowPreview() {
             onOpenCollectionClick = {},
             modifier = Modifier.fillMaxWidth()
         )
+    }
+}
+
+@Composable
+private fun DetailsRow(
+    title: String,
+    curatorUsername: String,
+    totalPhotos: Long,
+    onUserProfileClick: () -> Unit,
+    onOpenCollectionClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    ConstraintLayout(modifier = modifier) {
+        val (titleText, infoText, openButton) = createRefs()
+
+        Text(
+            text = title,
+            style = MaterialTheme.typography.h6,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.constrainAs(titleText) {
+                top.linkTo(parent.top)
+                start.linkTo(parent.start)
+                end.linkTo(openButton.start, 8.dp)
+                width = Dimension.fillToConstraints
+            }
+        )
+
+        Text(
+            text = stringResource(
+                id = R.string.bullet_template,
+                curatorUsername,
+                totalPhotos.abbreviatedNumberString
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
+                .constrainAs(infoText) {
+                    top.linkTo(titleText.bottom, 4.dp)
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(titleText.start)
+                    end.linkTo(openButton.start, 8.dp)
+                    width = Dimension.fillToConstraints
+                }
+                .clickable(onClick = onUserProfileClick)
+        )
+
+        FloatingActionButton(
+            onClick = onOpenCollectionClick,
+            shape = RoundedCornerShape(16.dp),
+            content = {
+                Icon(
+                    imageVector = Icons.Default.ArrowForwardIos,
+                    contentDescription = stringResource(id = R.string.description_open_collection)
+                )
+            },
+            modifier = Modifier.constrainAs(openButton) {
+                top.linkTo(titleText.top)
+                bottom.linkTo(infoText.bottom)
+                end.linkTo(parent.end, 4.dp)
+                start.linkTo(infoText.end)
+            }
+        )
+    }
+
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp)
+    ) {
+        Column(verticalArrangement = Arrangement.SpaceBetween) {
+
+
+        }
+
+
     }
 }

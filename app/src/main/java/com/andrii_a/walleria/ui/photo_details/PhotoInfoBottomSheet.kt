@@ -33,6 +33,7 @@ import com.andrii_a.walleria.domain.models.photo.RelatedCollections
 import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.ui.common.CollectionId
 import com.andrii_a.walleria.ui.common.SearchQuery
+import com.andrii_a.walleria.ui.common.components.TagsRow
 import com.andrii_a.walleria.ui.photo_details.components.*
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.*

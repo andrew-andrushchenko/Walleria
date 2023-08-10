@@ -1,4 +1,4 @@
-package com.andrii_a.walleria.ui.common
+package com.andrii_a.walleria.ui.common.components
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes

@@ -1,4 +1,4 @@
-package com.andrii_a.walleria.ui.photos
+package com.andrii_a.walleria.ui.common.components.lists
 
 import android.graphics.drawable.ColorDrawable
 import androidx.compose.foundation.Image
@@ -40,12 +40,12 @@ import coil.request.ImageRequest
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.core.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
-import com.andrii_a.walleria.ui.common.EmptyContentBanner
-import com.andrii_a.walleria.ui.common.ErrorBanner
-import com.andrii_a.walleria.ui.common.ErrorItem
-import com.andrii_a.walleria.ui.common.LoadingListItem
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.common.UserNickname
+import com.andrii_a.walleria.ui.common.components.EmptyContentBanner
+import com.andrii_a.walleria.ui.common.components.ErrorBanner
+import com.andrii_a.walleria.ui.common.components.ErrorItem
+import com.andrii_a.walleria.ui.common.components.LoadingListItem
 import com.andrii_a.walleria.ui.util.getUrlByQuality
 import com.andrii_a.walleria.ui.util.getUserProfileImageUrlOrEmpty
 import com.andrii_a.walleria.ui.util.primaryColorComposable

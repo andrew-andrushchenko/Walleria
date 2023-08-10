@@ -47,12 +47,13 @@ import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.user.User
-import com.andrii_a.walleria.ui.collections.CollectionsList
 import com.andrii_a.walleria.ui.common.CollectionId
 import com.andrii_a.walleria.ui.common.PhotoId
-import com.andrii_a.walleria.ui.common.ScrollToTopLayout
-import com.andrii_a.walleria.ui.common.WOutlinedTextField
-import com.andrii_a.walleria.ui.photos.PhotosList
+import com.andrii_a.walleria.ui.common.components.ScrollToTopLayout
+import com.andrii_a.walleria.ui.common.components.WOutlinedTextField
+import com.andrii_a.walleria.ui.common.components.lists.CollectionsList
+import com.andrii_a.walleria.ui.common.components.lists.PhotosList
+import com.andrii_a.walleria.ui.common.components.lists.UsersList
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow

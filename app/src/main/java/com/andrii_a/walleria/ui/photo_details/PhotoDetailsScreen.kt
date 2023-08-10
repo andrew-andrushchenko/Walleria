@@ -35,6 +35,8 @@ import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.domain.models.user.UserProfileImage
 import com.andrii_a.walleria.ui.common.*
+import com.andrii_a.walleria.ui.common.components.ErrorBanner
+import com.andrii_a.walleria.ui.common.components.LoadingBanner
 import com.andrii_a.walleria.ui.login.LoginActivity
 import com.andrii_a.walleria.ui.photo_details.components.*
 import com.andrii_a.walleria.ui.theme.OnPrimaryLight
