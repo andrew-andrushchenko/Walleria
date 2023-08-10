@@ -366,13 +366,13 @@ private fun Pages(
                                     .calculateBottomPadding() + 64.dp
                             )
                         )
-
-                        PullRefreshIndicator(
-                            refreshing = query.value.isNotEmpty() && lazyCollectionItems.loadState.refresh is LoadState.Loading,
-                            state = pullRefreshState,
-                            modifier = Modifier.align(Alignment.TopCenter)
-                        )
                     }
+
+                    PullRefreshIndicator(
+                        refreshing = query.value.isNotEmpty() && lazyCollectionItems.loadState.refresh is LoadState.Loading,
+                        state = pullRefreshState,
+                        modifier = Modifier.align(Alignment.TopCenter)
+                    )
                 }
             }
 
@@ -408,13 +408,13 @@ private fun Pages(
                                     .calculateBottomPadding() + 64.dp
                             )
                         )
-
-                        PullRefreshIndicator(
-                            refreshing = query.value.isNotEmpty() && lazyUserItems.loadState.refresh is LoadState.Loading,
-                            state = pullRefreshState,
-                            modifier = Modifier.align(Alignment.TopCenter)
-                        )
                     }
+
+                    PullRefreshIndicator(
+                        refreshing = query.value.isNotEmpty() && lazyUserItems.loadState.refresh is LoadState.Loading,
+                        state = pullRefreshState,
+                        modifier = Modifier.align(Alignment.TopCenter)
+                    )
                 }
             }
 
