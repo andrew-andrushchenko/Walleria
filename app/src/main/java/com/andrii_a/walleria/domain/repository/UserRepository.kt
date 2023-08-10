@@ -6,6 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
 
-    suspend fun getUserPublicProfile(username: String): Flow<BackendResult<User>>
+    fun getUserPublicProfile(username: String): Flow<BackendResult<User>>
 
 }

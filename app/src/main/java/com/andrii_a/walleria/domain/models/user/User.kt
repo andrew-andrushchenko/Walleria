@@ -4,7 +4,7 @@ import com.andrii_a.walleria.domain.models.photo.Photo
 
 data class User(
     val id: String,
-    val username: String?,
+    val username: String,
     val firstName: String,
     val lastName: String,
     val bio: String?,

@@ -38,7 +38,7 @@ data class UserDTO(
 ) {
     fun toUser(): User = User(
         id = id,
-        username = username,
+        username = username.orEmpty(),
         firstName = firstName.orEmpty(),
         lastName = lastName.orEmpty(),
         bio = bio,

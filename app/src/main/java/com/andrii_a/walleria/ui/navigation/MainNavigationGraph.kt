@@ -22,6 +22,7 @@ import com.andrii_a.walleria.ui.profile.profileRoute
 import com.andrii_a.walleria.ui.profile_edit.editUserProfileRoute
 import com.andrii_a.walleria.ui.search.searchRoute
 import com.andrii_a.walleria.ui.topics.topicsBottomNavRoute
+import com.andrii_a.walleria.ui.user_details.userDetailsRoute
 import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
@@ -66,6 +67,8 @@ fun MainNavHost(
             collectPhotoRoute(navHostController, bottomSheetState)
 
             collectionDetailsRoute(navHostController, systemUiController)
+
+            userDetailsRoute(navHostController, systemUiController)
         }
     }
 

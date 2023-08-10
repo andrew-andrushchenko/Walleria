@@ -15,6 +15,7 @@ import com.andrii_a.walleria.ui.collection_details.navigateToCollectionDetails
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.search.navigateToSearch
+import com.andrii_a.walleria.ui.user_details.navigateToUserDetails
 import com.andrii_a.walleria.ui.util.InterScreenCommunicationKeys
 import com.google.accompanist.systemuicontroller.SystemUiController
 
@@ -72,7 +73,7 @@ fun NavGraphBuilder.photoDetailsRoute(
             isPhotoCollected = isPhotoCollected,
             onEvent = viewModel::onEvent,
             navigateBack = navController::navigateUp,
-            navigateToUserDetails = {},
+            navigateToUserDetails = navController::navigateToUserDetails,
             navigateToCollectPhoto = navController::navigateToCollectPhoto,
             navigateToSearch = navController::navigateToSearch,
             navigateToCollectionDetails = navController::navigateToCollectionDetails

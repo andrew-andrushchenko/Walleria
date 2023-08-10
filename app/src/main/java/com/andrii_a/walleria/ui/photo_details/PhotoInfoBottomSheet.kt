@@ -159,7 +159,7 @@ fun PhotoInfoBottomSheetPreview() {
     WalleriaTheme {
         val user = User(
             id = "",
-            username = null,
+            username = "ABC",
             firstName = "John",
             lastName = "Smith",
             bio = null,

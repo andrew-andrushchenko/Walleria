@@ -48,6 +48,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.models.preferences.MyProfileData
+import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.common.WButton
 import com.andrii_a.walleria.ui.common.WTextButton
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
@@ -58,7 +59,7 @@ fun ProfileScreen(
     userProfileData: MyProfileData,
     navigateToLoginScreen: () -> Unit,
     onLogout: () -> Unit,
-    navigateToViewProfileScreen: () -> Unit,
+    navigateToViewProfileScreen: (UserNickname) -> Unit,
     navigateToEditProfileScreen: () -> Unit,
     navigateToSettingsScreen: () -> Unit,
     navigateToAboutScreen: () -> Unit
@@ -96,7 +97,11 @@ fun ProfileScreen(
                     ),
                     userNickname = userProfileData.nickname,
                     userEmail = userProfileData.email,
-                    navigateToViewProfileScreen = navigateToViewProfileScreen,
+                    navigateToViewProfileScreen = {
+                        navigateToViewProfileScreen(
+                            UserNickname(userProfileData.nickname)
+                        )
+                    },
                     navigateToEditProfileScreen = navigateToEditProfileScreen,
                     onLogout = onLogout
                 )

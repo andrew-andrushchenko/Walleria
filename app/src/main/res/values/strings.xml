@@ -194,4 +194,15 @@
     <string name="download_failed">Download failed!</string>
     <string name="downloading_photo">Downloading photo…</string>
 
+    <!--User details-->
+    <string name="liked_photos">Liked</string>
+    <string name="more_about_profile">More about profile</string>
+    <string name="portfolio_url">Portfolio URL</string>
+    <string name="instagram_profile">Instagram profile</string>
+    <string name="x_twitter_profile">X (former Twitter) profile</string>
+    <string name="total_likes">Likes</string>
+    <string name="followers">Followers</string>
+    <string name="following">Following</string>
+
+
 </resources>
