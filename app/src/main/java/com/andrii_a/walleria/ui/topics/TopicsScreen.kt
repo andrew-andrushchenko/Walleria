@@ -25,6 +25,7 @@ import com.andrii_a.walleria.domain.TopicsDisplayOrder
 import com.andrii_a.walleria.domain.models.topic.Topic
 import com.andrii_a.walleria.ui.common.components.ScrollToTopLayout
 import com.andrii_a.walleria.ui.common.SearchQuery
+import com.andrii_a.walleria.ui.common.TopicId
 import com.andrii_a.walleria.ui.common.components.WTitleDropdown
 import com.andrii_a.walleria.ui.common.components.lists.TopicsList
 import com.andrii_a.walleria.ui.util.titleRes
@@ -36,6 +37,7 @@ fun TopicsScreen(
     topics: Flow<PagingData<Topic>>,
     order: TopicsDisplayOrder,
     orderBy: (Int) -> Unit,
+    navigateToTopicDetails: (TopicId) -> Unit,
     navigateToProfileScreen: () -> Unit,
     navigateToSearchScreen: (SearchQuery?) -> Unit
 ) {
@@ -63,7 +65,7 @@ fun TopicsScreen(
         ) {
             TopicsList(
                 lazyTopicItems = lazyTopicItems,
-                onClick = {},
+                onClick = navigateToTopicDetails,
                 listState = listState,
                 contentPadding = PaddingValues(
                     top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 64.dp,

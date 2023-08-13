@@ -36,7 +36,7 @@ import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.TopicStatus
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.topic.Topic
-import com.andrii_a.walleria.ui.common.TopicInfo
+import com.andrii_a.walleria.ui.common.TopicId
 import com.andrii_a.walleria.ui.common.components.EmptyContentBanner
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
 import com.andrii_a.walleria.ui.common.components.ErrorItem
@@ -56,7 +56,7 @@ import com.andrii_a.walleria.ui.util.titleRes
 fun TopicsList(
     lazyTopicItems: LazyPagingItems<Topic>,
     modifier: Modifier = Modifier,
-    onClick: (TopicInfo) -> Unit,
+    onClick: (TopicId) -> Unit,
     coverPhotoQuality: PhotoQuality = PhotoQuality.MEDIUM,
     listState: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues()
@@ -84,11 +84,7 @@ fun TopicsList(
                                 status = topic.status,
                                 updatedAt = topic.updatedAt.orEmpty(),
                                 onClick = {
-                                    val topicInfo = TopicInfo(
-                                        idAsString = topic.id,
-                                        title = topic.title
-                                    )
-                                    onClick(topicInfo)
+                                    onClick(TopicId(topic.id))
                                 },
                                 modifier = Modifier.padding(
                                     start = 8.dp,
@@ -249,7 +245,7 @@ fun DefaultTopicItem(
 }
 
 @Composable
-private fun StatusIndicatorText(status: TopicStatus, modifier: Modifier = Modifier) {
+fun StatusIndicatorText(status: TopicStatus, modifier: Modifier = Modifier) {
     Text(
         text = stringResource(id = status.titleRes),
         style = MaterialTheme.typography.subtitle2,

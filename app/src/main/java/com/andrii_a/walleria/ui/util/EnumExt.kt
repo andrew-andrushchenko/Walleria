@@ -9,6 +9,7 @@ import com.andrii_a.walleria.domain.SearchResultsContentFilter
 import com.andrii_a.walleria.domain.SearchResultsDisplayOrder
 import com.andrii_a.walleria.domain.SearchResultsPhotoColor
 import com.andrii_a.walleria.domain.SearchResultsPhotoOrientation
+import com.andrii_a.walleria.domain.TopicPhotosOrientation
 import com.andrii_a.walleria.domain.TopicStatus
 import com.andrii_a.walleria.domain.TopicsDisplayOrder
 
@@ -67,6 +68,22 @@ val SearchResultsPhotoOrientation.iconRes: Int
         SearchResultsPhotoOrientation.LANDSCAPE -> R.drawable.ic_landscape
         SearchResultsPhotoOrientation.PORTRAIT -> R.drawable.ic_portrait
         SearchResultsPhotoOrientation.SQUARISH -> R.drawable.ic_squarish
+    }
+
+val TopicPhotosOrientation.titleRes: Int
+    @StringRes
+    get() = when (this) {
+        TopicPhotosOrientation.LANDSCAPE -> R.string.orientation_landscape
+        TopicPhotosOrientation.PORTRAIT -> R.string.orientation_portrait
+        TopicPhotosOrientation.SQUARISH -> R.string.orientation_squarish
+    }
+
+val TopicPhotosOrientation.iconRes: Int
+    @DrawableRes
+    get() = when (this) {
+        TopicPhotosOrientation.LANDSCAPE -> R.drawable.ic_landscape
+        TopicPhotosOrientation.PORTRAIT -> R.drawable.ic_portrait
+        TopicPhotosOrientation.SQUARISH -> R.drawable.ic_squarish
     }
 
 val TopicsDisplayOrder.titleRes: Int

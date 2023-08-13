@@ -12,7 +12,5 @@ value class SearchQuery(val value: String)
 @JvmInline
 value class UserNickname(val value: String)
 
-data class TopicInfo(
-    val idAsString: String,
-    val title: String?
-)
+@JvmInline
+value class TopicId(val value: String)

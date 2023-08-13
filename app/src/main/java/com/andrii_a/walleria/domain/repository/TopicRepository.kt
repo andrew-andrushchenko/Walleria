@@ -10,6 +10,6 @@ interface TopicRepository {
 
     fun getTopics(order: TopicsDisplayOrder): Flow<PagingData<Topic>>
 
-    suspend fun getTopic(idOrSlug: String): BackendResult<Topic>
+    fun getTopic(idOrSlug: String): Flow<BackendResult<Topic>>
 
 }

@@ -60,7 +60,8 @@ fun PhotosList(
     modifier: Modifier = Modifier,
     photosQuality: PhotoQuality = PhotoQuality.MEDIUM,
     listState: LazyListState = rememberLazyListState(),
-    contentPadding: PaddingValues = PaddingValues()
+    contentPadding: PaddingValues = PaddingValues(),
+    headerContent: (@Composable () -> Unit)? = null
 ) {
     LazyColumn(
         state = listState,
@@ -69,6 +70,12 @@ fun PhotosList(
     ) {
         when (lazyPhotoItems.loadState.refresh) {
             is LoadState.NotLoading -> {
+                headerContent?.let { header ->
+                    item {
+                        header.invoke()
+                    }
+                }
+
                 if (lazyPhotoItems.itemCount > 0) {
                     items(
                         count = lazyPhotoItems.itemCount,
