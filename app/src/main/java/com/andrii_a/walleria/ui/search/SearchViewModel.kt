@@ -23,13 +23,6 @@ sealed interface SearchScreenEvent {
     data class ChangePhotoFilters(val photoFilters: PhotoFilters) : SearchScreenEvent
 }
 
-data class PhotoFilters(
-    val order: SearchResultsDisplayOrder,
-    val contentFilter: SearchResultsContentFilter,
-    val color: SearchResultsPhotoColor,
-    val orientation: SearchResultsPhotoOrientation
-)
-
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val searchRepository: SearchRepository,
