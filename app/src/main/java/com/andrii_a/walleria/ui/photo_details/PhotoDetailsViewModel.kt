@@ -9,6 +9,7 @@ import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.repository.LocalUserAccountPreferencesRepository
 import com.andrii_a.walleria.domain.repository.PhotoRepository
 import com.andrii_a.walleria.domain.services.PhotoDownloader
+import com.andrii_a.walleria.ui.common.PhotoId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,7 +38,7 @@ sealed interface PhotoDetailsEvent {
 sealed interface PhotoLoadResult {
     data object Empty : PhotoLoadResult
     data object Loading : PhotoLoadResult
-    data object Error : PhotoLoadResult
+    data class Error(val photoId: PhotoId) : PhotoLoadResult
     data class Success(val photo: Photo) : PhotoLoadResult
 }
 
@@ -94,7 +95,7 @@ class PhotoDetailsViewModel @Inject constructor(
                     _isCollected.update { photo.currentUserCollections?.map { it.id }?.isNotEmpty() ?: false }
                 }
                 is BackendResult.Error -> {
-                    _loadResult.update { PhotoLoadResult.Error }
+                    _loadResult.update { PhotoLoadResult.Error(PhotoId(photoId)) }
                 }
                 is BackendResult.Empty -> Unit
             }

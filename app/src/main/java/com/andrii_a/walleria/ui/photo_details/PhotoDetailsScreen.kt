@@ -49,7 +49,6 @@ import kotlin.math.max
 
 @Composable
 fun PhotoDetailsScreen(
-    photoId: PhotoId,
     loadResult: PhotoLoadResult,
     isUserLoggedIn: Boolean,
     isPhotoLiked: Boolean,
@@ -80,7 +79,7 @@ fun PhotoDetailsScreen(
             is PhotoLoadResult.Error -> {
                 ErrorStateContent(
                     onRetry = {
-                        onEvent(PhotoDetailsEvent.RequestPhoto(photoId.value))
+                        onEvent(PhotoDetailsEvent.RequestPhoto(loadResult.photoId.value))
                     },
                     onNavigateBack = navigateBack,
                     modifier = Modifier

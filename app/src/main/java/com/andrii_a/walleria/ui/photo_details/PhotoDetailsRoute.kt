@@ -31,7 +31,7 @@ fun NavGraphBuilder.photoDetailsRoute(
                 nullable = false
             }
         )
-    ) { navBackStackEntry ->
+    ) {
         val systemBarsColors = Color.Transparent
         val isDark = false
 
@@ -44,7 +44,6 @@ fun NavGraphBuilder.photoDetailsRoute(
 
         val viewModel: PhotoDetailsViewModel = hiltViewModel()
 
-        val photoId = PhotoId(navBackStackEntry.arguments?.getString(PhotoDetailsArgs.ID).orEmpty())
         val loadResultState by viewModel.loadResult.collectAsStateWithLifecycle()
         val isUserLoggedIn by viewModel.isUserLoggedIn.collectAsStateWithLifecycle()
         val isPhotoLiked by viewModel.isLiked.collectAsStateWithLifecycle()
@@ -66,7 +65,6 @@ fun NavGraphBuilder.photoDetailsRoute(
         }
 
         PhotoDetailsScreen(
-            photoId = photoId,
             loadResult = loadResultState,
             isUserLoggedIn = isUserLoggedIn,
             isPhotoLiked = isPhotoLiked,
