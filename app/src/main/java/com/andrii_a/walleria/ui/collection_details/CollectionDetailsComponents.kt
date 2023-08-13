@@ -3,14 +3,8 @@ package com.andrii_a.walleria.ui.collection_details
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -22,126 +16,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.paging.LoadState
-import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.itemKey
-import com.andrii_a.walleria.domain.PhotoQuality
-import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.user.User
-import com.andrii_a.walleria.ui.common.PhotoId
-import com.andrii_a.walleria.ui.common.UserNickname
-import com.andrii_a.walleria.ui.common.components.EmptyContentBanner
-import com.andrii_a.walleria.ui.common.components.ErrorBanner
-import com.andrii_a.walleria.ui.common.components.ErrorItem
-import com.andrii_a.walleria.ui.common.components.LoadingListItem
 import com.andrii_a.walleria.ui.common.components.UserRowWithPhotoCount
-import com.andrii_a.walleria.ui.common.components.lists.DefaultPhotoItem
-import com.andrii_a.walleria.ui.util.getUrlByQuality
-import com.andrii_a.walleria.ui.util.getUserProfileImageUrlOrEmpty
-import com.andrii_a.walleria.ui.util.primaryColorComposable
-import com.andrii_a.walleria.ui.util.userFullName
-import com.andrii_a.walleria.ui.util.userNickname
 
 @Composable
-fun CollectionDetailsList(
-    owner: User?,
-    description: String?,
-    totalPhotos: Long,
-    modifier: Modifier = Modifier,
-    lazyPhotoItems: LazyPagingItems<Photo>,
-    onPhotoClicked: (PhotoId) -> Unit,
-    onUserProfileClicked: (UserNickname) -> Unit,
-    photosQuality: PhotoQuality = PhotoQuality.MEDIUM,
-    listState: LazyListState = rememberLazyListState(),
-    contentPadding: PaddingValues = PaddingValues()
-) {
-    LazyColumn(
-        state = listState,
-        contentPadding = contentPadding,
-        modifier = modifier
-    ) {
-        when (lazyPhotoItems.loadState.refresh) {
-            is LoadState.NotLoading -> {
-                if (lazyPhotoItems.itemCount > 0) {
-                    item {
-                        DescriptionHeader(
-                            owner = owner,
-                            description = description,
-                            totalPhotos = totalPhotos,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 24.dp, vertical = 16.dp)
-                        )
-                    }
-
-                    items(
-                        count = lazyPhotoItems.itemCount,
-                        key = lazyPhotoItems.itemKey { it.id }
-                    ) { index ->
-                        val photo = lazyPhotoItems[index]
-                        photo?.let {
-                            DefaultPhotoItem(
-                                width = photo.width.toFloat(),
-                                height = photo.height.toFloat(),
-                                photoUrl = photo.getUrlByQuality(photosQuality),
-                                photoPlaceholderColor = photo.primaryColorComposable,
-                                userProfileImageUrl = photo.getUserProfileImageUrlOrEmpty(),
-                                username = photo.userFullName,
-                                onPhotoClicked = { onPhotoClicked(PhotoId(it.id)) },
-                                onUserClick = { onUserProfileClicked(UserNickname(photo.userNickname)) },
-                                modifier = Modifier
-                                    .padding(
-                                        start = 16.dp,
-                                        end = 16.dp,
-                                        bottom = 16.dp
-                                    )
-                            )
-                        }
-                    }
-                } else {
-                    item {
-                        EmptyContentBanner(modifier = Modifier.fillParentMaxSize())
-                    }
-                }
-            }
-
-            is LoadState.Loading -> Unit
-
-            is LoadState.Error -> {
-                item {
-                    ErrorBanner(
-                        onRetry = lazyPhotoItems::retry,
-                        modifier = Modifier.fillParentMaxSize()
-                    )
-                }
-            }
-        }
-
-        when (lazyPhotoItems.loadState.append) {
-            is LoadState.NotLoading -> Unit
-
-            is LoadState.Loading -> {
-                item {
-                    LoadingListItem(modifier = Modifier.fillParentMaxWidth())
-                }
-            }
-
-            is LoadState.Error -> {
-                item {
-                    ErrorItem(
-                        onRetry = lazyPhotoItems::retry,
-                        modifier = Modifier
-                            .fillParentMaxWidth()
-                            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun DescriptionHeader(
+fun CollectionDescriptionHeader(
     owner: User?,
     description: String?,
     totalPhotos: Long,

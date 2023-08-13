@@ -63,6 +63,7 @@ import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
 import com.andrii_a.walleria.ui.common.components.LoadingBanner
 import com.andrii_a.walleria.ui.common.components.ScrollToTopLayout
+import com.andrii_a.walleria.ui.common.components.lists.PhotosList
 import com.andrii_a.walleria.ui.theme.PrimaryDark
 import com.andrii_a.walleria.ui.util.getUrlByQuality
 import com.andrii_a.walleria.ui.util.username
@@ -317,13 +318,20 @@ private fun SuccessStateContent(
                         .calculateBottomPadding() + 8.dp
                 )
             ) {
-                CollectionDetailsList(
-                    owner = collection.user,
-                    description = collection.description,
-                    totalPhotos = collection.totalPhotos,
+                PhotosList(
                     lazyPhotoItems = collectionPhotosLazyItems,
                     onPhotoClicked = navigateToPhotoDetails,
                     onUserProfileClicked = navigateToUserDetails,
+                    headerContent = {
+                        CollectionDescriptionHeader(
+                            owner = collection.user,
+                            description = collection.description,
+                            totalPhotos = collection.totalPhotos,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 24.dp, vertical = 16.dp)
+                        )
+                    },
                     listState = listState,
                     contentPadding = PaddingValues(
                         top = WindowInsets.systemBars.asPaddingValues()
