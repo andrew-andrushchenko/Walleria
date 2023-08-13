@@ -72,19 +72,19 @@ class CollectionDetailsViewModel @Inject constructor(
 
     init {
         savedStateHandle.get<String>(CollectionDetailsArgs.ID)?.let { id ->
-            getCollection(id)
+            getCollection(CollectionId(id))
         }
     }
 
     fun onEvent(event: CollectionDetailsEvent) {
         when (event) {
             is CollectionDetailsEvent.RequestCollection -> {
-                getCollection(event.collectionId.value)
+                getCollection(event.collectionId)
             }
 
             is CollectionDetailsEvent.UpdateCollection -> {
                 updateCollection(
-                    event.collectionId.value,
+                    event.collectionId,
                     event.title,
                     event.description,
                     event.isPrivate
@@ -92,17 +92,17 @@ class CollectionDetailsViewModel @Inject constructor(
             }
 
             is CollectionDetailsEvent.DeleteCollection -> {
-                deleteCollection(event.collectionId.value)
+                deleteCollection(event.collectionId)
             }
         }
     }
 
-    private fun getCollection(id: String) {
-        collectionRepository.getCollection(id).onEach { result ->
+    private fun getCollection(id: CollectionId) {
+        collectionRepository.getCollection(id.value).onEach { result ->
             when (result) {
                 is BackendResult.Empty -> Unit
                 is BackendResult.Error -> {
-                    _loadResult.update { CollectionLoadResult.Error(CollectionId((id))) }
+                    _loadResult.update { CollectionLoadResult.Error(id) }
                 }
 
                 is BackendResult.Loading -> {
@@ -123,19 +123,19 @@ class CollectionDetailsViewModel @Inject constructor(
     }
 
     private fun updateCollection(
-        id: String,
+        id: CollectionId,
         title: String,
         description: String?,
         isPrivate: Boolean
     ) {
         viewModelScope.launch {
-            collectionRepository.updateCollection(id, title, description, isPrivate)
+            collectionRepository.updateCollection(id.value, title, description, isPrivate)
         }
     }
 
-    private fun deleteCollection(id: String) {
+    private fun deleteCollection(id: CollectionId) {
         viewModelScope.launch {
-            collectionRepository.deleteCollection(id)
+            collectionRepository.deleteCollection(id.value)
         }
     }
 
