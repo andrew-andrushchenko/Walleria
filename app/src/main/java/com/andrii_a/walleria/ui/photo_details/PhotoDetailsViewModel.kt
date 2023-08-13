@@ -24,9 +24,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed interface PhotoDetailsEvent {
-    data class RequestPhoto(val photoId: String) : PhotoDetailsEvent
-    data class LikePhoto(val photoId: String) : PhotoDetailsEvent
-    data class DislikePhoto(val photoId: String) : PhotoDetailsEvent
+    data class RequestPhoto(val photoId: PhotoId) : PhotoDetailsEvent
+    data class LikePhoto(val photoId: PhotoId) : PhotoDetailsEvent
+    data class DislikePhoto(val photoId: PhotoId) : PhotoDetailsEvent
     data object CollectPhoto : PhotoDetailsEvent
     data object DropPhoto : PhotoDetailsEvent
     data class DownloadPhoto(
@@ -67,7 +67,7 @@ class PhotoDetailsViewModel @Inject constructor(
 
     init {
         savedStateHandle.get<String>(PhotoDetailsArgs.ID)?.let { photoId ->
-            onEvent(PhotoDetailsEvent.RequestPhoto(photoId))
+            onEvent(PhotoDetailsEvent.RequestPhoto(PhotoId(photoId)))
         }
     }
 
@@ -82,8 +82,8 @@ class PhotoDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun getPhoto(photoId: String) {
-        photoRepository.getPhoto(photoId).onEach { result ->
+    private fun getPhoto(photoId: PhotoId) {
+        photoRepository.getPhoto(photoId.value).onEach { result ->
             when (result) {
                 is BackendResult.Loading -> {
                     _loadResult.update { PhotoLoadResult.Loading }
@@ -95,7 +95,7 @@ class PhotoDetailsViewModel @Inject constructor(
                     _isCollected.update { photo.currentUserCollections?.map { it.id }?.isNotEmpty() ?: false }
                 }
                 is BackendResult.Error -> {
-                    _loadResult.update { PhotoLoadResult.Error(PhotoId(photoId)) }
+                    _loadResult.update { PhotoLoadResult.Error(photoId) }
                 }
                 is BackendResult.Empty -> Unit
             }
@@ -105,18 +105,18 @@ class PhotoDetailsViewModel @Inject constructor(
     private var likePhotoJob: Job? = null
     private var dislikePhotoJob: Job? = null
 
-    private fun likePhoto(photoId: String) {
+    private fun likePhoto(photoId: PhotoId) {
         likePhotoJob?.cancel()
         likePhotoJob = viewModelScope.launch {
-            photoRepository.likePhoto(photoId)
+            photoRepository.likePhoto(photoId.value)
             _isLiked.update { true }
         }
     }
 
-    private fun dislikePhoto(photoId: String) {
+    private fun dislikePhoto(photoId: PhotoId) {
         dislikePhotoJob?.cancel()
         dislikePhotoJob = viewModelScope.launch {
-            photoRepository.dislikePhoto(photoId)
+            photoRepository.dislikePhoto(photoId.value)
             _isLiked.update { false }
         }
     }
