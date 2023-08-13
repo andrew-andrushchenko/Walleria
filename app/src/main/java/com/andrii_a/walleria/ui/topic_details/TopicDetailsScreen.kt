@@ -59,7 +59,7 @@ import com.andrii_a.walleria.ui.common.components.ScrollToTopLayout
 import com.andrii_a.walleria.ui.common.components.lists.PhotosList
 import com.andrii_a.walleria.ui.theme.PrimaryDark
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
-import com.andrii_a.walleria.ui.util.openPhotoInBrowser
+import com.andrii_a.walleria.ui.util.openLinkInBrowser
 import kotlinx.coroutines.launch
 
 @Composable
@@ -340,7 +340,7 @@ private fun SuccessStateContent(
                 titleText = topic.title,
                 onNavigateBack = navigateBack,
                 onFilterButtonClick = { scope.launch { modalBottomSheetState.show() } },
-                onOpenTopicInBrowserButtonClick = { context.openPhotoInBrowser(topic.links?.html) },
+                onOpenTopicInBrowserButtonClick = { context.openLinkInBrowser(topic.links?.html) },
                 modifier = Modifier.background(topBarColor)
             )
         }

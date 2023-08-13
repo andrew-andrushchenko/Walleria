@@ -36,7 +36,7 @@ fun Context.sharePhoto(photoLink: String?, photoDescription: String?) {
     }
 }
 
-fun Context.openPhotoInBrowser(photoLink: String?) {
+fun Context.openLinkInBrowser(photoLink: String?) {
     CustomTabsHelper.openCustomTab(this, Uri.parse(photoLink))
 }
 

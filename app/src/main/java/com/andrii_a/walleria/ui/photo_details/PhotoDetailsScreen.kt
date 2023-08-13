@@ -208,7 +208,7 @@ private fun SuccessStateContent(
             ) {
                 TopBar(
                     onNavigateBack = navigateBack,
-                    onOpenInBrowser = { context.openPhotoInBrowser(photo.links?.html) },
+                    onOpenInBrowser = { context.openLinkInBrowser(photo.links?.html) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(color = Color.Black.copy(alpha = 0.5f))
