@@ -6,6 +6,7 @@ import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -14,6 +15,7 @@ import androidx.navigation.navArgument
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.util.InterScreenCommunicationKeys
+import com.andrii_a.walleria.ui.util.toast
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.bottomSheet
 import kotlinx.coroutines.flow.collectLatest
@@ -63,14 +65,20 @@ fun NavGraphBuilder.collectPhotoRoute(
                 }
         }
 
+        val context = LocalContext.current
+        LaunchedEffect(true) {
+            viewModel.errorFlow.collect { errorText ->
+                context.toast(errorText.asString(context))
+            }
+        }
+
         CollectPhotoScreen(
             photoId = PhotoId(id),
             userCollections = viewModel.userCollections,
             isCollectionInList = viewModel::isCollectionInList,
             collectPhoto = viewModel::collectPhoto,
             dropPhoto = viewModel::dropPhotoFromCollection,
-            createAndCollect = viewModel::createCollectionNewAndCollect,
-            errorFlow = viewModel.errorFlow
+            createAndCollect = viewModel::createCollectionNewAndCollect
         )
     }
 }

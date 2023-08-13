@@ -5,20 +5,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.ui.common.PhotoId
-import com.andrii_a.walleria.ui.util.UiText
-import com.andrii_a.walleria.ui.util.toast
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
@@ -35,17 +31,9 @@ fun CollectPhotoScreen(
         description: String?,
         isPrivate: Boolean,
         photoId: String
-    ) -> SharedFlow<CollectionCreationResult>,
-    errorFlow: SharedFlow<UiText>
+    ) -> SharedFlow<CollectionCreationResult>
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val context = LocalContext.current
-
-    LaunchedEffect(true) {
-        errorFlow.collect { errorText ->
-            context.toast(errorText.asString(context))
-        }
-    }
 
     Surface(
         color = MaterialTheme.colors.primary,
