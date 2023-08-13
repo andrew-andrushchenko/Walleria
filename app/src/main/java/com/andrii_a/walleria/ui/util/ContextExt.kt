@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import androidx.annotation.StringRes
+import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.models.photo.PhotoLocation
 import com.andrii_a.walleria.ui.common.UserNickname
 
@@ -30,7 +31,7 @@ fun Context.sharePhoto(photoLink: String?, photoDescription: String?) {
             type = "text/plain"
             putExtra(Intent.EXTRA_TEXT, photoLink)
             putExtra(Intent.EXTRA_TITLE, photoDescription)
-        }, "Share"
+        }, getString(R.string.share)
     ).let {
         startActivity(it)
     }
@@ -53,10 +54,6 @@ fun Context.openLocationInMaps(position: PhotoLocation.Position?) {
 
 fun Context.openUserProfileInBrowser(userNickname: UserNickname) {
     CustomTabsHelper.openCustomTab(this, Uri.parse("https://unsplash.com/@${userNickname.value}"))
-}
-
-fun Context.openUserPortfolio(portfolioUrl: String) {
-    CustomTabsHelper.openCustomTab(this, Uri.parse(portfolioUrl))
 }
 
 fun Context.openInstagramProfile(instagramUsername: String) {

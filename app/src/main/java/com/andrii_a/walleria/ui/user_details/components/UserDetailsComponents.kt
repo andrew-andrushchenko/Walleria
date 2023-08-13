@@ -57,8 +57,8 @@ import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.getProfileImageUrlOrEmpty
 import com.andrii_a.walleria.ui.util.openInstagramProfile
+import com.andrii_a.walleria.ui.util.openLinkInBrowser
 import com.andrii_a.walleria.ui.util.openTwitterProfile
-import com.andrii_a.walleria.ui.util.openUserPortfolio
 import com.andrii_a.walleria.ui.util.openUserProfileInBrowser
 import com.andrii_a.walleria.ui.util.userFullName
 
@@ -72,7 +72,7 @@ private fun UserSocialMediaRow(userSocial: UserSocialMediaLinks) {
         modifier = Modifier.fillMaxWidth()
     ) {
         userSocial.portfolioUrl?.let {
-            IconButton(onClick = { context.openUserPortfolio(it) }) {
+            IconButton(onClick = { context.openLinkInBrowser(it) }) {
                 Icon(
                     painterResource(id = R.drawable.ic_portfolio_outlined),
                     contentDescription = stringResource(id = R.string.portfolio_url)
