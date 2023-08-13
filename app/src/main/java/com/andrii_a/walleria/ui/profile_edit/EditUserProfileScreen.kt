@@ -146,7 +146,7 @@ fun EditUserProfileScreen(
                     },
                     leadingIcon = {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_web_outlined),
+                            painter = painterResource(id = R.drawable.ic_portfolio_outlined),
                             contentDescription = stringResource(id = R.string.portfolio_hint)
                         )
                     },
