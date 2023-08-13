@@ -42,7 +42,7 @@ sealed interface CollectionDetailsEvent {
 sealed interface CollectionLoadResult {
     data object Empty : CollectionLoadResult
     data object Loading : CollectionLoadResult
-    data object Error : CollectionLoadResult
+    data class Error(val collectionId: CollectionId) : CollectionLoadResult
     data class Success(
         val collection: Collection,
         val collectionPhotos: Flow<PagingData<Photo>>
@@ -102,7 +102,7 @@ class CollectionDetailsViewModel @Inject constructor(
             when (result) {
                 is BackendResult.Empty -> Unit
                 is BackendResult.Error -> {
-                    _loadResult.update { CollectionLoadResult.Error }
+                    _loadResult.update { CollectionLoadResult.Error(CollectionId((id))) }
                 }
 
                 is BackendResult.Loading -> {

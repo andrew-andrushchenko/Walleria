@@ -30,7 +30,7 @@ fun NavGraphBuilder.collectionDetailsRoute(
                 nullable = false
             }
         )
-    ) { navBackStackEntry ->
+    ) {
         val systemBarsColors = Color.Transparent
         val isDark = isSystemInDarkTheme()
 
@@ -43,12 +43,10 @@ fun NavGraphBuilder.collectionDetailsRoute(
 
         val viewModel: CollectionDetailsViewModel = hiltViewModel()
 
-        val collectionId = CollectionId(navBackStackEntry.arguments?.getString(CollectionDetailsArgs.ID).orEmpty())
         val loadResult by viewModel.loadResult.collectAsStateWithLifecycle()
         val loggedInUsername by viewModel.loggedInUsername.collectAsStateWithLifecycle()
 
         CollectionDetailsScreen(
-            collectionId = collectionId,
             loadResult = loadResult,
             loggedInUsername = UserNickname(loggedInUsername),
             onEvent = viewModel::onEvent,

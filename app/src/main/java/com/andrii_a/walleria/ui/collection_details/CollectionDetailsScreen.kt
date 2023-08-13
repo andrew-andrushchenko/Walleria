@@ -57,7 +57,6 @@ import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.domain.models.photo.Photo
-import com.andrii_a.walleria.ui.common.CollectionId
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
@@ -71,7 +70,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun CollectionDetailsScreen(
-    collectionId: CollectionId,
     loadResult: CollectionLoadResult,
     loggedInUsername: UserNickname,
     onEvent: (CollectionDetailsEvent) -> Unit,
@@ -94,7 +92,7 @@ fun CollectionDetailsScreen(
             is CollectionLoadResult.Error -> {
                 ErrorStateContent(
                     onRetry = {
-                        onEvent(CollectionDetailsEvent.RequestCollection(collectionId))
+                        onEvent(CollectionDetailsEvent.RequestCollection(loadResult.collectionId))
                     },
                     onNavigateBack = navigateBack,
                     modifier = Modifier
