@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -67,10 +68,21 @@ fun LoginScreen(
                 .build(),
             contentDescription = stringResource(id = R.string.topic_cover_photo),
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .drawWithContent {
+                    drawContent()
+                    drawRect(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Black.copy(alpha = 0.5f),
+                                Color.Transparent,
+                                Color.Black.copy(alpha = 0.8f)
+                            )
+                        )
+                    )
+                }
         )
-
-        Gradient()
 
         TopSection(
             onNavigateBack = onNavigateBack,
@@ -231,21 +243,4 @@ private fun BottomSection(
             }
         }
     }
-}
-
-@Composable
-private fun Gradient() {
-    Spacer(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color.Black.copy(alpha = 0.5f),
-                        Color.Transparent,
-                        Color.Black.copy(alpha = 0.8f)
-                    )
-                )
-            )
-    )
 }
