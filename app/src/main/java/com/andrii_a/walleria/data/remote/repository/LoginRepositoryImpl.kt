@@ -11,7 +11,7 @@ import com.andrii_a.walleria.data.util.network.backendRequest
 import com.andrii_a.walleria.domain.models.login.AccessToken
 import com.andrii_a.walleria.domain.models.login.MyProfile
 import com.andrii_a.walleria.domain.models.preferences.MyProfileData
-import com.andrii_a.walleria.domain.repository.LocalUserAccountPreferencesRepository
+import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
 import com.andrii_a.walleria.domain.repository.LoginRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.flow
 class LoginRepositoryImpl(
     private val loginService: LoginService,
     private val userService: UserService,
-    private val localUserAccountPreferencesRepository: LocalUserAccountPreferencesRepository
+    private val userAccountPreferencesRepository: UserAccountPreferencesRepository
 ) : LoginRepository {
 
     override val loginUrl: String
@@ -55,7 +55,7 @@ class LoginRepositoryImpl(
         }
 
     override suspend fun saveAccessToken(accessToken: AccessToken) {
-        localUserAccountPreferencesRepository.saveAccessToken(accessToken)
+        userAccountPreferencesRepository.saveAccessToken(accessToken)
     }
 
     override suspend fun getMyProfile(): BackendResult<MyProfile> = backendRequest {
@@ -63,7 +63,7 @@ class LoginRepositoryImpl(
     }
 
     override suspend fun saveMyProfile(myProfile: MyProfile) {
-        localUserAccountPreferencesRepository.saveMyProfileInfo(myProfile)
+        userAccountPreferencesRepository.saveMyProfileInfo(myProfile)
     }
 
     override suspend fun updateMyProfile(myProfileData: MyProfileData): BackendResult<MyProfile> =
@@ -80,6 +80,6 @@ class LoginRepositoryImpl(
             ).toMyProfile()
         }
 
-    override suspend fun logout() = localUserAccountPreferencesRepository.reset()
+    override suspend fun logout() = userAccountPreferencesRepository.reset()
 
 }

@@ -12,7 +12,7 @@ import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.repository.CollectionRepository
 import com.andrii_a.walleria.domain.repository.LocalPreferencesRepository
-import com.andrii_a.walleria.domain.repository.LocalUserAccountPreferencesRepository
+import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
 import com.andrii_a.walleria.domain.repository.PhotoRepository
 import com.andrii_a.walleria.ui.common.CollectionId
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -59,12 +59,12 @@ class CollectionDetailsViewModel @Inject constructor(
     private val collectionRepository: CollectionRepository,
     private val photoRepository: PhotoRepository,
     localPreferencesRepository: LocalPreferencesRepository,
-    localUserAccountPreferencesRepository: LocalUserAccountPreferencesRepository,
+    userAccountPreferencesRepository: UserAccountPreferencesRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     val loggedInUsername: StateFlow<String> =
-        localUserAccountPreferencesRepository.myProfileData
+        userAccountPreferencesRepository.myProfileData
             .map {
                 it.nickname
             }.stateIn(

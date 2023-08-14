@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.andrii_a.walleria.core.BackendResult
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
-import com.andrii_a.walleria.domain.repository.LocalUserAccountPreferencesRepository
+import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
 import com.andrii_a.walleria.domain.repository.PhotoRepository
 import com.andrii_a.walleria.domain.services.PhotoDownloader
 import com.andrii_a.walleria.ui.common.PhotoId
@@ -45,11 +45,11 @@ sealed interface PhotoLoadResult {
 @HiltViewModel
 class PhotoDetailsViewModel @Inject constructor(
     private val photoRepository: PhotoRepository,
-    localUserAccountPreferencesRepository: LocalUserAccountPreferencesRepository,
+    userAccountPreferencesRepository: UserAccountPreferencesRepository,
     private val photoDownloader: PhotoDownloader,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    val isUserLoggedIn: StateFlow<Boolean> = localUserAccountPreferencesRepository.isUserAuthorized
+    val isUserLoggedIn: StateFlow<Boolean> = userAccountPreferencesRepository.isUserAuthorized
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),

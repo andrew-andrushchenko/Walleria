@@ -1,7 +1,7 @@
 package com.andrii_a.walleria.di
 
 import com.andrii_a.walleria.data.util.network.AccessTokenInterceptor
-import com.andrii_a.walleria.domain.repository.LocalUserAccountPreferencesRepository
+import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,8 +19,8 @@ object GeneralNetworkModule {
     @Provides
     @Singleton
     fun provideAccessTokenInterceptor(
-        localUserAccountPreferencesRepository: LocalUserAccountPreferencesRepository
-    ): AccessTokenInterceptor = AccessTokenInterceptor(localUserAccountPreferencesRepository)
+        userAccountPreferencesRepository: UserAccountPreferencesRepository
+    ): AccessTokenInterceptor = AccessTokenInterceptor(userAccountPreferencesRepository)
 
     @Provides
     @Singleton

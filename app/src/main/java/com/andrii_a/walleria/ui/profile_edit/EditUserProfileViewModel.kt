@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.core.BackendResult
 import com.andrii_a.walleria.domain.models.preferences.MyProfileData
-import com.andrii_a.walleria.domain.repository.LocalUserAccountPreferencesRepository
+import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
 import com.andrii_a.walleria.domain.repository.LoginRepository
 import com.andrii_a.walleria.ui.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -55,13 +55,13 @@ sealed interface EditUserProfileEvent {
 @HiltViewModel
 class EditUserProfileViewModel @Inject constructor(
     private val loginRepository: LoginRepository,
-    localUserAccountPreferencesRepository: LocalUserAccountPreferencesRepository
+    userAccountPreferencesRepository: UserAccountPreferencesRepository
 ) : ViewModel() {
 
     private val _state: MutableStateFlow<EditUserProfileScreenState> =
         MutableStateFlow(
             runBlocking {
-                localUserAccountPreferencesRepository.myProfileData.map {
+                userAccountPreferencesRepository.myProfileData.map {
                     EditUserProfileScreenState(
                         nickname = it.nickname,
                         firstName = it.firstName,

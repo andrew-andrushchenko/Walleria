@@ -1,6 +1,6 @@
 package com.andrii_a.walleria.data.util.network
 
-import com.andrii_a.walleria.domain.repository.LocalUserAccountPreferencesRepository
+import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
@@ -8,12 +8,12 @@ import okhttp3.Response
 import com.andrii_a.walleria.data.util.CLIENT_ID
 
 class AccessTokenInterceptor(
-    private val localUserAccountPreferencesRepository: LocalUserAccountPreferencesRepository
+    private val userAccountPreferencesRepository: UserAccountPreferencesRepository
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val accessToken = runBlocking {
-            localUserAccountPreferencesRepository.accessToken.firstOrNull()
+            userAccountPreferencesRepository.accessToken.firstOrNull()
         }
         return if (accessToken.isNullOrBlank().not()) {
             val authenticatedRequest = chain.request()

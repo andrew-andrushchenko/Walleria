@@ -4,7 +4,7 @@ import com.andrii_a.walleria.data.remote.repository.LoginRepositoryImpl
 import com.andrii_a.walleria.data.remote.services.LoginService
 import com.andrii_a.walleria.data.remote.services.UserService
 import com.andrii_a.walleria.data.util.BASE_URL
-import com.andrii_a.walleria.domain.repository.LocalUserAccountPreferencesRepository
+import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
 import com.andrii_a.walleria.domain.repository.LoginRepository
 import dagger.Module
 import dagger.Provides
@@ -27,7 +27,7 @@ object AuthModule {
     fun provideLoginRepository(
         loginService: LoginService,
         userService: UserService,
-        localUserAccountPreferencesRepository: LocalUserAccountPreferencesRepository
-    ): LoginRepository = LoginRepositoryImpl(loginService, userService, localUserAccountPreferencesRepository)
+        userAccountPreferencesRepository: UserAccountPreferencesRepository
+    ): LoginRepository = LoginRepositoryImpl(loginService, userService, userAccountPreferencesRepository)
 
 }

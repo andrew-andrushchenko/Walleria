@@ -10,7 +10,7 @@ import com.andrii_a.walleria.core.BackendResult
 import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.repository.CollectionRepository
-import com.andrii_a.walleria.domain.repository.LocalUserAccountPreferencesRepository
+import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
 import com.andrii_a.walleria.domain.repository.PhotoRepository
 import com.andrii_a.walleria.ui.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -44,12 +44,12 @@ sealed interface CollectionCreationResult {
 class CollectPhotoViewModel @Inject constructor(
     private val photoRepository: PhotoRepository,
     private val collectionRepository: CollectionRepository,
-    localUserAccountPreferencesRepository: LocalUserAccountPreferencesRepository,
+    userAccountPreferencesRepository: UserAccountPreferencesRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val userNickname: SharedFlow<String> =
-        localUserAccountPreferencesRepository
+        userAccountPreferencesRepository
             .myProfileData
             .map { it.nickname }
             .shareIn(

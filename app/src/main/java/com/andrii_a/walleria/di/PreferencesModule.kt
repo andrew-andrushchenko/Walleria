@@ -2,9 +2,9 @@ package com.andrii_a.walleria.di
 
 import android.content.Context
 import com.andrii_a.walleria.data.local.repository.LocalPreferencesRepositoryImpl
-import com.andrii_a.walleria.data.local.repository.LocalUserAccountPreferencesRepositoryImpl
+import com.andrii_a.walleria.data.local.repository.UserAccountPreferencesRepositoryImpl
 import com.andrii_a.walleria.domain.repository.LocalPreferencesRepository
-import com.andrii_a.walleria.domain.repository.LocalUserAccountPreferencesRepository
+import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,7 +20,7 @@ object PreferencesModule {
     @Singleton
     fun provideLocalUserAccountPreferencesRepository(
         @ApplicationContext context: Context
-    ): LocalUserAccountPreferencesRepository = LocalUserAccountPreferencesRepositoryImpl(context)
+    ): UserAccountPreferencesRepository = UserAccountPreferencesRepositoryImpl(context)
 
     @Provides
     @Singleton

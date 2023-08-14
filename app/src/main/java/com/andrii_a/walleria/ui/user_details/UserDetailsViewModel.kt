@@ -14,7 +14,7 @@ import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.domain.repository.CollectionRepository
 import com.andrii_a.walleria.domain.repository.LocalPreferencesRepository
-import com.andrii_a.walleria.domain.repository.LocalUserAccountPreferencesRepository
+import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
 import com.andrii_a.walleria.domain.repository.PhotoRepository
 import com.andrii_a.walleria.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -49,7 +49,7 @@ class UserDetailsViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val photoRepository: PhotoRepository,
     private val collectionRepository: CollectionRepository,
-    private val localUserAccountPreferencesRepository: LocalUserAccountPreferencesRepository,
+    private val userAccountPreferencesRepository: UserAccountPreferencesRepository,
     localPreferencesRepository: LocalPreferencesRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -101,7 +101,7 @@ class UserDetailsViewModel @Inject constructor(
                     _loadResult.update {
                         UserLoadResult.Success(
                             user = user,
-                            loggedInUserNickname = localUserAccountPreferencesRepository.myProfileData.first().nickname,
+                            loggedInUserNickname = userAccountPreferencesRepository.myProfileData.first().nickname,
                             userPhotos = photoRepository.getUserPhotos(user.username).cachedIn(viewModelScope),
                             userLikedPhotos = photoRepository.getUserLikedPhotos(user.username).cachedIn(viewModelScope),
                             userCollections = collectionRepository.getUserCollections(user.username).cachedIn(viewModelScope)
