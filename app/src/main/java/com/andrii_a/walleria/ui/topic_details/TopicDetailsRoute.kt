@@ -43,9 +43,13 @@ fun NavGraphBuilder.topicDetailsRoute(
         val viewModel: TopicDetailsViewModel = hiltViewModel()
 
         val loadResult by viewModel.loadResult.collectAsStateWithLifecycle()
+        val photosLayoutType by viewModel.photosLayoutType.collectAsStateWithLifecycle()
+        val photosLoadQuality by viewModel.photosLoadQuality.collectAsStateWithLifecycle()
 
         TopicDetailsScreen(
             loadResult = loadResult,
+            photosListLayoutType = photosLayoutType,
+            photosLoadQuality = photosLoadQuality,
             onEvent = viewModel::onEvent,
             navigateBack = navController::navigateUp,
             navigateToPhotoDetails = navController::navigateToPhotoDetails,
