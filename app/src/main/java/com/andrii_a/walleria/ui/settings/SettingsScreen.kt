@@ -13,16 +13,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -47,48 +43,61 @@ fun SettingsScreen(
     navigateBack: () -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
-        var showPhotosLayoutDialog by rememberSaveable { mutableStateOf(false) }
-        var showCollectionsLayoutDialog by rememberSaveable { mutableStateOf(false) }
-        var showPhotoPreviewsQualityDialog by rememberSaveable { mutableStateOf(false) }
-
         Column(
             modifier = Modifier
                 .statusBarsPadding()
                 .padding(top = dimensionResource(id = R.dimen.top_bar_height))
+                .padding(horizontal = 16.dp)
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
         ) {
-            Text(
-                text = stringResource(id = R.string.list_layout_settings),
-                style = MaterialTheme.typography.subtitle1,
-                modifier = Modifier.padding(16.dp)
-            )
+            SettingsGroup(name = stringResource(id = R.string.layout_settings)) {
+                SettingsItem(
+                    title = stringResource(id = R.string.photos_layout),
+                    selectedValue = stringResource(id = currentPhotosListLayoutType.titleRes),
+                    selectionOptions = PhotosListLayoutType.values().map { stringResource(id = it.titleRes) },
+                    selectedItemPositionOrdinal = currentPhotosListLayoutType.ordinal,
+                    onChangeParameter = { selectedLayoutTypeOrdinal ->
+                        onEvent(
+                            SettingsEvent.UpdatePhotosListLayoutType(
+                                PhotosListLayoutType.values()[selectedLayoutTypeOrdinal]
+                            )
+                        )
+                    }
+                )
 
-            SettingsItemRow(
-                title = stringResource(id = R.string.photos_layout),
-                selectedValue = stringResource(id = currentPhotosListLayoutType.titleRes),
-                onSelect = { showPhotosLayoutDialog = true }
-            )
+                SettingsItem(
+                    title = stringResource(id = R.string.collections_layout),
+                    selectedValue = stringResource(id = currentCollectionListLayoutType.titleRes),
+                    selectionOptions = CollectionListLayoutType.values().map { stringResource(id = it.titleRes) },
+                    selectedItemPositionOrdinal = currentCollectionListLayoutType.ordinal,
+                    onChangeParameter = { selectedLayoutTypeOrdinal ->
+                        onEvent(
+                            SettingsEvent.UpdateCollectionsListLayoutType(
+                                CollectionListLayoutType.values()[selectedLayoutTypeOrdinal]
+                            )
+                        )
+                    },
+                )
+            }
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            SettingsItemRow(
-                title = stringResource(id = R.string.collections_layout),
-                selectedValue = stringResource(id = currentCollectionListLayoutType.titleRes),
-                onSelect = { showCollectionsLayoutDialog = true }
-            )
-
-            Divider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-            )
-
-            SettingsItemRow(
-                title = stringResource(id = R.string.photo_previews_quality),
-                selectedValue = stringResource(id = currentPhotoPreviewsQuality.titleRes),
-                onSelect = { showPhotoPreviewsQualityDialog = true }
-            )
+            SettingsGroup(name = stringResource(id = R.string.load_settings)) {
+                SettingsItem(
+                    title = stringResource(id = R.string.lists_grids_photo_quality),
+                    selectedValue = stringResource(id = currentPhotoPreviewsQuality.titleRes),
+                    selectionOptions = PhotoQuality.values().map { stringResource(id = it.titleRes) },
+                    selectedItemPositionOrdinal = currentPhotoPreviewsQuality.ordinal,
+                    onChangeParameter = { selectedPhotoQualityOrdinal ->
+                        onEvent(
+                            SettingsEvent.UpdatePhotoPreviewsQuality(
+                                PhotoQuality.values()[selectedPhotoQualityOrdinal]
+                            )
+                        )
+                    }
+                )
+            }
         }
 
         TopBar(
@@ -101,54 +110,6 @@ fun SettingsScreen(
                 .fillMaxWidth()
                 .align(Alignment.TopCenter)
         )
-
-        if (showPhotosLayoutDialog) {
-            SingleChoiceSelectionDialog(
-                title = stringResource(id = R.string.photos_layout),
-                items = PhotosListLayoutType.values().map { stringResource(id = it.titleRes) },
-                selectedItemPositionOrdinal = currentPhotosListLayoutType.ordinal,
-                onSelect = { selectedLayoutTypeOrdinal ->
-                    onEvent(
-                        SettingsEvent.UpdatePhotosListLayoutType(
-                            PhotosListLayoutType.values()[selectedLayoutTypeOrdinal]
-                        )
-                    )
-                },
-                onDismiss = { showPhotosLayoutDialog = false }
-            )
-        }
-
-        if (showCollectionsLayoutDialog) {
-            SingleChoiceSelectionDialog(
-                title = stringResource(id = R.string.collections_layout),
-                items = CollectionListLayoutType.values().map { stringResource(id = it.titleRes) },
-                selectedItemPositionOrdinal = currentCollectionListLayoutType.ordinal,
-                onSelect = { selectedLayoutTypeOrdinal ->
-                    onEvent(
-                        SettingsEvent.UpdateCollectionsListLayoutType(
-                            CollectionListLayoutType.values()[selectedLayoutTypeOrdinal]
-                        )
-                    )
-                },
-                onDismiss = { showCollectionsLayoutDialog = false }
-            )
-        }
-
-        if (showPhotoPreviewsQualityDialog) {
-            SingleChoiceSelectionDialog(
-                title = stringResource(id = R.string.photo_previews_quality),
-                items = PhotoQuality.values().map { stringResource(id = it.titleRes) },
-                selectedItemPositionOrdinal = currentPhotoPreviewsQuality.ordinal,
-                onSelect = { selectedPhotoQualityOrdinal ->
-                    onEvent(
-                        SettingsEvent.UpdatePhotoPreviewsQuality(
-                            PhotoQuality.values()[selectedPhotoQualityOrdinal]
-                        )
-                    )
-                },
-                onDismiss = { showPhotoPreviewsQualityDialog = false }
-            )
-        }
     }
 }
 
@@ -182,12 +143,14 @@ private fun TopBar(
 @Composable
 fun SettingsScreen() {
     WalleriaTheme {
-        SettingsScreen(
-            currentPhotosListLayoutType = PhotosListLayoutType.DEFAULT,
-            currentCollectionListLayoutType = CollectionListLayoutType.DEFAULT,
-            currentPhotoPreviewsQuality = PhotoQuality.HIGH,
-            onEvent = {},
-            navigateBack = {}
-        )
+        Surface {
+            SettingsScreen(
+                currentPhotosListLayoutType = PhotosListLayoutType.DEFAULT,
+                currentCollectionListLayoutType = CollectionListLayoutType.DEFAULT,
+                currentPhotoPreviewsQuality = PhotoQuality.HIGH,
+                onEvent = {},
+                navigateBack = {}
+            )
+        }
     }
 }

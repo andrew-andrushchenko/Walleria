@@ -206,10 +206,11 @@
     <string name="following">Following</string>
 
     <!-- Settings -->
-    <string name="list_layout_settings">List layout settings:</string>
+    <string name="layout_settings">Layout settings</string>
+    <string name="load_settings">Load settings</string>
     <string name="photos_layout">Photos layout</string>
     <string name="collections_layout">Collections layout</string>
-    <string name="photo_previews_quality">Photo previews quality</string>
+    <string name="lists_grids_photo_quality">Lists and grids photo quality</string>
     <string name="type_default">Default</string>
     <string name="type_minimal_list">Minimal list</string>
     <string name="type_staggered_grid">Staggered grid</string>
