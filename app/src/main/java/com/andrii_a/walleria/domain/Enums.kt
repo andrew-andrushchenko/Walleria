@@ -66,7 +66,7 @@ enum class PhotosListLayoutType {
 enum class CollectionListLayoutType {
     DEFAULT,
     MINIMAL_LIST,
-    STAGGERED_GRID
+    GRID
 }
 
 enum class PhotoQuality {

@@ -3,8 +3,10 @@ package com.andrii_a.walleria.ui.collections
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -37,9 +39,13 @@ fun NavGraphBuilder.collectionsBottomNavRoute(
         }
 
         val viewModel: CollectionsViewModel = hiltViewModel()
+        val collectionsLayoutType by viewModel.collectionsLayoutType.collectAsStateWithLifecycle()
+        val coverPhotoQuality by viewModel.photosLoadQuality.collectAsStateWithLifecycle()
 
         CollectionsScreen(
             collections = viewModel.collections,
+            collectionsLayoutType = collectionsLayoutType,
+            coverPhotoQuality = coverPhotoQuality,
             navigateToProfileScreen = navController::navigateToProfileScreen,
             navigateToSearchScreen = navController::navigateToSearch,
             navigateToPhotoDetails = navController::navigateToPhotoDetails,

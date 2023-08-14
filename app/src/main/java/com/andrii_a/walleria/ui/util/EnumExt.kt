@@ -128,5 +128,5 @@ val CollectionListLayoutType.titleRes: Int
     get() = when (this) {
         CollectionListLayoutType.DEFAULT -> R.string.type_default
         CollectionListLayoutType.MINIMAL_LIST -> R.string.type_minimal_list
-        CollectionListLayoutType.STAGGERED_GRID -> R.string.type_staggered_grid
+        CollectionListLayoutType.GRID -> R.string.type_grid
     }

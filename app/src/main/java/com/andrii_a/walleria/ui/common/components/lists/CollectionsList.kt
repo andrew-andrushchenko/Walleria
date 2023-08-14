@@ -3,15 +3,25 @@ package com.andrii_a.walleria.ui.common.components.lists
 import android.graphics.drawable.ColorDrawable
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.FloatingActionButton
@@ -25,9 +35,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,7 +58,7 @@ import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.domain.models.photo.Photo
-import com.andrii_a.walleria.domain.models.photo.PhotoUrls
+import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.ui.common.CollectionId
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.common.UserNickname
@@ -51,6 +66,9 @@ import com.andrii_a.walleria.ui.common.components.EmptyContentBanner
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
 import com.andrii_a.walleria.ui.common.components.ErrorItem
 import com.andrii_a.walleria.ui.common.components.LoadingListItem
+import com.andrii_a.walleria.ui.common.components.ScrollToTopLayout
+import com.andrii_a.walleria.ui.theme.PrimaryDark
+import com.andrii_a.walleria.ui.theme.PrimaryLight
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.abbreviatedNumberString
 import com.andrii_a.walleria.ui.util.getPreviewPhotos
@@ -65,92 +83,109 @@ fun CollectionsList(
     onUserProfileClicked: (UserNickname) -> Unit,
     onPhotoClicked: (PhotoId) -> Unit,
     modifier: Modifier = Modifier,
+    isCompact: Boolean = false,
+    addNavBarPadding: Boolean = false,
     previewPhotosQuality: PhotoQuality = PhotoQuality.MEDIUM,
     listState: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues()
 ) {
-    LazyColumn(
-        state = listState,
-        contentPadding = contentPadding,
+    ScrollToTopLayout(
+        listState = listState,
+        contentPadding = PaddingValues(
+            bottom = WindowInsets.navigationBars
+                .asPaddingValues()
+                .calculateBottomPadding()
+                    + dimensionResource(id = R.dimen.scroll_to_top_button_padding)
+                    + if (addNavBarPadding) dimensionResource(id = R.dimen.navigation_bar_height) else 0.dp
+        ),
         modifier = modifier
     ) {
-        when (lazyCollectionItems.loadState.refresh) {
-            is LoadState.NotLoading -> {
-                if (lazyCollectionItems.itemCount > 0) {
-                    items(
-                        count = lazyCollectionItems.itemCount,
-                        key = lazyCollectionItems.itemKey { it.id }
-                    ) { index ->
-                        val collection = lazyCollectionItems[index]
-                        collection?.let {
-                            val previewPhotos = remember {
-                                collection.getPreviewPhotos()
-                            }
-
-                            val onPhotoClickListeners = remember {
-                                previewPhotos.map { photo ->
-                                    val listener: () -> Unit = {
-                                        onPhotoClicked(PhotoId(photo.id))
-                                    }
-                                    listener
+        LazyColumn(
+            state = listState,
+            contentPadding = contentPadding
+        ) {
+            when (lazyCollectionItems.loadState.refresh) {
+                is LoadState.NotLoading -> {
+                    if (lazyCollectionItems.itemCount > 0) {
+                        items(
+                            count = lazyCollectionItems.itemCount,
+                            key = lazyCollectionItems.itemKey { it.id }
+                        ) { index ->
+                            val collection = lazyCollectionItems[index]
+                            collection?.let {
+                                if (isCompact) {
+                                    SimpleCollectionItem(
+                                        collection = collection,
+                                        photoQuality = previewPhotosQuality,
+                                        onOpenCollectionClick = {
+                                            onCollectionClicked(CollectionId(collection.id))
+                                        },
+                                        modifier = Modifier.padding(
+                                            start = 16.dp,
+                                            end = 16.dp,
+                                            bottom = 16.dp
+                                        )
+                                    )
+                                } else {
+                                    DefaultCollectionItem(
+                                        collection = collection,
+                                        photoQuality = previewPhotosQuality,
+                                        onPhotoClicked = onPhotoClicked,
+                                        onOpenCollectionClick = {
+                                            onCollectionClicked(CollectionId(collection.id))
+                                        },
+                                        onUserProfileClick = {
+                                            val userNickname = UserNickname(collection.username)
+                                            onUserProfileClicked(userNickname)
+                                        },
+                                        modifier = Modifier
+                                            .padding(
+                                                top = 8.dp,
+                                                start = 16.dp,
+                                                end = 16.dp,
+                                                bottom = 48.dp
+                                            )
+                                    )
                                 }
                             }
-
-                            DefaultCollectionItem(
-                                title = collection.title,
-                                previewPhotos = previewPhotos,
-                                totalPhotos = collection.totalPhotos,
-                                previewPhotosQuality = previewPhotosQuality,
-                                curatorUsername = collection.username,
-                                onOpenCollectionClick = {
-                                    onCollectionClicked(CollectionId(collection.id))
-                                },
-                                onUserProfileClick = {
-                                    val userNickname = UserNickname(collection.username)
-                                    onUserProfileClicked(userNickname)
-                                },
-                                onPhotoClickListeners = onPhotoClickListeners,
-                                modifier = Modifier
-                                    .padding(top = 8.dp, start = 16.dp, end = 16.dp, bottom = 48.dp)
-                            )
+                        }
+                    } else {
+                        item {
+                            EmptyContentBanner(modifier = Modifier.fillParentMaxSize())
                         }
                     }
-                } else {
+                }
+
+                is LoadState.Loading -> Unit
+
+                is LoadState.Error -> {
                     item {
-                        EmptyContentBanner(modifier = Modifier.fillParentMaxSize())
+                        ErrorBanner(
+                            onRetry = lazyCollectionItems::retry,
+                            modifier = Modifier.fillParentMaxSize()
+                        )
                     }
                 }
             }
 
-            is LoadState.Loading -> Unit
+            when (lazyCollectionItems.loadState.append) {
+                is LoadState.NotLoading -> Unit
 
-            is LoadState.Error -> {
-                item {
-                    ErrorBanner(
-                        onRetry = lazyCollectionItems::retry,
-                        modifier = Modifier.fillParentMaxSize()
-                    )
+                is LoadState.Loading -> {
+                    item {
+                        LoadingListItem(modifier = Modifier.fillParentMaxWidth())
+                    }
                 }
-            }
-        }
 
-        when (lazyCollectionItems.loadState.append) {
-            is LoadState.NotLoading -> Unit
-
-            is LoadState.Loading -> {
-                item {
-                    LoadingListItem(modifier = Modifier.fillParentMaxWidth())
-                }
-            }
-
-            is LoadState.Error -> {
-                item {
-                    ErrorItem(
-                        onRetry = lazyCollectionItems::retry,
-                        modifier = Modifier
-                            .fillParentMaxWidth()
-                            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                    )
+                is LoadState.Error -> {
+                    item {
+                        ErrorItem(
+                            onRetry = lazyCollectionItems::retry,
+                            modifier = Modifier
+                                .fillParentMaxWidth()
+                                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                        )
+                    }
                 }
             }
         }
@@ -158,33 +193,130 @@ fun CollectionsList(
 }
 
 @Composable
-fun DefaultCollectionItem(
-    title: String,
-    previewPhotos: List<Photo>,
-    previewPhotosQuality: PhotoQuality,
-    totalPhotos: Long,
-    curatorUsername: String,
+fun CollectionsGrid(
+    lazyCollectionItems: LazyPagingItems<Collection>,
+    onCollectionClicked: (CollectionId) -> Unit,
     modifier: Modifier = Modifier,
+    addNavBarPadding: Boolean = false,
+    coverPhotoQuality: PhotoQuality = PhotoQuality.MEDIUM,
+    gridState: LazyGridState,
+    contentPadding: PaddingValues = PaddingValues()
+) {
+    ScrollToTopLayout(
+        gridState = gridState,
+        contentPadding = PaddingValues(
+            bottom = WindowInsets.navigationBars
+                .asPaddingValues()
+                .calculateBottomPadding()
+                    + dimensionResource(id = R.dimen.scroll_to_top_button_padding)
+                    + if (addNavBarPadding) dimensionResource(id = R.dimen.navigation_bar_height) else 0.dp
+        ),
+        modifier = modifier
+    )  {
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = contentPadding,
+            modifier = Modifier.padding(horizontal = 8.dp)
+        ) {
+            when (lazyCollectionItems.loadState.refresh) {
+                is LoadState.NotLoading -> {
+                    if (lazyCollectionItems.itemCount > 0) {
+                        items(
+                            count = lazyCollectionItems.itemCount,
+                            key = lazyCollectionItems.itemKey { it.id }
+                        ) { index ->
+                            val collection = lazyCollectionItems[index]
+                            collection?.let {
+                                SimpleCollectionItem(
+                                    collection = collection,
+                                    photoQuality = coverPhotoQuality,
+                                    onOpenCollectionClick = {
+                                        onCollectionClicked(CollectionId(collection.id))
+                                    }
+                                )
+                            }
+                        }
+                    } else {
+                        item(span = { GridItemSpan(2) }) {
+                            EmptyContentBanner(modifier = Modifier.fillMaxSize())
+                        }
+                    }
+                }
+
+                is LoadState.Loading -> Unit
+
+                is LoadState.Error -> {
+                    item(span = { GridItemSpan(2) }) {
+                        ErrorBanner(
+                            onRetry = lazyCollectionItems::retry,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                }
+            }
+
+            when (lazyCollectionItems.loadState.append) {
+                is LoadState.NotLoading -> Unit
+
+                is LoadState.Loading -> {
+                    item(span = { GridItemSpan(2) }) {
+                        LoadingListItem(modifier = Modifier.fillMaxWidth())
+                    }
+                }
+
+                is LoadState.Error -> {
+                    item(span = { GridItemSpan(2) }) {
+                        ErrorItem(
+                            onRetry = lazyCollectionItems::retry,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun DefaultCollectionItem(
+    collection: Collection,
+    photoQuality: PhotoQuality,
+    modifier: Modifier = Modifier,
+    onPhotoClicked: (PhotoId) -> Unit,
     onOpenCollectionClick: () -> Unit,
     onUserProfileClick: () -> Unit,
-    onPhotoClickListeners: List<() -> Unit>
 ) {
-    require(previewPhotos.size <= 3) { "Requires at most 3 photos." }
+    val previewPhotos = remember {
+        collection.getPreviewPhotos(quality = photoQuality)
+    }
+
+    val onPhotoClickListeners = remember {
+        previewPhotos.map { photo ->
+            val listener: () -> Unit = {
+                onPhotoClicked(PhotoId(photo.id))
+            }
+            listener
+        }
+    }
 
     Column(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         modifier = modifier
     ) {
-        PhotosGrid(
+        PhotoTiles(
             previewPhotos = previewPhotos,
-            previewPhotosQuality = previewPhotosQuality,
+            previewPhotosQuality = photoQuality,
             onPhotoClickListeners = onPhotoClickListeners
         )
 
         DetailsRow(
-            title = title,
-            curatorUsername = curatorUsername,
-            totalPhotos = totalPhotos,
+            title = collection.title,
+            curatorUsername = collection.username,
+            totalPhotos = collection.totalPhotos,
             onUserProfileClick = onUserProfileClick,
             onOpenCollectionClick = onOpenCollectionClick,
             modifier = Modifier.fillMaxWidth()
@@ -193,7 +325,7 @@ fun DefaultCollectionItem(
 }
 
 @Composable
-private fun PhotosGrid(
+private fun PhotoTiles(
     previewPhotos: List<Photo>,
     previewPhotosQuality: PhotoQuality,
     onPhotoClickListeners: List<() -> Unit>,
@@ -304,98 +436,6 @@ private fun PhotosGrid(
     }
 }
 
-@Preview
-@Composable
-fun PhotosGridPreview() {
-    WalleriaTheme {
-        PhotosGrid(
-            previewPhotos = listOf(
-                Photo(
-                    id = "",
-                    width = 200,
-                    height = 300,
-                    color = "#E0E0E0",
-                    blurHash = "",
-                    views = 200,
-                    downloads = 200,
-                    likes = 10,
-                    likedByUser = false,
-                    description = "",
-                    exif = null,
-                    location = null,
-                    tags = null,
-                    relatedCollections = null,
-                    currentUserCollections = null,
-                    sponsorship = null,
-                    urls = PhotoUrls("", "", "", "", ""),
-                    links = null,
-                    user = null
-                ),
-                Photo(
-                    id = "",
-                    width = 200,
-                    height = 300,
-                    blurHash = "",
-                    color = "#E0E0E0",
-                    views = 200,
-                    downloads = 200,
-                    likes = 10,
-                    likedByUser = false,
-                    description = "",
-                    exif = null,
-                    location = null,
-                    tags = null,
-                    relatedCollections = null,
-                    currentUserCollections = null,
-                    sponsorship = null,
-                    urls = PhotoUrls("", "", "", "", ""),
-                    links = null,
-                    user = null
-                ),
-                /*Photo(
-                    id = "",
-                    width = 200,
-                    height = 300,
-                    blurHash = "",
-                    views = 200,
-                    downloads = 200,
-                    likes = 10,
-                    color = "#E0E0E0",
-                    likedByUser = false,
-                    description = "",
-                    exif = null,
-                    location = null,
-                    tags = null,
-                    relatedCollections = null,
-                    currentUserCollections = null,
-                    sponsorship = null,
-                    urls = PhotoUrls("", "", "", "", ""),
-                    links = null,
-                    user = null
-                )*/
-            ),
-            previewPhotosQuality = PhotoQuality.MEDIUM,
-            onPhotoClickListeners = listOf({}, {}, {}),
-            //modifier = Modifier.padding(8.dp)
-        )
-    }
-}
-
-@Preview
-@Composable
-fun DetailsRowPreview() {
-    WalleriaTheme {
-        DetailsRow(
-            title = "Title very very looooooooooooong title",
-            curatorUsername = "John very very very long name Smith",
-            totalPhotos = 100_000,
-            onUserProfileClick = {},
-            onOpenCollectionClick = {},
-            modifier = Modifier.fillMaxWidth()
-        )
-    }
-}
-
 @Composable
 private fun DetailsRow(
     title: String,
@@ -457,19 +497,113 @@ private fun DetailsRow(
             }
         )
     }
+}
 
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp)
-    ) {
-        Column(verticalArrangement = Arrangement.SpaceBetween) {
+@Composable
+private fun SimpleCollectionItem(
+    collection: Collection,
+    photoQuality: PhotoQuality,
+    onOpenCollectionClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    shape: Shape = RoundedCornerShape(16.dp)
+) {
+    Box(modifier = modifier.clickable(onClick = onOpenCollectionClick)) {
+        AsyncImage(
+            model = ImageRequest
+                .Builder(LocalContext.current)
+                .data(collection.coverPhoto?.getUrlByQuality(photoQuality))
+                .crossfade(durationMillis = 1000)
+                .placeholder(ColorDrawable(collection.coverPhoto?.primaryColorInt ?: android.graphics.Color.GRAY))
+                .build(),
+            contentScale = ContentScale.Crop,
+            contentDescription = stringResource(id = R.string.collection_cover_photo),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .clip(shape)
+                .drawWithContent {
+                    drawContent()
+                    drawRect(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(Color.Transparent, PrimaryDark.copy(alpha = 0.7f))
+                        )
+                    )
+                }
+        )
 
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(start = 16.dp, bottom = 16.dp, end = 16.dp)
+        ) {
+            Text(
+                text = collection.title,
+                style = MaterialTheme.typography.subtitle1,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                color = PrimaryLight
+            )
 
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = stringResource(
+                    id = R.string.bullet_template,
+                    collection.username,
+                    collection.totalPhotos.abbreviatedNumberString
+                ),
+                style = MaterialTheme.typography.caption,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                color = PrimaryLight
+            )
         }
-
-
     }
 }
+
+@Preview
+@Composable
+fun SimpleCollectionItemPreview() {
+    WalleriaTheme {
+        val user = User(
+            id = "",
+            username = "ABC",
+            firstName = "John",
+            lastName = "Smith",
+            bio = "",
+            location = "",
+            totalLikes = 100,
+            totalPhotos = 100,
+            totalCollections = 100,
+            followersCount = 100_000,
+            followingCount = 56,
+            downloads = 99_000,
+            profileImage = null,
+            social = null,
+            tags = null,
+            photos = null
+        )
+
+        val collection = Collection(
+            id = "",
+            title = "Walleria",
+            description = null,
+            curated = false,
+            featured = false,
+            totalPhotos = 856_000,
+            isPrivate = false,
+            tags = null,
+            coverPhoto = null,
+            previewPhotos = null,
+            links = null,
+            user = user
+        )
+
+        SimpleCollectionItem(
+            collection = collection,
+            photoQuality = PhotoQuality.MEDIUM,
+            onOpenCollectionClick = {}
+        )
+    }
+}
+

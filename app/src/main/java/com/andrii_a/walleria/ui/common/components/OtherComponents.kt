@@ -13,6 +13,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.selection.toggleable
@@ -126,11 +127,12 @@ fun WButton(
 fun ScrollToTopLayout(
     listState: LazyListState,
     contentPadding: PaddingValues,
+    modifier: Modifier = Modifier,
     list: @Composable () -> Unit
 ) {
     val scope = rememberCoroutineScope()
 
-    Box {
+    Box(modifier = modifier) {
         list()
 
         val showButton = remember {
@@ -171,11 +173,58 @@ fun ScrollToTopLayout(
 fun ScrollToTopLayout(
     gridState: LazyStaggeredGridState,
     contentPadding: PaddingValues,
+    modifier: Modifier = Modifier,
     grid: @Composable () -> Unit
 ) {
     val scope = rememberCoroutineScope()
 
-    Box {
+    Box(modifier = modifier) {
+        grid()
+
+        val showButton = remember {
+            derivedStateOf {
+                gridState.firstVisibleItemIndex > 0
+            }
+        }
+
+        AnimatedVisibility(
+            visible = showButton.value,
+            enter = fadeIn(),
+            exit = fadeOut(),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(contentPadding)
+        ) {
+            ExtendedFloatingActionButton(
+                text = {
+                    Text(text = stringResource(id = R.string.to_top))
+                },
+                icon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_arrow_up_alt),
+                        contentDescription = stringResource(id = R.string.to_top)
+                    )
+                },
+                onClick = {
+                    scope.launch {
+                        gridState.scrollToItem(0)
+                    }
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun ScrollToTopLayout(
+    gridState: LazyGridState,
+    contentPadding: PaddingValues,
+    modifier: Modifier = Modifier,
+    grid: @Composable () -> Unit
+) {
+    val scope = rememberCoroutineScope()
+
+    Box(modifier = modifier) {
         grid()
 
         val showButton = remember {

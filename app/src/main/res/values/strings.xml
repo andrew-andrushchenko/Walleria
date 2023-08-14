@@ -10,6 +10,7 @@
     <string name="photo_quality_medium">Medium</string>
     <string name="photo_quality_low">Low</string>
     <string name="photo_quality_thumbnail">Thumbnail</string>
+    <string name="collection_cover_photo">Collection cover photo</string>
 
     <!--Navigation screen titles-->
     <string name="photos">Photos</string>
@@ -212,5 +213,6 @@
     <string name="type_default">Default</string>
     <string name="type_minimal_list">Minimal list</string>
     <string name="type_staggered_grid">Staggered grid</string>
+    <string name="type_grid">Grid</string>
 
 </resources>

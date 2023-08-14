@@ -2,6 +2,7 @@ package com.andrii_a.walleria.ui.collections
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -19,12 +20,14 @@ import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
+import com.andrii_a.walleria.domain.CollectionListLayoutType
+import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.ui.common.CollectionId
 import com.andrii_a.walleria.ui.common.PhotoId
-import com.andrii_a.walleria.ui.common.components.ScrollToTopLayout
 import com.andrii_a.walleria.ui.common.SearchQuery
 import com.andrii_a.walleria.ui.common.UserNickname
+import com.andrii_a.walleria.ui.common.components.lists.CollectionsGrid
 import com.andrii_a.walleria.ui.common.components.lists.CollectionsList
 import kotlinx.coroutines.flow.Flow
 
@@ -32,6 +35,8 @@ import kotlinx.coroutines.flow.Flow
 @Composable
 fun CollectionsScreen(
     collections: Flow<PagingData<Collection>>,
+    collectionsLayoutType: CollectionListLayoutType,
+    coverPhotoQuality: PhotoQuality,
     navigateToProfileScreen: () -> Unit,
     navigateToSearchScreen: (SearchQuery?) -> Unit,
     navigateToPhotoDetails: (PhotoId) -> Unit,
@@ -51,26 +56,65 @@ fun CollectionsScreen(
             .fillMaxWidth()
             .pullRefresh(pullRefreshState)
     ) {
-        val listState = rememberLazyListState()
+        when (collectionsLayoutType) {
+            CollectionListLayoutType.DEFAULT -> {
+                val listState = rememberLazyListState()
 
-        ScrollToTopLayout(
-            listState = listState,
-            contentPadding = PaddingValues(
-                bottom = WindowInsets.navigationBars.asPaddingValues()
-                    .calculateBottomPadding() + dimensionResource(id = R.dimen.navigation_bar_height) + 8.dp
-            )
-        ) {
-            CollectionsList(
-                lazyCollectionItems = lazyCollectionItems,
-                onCollectionClicked = navigateToCollectionDetails,
-                onUserProfileClicked = navigateToUserDetails,
-                onPhotoClicked = navigateToPhotoDetails,
-                listState = listState,
-                contentPadding = PaddingValues(
-                    top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 64.dp,
-                    bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 200.dp
+                CollectionsList(
+                    lazyCollectionItems = lazyCollectionItems,
+                    onCollectionClicked = navigateToCollectionDetails,
+                    onUserProfileClicked = navigateToUserDetails,
+                    onPhotoClicked = navigateToPhotoDetails,
+                    isCompact = false,
+                    addNavBarPadding = true,
+                    listState = listState,
+                    contentPadding = PaddingValues(
+                        top = WindowInsets.systemBars.asPaddingValues()
+                            .calculateTopPadding() + 64.dp,
+                        bottom = WindowInsets.navigationBars.asPaddingValues()
+                            .calculateBottomPadding() + 200.dp
+                    ),
                 )
-            )
+            }
+
+            CollectionListLayoutType.MINIMAL_LIST -> {
+                val listState = rememberLazyListState()
+
+                CollectionsList(
+                    lazyCollectionItems = lazyCollectionItems,
+                    onCollectionClicked = navigateToCollectionDetails,
+                    onUserProfileClicked = navigateToUserDetails,
+                    onPhotoClicked = navigateToPhotoDetails,
+                    isCompact = true,
+                    addNavBarPadding = true,
+                    previewPhotosQuality = coverPhotoQuality,
+                    listState = listState,
+                    contentPadding = PaddingValues(
+                        top = WindowInsets.systemBars.asPaddingValues()
+                            .calculateTopPadding() + 64.dp,
+                        bottom = WindowInsets.navigationBars.asPaddingValues()
+                            .calculateBottomPadding() + 200.dp
+                    ),
+                )
+            }
+
+            CollectionListLayoutType.GRID -> {
+                val gridState = rememberLazyGridState()
+
+                CollectionsGrid(
+                    lazyCollectionItems = lazyCollectionItems,
+                    onCollectionClicked = navigateToCollectionDetails,
+                    gridState = gridState,
+                    coverPhotoQuality = coverPhotoQuality,
+                    addNavBarPadding = true,
+                    contentPadding = PaddingValues(
+                        top = WindowInsets.systemBars.asPaddingValues()
+                            .calculateTopPadding() + 64.dp,
+                        bottom = WindowInsets.navigationBars.asPaddingValues()
+                            .calculateBottomPadding() + 200.dp
+                    ),
+                )
+            }
         }
 
         PullRefreshIndicator(
