@@ -45,10 +45,14 @@ fun NavGraphBuilder.collectionDetailsRoute(
 
         val loadResult by viewModel.loadResult.collectAsStateWithLifecycle()
         val loggedInUsername by viewModel.loggedInUsername.collectAsStateWithLifecycle()
+        val photosLayoutType by viewModel.photosLayoutType.collectAsStateWithLifecycle()
+        val photosLoadQuality by viewModel.photosLoadQuality.collectAsStateWithLifecycle()
 
         CollectionDetailsScreen(
             loadResult = loadResult,
             loggedInUsername = UserNickname(loggedInUsername),
+            photosListLayoutType = photosLayoutType,
+            photosLoadQuality = photosLoadQuality,
             onEvent = viewModel::onEvent,
             navigateBack = navController::navigateUp,
             navigateToPhotoDetails = navController::navigateToPhotoDetails,

@@ -6,9 +6,12 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.andrii_a.walleria.core.BackendResult
+import com.andrii_a.walleria.domain.PhotoQuality
+import com.andrii_a.walleria.domain.PhotosListLayoutType
 import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.repository.CollectionRepository
+import com.andrii_a.walleria.domain.repository.LocalPreferencesRepository
 import com.andrii_a.walleria.domain.repository.LocalUserAccountPreferencesRepository
 import com.andrii_a.walleria.domain.repository.PhotoRepository
 import com.andrii_a.walleria.ui.common.CollectionId
@@ -18,12 +21,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 sealed interface CollectionDetailsEvent {
@@ -53,6 +58,7 @@ sealed interface CollectionLoadResult {
 class CollectionDetailsViewModel @Inject constructor(
     private val collectionRepository: CollectionRepository,
     private val photoRepository: PhotoRepository,
+    localPreferencesRepository: LocalPreferencesRepository,
     localUserAccountPreferencesRepository: LocalUserAccountPreferencesRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -66,6 +72,20 @@ class CollectionDetailsViewModel @Inject constructor(
                 started = SharingStarted.WhileSubscribed(5000L),
                 initialValue = ""
             )
+
+    val photosLayoutType: StateFlow<PhotosListLayoutType> = localPreferencesRepository.photosListLayoutType
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = runBlocking { localPreferencesRepository.photosListLayoutType.first() }
+        )
+
+    val photosLoadQuality: StateFlow<PhotoQuality> = localPreferencesRepository.photoPreviewsQuality
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = runBlocking { localPreferencesRepository.photoPreviewsQuality.first() }
+        )
 
     private val _loadResult: MutableStateFlow<CollectionLoadResult> = MutableStateFlow(CollectionLoadResult.Empty)
     val loadResult: StateFlow<CollectionLoadResult> = _loadResult.asStateFlow()
