@@ -5,18 +5,18 @@ import com.andrii_a.walleria.domain.CollectionListLayoutType
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.PhotosListLayoutType
 
-interface AppLocalPreferencesRepository {
+interface LocalPreferencesRepository {
 
     val photosListLayoutType: Flow<PhotosListLayoutType>
 
     val collectionsListLayoutType: Flow<CollectionListLayoutType>
 
-    val imagePreviewsQuality: Flow<PhotoQuality>
+    val photoPreviewsQuality: Flow<PhotoQuality>
 
-    suspend fun savePhotosListLayoutType(photosListLayoutType: PhotosListLayoutType)
+    suspend fun updatePhotosListLayoutType(layoutType: PhotosListLayoutType)
 
-    suspend fun saveCollectionsListLayoutType(collectionListLayoutType: CollectionListLayoutType)
+    suspend fun updateCollectionsListLayoutType(layoutType: CollectionListLayoutType)
 
-    suspend fun saveImagePreviewsQuality(imagePreviewsQuality: PhotoQuality)
+    suspend fun updatePhotoPreviewsQuality(photoQuality: PhotoQuality)
 
 }

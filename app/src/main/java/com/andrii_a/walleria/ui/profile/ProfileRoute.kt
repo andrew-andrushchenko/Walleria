@@ -9,6 +9,7 @@ import androidx.navigation.NavGraphBuilder
 import com.andrii_a.walleria.ui.login.LoginActivity
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.profile_edit.navigateToEditUserProfile
+import com.andrii_a.walleria.ui.settings.navigateToSettings
 import com.andrii_a.walleria.ui.user_details.navigateToUserDetails
 import com.andrii_a.walleria.ui.util.startActivity
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
@@ -33,7 +34,7 @@ fun NavGraphBuilder.profileRoute(navController: NavController) {
             onLogout = viewModel::logout,
             navigateToViewProfileScreen = navController::navigateToUserDetails,
             navigateToEditProfileScreen = navController::navigateToEditUserProfile,
-            navigateToSettingsScreen = {},
+            navigateToSettingsScreen = navController::navigateToSettings,
             navigateToAboutScreen = {}
         )
     }

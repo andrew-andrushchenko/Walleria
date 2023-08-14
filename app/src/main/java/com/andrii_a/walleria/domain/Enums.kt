@@ -60,13 +60,13 @@ enum class TopicStatus {
 enum class PhotosListLayoutType {
     DEFAULT,
     MINIMAL_LIST,
-    GRID
+    STAGGERED_GRID
 }
 
 enum class CollectionListLayoutType {
     DEFAULT,
-    GRID,
-    ALBUM_COVER
+    MINIMAL_LIST,
+    STAGGERED_GRID
 }
 
 enum class PhotoQuality {

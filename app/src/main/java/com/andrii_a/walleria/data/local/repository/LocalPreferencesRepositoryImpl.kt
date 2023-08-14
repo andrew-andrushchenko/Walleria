@@ -11,17 +11,17 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.andrii_a.walleria.domain.CollectionListLayoutType
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.PhotosListLayoutType
-import com.andrii_a.walleria.domain.repository.AppLocalPreferencesRepository
+import com.andrii_a.walleria.domain.repository.LocalPreferencesRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 
-private const val TAG = "AppLocalPreferencesRepo"
+private const val TAG = "LocalPreferencesRepository"
 
-private val Context.appLocalPreferences: DataStore<Preferences> by preferencesDataStore(name = "walleria_app_local_preferences")
+private val Context.appLocalPreferences: DataStore<Preferences> by preferencesDataStore(name = "walleria_local_preferences")
 
-class AppLocalPreferencesRepositoryImpl(context: Context) : AppLocalPreferencesRepository {
+class LocalPreferencesRepositoryImpl(context: Context) : LocalPreferencesRepository {
 
     private val appLocalPreferences: DataStore<Preferences> by lazy {
         return@lazy context.appLocalPreferences
@@ -53,39 +53,36 @@ class AppLocalPreferencesRepositoryImpl(context: Context) : AppLocalPreferencesR
             )
         }
 
-    override val imagePreviewsQuality: Flow<PhotoQuality> = preferencesFlow.map { preferences ->
+    override val photoPreviewsQuality: Flow<PhotoQuality> = preferencesFlow.map { preferences ->
         PhotoQuality.valueOf(
-            preferences[WalleriaAppPreferencesKeys.IMAGE_PREVIEWS_QUALITY] ?: PhotoQuality.MEDIUM.name
+            preferences[WalleriaAppPreferencesKeys.PHOTO_PREVIEWS_QUALITY] ?: PhotoQuality.MEDIUM.name
         )
     }
 
-    override suspend fun savePhotosListLayoutType(photosListLayoutType: PhotosListLayoutType) {
+    override suspend fun updatePhotosListLayoutType(layoutType: PhotosListLayoutType) {
         appLocalPreferences.edit { preferences ->
             preferences[WalleriaAppPreferencesKeys.PHOTOS_LIST_LAYOUT_TYPE] =
-                photosListLayoutType.name
+                layoutType.name
         }
     }
 
-    override suspend fun saveCollectionsListLayoutType(collectionListLayoutType: CollectionListLayoutType) {
+    override suspend fun updateCollectionsListLayoutType(layoutType: CollectionListLayoutType) {
         appLocalPreferences.edit { preferences ->
             preferences[WalleriaAppPreferencesKeys.COLLECTIONS_LIST_LAYOUT_TYPE] =
-                collectionListLayoutType.name
+                layoutType.name
         }
     }
 
-    override suspend fun saveImagePreviewsQuality(imagePreviewsQuality: PhotoQuality) {
+    override suspend fun updatePhotoPreviewsQuality(photoQuality: PhotoQuality) {
         appLocalPreferences.edit { preferences ->
-            preferences[WalleriaAppPreferencesKeys.IMAGE_PREVIEWS_QUALITY] =
-                imagePreviewsQuality.name
+            preferences[WalleriaAppPreferencesKeys.PHOTO_PREVIEWS_QUALITY] =
+                photoQuality.name
         }
     }
 
     object WalleriaAppPreferencesKeys {
-
         val PHOTOS_LIST_LAYOUT_TYPE = stringPreferencesKey("photos_list_layout_type")
-
         val COLLECTIONS_LIST_LAYOUT_TYPE = stringPreferencesKey("collections_list_layout_type")
-
-        val IMAGE_PREVIEWS_QUALITY = stringPreferencesKey("image_previews_quality")
+        val PHOTO_PREVIEWS_QUALITY = stringPreferencesKey("photo_previews_quality")
     }
 }
