@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -159,6 +160,51 @@ fun ScrollToTopLayout(
                 onClick = {
                     scope.launch {
                         listState.scrollToItem(0)
+                    }
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun ScrollToTopLayout(
+    gridState: LazyStaggeredGridState,
+    contentPadding: PaddingValues,
+    grid: @Composable () -> Unit
+) {
+    val scope = rememberCoroutineScope()
+
+    Box {
+        grid()
+
+        val showButton = remember {
+            derivedStateOf {
+                gridState.firstVisibleItemIndex > 0
+            }
+        }
+
+        AnimatedVisibility(
+            visible = showButton.value,
+            enter = fadeIn(),
+            exit = fadeOut(),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(contentPadding)
+        ) {
+            ExtendedFloatingActionButton(
+                text = {
+                    Text(text = stringResource(id = R.string.to_top))
+                },
+                icon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_arrow_up_alt),
+                        contentDescription = stringResource(id = R.string.to_top)
+                    )
+                },
+                onClick = {
+                    scope.launch {
+                        gridState.scrollToItem(0)
                     }
                 }
             )

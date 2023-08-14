@@ -40,14 +40,16 @@ fun NavGraphBuilder.photosBottomNavRoute(
 
         val viewModel: PhotosViewModel = hiltViewModel()
 
-        val photos = viewModel.photos
         val order by viewModel.order.collectAsStateWithLifecycle()
-        val orderByFun = viewModel::orderBy
+        val photosLayoutType by viewModel.photosLayoutType.collectAsStateWithLifecycle()
+        val photosLoadQuality by viewModel.photosLoadQuality.collectAsStateWithLifecycle()
 
         PhotosScreen(
-            photos = photos,
+            photos = viewModel.photos,
             order = order,
-            orderBy = orderByFun,
+            photosListLayoutType = photosLayoutType,
+            photosLoadQuality = photosLoadQuality,
+            orderBy = viewModel::orderBy,
             navigateToProfileScreen = navController::navigateToProfileScreen,
             navigateToSearchScreen = navController::navigateToSearch,
             navigateToPhotoDetailsScreen = navController::navigateToPhotoDetails,

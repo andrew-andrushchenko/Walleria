@@ -3,6 +3,7 @@ package com.andrii_a.walleria.ui.photos
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -22,10 +23,13 @@ import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.PhotoListDisplayOrder
+import com.andrii_a.walleria.domain.PhotoQuality
+import com.andrii_a.walleria.domain.PhotosListLayoutType
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.ui.common.*
 import com.andrii_a.walleria.ui.common.components.ScrollToTopLayout
 import com.andrii_a.walleria.ui.common.components.WTitleDropdown
+import com.andrii_a.walleria.ui.common.components.lists.PhotosGrid
 import com.andrii_a.walleria.ui.common.components.lists.PhotosList
 import com.andrii_a.walleria.ui.util.titleRes
 import kotlinx.coroutines.flow.Flow
@@ -35,6 +39,8 @@ import kotlinx.coroutines.flow.Flow
 fun PhotosScreen(
     photos: Flow<PagingData<Photo>>,
     order: PhotoListDisplayOrder,
+    photosListLayoutType: PhotosListLayoutType,
+    photosLoadQuality: PhotoQuality,
     orderBy: (Int) -> Unit,
     navigateToProfileScreen: () -> Unit,
     navigateToSearchScreen: (SearchQuery?) -> Unit,
@@ -54,29 +60,91 @@ fun PhotosScreen(
             .fillMaxWidth()
             .pullRefresh(pullRefreshState)
     ) {
-        val listState = rememberLazyListState()
+        when (photosListLayoutType) {
+            PhotosListLayoutType.DEFAULT -> {
+                val listState = rememberLazyListState()
 
-        ScrollToTopLayout(
-            listState = listState,
-            contentPadding = PaddingValues(
-                bottom = WindowInsets.navigationBars.asPaddingValues()
-                    .calculateBottomPadding() + dimensionResource(id = R.dimen.navigation_bar_height) + 8.dp
-            )
-        ) {
-            PhotosList(
-                lazyPhotoItems = lazyPhotoItems,
-                onPhotoClicked = { photoId ->
-                    navigateToPhotoDetailsScreen(photoId)
-                },
-                onUserProfileClicked = navigateToUserDetails,
-                listState = listState,
-                contentPadding = PaddingValues(
-                    top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 64.dp,
-                    bottom = WindowInsets.navigationBars.asPaddingValues()
-                        .calculateBottomPadding() + 200.dp
-                ),
-                modifier = Modifier.fillMaxSize()
-            )
+                ScrollToTopLayout(
+                    listState = listState,
+                    contentPadding = PaddingValues(
+                        bottom = WindowInsets.navigationBars.asPaddingValues()
+                            .calculateBottomPadding() + dimensionResource(id = R.dimen.navigation_bar_height) + 8.dp
+                    )
+                ) {
+                    PhotosList(
+                        lazyPhotoItems = lazyPhotoItems,
+                        onPhotoClicked = { photoId ->
+                            navigateToPhotoDetailsScreen(photoId)
+                        },
+                        onUserProfileClicked = navigateToUserDetails,
+                        isCompact = false,
+                        photosQuality = photosLoadQuality,
+                        listState = listState,
+                        contentPadding = PaddingValues(
+                            top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 64.dp,
+                            bottom = WindowInsets.navigationBars.asPaddingValues()
+                                .calculateBottomPadding() + 200.dp
+                        ),
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+            }
+
+            PhotosListLayoutType.MINIMAL_LIST -> {
+                val listState = rememberLazyListState()
+
+                ScrollToTopLayout(
+                    listState = listState,
+                    contentPadding = PaddingValues(
+                        bottom = WindowInsets.navigationBars.asPaddingValues()
+                            .calculateBottomPadding() + dimensionResource(id = R.dimen.navigation_bar_height) + 8.dp
+                    )
+                ) {
+                    PhotosList(
+                        lazyPhotoItems = lazyPhotoItems,
+                        onPhotoClicked = { photoId ->
+                            navigateToPhotoDetailsScreen(photoId)
+                        },
+                        onUserProfileClicked = navigateToUserDetails,
+                        isCompact = true,
+                        photosQuality = photosLoadQuality,
+                        listState = listState,
+                        contentPadding = PaddingValues(
+                            top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 64.dp,
+                            bottom = WindowInsets.navigationBars.asPaddingValues()
+                                .calculateBottomPadding() + 200.dp
+                        ),
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+            }
+
+            PhotosListLayoutType.STAGGERED_GRID -> {
+                val gridState = rememberLazyStaggeredGridState()
+
+                ScrollToTopLayout(
+                    gridState = gridState,
+                    contentPadding = PaddingValues(
+                        bottom = WindowInsets.navigationBars.asPaddingValues()
+                            .calculateBottomPadding() + dimensionResource(id = R.dimen.navigation_bar_height) + 8.dp
+                    )
+                ) {
+                    PhotosGrid(
+                        lazyPhotoItems = lazyPhotoItems,
+                        onPhotoClicked = navigateToPhotoDetailsScreen,
+                        photosQuality = photosLoadQuality,
+                        gridState = gridState,
+                        contentPadding = PaddingValues(
+                            top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 64.dp,
+                            bottom = WindowInsets.navigationBars.asPaddingValues()
+                                .calculateBottomPadding() + 200.dp,
+                            start = 8.dp,
+                            end = 8.dp
+                        ),
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+            }
         }
 
         PullRefreshIndicator(
