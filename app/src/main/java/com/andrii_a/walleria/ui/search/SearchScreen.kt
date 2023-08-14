@@ -55,7 +55,6 @@ import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.ui.common.CollectionId
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.common.UserNickname
-import com.andrii_a.walleria.ui.common.components.ScrollToTopLayout
 import com.andrii_a.walleria.ui.common.components.WOutlinedTextField
 import com.andrii_a.walleria.ui.common.components.lists.CollectionsGrid
 import com.andrii_a.walleria.ui.common.components.lists.CollectionsList
@@ -474,24 +473,16 @@ private fun Pages(
                 ) {
                     val listState = rememberLazyListState()
 
-                    ScrollToTopLayout(
+                    UsersList(
+                        lazyUserItems = lazyUserItems,
+                        onUserClick = navigateToUserDetails,
                         listState = listState,
                         contentPadding = PaddingValues(
+                            top = 8.dp,
                             bottom = WindowInsets.navigationBars.asPaddingValues()
-                                .calculateBottomPadding() + 8.dp
+                                .calculateBottomPadding() + 64.dp
                         )
-                    ) {
-                        UsersList(
-                            lazyUserItems = lazyUserItems,
-                            onUserClick = navigateToUserDetails,
-                            listState = listState,
-                            contentPadding = PaddingValues(
-                                top = 8.dp,
-                                bottom = WindowInsets.navigationBars.asPaddingValues()
-                                    .calculateBottomPadding() + 64.dp
-                            )
-                        )
-                    }
+                    )
 
                     PullRefreshIndicator(
                         refreshing = query.value.isNotEmpty() && lazyUserItems.loadState.refresh is LoadState.Loading,

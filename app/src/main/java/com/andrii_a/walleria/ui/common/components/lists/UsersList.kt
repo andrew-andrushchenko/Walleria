@@ -3,7 +3,10 @@ package com.andrii_a.walleria.ui.common.components.lists
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -41,6 +44,7 @@ import com.andrii_a.walleria.ui.common.components.EmptyContentBanner
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
 import com.andrii_a.walleria.ui.common.components.ErrorItem
 import com.andrii_a.walleria.ui.common.components.LoadingListItem
+import com.andrii_a.walleria.ui.common.components.ScrollToTopLayout
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.getPreviewPhotos
 import com.andrii_a.walleria.ui.util.getProfileImageUrlOrEmpty
@@ -56,70 +60,78 @@ fun UsersList(
     listState: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues()
 ) {
-    LazyColumn(
-        state = listState,
-        contentPadding = contentPadding,
+    ScrollToTopLayout(
+        listState = listState,
+        contentPadding = PaddingValues(
+            bottom = WindowInsets.navigationBars.asPaddingValues()
+                .calculateBottomPadding() + 8.dp
+        ),
         modifier = modifier
     ) {
-        when (lazyUserItems.loadState.refresh) {
-            is LoadState.NotLoading -> {
-                if (lazyUserItems.itemCount > 0) {
-                    items(
-                        count = lazyUserItems.itemCount,
-                        key = lazyUserItems.itemKey { it.id }
-                    ) { index ->
-                        val user = lazyUserItems[index]
-                        user?.let {
-                            DefaultUserItem(
-                                nickname = user.username,
-                                username = user.userFullName,
-                                profileImageUrl = user.getProfileImageUrlOrEmpty(),
-                                previewPhotos = user.getPreviewPhotos(),
-                                onUserClick = onUserClick,
-                                modifier = Modifier.padding(
-                                    start = 8.dp,
-                                    end = 8.dp,
-                                    bottom = 8.dp
+        LazyColumn(
+            state = listState,
+            contentPadding = contentPadding
+        ) {
+            when (lazyUserItems.loadState.refresh) {
+                is LoadState.NotLoading -> {
+                    if (lazyUserItems.itemCount > 0) {
+                        items(
+                            count = lazyUserItems.itemCount,
+                            key = lazyUserItems.itemKey { it.id }
+                        ) { index ->
+                            val user = lazyUserItems[index]
+                            user?.let {
+                                DefaultUserItem(
+                                    nickname = user.username,
+                                    username = user.userFullName,
+                                    profileImageUrl = user.getProfileImageUrlOrEmpty(),
+                                    previewPhotos = user.getPreviewPhotos(),
+                                    onUserClick = onUserClick,
+                                    modifier = Modifier.padding(
+                                        start = 8.dp,
+                                        end = 8.dp,
+                                        bottom = 8.dp
+                                    )
                                 )
-                            )
+                            }
+                        }
+                    } else {
+                        item {
+                            EmptyContentBanner(modifier = Modifier.fillParentMaxSize())
                         }
                     }
-                } else {
+                }
+
+                is LoadState.Loading -> Unit
+
+                is LoadState.Error -> {
                     item {
-                        EmptyContentBanner(modifier = Modifier.fillParentMaxSize())
+                        ErrorBanner(
+                            onRetry = lazyUserItems::retry,
+                            modifier = Modifier.fillParentMaxSize()
+                        )
                     }
                 }
             }
 
-            is LoadState.Loading -> Unit
+            when (lazyUserItems.loadState.append) {
+                is LoadState.NotLoading -> Unit
 
-            is LoadState.Error -> {
-                item {
-                    ErrorBanner(
-                        onRetry = lazyUserItems::retry,
-                        modifier = Modifier.fillParentMaxSize()
-                    )
+                is LoadState.Loading -> {
+                    item {
+                        LoadingListItem(modifier = Modifier.fillParentMaxWidth())
+                    }
                 }
-            }
-        }
 
-        when (lazyUserItems.loadState.append) {
-            is LoadState.NotLoading -> Unit
-
-            is LoadState.Loading -> {
-                item {
-                    LoadingListItem(modifier = Modifier.fillParentMaxWidth())
-                }
-            }
-
-            is LoadState.Error -> {
-                item {
-                    ErrorItem(
-                        onRetry = lazyUserItems::retry,
-                        modifier = Modifier
-                            .fillParentMaxWidth()
-                            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                    )
+                is LoadState.Error -> {
+                    item {
+                        ErrorItem(
+                            onRetry = lazyUserItems::retry,
+                            modifier = Modifier
+                                .fillParentMaxWidth()
+                                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                        )
+                    }
                 }
             }
         }
