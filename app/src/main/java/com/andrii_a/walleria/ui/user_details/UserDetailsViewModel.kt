@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.andrii_a.walleria.core.BackendResult
+import com.andrii_a.walleria.domain.CollectionListLayoutType
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.PhotosListLayoutType
 import com.andrii_a.walleria.domain.models.collection.Collection
@@ -61,6 +62,13 @@ class UserDetailsViewModel @Inject constructor(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000L),
             initialValue = runBlocking { localPreferencesRepository.photosListLayoutType.first() }
+        )
+
+    val collectionsLayoutType: StateFlow<CollectionListLayoutType> = localPreferencesRepository.collectionsListLayoutType
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = runBlocking { localPreferencesRepository.collectionsListLayoutType.first() }
         )
 
     val photosLoadQuality: StateFlow<PhotoQuality> = localPreferencesRepository.photoPreviewsQuality

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.pager.HorizontalPager
@@ -40,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
+import com.andrii_a.walleria.domain.CollectionListLayoutType
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.PhotosListLayoutType
 import com.andrii_a.walleria.domain.models.collection.Collection
@@ -47,11 +49,11 @@ import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.ui.common.CollectionId
 import com.andrii_a.walleria.ui.common.PhotoId
-import com.andrii_a.walleria.ui.common.components.ScrollToTopLayout
 import com.andrii_a.walleria.ui.common.SearchQuery
 import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
 import com.andrii_a.walleria.ui.common.components.LoadingBanner
+import com.andrii_a.walleria.ui.common.components.lists.CollectionsGrid
 import com.andrii_a.walleria.ui.common.components.lists.CollectionsList
 import com.andrii_a.walleria.ui.common.components.lists.PhotosGrid
 import com.andrii_a.walleria.ui.common.components.lists.PhotosList
@@ -66,6 +68,7 @@ import kotlinx.coroutines.launch
 fun UserDetailsScreen(
     loadResult: UserLoadResult,
     photosListLayoutType: PhotosListLayoutType,
+    collectionsListLayoutType: CollectionListLayoutType,
     photosLoadQuality: PhotoQuality,
     onRetryLoading: (String) -> Unit,
     navigateBack: () -> Unit,
@@ -105,6 +108,7 @@ fun UserDetailsScreen(
                     userLikedPhotosLazyItems = loadResult.userLikedPhotos.collectAsLazyPagingItems(),
                     userCollectionsLazyItems = loadResult.userCollections.collectAsLazyPagingItems(),
                     photosListLayoutType = photosListLayoutType,
+                    collectionsListLayoutType = collectionsListLayoutType,
                     photosLoadQuality = photosLoadQuality,
                     navigateBack = navigateBack,
                     navigateToPhotoDetails = navigateToPhotoDetails,
@@ -170,6 +174,7 @@ fun SuccessStateContent(
     userLikedPhotosLazyItems: LazyPagingItems<Photo>,
     userCollectionsLazyItems: LazyPagingItems<Collection>,
     photosListLayoutType: PhotosListLayoutType,
+    collectionsListLayoutType: CollectionListLayoutType,
     photosLoadQuality: PhotoQuality,
     navigateBack: () -> Unit,
     navigateToPhotoDetails: (PhotoId) -> Unit,
@@ -250,6 +255,7 @@ fun SuccessStateContent(
                         lazyLikedPhotoItems = userLikedPhotosLazyItems,
                         lazyCollectionItems = userCollectionsLazyItems,
                         photosListLayoutType = photosListLayoutType,
+                        collectionsListLayoutType = collectionsListLayoutType,
                         photosLoadQuality = photosLoadQuality,
                         navigateToPhotoDetails = navigateToPhotoDetails,
                         navigateToCollectionDetails = navigateToCollectionDetails,
@@ -278,6 +284,7 @@ private fun Pages(
     lazyLikedPhotoItems: LazyPagingItems<Photo>,
     lazyCollectionItems: LazyPagingItems<Collection>,
     photosListLayoutType: PhotosListLayoutType,
+    collectionsListLayoutType: CollectionListLayoutType,
     photosLoadQuality: PhotoQuality,
     navigateToPhotoDetails: (PhotoId) -> Unit,
     navigateToCollectionDetails: (CollectionId) -> Unit,
@@ -408,27 +415,59 @@ private fun Pages(
             }
 
             UserDetailsScreenTabs.Collections.ordinal -> {
-                val listState = rememberLazyListState()
+                when (collectionsListLayoutType) {
+                    CollectionListLayoutType.DEFAULT -> {
+                        val listState = rememberLazyListState()
 
-                ScrollToTopLayout(
-                    listState = listState,
-                    contentPadding = PaddingValues(
-                        bottom = WindowInsets.navigationBars.asPaddingValues()
-                            .calculateBottomPadding() + 8.dp
-                    )
-                ) {
-                    CollectionsList(
-                        lazyCollectionItems = lazyCollectionItems,
-                        onCollectionClicked = navigateToCollectionDetails,
-                        onUserProfileClicked = navigateToUserDetails,
-                        onPhotoClicked = navigateToPhotoDetails,
-                        listState = listState,
-                        contentPadding = PaddingValues(
-                            top = 8.dp,
-                            bottom = WindowInsets.navigationBars.asPaddingValues()
-                                .calculateBottomPadding() + 64.dp
+                        CollectionsList(
+                            lazyCollectionItems = lazyCollectionItems,
+                            onCollectionClicked = navigateToCollectionDetails,
+                            onUserProfileClicked = navigateToUserDetails,
+                            onPhotoClicked = navigateToPhotoDetails,
+                            previewPhotosQuality = photosLoadQuality,
+                            listState = listState,
+                            contentPadding = PaddingValues(
+                                top = 8.dp,
+                                bottom = WindowInsets.navigationBars.asPaddingValues()
+                                    .calculateBottomPadding() + 64.dp
+                            )
                         )
-                    )
+                    }
+
+                    CollectionListLayoutType.MINIMAL_LIST -> {
+                        val listState = rememberLazyListState()
+
+                        CollectionsList(
+                            lazyCollectionItems = lazyCollectionItems,
+                            onCollectionClicked = navigateToCollectionDetails,
+                            onUserProfileClicked = navigateToUserDetails,
+                            onPhotoClicked = navigateToPhotoDetails,
+                            previewPhotosQuality = photosLoadQuality,
+                            isCompact = true,
+                            listState = listState,
+                            contentPadding = PaddingValues(
+                                top = 8.dp,
+                                bottom = WindowInsets.navigationBars.asPaddingValues()
+                                    .calculateBottomPadding() + 64.dp
+                            )
+                        )
+                    }
+
+                    CollectionListLayoutType.GRID -> {
+                        val gridState = rememberLazyGridState()
+
+                        CollectionsGrid(
+                            lazyCollectionItems = lazyCollectionItems,
+                            onCollectionClicked = navigateToCollectionDetails,
+                            gridState = gridState,
+                            coverPhotoQuality = photosLoadQuality,
+                            contentPadding = PaddingValues(
+                                top = 8.dp,
+                                bottom = WindowInsets.navigationBars.asPaddingValues()
+                                    .calculateBottomPadding() + 64.dp
+                            ),
+                        )
+                    }
                 }
             }
 
