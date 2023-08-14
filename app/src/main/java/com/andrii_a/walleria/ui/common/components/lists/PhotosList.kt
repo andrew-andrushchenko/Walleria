@@ -87,12 +87,12 @@ fun PhotosList(
                 .calculateBottomPadding()
                     + dimensionResource(id = R.dimen.scroll_to_top_button_padding)
                     + if (addNavBarPadding) dimensionResource(id = R.dimen.navigation_bar_height) else 0.dp
-        )
+        ),
+        modifier = modifier
     ) {
         LazyColumn(
             state = listState,
-            contentPadding = contentPadding,
-            modifier = modifier
+            contentPadding = contentPadding
         ) {
             when (lazyPhotoItems.loadState.refresh) {
                 is LoadState.NotLoading -> {
@@ -199,12 +199,12 @@ fun PhotosGrid(
                 .calculateBottomPadding()
                     + dimensionResource(id = R.dimen.scroll_to_top_button_padding)
                     + if (addNavBarPadding) dimensionResource(id = R.dimen.navigation_bar_height) else 0.dp
-        )
+        ),
+        modifier = modifier
     ) {
         LazyVerticalStaggeredGrid(
             columns = StaggeredGridCells.Adaptive(150.dp),
             state = gridState,
-            modifier = modifier,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalItemSpacing = 8.dp,
             contentPadding = contentPadding
