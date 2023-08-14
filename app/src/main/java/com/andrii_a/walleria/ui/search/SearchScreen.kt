@@ -11,6 +11,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.pager.HorizontalPager
@@ -45,6 +46,7 @@ import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
+import com.andrii_a.walleria.domain.CollectionListLayoutType
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.PhotosListLayoutType
 import com.andrii_a.walleria.domain.models.collection.Collection
@@ -55,6 +57,7 @@ import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.common.components.ScrollToTopLayout
 import com.andrii_a.walleria.ui.common.components.WOutlinedTextField
+import com.andrii_a.walleria.ui.common.components.lists.CollectionsGrid
 import com.andrii_a.walleria.ui.common.components.lists.CollectionsList
 import com.andrii_a.walleria.ui.common.components.lists.PhotosGrid
 import com.andrii_a.walleria.ui.common.components.lists.PhotosList
@@ -73,6 +76,7 @@ fun SearchScreen(
     users: Flow<PagingData<User>>,
     photoFilters: StateFlow<PhotoFilters>,
     photosListLayoutType: PhotosListLayoutType,
+    collectionListLayoutType: CollectionListLayoutType,
     photosLoadQuality: PhotoQuality,
     onEvent: (SearchScreenEvent) -> Unit,
     navigateToPhotoDetails: (PhotoId) -> Unit,
@@ -122,6 +126,7 @@ fun SearchScreen(
                 collections = collections,
                 users = users,
                 photosListLayoutType = photosListLayoutType,
+                collectionListLayoutType = collectionListLayoutType,
                 photosLoadQuality = photosLoadQuality,
                 navigateToPhotoDetails = navigateToPhotoDetails,
                 navigateToCollectionDetails = navigateToCollectionDetails,
@@ -288,6 +293,7 @@ private fun Pages(
     collections: Flow<PagingData<Collection>>,
     users: Flow<PagingData<User>>,
     photosListLayoutType: PhotosListLayoutType,
+    collectionListLayoutType: CollectionListLayoutType,
     photosLoadQuality: PhotoQuality,
     contentPadding: PaddingValues = PaddingValues(),
     navigateToPhotoDetails: (PhotoId) -> Unit,
@@ -390,27 +396,59 @@ private fun Pages(
                         .fillMaxWidth()
                         .pullRefresh(pullRefreshState)
                 ) {
-                    val listState = rememberLazyListState()
+                    when (collectionListLayoutType) {
+                        CollectionListLayoutType.DEFAULT -> {
+                            val listState = rememberLazyListState()
 
-                    ScrollToTopLayout(
-                        listState = listState,
-                        contentPadding = PaddingValues(
-                            bottom = WindowInsets.navigationBars.asPaddingValues()
-                                .calculateBottomPadding() + 8.dp
-                        )
-                    ) {
-                        CollectionsList(
-                            lazyCollectionItems = lazyCollectionItems,
-                            onCollectionClicked = navigateToCollectionDetails,
-                            onUserProfileClicked = navigateToUserDetails,
-                            onPhotoClicked = navigateToPhotoDetails,
-                            listState = listState,
-                            contentPadding = PaddingValues(
-                                top = 8.dp,
-                                bottom = WindowInsets.navigationBars.asPaddingValues()
-                                    .calculateBottomPadding() + 64.dp
+                            CollectionsList(
+                                lazyCollectionItems = lazyCollectionItems,
+                                onCollectionClicked = navigateToCollectionDetails,
+                                onUserProfileClicked = navigateToUserDetails,
+                                onPhotoClicked = navigateToPhotoDetails,
+                                previewPhotosQuality = photosLoadQuality,
+                                listState = listState,
+                                contentPadding = PaddingValues(
+                                    top = 8.dp,
+                                    bottom = WindowInsets.navigationBars.asPaddingValues()
+                                        .calculateBottomPadding() + 64.dp
+                                )
                             )
-                        )
+                        }
+
+                        CollectionListLayoutType.MINIMAL_LIST -> {
+                            val listState = rememberLazyListState()
+
+                            CollectionsList(
+                                lazyCollectionItems = lazyCollectionItems,
+                                onCollectionClicked = navigateToCollectionDetails,
+                                onUserProfileClicked = navigateToUserDetails,
+                                onPhotoClicked = navigateToPhotoDetails,
+                                previewPhotosQuality = photosLoadQuality,
+                                isCompact = true,
+                                listState = listState,
+                                contentPadding = PaddingValues(
+                                    top = 8.dp,
+                                    bottom = WindowInsets.navigationBars.asPaddingValues()
+                                        .calculateBottomPadding() + 64.dp
+                                )
+                            )
+                        }
+
+                        CollectionListLayoutType.GRID -> {
+                            val gridState = rememberLazyGridState()
+
+                            CollectionsGrid(
+                                lazyCollectionItems = lazyCollectionItems,
+                                onCollectionClicked = navigateToCollectionDetails,
+                                gridState = gridState,
+                                coverPhotoQuality = photosLoadQuality,
+                                contentPadding = PaddingValues(
+                                    top = 8.dp,
+                                    bottom = WindowInsets.navigationBars.asPaddingValues()
+                                        .calculateBottomPadding() + 64.dp
+                                ),
+                            )
+                        }
                     }
 
                     PullRefreshIndicator(
