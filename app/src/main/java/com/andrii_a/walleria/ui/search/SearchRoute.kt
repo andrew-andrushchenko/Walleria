@@ -3,8 +3,10 @@ package com.andrii_a.walleria.ui.search
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -49,12 +51,17 @@ fun NavGraphBuilder.searchRoute(
 
         val viewModel: SearchViewModel = hiltViewModel()
 
+        val photosLayoutType by viewModel.photosLayoutType.collectAsStateWithLifecycle()
+        val photosLoadQuality by viewModel.photosLoadQuality.collectAsStateWithLifecycle()
+
         SearchScreen(
             query = viewModel.query,
             photos = viewModel.photos,
             collections = viewModel.collections,
             users = viewModel.users,
             photoFilters = viewModel.photoFilters,
+            photosListLayoutType = photosLayoutType,
+            photosLoadQuality = photosLoadQuality,
             onEvent = viewModel::onEvent,
             navigateToPhotoDetails = navController::navigateToPhotoDetails,
             navigateToCollectionDetails = navController::navigateToCollectionDetails,
