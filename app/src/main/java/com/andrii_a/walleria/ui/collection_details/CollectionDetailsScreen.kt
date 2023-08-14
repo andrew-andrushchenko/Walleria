@@ -38,6 +38,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -283,10 +284,14 @@ private fun SuccessStateContent(
         val pullRefreshState = rememberPullRefreshState(
             refreshing = collectionPhotosLazyItems.loadState.refresh is LoadState.Loading,
             onRefresh = collectionPhotosLazyItems::refresh,
-            refreshingOffset = dimensionResource(id = R.dimen.top_bar_height) + WindowInsets.systemBars.asPaddingValues().calculateTopPadding()
+            refreshingOffset = dimensionResource(id = R.dimen.top_bar_height) + WindowInsets.systemBars.asPaddingValues()
+                .calculateTopPadding()
         )
 
         Box(modifier = modifier.pullRefresh(pullRefreshState)) {
+            val colorPrimaryTransparent = MaterialTheme.colors.primary.copy(alpha = 0.4f)
+            val colorPrimary = MaterialTheme.colors.primary
+
             AsyncImage(
                 model = ImageRequest
                     .Builder(LocalContext.current)
@@ -299,20 +304,17 @@ private fun SuccessStateContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(400.dp)
-            )
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(400.dp)
-                    .background(
-                        brush = Brush.verticalGradient(
-                            colors = listOf(
-                                MaterialTheme.colors.primary.copy(alpha = 0.4f),
-                                MaterialTheme.colors.primary
+                    .drawWithContent {
+                        drawContent()
+                        drawRect(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    colorPrimaryTransparent,
+                                    colorPrimary
+                                )
                             )
                         )
-                    )
+                    }
             )
 
             val listState = rememberLazyListState()
