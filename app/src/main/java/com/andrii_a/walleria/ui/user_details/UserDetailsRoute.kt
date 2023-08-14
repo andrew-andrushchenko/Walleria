@@ -51,9 +51,13 @@ fun NavGraphBuilder.userDetailsRoute(
         val viewModel: UserDetailsViewModel = hiltViewModel()
 
         val loadResult by viewModel.loadResult.collectAsStateWithLifecycle()
+        val photosLayoutType by viewModel.photosLayoutType.collectAsStateWithLifecycle()
+        val photosLoadQuality by viewModel.photosLoadQuality.collectAsStateWithLifecycle()
 
         UserDetailsScreen(
             loadResult = loadResult,
+            photosListLayoutType = photosLayoutType,
+            photosLoadQuality = photosLoadQuality,
             onRetryLoading = viewModel::getUser,
             navigateBack = navController::navigateUp,
             navigateToPhotoDetails = navController::navigateToPhotoDetails,
