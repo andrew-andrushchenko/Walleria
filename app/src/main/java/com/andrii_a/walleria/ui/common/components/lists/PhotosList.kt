@@ -33,7 +33,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toArgb
@@ -115,7 +114,13 @@ fun PhotosList(
                                         height = photo.height.toFloat(),
                                         photoUrl = photo.getUrlByQuality(photosQuality),
                                         photoPlaceholderColor = photo.primaryColorComposable,
-                                        onPhotoClicked = { onPhotoClicked(PhotoId(it.id)) }
+                                        onPhotoClicked = { onPhotoClicked(PhotoId(it.id)) },
+                                        modifier = Modifier
+                                            .padding(
+                                                start = 16.dp,
+                                                end = 16.dp,
+                                                bottom = 16.dp
+                                            )
                                     )
                                 } else {
                                     DefaultPhotoItem(
@@ -328,7 +333,7 @@ fun SimplePhotoItem(
     photoPlaceholderColor: Color,
     onPhotoClicked: () -> Unit,
     modifier: Modifier = Modifier,
-    shape: Shape = RectangleShape
+    shape: Shape = RoundedCornerShape(16.dp)
 ) {
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
