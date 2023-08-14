@@ -2,4 +2,5 @@
 <resources>
     <dimen name="navigation_bar_height">72dp</dimen>
     <dimen name="top_bar_height">64dp</dimen>
+    <dimen name="scroll_to_top_button_padding">8dp</dimen>
 </resources>

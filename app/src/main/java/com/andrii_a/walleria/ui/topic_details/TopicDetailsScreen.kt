@@ -59,7 +59,6 @@ import com.andrii_a.walleria.ui.common.TopicId
 import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
 import com.andrii_a.walleria.ui.common.components.LoadingBanner
-import com.andrii_a.walleria.ui.common.components.ScrollToTopLayout
 import com.andrii_a.walleria.ui.common.components.lists.PhotosGrid
 import com.andrii_a.walleria.ui.common.components.lists.PhotosList
 import com.andrii_a.walleria.ui.theme.PrimaryDark
@@ -288,8 +287,7 @@ private fun SuccessStateContent(
         val pullRefreshState = rememberPullRefreshState(
             refreshing = topicPhotosLazyItems.loadState.refresh is LoadState.Loading,
             onRefresh = topicPhotosLazyItems::refresh,
-            refreshingOffset = dimensionResource(id = R.dimen.top_bar_height) +
-                    WindowInsets.systemBars.asPaddingValues().calculateTopPadding()
+            refreshingOffset = dimensionResource(id = R.dimen.top_bar_height) + WindowInsets.systemBars.asPaddingValues().calculateTopPadding()
         )
 
         Box(modifier = modifier.pullRefresh(pullRefreshState)) {
@@ -298,105 +296,81 @@ private fun SuccessStateContent(
 
             when (photosListLayoutType) {
                 PhotosListLayoutType.DEFAULT -> {
-                    ScrollToTopLayout(
+                    PhotosList(
+                        lazyPhotoItems = topicPhotosLazyItems,
+                        headerContent = {
+                            TopicDetailsDescriptionHeader(
+                                topic = topic,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 24.dp, vertical = 16.dp)
+                            )
+                        },
+                        onPhotoClicked = navigateToPhotoDetails,
+                        onUserProfileClicked = navigateToUserDetails,
+                        isCompact = false,
+                        photosQuality = photosLoadQuality,
                         listState = listState,
                         contentPadding = PaddingValues(
+                            top = WindowInsets.systemBars.asPaddingValues()
+                                .calculateTopPadding() + dimensionResource(id = R.dimen.top_bar_height),
                             bottom = WindowInsets.navigationBars.asPaddingValues()
-                                .calculateBottomPadding() + 8.dp
-                        )
-                    ) {
-                        PhotosList(
-                            lazyPhotoItems = topicPhotosLazyItems,
-                            headerContent = {
-                                TopicDetailsDescriptionHeader(
-                                    topic = topic,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 24.dp, vertical = 16.dp)
-                                )
-                            },
-                            onPhotoClicked = navigateToPhotoDetails,
-                            onUserProfileClicked = navigateToUserDetails,
-                            isCompact = false,
-                            photosQuality = photosLoadQuality,
-                            listState = listState,
-                            contentPadding = PaddingValues(
-                                top = WindowInsets.systemBars.asPaddingValues()
-                                    .calculateTopPadding() + dimensionResource(id = R.dimen.top_bar_height),
-                                bottom = WindowInsets.navigationBars.asPaddingValues()
-                                    .calculateBottomPadding() + 200.dp
-                            ),
-                            modifier = Modifier.fillMaxSize(),
-                        )
-                    }
+                                .calculateBottomPadding() + 200.dp
+                        ),
+                        modifier = Modifier.fillMaxSize(),
+                    )
                 }
 
                 PhotosListLayoutType.MINIMAL_LIST -> {
-                    ScrollToTopLayout(
+                    PhotosList(
+                        lazyPhotoItems = topicPhotosLazyItems,
+                        headerContent = {
+                            TopicDetailsDescriptionHeader(
+                                topic = topic,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 24.dp, vertical = 16.dp)
+                            )
+                        },
+                        onPhotoClicked = navigateToPhotoDetails,
+                        onUserProfileClicked = navigateToUserDetails,
+                        isCompact = true,
+                        photosQuality = photosLoadQuality,
                         listState = listState,
                         contentPadding = PaddingValues(
+                            top = WindowInsets.systemBars.asPaddingValues()
+                                .calculateTopPadding() + dimensionResource(id = R.dimen.top_bar_height),
                             bottom = WindowInsets.navigationBars.asPaddingValues()
-                                .calculateBottomPadding() + 8.dp
-                        )
-                    ) {
-                        PhotosList(
-                            lazyPhotoItems = topicPhotosLazyItems,
-                            headerContent = {
-                                TopicDetailsDescriptionHeader(
-                                    topic = topic,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 24.dp, vertical = 16.dp)
-                                )
-                            },
-                            onPhotoClicked = navigateToPhotoDetails,
-                            onUserProfileClicked = navigateToUserDetails,
-                            isCompact = true,
-                            photosQuality = photosLoadQuality,
-                            listState = listState,
-                            contentPadding = PaddingValues(
-                                top = WindowInsets.systemBars.asPaddingValues()
-                                    .calculateTopPadding() + dimensionResource(id = R.dimen.top_bar_height),
-                                bottom = WindowInsets.navigationBars.asPaddingValues()
-                                    .calculateBottomPadding() + 200.dp
-                            ),
-                            modifier = Modifier.fillMaxSize(),
-                        )
-                    }
+                                .calculateBottomPadding() + 200.dp
+                        ),
+                        modifier = Modifier.fillMaxSize(),
+                    )
                 }
 
                 PhotosListLayoutType.STAGGERED_GRID -> {
-                    ScrollToTopLayout(
+                    PhotosGrid(
+                        lazyPhotoItems = topicPhotosLazyItems,
+                        headerContent = {
+                            TopicDetailsDescriptionHeader(
+                                topic = topic,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 24.dp, vertical = 16.dp)
+                            )
+                        },
+                        onPhotoClicked = navigateToPhotoDetails,
+                        photosQuality = photosLoadQuality,
                         gridState = gridState,
                         contentPadding = PaddingValues(
+                            top = WindowInsets.systemBars.asPaddingValues()
+                                .calculateTopPadding() + 64.dp,
                             bottom = WindowInsets.navigationBars.asPaddingValues()
-                                .calculateBottomPadding() + 8.dp
-                        )
-                    ) {
-                        PhotosGrid(
-                            lazyPhotoItems = topicPhotosLazyItems,
-                            headerContent = {
-                                TopicDetailsDescriptionHeader(
-                                    topic = topic,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 24.dp, vertical = 16.dp)
-                                )
-                            },
-                            onPhotoClicked = navigateToPhotoDetails,
-                            photosQuality = photosLoadQuality,
-                            gridState = gridState,
-                            contentPadding = PaddingValues(
-                                top = WindowInsets.systemBars.asPaddingValues()
-                                    .calculateTopPadding() + 64.dp,
-                                bottom = WindowInsets.navigationBars.asPaddingValues()
-                                    .calculateBottomPadding() + 200.dp,
-                                start = 8.dp,
-                                end = 8.dp
-                            ),
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
+                                .calculateBottomPadding() + 200.dp,
+                            start = 8.dp,
+                            end = 8.dp
+                        ),
+                        modifier = Modifier.fillMaxSize()
+                    )
                 }
             }
 

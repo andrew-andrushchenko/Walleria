@@ -64,7 +64,6 @@ import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
 import com.andrii_a.walleria.ui.common.components.LoadingBanner
-import com.andrii_a.walleria.ui.common.components.ScrollToTopLayout
 import com.andrii_a.walleria.ui.common.components.lists.PhotosGrid
 import com.andrii_a.walleria.ui.common.components.lists.PhotosList
 import com.andrii_a.walleria.ui.theme.PrimaryDark
@@ -284,8 +283,7 @@ private fun SuccessStateContent(
         val pullRefreshState = rememberPullRefreshState(
             refreshing = collectionPhotosLazyItems.loadState.refresh is LoadState.Loading,
             onRefresh = collectionPhotosLazyItems::refresh,
-            refreshingOffset = dimensionResource(id = R.dimen.top_bar_height) +
-                    WindowInsets.systemBars.asPaddingValues().calculateTopPadding()
+            refreshingOffset = dimensionResource(id = R.dimen.top_bar_height) + WindowInsets.systemBars.asPaddingValues().calculateTopPadding()
         )
 
         Box(modifier = modifier.pullRefresh(pullRefreshState)) {
@@ -322,111 +320,87 @@ private fun SuccessStateContent(
 
             when (photosListLayoutType) {
                 PhotosListLayoutType.DEFAULT -> {
-                    ScrollToTopLayout(
+                    PhotosList(
+                        lazyPhotoItems = collectionPhotosLazyItems,
+                        onPhotoClicked = navigateToPhotoDetails,
+                        onUserProfileClicked = navigateToUserDetails,
+                        headerContent = {
+                            CollectionDescriptionHeader(
+                                owner = collection.user,
+                                description = collection.description,
+                                totalPhotos = collection.totalPhotos,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 24.dp, vertical = 16.dp)
+                            )
+                        },
+                        isCompact = false,
+                        photosQuality = photosLoadQuality,
                         listState = listState,
                         contentPadding = PaddingValues(
+                            top = WindowInsets.systemBars.asPaddingValues()
+                                .calculateTopPadding() + dimensionResource(id = R.dimen.top_bar_height),
                             bottom = WindowInsets.navigationBars.asPaddingValues()
-                                .calculateBottomPadding() + 8.dp
-                        )
-                    ) {
-                        PhotosList(
-                            lazyPhotoItems = collectionPhotosLazyItems,
-                            onPhotoClicked = navigateToPhotoDetails,
-                            onUserProfileClicked = navigateToUserDetails,
-                            headerContent = {
-                                CollectionDescriptionHeader(
-                                    owner = collection.user,
-                                    description = collection.description,
-                                    totalPhotos = collection.totalPhotos,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 24.dp, vertical = 16.dp)
-                                )
-                            },
-                            isCompact = false,
-                            photosQuality = photosLoadQuality,
-                            listState = listState,
-                            contentPadding = PaddingValues(
-                                top = WindowInsets.systemBars.asPaddingValues()
-                                    .calculateTopPadding() + dimensionResource(id = R.dimen.top_bar_height),
-                                bottom = WindowInsets.navigationBars.asPaddingValues()
-                                    .calculateBottomPadding() + 200.dp
-                            ),
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
+                                .calculateBottomPadding() + 200.dp
+                        ),
+                        modifier = Modifier.fillMaxSize()
+                    )
                 }
 
                 PhotosListLayoutType.MINIMAL_LIST -> {
-                    ScrollToTopLayout(
+                    PhotosList(
+                        lazyPhotoItems = collectionPhotosLazyItems,
+                        onPhotoClicked = navigateToPhotoDetails,
+                        onUserProfileClicked = navigateToUserDetails,
+                        headerContent = {
+                            CollectionDescriptionHeader(
+                                owner = collection.user,
+                                description = collection.description,
+                                totalPhotos = collection.totalPhotos,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 24.dp, vertical = 16.dp)
+                            )
+                        },
+                        isCompact = true,
+                        photosQuality = photosLoadQuality,
                         listState = listState,
                         contentPadding = PaddingValues(
+                            top = WindowInsets.systemBars.asPaddingValues()
+                                .calculateTopPadding() + dimensionResource(id = R.dimen.top_bar_height),
                             bottom = WindowInsets.navigationBars.asPaddingValues()
-                                .calculateBottomPadding() + 8.dp
-                        )
-                    ) {
-                        PhotosList(
-                            lazyPhotoItems = collectionPhotosLazyItems,
-                            onPhotoClicked = navigateToPhotoDetails,
-                            onUserProfileClicked = navigateToUserDetails,
-                            headerContent = {
-                                CollectionDescriptionHeader(
-                                    owner = collection.user,
-                                    description = collection.description,
-                                    totalPhotos = collection.totalPhotos,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 24.dp, vertical = 16.dp)
-                                )
-                            },
-                            isCompact = true,
-                            photosQuality = photosLoadQuality,
-                            listState = listState,
-                            contentPadding = PaddingValues(
-                                top = WindowInsets.systemBars.asPaddingValues()
-                                    .calculateTopPadding() + dimensionResource(id = R.dimen.top_bar_height),
-                                bottom = WindowInsets.navigationBars.asPaddingValues()
-                                    .calculateBottomPadding() + 200.dp
-                            ),
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
+                                .calculateBottomPadding() + 200.dp
+                        ),
+                        modifier = Modifier.fillMaxSize()
+                    )
                 }
 
                 PhotosListLayoutType.STAGGERED_GRID -> {
-                    ScrollToTopLayout(
+                    PhotosGrid(
+                        lazyPhotoItems = collectionPhotosLazyItems,
+                        onPhotoClicked = navigateToPhotoDetails,
+                        photosQuality = photosLoadQuality,
+                        headerContent = {
+                            CollectionDescriptionHeader(
+                                owner = collection.user,
+                                description = collection.description,
+                                totalPhotos = collection.totalPhotos,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 24.dp, vertical = 16.dp)
+                            )
+                        },
                         gridState = gridState,
                         contentPadding = PaddingValues(
+                            top = WindowInsets.systemBars.asPaddingValues()
+                                .calculateTopPadding() + 64.dp,
                             bottom = WindowInsets.navigationBars.asPaddingValues()
-                                .calculateBottomPadding() + 8.dp
-                        )
-                    ) {
-                        PhotosGrid(
-                            lazyPhotoItems = collectionPhotosLazyItems,
-                            onPhotoClicked = navigateToPhotoDetails,
-                            photosQuality = photosLoadQuality,
-                            headerContent = {
-                                CollectionDescriptionHeader(
-                                    owner = collection.user,
-                                    description = collection.description,
-                                    totalPhotos = collection.totalPhotos,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 24.dp, vertical = 16.dp)
-                                )
-                            },
-                            gridState = gridState,
-                            contentPadding = PaddingValues(
-                                top = WindowInsets.systemBars.asPaddingValues()
-                                    .calculateTopPadding() + 64.dp,
-                                bottom = WindowInsets.navigationBars.asPaddingValues()
-                                    .calculateBottomPadding() + 200.dp,
-                                start = 8.dp,
-                                end = 8.dp
-                            ),
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
+                                .calculateBottomPadding() + 200.dp,
+                            start = 8.dp,
+                            end = 8.dp
+                        ),
+                        modifier = Modifier.fillMaxSize()
+                    )
                 }
             }
 
