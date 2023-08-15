@@ -337,7 +337,7 @@ private fun SuccessStateContent(
                             )
                         },
                         isCompact = false,
-                        photosQuality = photosLoadQuality,
+                        photosLoadQuality = photosLoadQuality,
                         listState = listState,
                         contentPadding = PaddingValues(
                             top = WindowInsets.systemBars.asPaddingValues()
@@ -365,7 +365,7 @@ private fun SuccessStateContent(
                             )
                         },
                         isCompact = true,
-                        photosQuality = photosLoadQuality,
+                        photosLoadQuality = photosLoadQuality,
                         listState = listState,
                         contentPadding = PaddingValues(
                             top = WindowInsets.systemBars.asPaddingValues()
@@ -381,7 +381,7 @@ private fun SuccessStateContent(
                     PhotosGrid(
                         lazyPhotoItems = collectionPhotosLazyItems,
                         onPhotoClicked = navigateToPhotoDetails,
-                        photosQuality = photosLoadQuality,
+                        photosLoadQuality = photosLoadQuality,
                         headerContent = {
                             CollectionDescriptionHeader(
                                 owner = collection.user,

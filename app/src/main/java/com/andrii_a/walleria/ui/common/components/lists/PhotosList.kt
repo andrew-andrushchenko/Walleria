@@ -73,7 +73,7 @@ fun PhotosList(
     modifier: Modifier = Modifier,
     isCompact: Boolean = false,
     addNavBarPadding: Boolean = false,
-    photosQuality: PhotoQuality = PhotoQuality.MEDIUM,
+    photosLoadQuality: PhotoQuality = PhotoQuality.MEDIUM,
     listState: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues(),
     headerContent: (@Composable () -> Unit)? = null
@@ -112,7 +112,7 @@ fun PhotosList(
                                     SimplePhotoItem(
                                         width = photo.width.toFloat(),
                                         height = photo.height.toFloat(),
-                                        photoUrl = photo.getUrlByQuality(photosQuality),
+                                        photoUrl = photo.getUrlByQuality(photosLoadQuality),
                                         photoPlaceholderColor = photo.primaryColorComposable,
                                         onPhotoClicked = { onPhotoClicked(PhotoId(it.id)) },
                                         modifier = Modifier
@@ -126,7 +126,7 @@ fun PhotosList(
                                     DefaultPhotoItem(
                                         width = photo.width.toFloat(),
                                         height = photo.height.toFloat(),
-                                        photoUrl = photo.getUrlByQuality(photosQuality),
+                                        photoUrl = photo.getUrlByQuality(photosLoadQuality),
                                         photoPlaceholderColor = photo.primaryColorComposable,
                                         userProfileImageUrl = photo.getUserProfileImageUrlOrEmpty(),
                                         username = photo.userFullName,
@@ -191,7 +191,7 @@ fun PhotosGrid(
     onPhotoClicked: (PhotoId) -> Unit,
     modifier: Modifier = Modifier,
     addNavBarPadding: Boolean = false,
-    photosQuality: PhotoQuality = PhotoQuality.MEDIUM,
+    photosLoadQuality: PhotoQuality = PhotoQuality.MEDIUM,
     gridState: LazyStaggeredGridState = rememberLazyStaggeredGridState(),
     contentPadding: PaddingValues = PaddingValues(),
     headerContent: (@Composable () -> Unit)? = null
@@ -232,7 +232,7 @@ fun PhotosGrid(
                                 SimplePhotoItem(
                                     width = photo.width.toFloat(),
                                     height = photo.height.toFloat(),
-                                    photoUrl = photo.getUrlByQuality(quality = photosQuality),
+                                    photoUrl = photo.getUrlByQuality(quality = photosLoadQuality),
                                     photoPlaceholderColor = photo.primaryColorComposable,
                                     onPhotoClicked = { onPhotoClicked(PhotoId(photo.id)) },
                                     shape = RoundedCornerShape(16.dp)

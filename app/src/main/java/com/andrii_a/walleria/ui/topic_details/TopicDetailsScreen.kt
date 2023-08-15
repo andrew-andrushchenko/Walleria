@@ -309,7 +309,7 @@ private fun SuccessStateContent(
                         onPhotoClicked = navigateToPhotoDetails,
                         onUserProfileClicked = navigateToUserDetails,
                         isCompact = false,
-                        photosQuality = photosLoadQuality,
+                        photosLoadQuality = photosLoadQuality,
                         listState = listState,
                         contentPadding = PaddingValues(
                             top = WindowInsets.systemBars.asPaddingValues()
@@ -335,7 +335,7 @@ private fun SuccessStateContent(
                         onPhotoClicked = navigateToPhotoDetails,
                         onUserProfileClicked = navigateToUserDetails,
                         isCompact = true,
-                        photosQuality = photosLoadQuality,
+                        photosLoadQuality = photosLoadQuality,
                         listState = listState,
                         contentPadding = PaddingValues(
                             top = WindowInsets.systemBars.asPaddingValues()
@@ -359,7 +359,7 @@ private fun SuccessStateContent(
                             )
                         },
                         onPhotoClicked = navigateToPhotoDetails,
-                        photosQuality = photosLoadQuality,
+                        photosLoadQuality = photosLoadQuality,
                         gridState = gridState,
                         contentPadding = PaddingValues(
                             top = WindowInsets.systemBars.asPaddingValues()

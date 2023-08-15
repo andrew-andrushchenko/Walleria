@@ -71,7 +71,7 @@ fun PhotosScreen(
                     onUserProfileClicked = navigateToUserDetails,
                     isCompact = false,
                     addNavBarPadding = true,
-                    photosQuality = photosLoadQuality,
+                    photosLoadQuality = photosLoadQuality,
                     listState = listState,
                     contentPadding = PaddingValues(
                         top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 64.dp,
@@ -92,7 +92,7 @@ fun PhotosScreen(
                     onUserProfileClicked = navigateToUserDetails,
                     isCompact = true,
                     addNavBarPadding = true,
-                    photosQuality = photosLoadQuality,
+                    photosLoadQuality = photosLoadQuality,
                     listState = listState,
                     contentPadding = PaddingValues(
                         top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 64.dp,
@@ -108,7 +108,7 @@ fun PhotosScreen(
                 PhotosGrid(
                     lazyPhotoItems = lazyPhotoItems,
                     onPhotoClicked = navigateToPhotoDetailsScreen,
-                    photosQuality = photosLoadQuality,
+                    photosLoadQuality = photosLoadQuality,
                     addNavBarPadding = true,
                     gridState = gridState,
                     contentPadding = PaddingValues(
