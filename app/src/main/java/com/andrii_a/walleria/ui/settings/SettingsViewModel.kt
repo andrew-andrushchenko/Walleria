@@ -18,7 +18,7 @@ import javax.inject.Inject
 sealed interface SettingsEvent {
     data class UpdatePhotosListLayoutType(val layoutType: PhotosListLayoutType) : SettingsEvent
     data class UpdateCollectionsListLayoutType(val layoutType: CollectionListLayoutType) : SettingsEvent
-    data class UpdatePhotoPreviewsQuality(val quality: PhotoQuality) : SettingsEvent
+    data class UpdatePhotosLoadQuality(val quality: PhotoQuality) : SettingsEvent
 }
 
 @HiltViewModel
@@ -59,7 +59,7 @@ class SettingsViewModel @Inject constructor(
                     localPreferencesRepository.updateCollectionsListLayoutType(event.layoutType)
                 }
             }
-            is SettingsEvent.UpdatePhotoPreviewsQuality -> {
+            is SettingsEvent.UpdatePhotosLoadQuality -> {
                 viewModelScope.launch {
                     localPreferencesRepository.updatePhotosLoadQuality(event.quality)
                 }

@@ -91,7 +91,7 @@ fun SettingsScreen(
                     selectedItemPositionOrdinal = currentPhotoPreviewsQuality.ordinal,
                     onChangeParameter = { selectedPhotoQualityOrdinal ->
                         onEvent(
-                            SettingsEvent.UpdatePhotoPreviewsQuality(
+                            SettingsEvent.UpdatePhotosLoadQuality(
                                 PhotoQuality.values()[selectedPhotoQualityOrdinal]
                             )
                         )
