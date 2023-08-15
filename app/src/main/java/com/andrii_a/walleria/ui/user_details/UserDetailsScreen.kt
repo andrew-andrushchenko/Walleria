@@ -424,7 +424,7 @@ private fun Pages(
                             onCollectionClicked = navigateToCollectionDetails,
                             onUserProfileClicked = navigateToUserDetails,
                             onPhotoClicked = navigateToPhotoDetails,
-                            previewPhotosQuality = photosLoadQuality,
+                            photosLoadQuality = photosLoadQuality,
                             listState = listState,
                             contentPadding = PaddingValues(
                                 top = 8.dp,
@@ -442,7 +442,7 @@ private fun Pages(
                             onCollectionClicked = navigateToCollectionDetails,
                             onUserProfileClicked = navigateToUserDetails,
                             onPhotoClicked = navigateToPhotoDetails,
-                            previewPhotosQuality = photosLoadQuality,
+                            photosLoadQuality = photosLoadQuality,
                             isCompact = true,
                             listState = listState,
                             contentPadding = PaddingValues(
@@ -460,7 +460,7 @@ private fun Pages(
                             lazyCollectionItems = lazyCollectionItems,
                             onCollectionClicked = navigateToCollectionDetails,
                             gridState = gridState,
-                            coverPhotoQuality = photosLoadQuality,
+                            photosLoadQuality = photosLoadQuality,
                             contentPadding = PaddingValues(
                                 top = 8.dp,
                                 bottom = WindowInsets.navigationBars.asPaddingValues()

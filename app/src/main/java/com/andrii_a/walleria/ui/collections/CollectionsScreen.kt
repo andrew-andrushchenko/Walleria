@@ -36,7 +36,7 @@ import kotlinx.coroutines.flow.Flow
 fun CollectionsScreen(
     collections: Flow<PagingData<Collection>>,
     collectionsLayoutType: CollectionListLayoutType,
-    coverPhotoQuality: PhotoQuality,
+    photosLoadQuality: PhotoQuality,
     navigateToProfileScreen: () -> Unit,
     navigateToSearchScreen: (SearchQuery?) -> Unit,
     navigateToPhotoDetails: (PhotoId) -> Unit,
@@ -87,7 +87,7 @@ fun CollectionsScreen(
                     onPhotoClicked = navigateToPhotoDetails,
                     isCompact = true,
                     addNavBarPadding = true,
-                    previewPhotosQuality = coverPhotoQuality,
+                    photosLoadQuality = photosLoadQuality,
                     listState = listState,
                     contentPadding = PaddingValues(
                         top = WindowInsets.systemBars.asPaddingValues()
@@ -105,7 +105,7 @@ fun CollectionsScreen(
                     lazyCollectionItems = lazyCollectionItems,
                     onCollectionClicked = navigateToCollectionDetails,
                     gridState = gridState,
-                    coverPhotoQuality = coverPhotoQuality,
+                    photosLoadQuality = photosLoadQuality,
                     addNavBarPadding = true,
                     contentPadding = PaddingValues(
                         top = WindowInsets.systemBars.asPaddingValues()

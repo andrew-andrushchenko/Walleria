@@ -85,7 +85,7 @@ fun CollectionsList(
     modifier: Modifier = Modifier,
     isCompact: Boolean = false,
     addNavBarPadding: Boolean = false,
-    previewPhotosQuality: PhotoQuality = PhotoQuality.MEDIUM,
+    photosLoadQuality: PhotoQuality = PhotoQuality.MEDIUM,
     listState: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues()
 ) {
@@ -116,7 +116,7 @@ fun CollectionsList(
                                 if (isCompact) {
                                     SimpleCollectionItem(
                                         collection = collection,
-                                        photoQuality = previewPhotosQuality,
+                                        photoQuality = photosLoadQuality,
                                         onOpenCollectionClick = {
                                             onCollectionClicked(CollectionId(collection.id))
                                         },
@@ -129,7 +129,7 @@ fun CollectionsList(
                                 } else {
                                     DefaultCollectionItem(
                                         collection = collection,
-                                        photoQuality = previewPhotosQuality,
+                                        photoQuality = photosLoadQuality,
                                         onPhotoClicked = onPhotoClicked,
                                         onOpenCollectionClick = {
                                             onCollectionClicked(CollectionId(collection.id))
@@ -198,7 +198,7 @@ fun CollectionsGrid(
     onCollectionClicked: (CollectionId) -> Unit,
     modifier: Modifier = Modifier,
     addNavBarPadding: Boolean = false,
-    coverPhotoQuality: PhotoQuality = PhotoQuality.MEDIUM,
+    photosLoadQuality: PhotoQuality = PhotoQuality.MEDIUM,
     gridState: LazyGridState,
     contentPadding: PaddingValues = PaddingValues()
 ) {
@@ -231,7 +231,7 @@ fun CollectionsGrid(
                             collection?.let {
                                 SimpleCollectionItem(
                                     collection = collection,
-                                    photoQuality = coverPhotoQuality,
+                                    photoQuality = photosLoadQuality,
                                     onOpenCollectionClick = {
                                         onCollectionClicked(CollectionId(collection.id))
                                     }

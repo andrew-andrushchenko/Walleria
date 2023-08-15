@@ -40,12 +40,12 @@ fun NavGraphBuilder.collectionsBottomNavRoute(
 
         val viewModel: CollectionsViewModel = hiltViewModel()
         val collectionsLayoutType by viewModel.collectionsLayoutType.collectAsStateWithLifecycle()
-        val coverPhotoQuality by viewModel.photosLoadQuality.collectAsStateWithLifecycle()
+        val photosLoadQuality by viewModel.photosLoadQuality.collectAsStateWithLifecycle()
 
         CollectionsScreen(
             collections = viewModel.collections,
             collectionsLayoutType = collectionsLayoutType,
-            coverPhotoQuality = coverPhotoQuality,
+            photosLoadQuality = photosLoadQuality,
             navigateToProfileScreen = navController::navigateToProfileScreen,
             navigateToSearchScreen = navController::navigateToSearch,
             navigateToPhotoDetails = navController::navigateToPhotoDetails,
