@@ -46,6 +46,7 @@ fun NavGraphBuilder.photoDetailsRoute(
 
         val loadResultState by viewModel.loadResult.collectAsStateWithLifecycle()
         val isUserLoggedIn by viewModel.isUserLoggedIn.collectAsStateWithLifecycle()
+        val photosDownloadQuality by viewModel.photosDownloadQuality.collectAsStateWithLifecycle()
         val isPhotoLiked by viewModel.isLiked.collectAsStateWithLifecycle()
         val isPhotoCollected by viewModel.isCollected.collectAsStateWithLifecycle()
 
@@ -69,6 +70,7 @@ fun NavGraphBuilder.photoDetailsRoute(
             isUserLoggedIn = isUserLoggedIn,
             isPhotoLiked = isPhotoLiked,
             isPhotoCollected = isPhotoCollected,
+            photosDownloadQuality = photosDownloadQuality,
             onEvent = viewModel::onEvent,
             navigateBack = navController::navigateUp,
             navigateToUserDetails = navController::navigateToUserDetails,

@@ -53,6 +53,7 @@ fun PhotoDetailsScreen(
     isUserLoggedIn: Boolean,
     isPhotoLiked: Boolean,
     isPhotoCollected: Boolean,
+    photosDownloadQuality: PhotoQuality,
     onEvent: (PhotoDetailsEvent) -> Unit,
     navigateBack: () -> Unit,
     navigateToUserDetails: (UserNickname) -> Unit,
@@ -94,6 +95,7 @@ fun PhotoDetailsScreen(
                     isUserLoggedIn = isUserLoggedIn,
                     isPhotoLiked = isPhotoLiked,
                     isPhotoCollected = isPhotoCollected,
+                    photosDownloadQuality = photosDownloadQuality,
                     navigateBack = navigateBack,
                     navigateToUserDetails = navigateToUserDetails,
                     navigateToCollectPhoto = navigateToCollectPhoto,
@@ -117,6 +119,7 @@ private fun SuccessStateContent(
     isUserLoggedIn: Boolean,
     isPhotoLiked: Boolean,
     isPhotoCollected: Boolean,
+    photosDownloadQuality: PhotoQuality,
     modifier: Modifier = Modifier,
     navigateBack: () -> Unit,
     navigateToUserDetails: (UserNickname) -> Unit,
@@ -286,7 +289,12 @@ private fun SuccessStateContent(
                             }
                         } else {
                             context.toast(context.getString(R.string.download_started))
-                            onEvent(PhotoDetailsEvent.DownloadPhoto(photo))
+                            onEvent(
+                                PhotoDetailsEvent.DownloadPhoto(
+                                    photo = photo,
+                                    quality = photosDownloadQuality
+                                )
+                            )
                         }
                     },
                     onZoomToFillClick = {

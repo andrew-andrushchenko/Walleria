@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.andrii_a.walleria.core.BackendResult
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
+import com.andrii_a.walleria.domain.repository.LocalPreferencesRepository
 import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
 import com.andrii_a.walleria.domain.repository.PhotoRepository
 import com.andrii_a.walleria.domain.services.PhotoDownloader
@@ -16,11 +17,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 sealed interface PhotoDetailsEvent {
@@ -46,6 +49,7 @@ sealed interface PhotoLoadResult {
 class PhotoDetailsViewModel @Inject constructor(
     private val photoRepository: PhotoRepository,
     userAccountPreferencesRepository: UserAccountPreferencesRepository,
+    localPreferencesRepository: LocalPreferencesRepository,
     private val photoDownloader: PhotoDownloader,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -54,6 +58,13 @@ class PhotoDetailsViewModel @Inject constructor(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),
             initialValue = false
+        )
+
+    val photosDownloadQuality: StateFlow<PhotoQuality> = localPreferencesRepository.photosDownloadQuality
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = runBlocking { localPreferencesRepository.photosLoadQuality.first() }
         )
 
     private val _loadResult: MutableStateFlow<PhotoLoadResult> = MutableStateFlow(PhotoLoadResult.Empty)
