@@ -70,6 +70,7 @@ import com.andrii_a.walleria.ui.theme.PrimaryDark
 import com.andrii_a.walleria.ui.theme.PrimaryLight
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.abbreviatedNumberString
+import com.andrii_a.walleria.ui.util.getCoverPhotoUrl
 import com.andrii_a.walleria.ui.util.getPreviewPhotos
 import com.andrii_a.walleria.ui.util.getUrlByQuality
 import com.andrii_a.walleria.ui.util.primaryColorInt
@@ -290,7 +291,7 @@ private fun DefaultCollectionItem(
     onUserProfileClick: () -> Unit,
 ) {
     val previewPhotos = remember {
-        collection.getPreviewPhotos(quality = photoQuality)
+        collection.getPreviewPhotos()
     }
 
     val onPhotoClickListeners = remember {
@@ -510,7 +511,7 @@ private fun SimpleCollectionItem(
         AsyncImage(
             model = ImageRequest
                 .Builder(LocalContext.current)
-                .data(collection.coverPhoto?.getUrlByQuality(photoQuality))
+                .data(collection.getCoverPhotoUrl(quality = photoQuality))
                 .crossfade(durationMillis = 1000)
                 .placeholder(
                     ColorDrawable(
