@@ -87,3 +87,17 @@ fun Context.openTwitterProfile(twitterUsername: String) {
         }
     }
 }
+
+fun Context.openGithubProfile(username: String) {
+    CustomTabsHelper.openCustomTab(this, Uri.parse("https://github.com/$username"))
+}
+
+fun Context.writeALetterTo(email: String) {
+    Intent(Intent.ACTION_SENDTO).apply {
+        data = Uri.parse("mailto:$email")
+        putExtra(Intent.EXTRA_SUBJECT, "")
+        putExtra(Intent.EXTRA_TEXT, "")
+    }.let {
+        startActivity(it)
+    }
+}

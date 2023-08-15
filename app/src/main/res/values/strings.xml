@@ -217,4 +217,15 @@
     <string name="type_staggered_grid">Staggered grid</string>
     <string name="type_grid">Grid</string>
 
+    <!-- About -->
+    <string name="developed_and_designed_by">Developed and designed by</string>
+    <string name="developer_username" translatable="false">Andrii Andrushchenko</string>
+    <string name="login_screen_photo_owner">Login screen photo by Brooke Cagle</string>
+    <string name="powered_by_unsplash">powered by Unsplash</string>
+    <string name="developer_email">aw.andrushchenko\@gmail.com</string>
+    <string name="developer_github_username">andrew-andrushchenko</string>
+    <string name="developer_instagram_username">and.rulik</string>
+    <string name="project_icons">Icons: Vuesax</string>
+    <string name="link_to_icons_project">https%3A%2F%2Fwww.figma.com%2Ffile%2FjM3gaBg876x4pjgRPhhAmH%2FVuesax-modified-Kit-%28Community%29%3Ftype%3Ddesign%26t%3DgGHP1q5TQe8pCSEc-6</string>
+
 </resources>

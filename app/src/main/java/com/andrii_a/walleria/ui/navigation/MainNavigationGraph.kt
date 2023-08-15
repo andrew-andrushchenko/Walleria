@@ -13,6 +13,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navigation
 import androidx.navigation.plusAssign
+import com.andrii_a.walleria.ui.about.aboutRoute
 import com.andrii_a.walleria.ui.collect_photo.collectPhotoRoute
 import com.andrii_a.walleria.ui.collection_details.collectionDetailsRoute
 import com.andrii_a.walleria.ui.collections.collectionsBottomNavRoute
@@ -75,6 +76,8 @@ fun MainNavHost(
             topicDetailsRoute(navHostController, systemUiController)
 
             settingsRoute(navHostController, systemUiController)
+
+            aboutRoute(navHostController, systemUiController)
         }
     }
 

@@ -6,6 +6,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import com.andrii_a.walleria.ui.about.navigateToAbout
 import com.andrii_a.walleria.ui.login.LoginActivity
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.profile_edit.navigateToEditUserProfile
@@ -35,7 +36,7 @@ fun NavGraphBuilder.profileRoute(navController: NavController) {
             navigateToViewProfileScreen = navController::navigateToUserDetails,
             navigateToEditProfileScreen = navController::navigateToEditUserProfile,
             navigateToSettingsScreen = navController::navigateToSettings,
-            navigateToAboutScreen = {}
+            navigateToAboutScreen = navController::navigateToAbout
         )
     }
 }
