@@ -1,7 +1,6 @@
 package com.andrii_a.walleria.ui.user_details
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
@@ -33,17 +32,12 @@ fun NavGraphBuilder.userDetailsRoute(
             }
         )
     ) {
-        val statusBarColor = MaterialTheme.colors.primary
-        val navigationBarColor = Color.Transparent
+        val systemBarsColor = Color.Transparent
         val isDark = isSystemInDarkTheme()
 
         LaunchedEffect(key1 = true) {
-            systemUiController.setStatusBarColor(
-                color = statusBarColor,
-                darkIcons = !isDark
-            )
-            systemUiController.setNavigationBarColor(
-                color = navigationBarColor,
+            systemUiController.setSystemBarsColor(
+                color = systemBarsColor,
                 darkIcons = !isDark
             )
         }
