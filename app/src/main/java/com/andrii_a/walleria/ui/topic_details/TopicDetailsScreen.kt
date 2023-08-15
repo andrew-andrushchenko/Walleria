@@ -143,7 +143,7 @@ private fun TopBar(
                 .constrainAs(backButton) {
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
-                    start.linkTo(parent.start, 16.dp)
+                    start.linkTo(parent.start, 8.dp)
                     if (titleText.isNotBlank()) {
                         end.linkTo(title.start)
                     }
@@ -196,7 +196,7 @@ private fun TopBar(
                 .constrainAs(openInBrowserButton) {
                     top.linkTo(backButton.top)
                     bottom.linkTo(backButton.bottom)
-                    end.linkTo(parent.end, 16.dp)
+                    end.linkTo(parent.end, 8.dp)
                 }
                 .statusBarsPadding()
         ) {

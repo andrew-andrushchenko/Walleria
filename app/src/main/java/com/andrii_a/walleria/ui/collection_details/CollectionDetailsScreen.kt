@@ -151,7 +151,7 @@ private fun TopBar(
                 .constrainAs(backButton) {
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
-                    start.linkTo(parent.start, 16.dp)
+                    start.linkTo(parent.start, 8.dp)
                     if (!titleText.isNullOrBlank()) {
                         end.linkTo(title.start)
                     }
@@ -178,7 +178,7 @@ private fun TopBar(
                         if (isOwnCollection) {
                             end.linkTo(editButton.start)
                         } else {
-                            end.linkTo(parent.end, 16.dp)
+                            end.linkTo(parent.end, 8.dp)
                         }
                         width = Dimension.fillToConstraints
                     }
@@ -193,7 +193,7 @@ private fun TopBar(
                     .constrainAs(editButton) {
                         top.linkTo(title.top)
                         bottom.linkTo(title.bottom)
-                        end.linkTo(parent.end, 16.dp)
+                        end.linkTo(parent.end, 8.dp)
                     }
                     .statusBarsPadding()
             ) {
