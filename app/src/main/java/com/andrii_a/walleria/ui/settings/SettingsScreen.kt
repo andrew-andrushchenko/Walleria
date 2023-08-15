@@ -38,7 +38,8 @@ import com.andrii_a.walleria.ui.util.titleRes
 fun SettingsScreen(
     currentPhotosListLayoutType: PhotosListLayoutType,
     currentCollectionListLayoutType: CollectionListLayoutType,
-    currentPhotoPreviewsQuality: PhotoQuality,
+    currentPhotosLoadQuality: PhotoQuality,
+    currentPhotosDownloadQuality: PhotoQuality,
     onEvent: (SettingsEvent) -> Unit,
     navigateBack: () -> Unit
 ) {
@@ -86,12 +87,26 @@ fun SettingsScreen(
             SettingsGroup(name = stringResource(id = R.string.load_settings)) {
                 SettingsItem(
                     title = stringResource(id = R.string.photo_load_quality),
-                    selectedValue = stringResource(id = currentPhotoPreviewsQuality.titleRes),
+                    selectedValue = stringResource(id = currentPhotosLoadQuality.titleRes),
                     selectionOptions = PhotoQuality.values().map { stringResource(id = it.titleRes) },
-                    selectedItemPositionOrdinal = currentPhotoPreviewsQuality.ordinal,
+                    selectedItemPositionOrdinal = currentPhotosLoadQuality.ordinal,
                     onChangeParameter = { selectedPhotoQualityOrdinal ->
                         onEvent(
                             SettingsEvent.UpdatePhotosLoadQuality(
+                                PhotoQuality.values()[selectedPhotoQualityOrdinal]
+                            )
+                        )
+                    }
+                )
+
+                SettingsItem(
+                    title = stringResource(id = R.string.photo_download_quality),
+                    selectedValue = stringResource(id = currentPhotosDownloadQuality.titleRes),
+                    selectionOptions = PhotoQuality.values().map { stringResource(id = it.titleRes) },
+                    selectedItemPositionOrdinal = currentPhotosDownloadQuality.ordinal,
+                    onChangeParameter = { selectedPhotoQualityOrdinal ->
+                        onEvent(
+                            SettingsEvent.UpdatePhotosDownloadQuality(
                                 PhotoQuality.values()[selectedPhotoQualityOrdinal]
                             )
                         )
@@ -147,7 +162,8 @@ fun SettingsScreen() {
             SettingsScreen(
                 currentPhotosListLayoutType = PhotosListLayoutType.DEFAULT,
                 currentCollectionListLayoutType = CollectionListLayoutType.DEFAULT,
-                currentPhotoPreviewsQuality = PhotoQuality.HIGH,
+                currentPhotosLoadQuality = PhotoQuality.HIGH,
+                currentPhotosDownloadQuality = PhotoQuality.HIGH,
                 onEvent = {},
                 navigateBack = {}
             )

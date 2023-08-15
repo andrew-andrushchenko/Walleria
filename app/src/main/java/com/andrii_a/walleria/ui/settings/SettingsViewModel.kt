@@ -19,6 +19,7 @@ sealed interface SettingsEvent {
     data class UpdatePhotosListLayoutType(val layoutType: PhotosListLayoutType) : SettingsEvent
     data class UpdateCollectionsListLayoutType(val layoutType: CollectionListLayoutType) : SettingsEvent
     data class UpdatePhotosLoadQuality(val quality: PhotoQuality) : SettingsEvent
+    data class UpdatePhotosDownloadQuality(val quality: PhotoQuality) : SettingsEvent
 }
 
 @HiltViewModel
@@ -47,6 +48,13 @@ class SettingsViewModel @Inject constructor(
             initialValue = runBlocking { localPreferencesRepository.photosLoadQuality.first() }
         )
 
+    val photosDownloadQuality: StateFlow<PhotoQuality> = localPreferencesRepository.photosDownloadQuality
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = runBlocking { localPreferencesRepository.photosLoadQuality.first() }
+        )
+
     fun onEvent(event: SettingsEvent) {
         when (event) {
             is SettingsEvent.UpdatePhotosListLayoutType -> {
@@ -54,14 +62,22 @@ class SettingsViewModel @Inject constructor(
                     localPreferencesRepository.updatePhotosListLayoutType(event.layoutType)
                 }
             }
+
             is SettingsEvent.UpdateCollectionsListLayoutType -> {
                 viewModelScope.launch {
                     localPreferencesRepository.updateCollectionsListLayoutType(event.layoutType)
                 }
             }
+
             is SettingsEvent.UpdatePhotosLoadQuality -> {
                 viewModelScope.launch {
                     localPreferencesRepository.updatePhotosLoadQuality(event.quality)
+                }
+            }
+
+            is SettingsEvent.UpdatePhotosDownloadQuality -> {
+                viewModelScope.launch {
+                    localPreferencesRepository.updatePhotosDownloadQuality(event.quality)
                 }
             }
         }

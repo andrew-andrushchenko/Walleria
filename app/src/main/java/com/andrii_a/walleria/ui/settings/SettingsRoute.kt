@@ -31,12 +31,14 @@ fun NavGraphBuilder.settingsRoute(
 
         val photosListLayoutType by viewModel.photosListLayoutType.collectAsStateWithLifecycle()
         val collectionsListLayoutType by viewModel.collectionsListLayoutType.collectAsStateWithLifecycle()
-        val photoPreviewsQuality by viewModel.photosLoadQuality.collectAsStateWithLifecycle()
+        val photosLoadQuality by viewModel.photosLoadQuality.collectAsStateWithLifecycle()
+        val photosDownloadQuality by viewModel.photosDownloadQuality.collectAsStateWithLifecycle()
 
         SettingsScreen(
             currentPhotosListLayoutType = photosListLayoutType,
             currentCollectionListLayoutType = collectionsListLayoutType,
-            currentPhotoPreviewsQuality = photoPreviewsQuality,
+            currentPhotosLoadQuality = photosLoadQuality,
+            currentPhotosDownloadQuality = photosDownloadQuality,
             onEvent = viewModel::onEvent,
             navigateBack = navController::navigateUp
         )
