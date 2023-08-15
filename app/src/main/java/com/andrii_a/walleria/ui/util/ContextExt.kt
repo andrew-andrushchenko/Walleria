@@ -37,8 +37,8 @@ fun Context.sharePhoto(photoLink: String?, photoDescription: String?) {
     }
 }
 
-fun Context.openLinkInBrowser(photoLink: String?) {
-    CustomTabsHelper.openCustomTab(this, Uri.parse(photoLink))
+fun Context.openLinkInBrowser(link: String?) {
+    CustomTabsHelper.openCustomTab(this, Uri.parse(link))
 }
 
 fun Context.openLocationInMaps(position: PhotoLocation.Position?) {
@@ -53,7 +53,8 @@ fun Context.openLocationInMaps(position: PhotoLocation.Position?) {
 }
 
 fun Context.openUserProfileInBrowser(userNickname: UserNickname) {
-    CustomTabsHelper.openCustomTab(this, Uri.parse("https://unsplash.com/@${userNickname.value}"))
+    val link = "https://unsplash.com/@${userNickname.value}"
+    this.openLinkInBrowser(link)
 }
 
 fun Context.openInstagramProfile(instagramUsername: String) {
@@ -64,10 +65,8 @@ fun Context.openInstagramProfile(instagramUsername: String) {
         try {
             startActivity(instagramIntent)
         } catch (e: ActivityNotFoundException) {
-            CustomTabsHelper.openCustomTab(
-                this,
-                Uri.parse("https://instagram.com/$instagramUsername")
-            )
+            val link = "https://instagram.com/$instagramUsername"
+            this.openLinkInBrowser(link)
         }
     }
 }
@@ -80,16 +79,15 @@ fun Context.openTwitterProfile(twitterUsername: String) {
         try {
             startActivity(twitterIntent)
         } catch (e: ActivityNotFoundException) {
-            CustomTabsHelper.openCustomTab(
-                this,
-                Uri.parse("https://twitter.com/$twitterUsername")
-            )
+            val link = "https://twitter.com/$twitterUsername"
+            this.openLinkInBrowser(link)
         }
     }
 }
 
 fun Context.openGithubProfile(username: String) {
-    CustomTabsHelper.openCustomTab(this, Uri.parse("https://github.com/$username"))
+    val link = "https://github.com/$username"
+    this.openLinkInBrowser(link)
 }
 
 fun Context.writeALetterTo(email: String) {
