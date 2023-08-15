@@ -85,7 +85,7 @@ fun SettingsScreen(
 
             SettingsGroup(name = stringResource(id = R.string.load_settings)) {
                 SettingsItem(
-                    title = stringResource(id = R.string.lists_grids_photo_quality),
+                    title = stringResource(id = R.string.photo_load_quality),
                     selectedValue = stringResource(id = currentPhotoPreviewsQuality.titleRes),
                     selectionOptions = PhotoQuality.values().map { stringResource(id = it.titleRes) },
                     selectedItemPositionOrdinal = currentPhotoPreviewsQuality.ordinal,

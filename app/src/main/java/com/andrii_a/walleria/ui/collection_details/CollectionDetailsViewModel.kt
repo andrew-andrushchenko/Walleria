@@ -80,11 +80,11 @@ class CollectionDetailsViewModel @Inject constructor(
             initialValue = runBlocking { localPreferencesRepository.photosListLayoutType.first() }
         )
 
-    val photosLoadQuality: StateFlow<PhotoQuality> = localPreferencesRepository.photoPreviewsQuality
+    val photosLoadQuality: StateFlow<PhotoQuality> = localPreferencesRepository.photosLoadQuality
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = runBlocking { localPreferencesRepository.photoPreviewsQuality.first() }
+            initialValue = runBlocking { localPreferencesRepository.photosLoadQuality.first() }
         )
 
     private val _loadResult: MutableStateFlow<CollectionLoadResult> = MutableStateFlow(CollectionLoadResult.Empty)

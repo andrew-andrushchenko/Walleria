@@ -31,7 +31,7 @@ fun NavGraphBuilder.settingsRoute(
 
         val photosListLayoutType by viewModel.photosListLayoutType.collectAsStateWithLifecycle()
         val collectionsListLayoutType by viewModel.collectionsListLayoutType.collectAsStateWithLifecycle()
-        val photoPreviewsQuality by viewModel.photoPreviewsQuality.collectAsStateWithLifecycle()
+        val photoPreviewsQuality by viewModel.photosLoadQuality.collectAsStateWithLifecycle()
 
         SettingsScreen(
             currentPhotosListLayoutType = photosListLayoutType,

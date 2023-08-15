@@ -62,11 +62,11 @@ class SearchViewModel @Inject constructor(
             initialValue = runBlocking { localPreferencesRepository.collectionsListLayoutType.first() }
         )
 
-    val photosLoadQuality: StateFlow<PhotoQuality> = localPreferencesRepository.photoPreviewsQuality
+    val photosLoadQuality: StateFlow<PhotoQuality> = localPreferencesRepository.photosLoadQuality
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = runBlocking { localPreferencesRepository.photoPreviewsQuality.first() }
+            initialValue = runBlocking { localPreferencesRepository.photosLoadQuality.first() }
         )
 
     init {

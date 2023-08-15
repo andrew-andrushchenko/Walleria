@@ -11,12 +11,16 @@ interface LocalPreferencesRepository {
 
     val collectionsListLayoutType: Flow<CollectionListLayoutType>
 
-    val photoPreviewsQuality: Flow<PhotoQuality>
+    val photosLoadQuality: Flow<PhotoQuality>
+
+    val photosDownloadQuality: Flow<PhotoQuality>
 
     suspend fun updatePhotosListLayoutType(layoutType: PhotosListLayoutType)
 
     suspend fun updateCollectionsListLayoutType(layoutType: CollectionListLayoutType)
 
-    suspend fun updatePhotoPreviewsQuality(photoQuality: PhotoQuality)
+    suspend fun updatePhotosLoadQuality(photoQuality: PhotoQuality)
+
+    suspend fun updatePhotosDownloadQuality(photoQuality: PhotoQuality)
 
 }

@@ -40,11 +40,11 @@ class SettingsViewModel @Inject constructor(
             initialValue = runBlocking { localPreferencesRepository.collectionsListLayoutType.first() }
         )
 
-    val photoPreviewsQuality: StateFlow<PhotoQuality> = localPreferencesRepository.photoPreviewsQuality
+    val photosLoadQuality: StateFlow<PhotoQuality> = localPreferencesRepository.photosLoadQuality
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = runBlocking { localPreferencesRepository.photoPreviewsQuality.first() }
+            initialValue = runBlocking { localPreferencesRepository.photosLoadQuality.first() }
         )
 
     fun onEvent(event: SettingsEvent) {
@@ -61,7 +61,7 @@ class SettingsViewModel @Inject constructor(
             }
             is SettingsEvent.UpdatePhotoPreviewsQuality -> {
                 viewModelScope.launch {
-                    localPreferencesRepository.updatePhotoPreviewsQuality(event.quality)
+                    localPreferencesRepository.updatePhotosLoadQuality(event.quality)
                 }
             }
         }

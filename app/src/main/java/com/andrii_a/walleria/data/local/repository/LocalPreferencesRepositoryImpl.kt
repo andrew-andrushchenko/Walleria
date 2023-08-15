@@ -53,9 +53,14 @@ class LocalPreferencesRepositoryImpl(context: Context) : LocalPreferencesReposit
             )
         }
 
-    override val photoPreviewsQuality: Flow<PhotoQuality> = preferencesFlow.map { preferences ->
+    override val photosLoadQuality: Flow<PhotoQuality> = preferencesFlow.map { preferences ->
         PhotoQuality.valueOf(
-            preferences[WalleriaAppPreferencesKeys.PHOTO_PREVIEWS_QUALITY] ?: PhotoQuality.MEDIUM.name
+            preferences[WalleriaAppPreferencesKeys.PHOTOS_LOAD_QUALITY] ?: PhotoQuality.MEDIUM.name
+        )
+    }
+    override val photosDownloadQuality: Flow<PhotoQuality> = preferencesFlow.map { preferences ->
+        PhotoQuality.valueOf(
+            preferences[WalleriaAppPreferencesKeys.PHOTOS_DOWNLOAD_QUALITY] ?: PhotoQuality.MEDIUM.name
         )
     }
 
@@ -73,9 +78,16 @@ class LocalPreferencesRepositoryImpl(context: Context) : LocalPreferencesReposit
         }
     }
 
-    override suspend fun updatePhotoPreviewsQuality(photoQuality: PhotoQuality) {
+    override suspend fun updatePhotosLoadQuality(photoQuality: PhotoQuality) {
         appLocalPreferences.edit { preferences ->
-            preferences[WalleriaAppPreferencesKeys.PHOTO_PREVIEWS_QUALITY] =
+            preferences[WalleriaAppPreferencesKeys.PHOTOS_LOAD_QUALITY] =
+                photoQuality.name
+        }
+    }
+
+    override suspend fun updatePhotosDownloadQuality(photoQuality: PhotoQuality) {
+        appLocalPreferences.edit { preferences ->
+            preferences[WalleriaAppPreferencesKeys.PHOTOS_DOWNLOAD_QUALITY] =
                 photoQuality.name
         }
     }
@@ -83,6 +95,7 @@ class LocalPreferencesRepositoryImpl(context: Context) : LocalPreferencesReposit
     object WalleriaAppPreferencesKeys {
         val PHOTOS_LIST_LAYOUT_TYPE = stringPreferencesKey("photos_list_layout_type")
         val COLLECTIONS_LIST_LAYOUT_TYPE = stringPreferencesKey("collections_list_layout_type")
-        val PHOTO_PREVIEWS_QUALITY = stringPreferencesKey("photo_previews_quality")
+        val PHOTOS_LOAD_QUALITY = stringPreferencesKey("photos_load_quality")
+        val PHOTOS_DOWNLOAD_QUALITY = stringPreferencesKey("photos_download_quality")
     }
 }
