@@ -74,8 +74,10 @@ fun PhotosScreen(
                     photosLoadQuality = photosLoadQuality,
                     listState = listState,
                     contentPadding = PaddingValues(
-                        top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 64.dp,
-                        bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 200.dp
+                        top = WindowInsets.systemBars.asPaddingValues()
+                            .calculateTopPadding() + 64.dp,
+                        bottom = WindowInsets.navigationBars.asPaddingValues()
+                            .calculateBottomPadding() + 200.dp
                     ),
                     modifier = Modifier.fillMaxSize()
                 )
@@ -95,8 +97,10 @@ fun PhotosScreen(
                     photosLoadQuality = photosLoadQuality,
                     listState = listState,
                     contentPadding = PaddingValues(
-                        top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 64.dp,
-                        bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 200.dp
+                        top = WindowInsets.systemBars.asPaddingValues()
+                            .calculateTopPadding() + 64.dp,
+                        bottom = WindowInsets.navigationBars.asPaddingValues()
+                            .calculateBottomPadding() + 200.dp
                     ),
                     modifier = Modifier.fillMaxSize()
                 )
@@ -112,8 +116,10 @@ fun PhotosScreen(
                     addNavBarPadding = true,
                     gridState = gridState,
                     contentPadding = PaddingValues(
-                        top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 64.dp,
-                        bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 200.dp,
+                        top = WindowInsets.systemBars.asPaddingValues()
+                            .calculateTopPadding() + dimensionResource(id = R.dimen.top_bar_height),
+                        bottom = WindowInsets.navigationBars.asPaddingValues()
+                            .calculateBottomPadding() + 200.dp,
                         start = 8.dp,
                         end = 8.dp
                     ),
