@@ -51,7 +51,6 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.andrii_a.walleria.R
@@ -107,13 +106,10 @@ fun CollectionsList(
             when (lazyCollectionItems.loadState.refresh) {
                 is LoadState.NotLoading -> {
                     if (lazyCollectionItems.itemCount > 0) {
-                        items(
-                            count = lazyCollectionItems.itemCount,
-                            key = lazyCollectionItems.itemKey { it.id }
-                        ) { index ->
-                            val collection = lazyCollectionItems[index]
-                            collection?.let {
-                                if (isCompact) {
+                        if (isCompact) {
+                            items(count = lazyCollectionItems.itemCount) { index ->
+                                val collection = lazyCollectionItems[index]
+                                collection?.let {
                                     SimpleCollectionItem(
                                         collection = collection,
                                         photoQuality = photosLoadQuality,
@@ -126,7 +122,12 @@ fun CollectionsList(
                                             bottom = 16.dp
                                         )
                                     )
-                                } else {
+                                }
+                            }
+                        } else {
+                            items(count = lazyCollectionItems.itemCount) { index ->
+                                val collection = lazyCollectionItems[index]
+                                collection?.let {
                                     DefaultCollectionItem(
                                         collection = collection,
                                         photoQuality = photosLoadQuality,
@@ -149,6 +150,7 @@ fun CollectionsList(
                                 }
                             }
                         }
+
                     } else {
                         item {
                             EmptyContentBanner(modifier = Modifier.fillParentMaxSize())
@@ -212,7 +214,7 @@ fun CollectionsGrid(
                     + if (addNavBarPadding) dimensionResource(id = R.dimen.navigation_bar_height) else 0.dp
         ),
         modifier = modifier
-    )  {
+    ) {
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -223,10 +225,7 @@ fun CollectionsGrid(
             when (lazyCollectionItems.loadState.refresh) {
                 is LoadState.NotLoading -> {
                     if (lazyCollectionItems.itemCount > 0) {
-                        items(
-                            count = lazyCollectionItems.itemCount,
-                            key = lazyCollectionItems.itemKey { it.id }
-                        ) { index ->
+                        items(count = lazyCollectionItems.itemCount) { index ->
                             val collection = lazyCollectionItems[index]
                             collection?.let {
                                 SimpleCollectionItem(
@@ -513,7 +512,11 @@ private fun SimpleCollectionItem(
                 .Builder(LocalContext.current)
                 .data(collection.coverPhoto?.getUrlByQuality(photoQuality))
                 .crossfade(durationMillis = 1000)
-                .placeholder(ColorDrawable(collection.coverPhoto?.primaryColorInt ?: android.graphics.Color.GRAY))
+                .placeholder(
+                    ColorDrawable(
+                        collection.coverPhoto?.primaryColorInt ?: android.graphics.Color.GRAY
+                    )
+                )
                 .build(),
             contentScale = ContentScale.Crop,
             contentDescription = stringResource(id = R.string.collection_cover_photo),
