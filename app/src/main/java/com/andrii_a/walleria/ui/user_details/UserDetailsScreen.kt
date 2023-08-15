@@ -309,6 +309,7 @@ private fun Pages(
                             photosLoadQuality = photosLoadQuality,
                             listState = listState,
                             contentPadding = PaddingValues(
+                                top = 8.dp,
                                 bottom = WindowInsets.navigationBars.asPaddingValues()
                                     .calculateBottomPadding() + 200.dp
                             ),
@@ -327,6 +328,7 @@ private fun Pages(
                             photosLoadQuality = photosLoadQuality,
                             listState = listState,
                             contentPadding = PaddingValues(
+                                top = 8.dp,
                                 bottom = WindowInsets.navigationBars.asPaddingValues()
                                     .calculateBottomPadding() + 200.dp
                             ),
@@ -368,6 +370,7 @@ private fun Pages(
                             photosLoadQuality = photosLoadQuality,
                             listState = listState,
                             contentPadding = PaddingValues(
+                                top = 8.dp,
                                 bottom = WindowInsets.navigationBars.asPaddingValues()
                                     .calculateBottomPadding() + 200.dp
                             ),
@@ -386,6 +389,7 @@ private fun Pages(
                             photosLoadQuality = photosLoadQuality,
                             listState = listState,
                             contentPadding = PaddingValues(
+                                top = 8.dp,
                                 bottom = WindowInsets.navigationBars.asPaddingValues()
                                     .calculateBottomPadding() + 200.dp
                             ),
