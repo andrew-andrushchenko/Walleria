@@ -4,7 +4,10 @@ import android.graphics.drawable.ColorDrawable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -41,6 +45,7 @@ import com.andrii_a.walleria.ui.common.components.EmptyContentBanner
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
 import com.andrii_a.walleria.ui.common.components.ErrorItem
 import com.andrii_a.walleria.ui.common.components.LoadingListItem
+import com.andrii_a.walleria.ui.common.components.ScrollToTopLayout
 import com.andrii_a.walleria.ui.theme.TopicStatusClosedTextColorDark
 import com.andrii_a.walleria.ui.theme.TopicStatusClosedTextColorLight
 import com.andrii_a.walleria.ui.theme.TopicStatusOpenTextColorDark
@@ -57,83 +62,98 @@ fun TopicsList(
     lazyTopicItems: LazyPagingItems<Topic>,
     modifier: Modifier = Modifier,
     onClick: (TopicId) -> Unit,
+    addNavigationBarPadding: Boolean = false,
     coverPhotoQuality: PhotoQuality = PhotoQuality.MEDIUM,
     listState: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues()
 ) {
-    LazyColumn(
-        state = listState,
-        contentPadding = contentPadding,
-        modifier = modifier
+    ScrollToTopLayout(
+        listState = listState,
+        scrollToTopButtonPadding = PaddingValues(
+            bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() +
+                    dimensionResource(id = R.dimen.scroll_to_top_button_padding) +
+                    if (addNavigationBarPadding) {
+                        dimensionResource(id = R.dimen.navigation_bar_height)
+                    } else {
+                        0.dp
+                    }
+        )
     ) {
-        when (lazyTopicItems.loadState.refresh) {
-            is LoadState.NotLoading -> {
-                if (lazyTopicItems.itemCount > 0) {
-                    items(
-                        count = lazyTopicItems.itemCount,
-                        key = lazyTopicItems.itemKey { it.id }
-                    ) { index ->
-                        val topic = lazyTopicItems[index]
-                        topic?.let {
-                            DefaultTopicItem(
-                                title = topic.title,
-                                coverPhoto = topic.coverPhoto,
-                                coverPhotoQuality = coverPhotoQuality,
-                                totalPhotos = topic.totalPhotos,
-                                curatorUsername = topic.ownerUsername,
-                                status = topic.status,
-                                updatedAt = topic.updatedAt.orEmpty(),
-                                onClick = {
-                                    onClick(TopicId(topic.id))
-                                },
-                                modifier = Modifier.padding(
-                                    start = 8.dp,
-                                    end = 8.dp,
-                                    bottom = 8.dp
+        LazyColumn(
+            state = listState,
+            contentPadding = contentPadding,
+            modifier = modifier
+        ) {
+            when (lazyTopicItems.loadState.refresh) {
+                is LoadState.NotLoading -> {
+                    if (lazyTopicItems.itemCount > 0) {
+                        items(
+                            count = lazyTopicItems.itemCount,
+                            key = lazyTopicItems.itemKey { it.id }
+                        ) { index ->
+                            val topic = lazyTopicItems[index]
+                            topic?.let {
+                                DefaultTopicItem(
+                                    title = topic.title,
+                                    coverPhoto = topic.coverPhoto,
+                                    coverPhotoQuality = coverPhotoQuality,
+                                    totalPhotos = topic.totalPhotos,
+                                    curatorUsername = topic.ownerUsername,
+                                    status = topic.status,
+                                    updatedAt = topic.updatedAt.orEmpty(),
+                                    onClick = {
+                                        onClick(TopicId(topic.id))
+                                    },
+                                    modifier = Modifier.padding(
+                                        start = 8.dp,
+                                        end = 8.dp,
+                                        bottom = 8.dp
+                                    )
                                 )
-                            )
+                            }
+                        }
+                    } else {
+                        item {
+                            EmptyContentBanner(modifier = Modifier.fillParentMaxSize())
                         }
                     }
-                } else {
+                }
+
+                is LoadState.Loading -> Unit
+
+                is LoadState.Error -> {
                     item {
-                        EmptyContentBanner(modifier = Modifier.fillParentMaxSize())
+                        ErrorBanner(
+                            onRetry = lazyTopicItems::retry,
+                            modifier = Modifier.fillParentMaxSize()
+                        )
                     }
                 }
             }
 
-            is LoadState.Loading -> Unit
+            when (lazyTopicItems.loadState.append) {
+                is LoadState.NotLoading -> Unit
 
-            is LoadState.Error -> {
-                item {
-                    ErrorBanner(
-                        onRetry = lazyTopicItems::retry,
-                        modifier = Modifier.fillParentMaxSize()
-                    )
+                is LoadState.Loading -> {
+                    item {
+                        LoadingListItem(modifier = Modifier.fillParentMaxWidth())
+                    }
                 }
-            }
-        }
 
-        when (lazyTopicItems.loadState.append) {
-            is LoadState.NotLoading -> Unit
-
-            is LoadState.Loading -> {
-                item {
-                    LoadingListItem(modifier = Modifier.fillParentMaxWidth())
-                }
-            }
-
-            is LoadState.Error -> {
-                item {
-                    ErrorItem(
-                        onRetry = lazyTopicItems::retry,
-                        modifier = Modifier
-                            .fillParentMaxWidth()
-                            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                    )
+                is LoadState.Error -> {
+                    item {
+                        ErrorItem(
+                            onRetry = lazyTopicItems::retry,
+                            modifier = Modifier
+                                .fillParentMaxWidth()
+                                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                        )
+                    }
                 }
             }
         }
     }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

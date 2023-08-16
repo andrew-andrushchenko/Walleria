@@ -72,7 +72,7 @@ fun PhotosList(
     onUserProfileClicked: (UserNickname) -> Unit,
     modifier: Modifier = Modifier,
     isCompact: Boolean = false,
-    addNavBarPadding: Boolean = false,
+    addNavigationBarPadding: Boolean = false,
     photosLoadQuality: PhotoQuality = PhotoQuality.MEDIUM,
     listState: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues(),
@@ -80,12 +80,14 @@ fun PhotosList(
 ) {
     ScrollToTopLayout(
         listState = listState,
-        contentPadding = PaddingValues(
-            bottom = WindowInsets.navigationBars
-                .asPaddingValues()
-                .calculateBottomPadding()
-                    + dimensionResource(id = R.dimen.scroll_to_top_button_padding)
-                    + if (addNavBarPadding) dimensionResource(id = R.dimen.navigation_bar_height) else 0.dp
+        scrollToTopButtonPadding = PaddingValues(
+            bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() +
+                    dimensionResource(id = R.dimen.scroll_to_top_button_padding) +
+                    if (addNavigationBarPadding) {
+                        dimensionResource(id = R.dimen.navigation_bar_height)
+                    } else {
+                        0.dp
+                    }
         ),
         modifier = modifier
     ) {
@@ -190,7 +192,7 @@ fun PhotosGrid(
     lazyPhotoItems: LazyPagingItems<Photo>,
     onPhotoClicked: (PhotoId) -> Unit,
     modifier: Modifier = Modifier,
-    addNavBarPadding: Boolean = false,
+    addNavigationBarPadding: Boolean = false,
     photosLoadQuality: PhotoQuality = PhotoQuality.MEDIUM,
     gridState: LazyStaggeredGridState = rememberLazyStaggeredGridState(),
     contentPadding: PaddingValues = PaddingValues(),
@@ -198,12 +200,14 @@ fun PhotosGrid(
 ) {
     ScrollToTopLayout(
         gridState = gridState,
-        contentPadding = PaddingValues(
-            bottom = WindowInsets.navigationBars
-                .asPaddingValues()
-                .calculateBottomPadding()
-                    + dimensionResource(id = R.dimen.scroll_to_top_button_padding)
-                    + if (addNavBarPadding) dimensionResource(id = R.dimen.navigation_bar_height) else 0.dp
+        scrollToTopButtonPadding = PaddingValues(
+            bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() +
+                    dimensionResource(id = R.dimen.scroll_to_top_button_padding) +
+                    if (addNavigationBarPadding) {
+                        dimensionResource(id = R.dimen.navigation_bar_height)
+                    } else {
+                        0.dp
+                    }
         ),
         modifier = modifier
     ) {
@@ -212,7 +216,8 @@ fun PhotosGrid(
             state = gridState,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalItemSpacing = 8.dp,
-            contentPadding = contentPadding
+            contentPadding = contentPadding,
+            modifier = Modifier.padding(horizontal = 8.dp)
         ) {
             when (lazyPhotoItems.loadState.refresh) {
                 is LoadState.NotLoading -> {

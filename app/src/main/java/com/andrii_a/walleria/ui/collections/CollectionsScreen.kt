@@ -92,15 +92,9 @@ fun CollectionsScreen(
                     onUserProfileClicked = navigateToUserDetails,
                     onPhotoClicked = navigateToPhotoDetails,
                     isCompact = false,
-                    addNavBarPadding = true,
+                    addNavigationBarPadding = true,
                     listState = listState,
-                    contentPadding = innerPadding,
-                    /*contentPadding = PaddingValues(
-                        top = WindowInsets.systemBars.asPaddingValues()
-                            .calculateTopPadding() + dimensionResource(id = R.dimen.top_bar_height),
-                        bottom = WindowInsets.navigationBars.asPaddingValues()
-                            .calculateBottomPadding() + 200.dp
-                    ),*/
+                    contentPadding = innerPadding
                 )
             }
 
@@ -113,16 +107,10 @@ fun CollectionsScreen(
                     onUserProfileClicked = navigateToUserDetails,
                     onPhotoClicked = navigateToPhotoDetails,
                     isCompact = true,
-                    addNavBarPadding = true,
+                    addNavigationBarPadding = true,
                     photosLoadQuality = photosLoadQuality,
                     listState = listState,
-                    contentPadding = innerPadding,
-                    /*contentPadding = PaddingValues(
-                        top = WindowInsets.systemBars.asPaddingValues()
-                            .calculateTopPadding() + 64.dp,
-                        bottom = WindowInsets.navigationBars.asPaddingValues()
-                            .calculateBottomPadding() + 200.dp
-                    ),*/
+                    contentPadding = innerPadding
                 )
             }
 
@@ -132,16 +120,10 @@ fun CollectionsScreen(
                 CollectionsGrid(
                     lazyCollectionItems = lazyCollectionItems,
                     onCollectionClicked = navigateToCollectionDetails,
+                    addNavigationBarPadding = true,
                     gridState = gridState,
                     photosLoadQuality = photosLoadQuality,
-                    addNavBarPadding = true,
-                    contentPadding = innerPadding,
-                    /*contentPadding = PaddingValues(
-                        top = WindowInsets.systemBars.asPaddingValues()
-                            .calculateTopPadding() + 64.dp,
-                        bottom = WindowInsets.navigationBars.asPaddingValues()
-                            .calculateBottomPadding() + 200.dp
-                    ),*/
+                    contentPadding = innerPadding
                 )
             }
         }

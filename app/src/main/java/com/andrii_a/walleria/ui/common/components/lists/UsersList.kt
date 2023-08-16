@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -62,9 +63,9 @@ fun UsersList(
 ) {
     ScrollToTopLayout(
         listState = listState,
-        contentPadding = PaddingValues(
-            bottom = WindowInsets.navigationBars.asPaddingValues()
-                .calculateBottomPadding() + 8.dp
+        scrollToTopButtonPadding = PaddingValues(
+            bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() +
+                    dimensionResource(id = R.dimen.scroll_to_top_button_padding)
         ),
         modifier = modifier
     ) {

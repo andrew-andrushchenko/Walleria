@@ -82,19 +82,21 @@ fun CollectionsList(
     onPhotoClicked: (PhotoId) -> Unit,
     modifier: Modifier = Modifier,
     isCompact: Boolean = false,
-    addNavBarPadding: Boolean = false,
+    addNavigationBarPadding: Boolean = false,
     photosLoadQuality: PhotoQuality = PhotoQuality.MEDIUM,
     listState: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues()
 ) {
     ScrollToTopLayout(
         listState = listState,
-        contentPadding = PaddingValues(
-            bottom = WindowInsets.navigationBars
-                .asPaddingValues()
-                .calculateBottomPadding()
-                    + dimensionResource(id = R.dimen.scroll_to_top_button_padding)
-                    + if (addNavBarPadding) dimensionResource(id = R.dimen.navigation_bar_height) else 0.dp
+        scrollToTopButtonPadding = PaddingValues(
+            bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() +
+                    dimensionResource(id = R.dimen.scroll_to_top_button_padding) +
+                    if (addNavigationBarPadding) {
+                        dimensionResource(id = R.dimen.navigation_bar_height)
+                    } else {
+                        0.dp
+                    }
         ),
         modifier = modifier
     ) {
@@ -198,19 +200,21 @@ fun CollectionsGrid(
     lazyCollectionItems: LazyPagingItems<Collection>,
     onCollectionClicked: (CollectionId) -> Unit,
     modifier: Modifier = Modifier,
-    addNavBarPadding: Boolean = false,
+    addNavigationBarPadding: Boolean = false,
     photosLoadQuality: PhotoQuality = PhotoQuality.MEDIUM,
     gridState: LazyGridState,
     contentPadding: PaddingValues = PaddingValues()
 ) {
     ScrollToTopLayout(
         gridState = gridState,
-        contentPadding = PaddingValues(
-            bottom = WindowInsets.navigationBars
-                .asPaddingValues()
-                .calculateBottomPadding()
-                    + dimensionResource(id = R.dimen.scroll_to_top_button_padding)
-                    + if (addNavBarPadding) dimensionResource(id = R.dimen.navigation_bar_height) else 0.dp
+        scrollToTopButtonPadding = PaddingValues(
+            bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() +
+                    dimensionResource(id = R.dimen.scroll_to_top_button_padding) +
+                    if (addNavigationBarPadding) {
+                        dimensionResource(id = R.dimen.navigation_bar_height)
+                    } else {
+                        0.dp
+                    }
         ),
         modifier = modifier
     ) {
@@ -219,6 +223,7 @@ fun CollectionsGrid(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = contentPadding,
+            state = gridState,
             modifier = Modifier.padding(horizontal = 8.dp)
         ) {
             when (lazyCollectionItems.loadState.refresh) {

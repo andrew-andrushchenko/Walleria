@@ -52,7 +52,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ScrollToTopLayout(
     listState: LazyListState,
-    contentPadding: PaddingValues,
+    scrollToTopButtonPadding: PaddingValues,
     modifier: Modifier = Modifier,
     list: @Composable () -> Unit
 ) {
@@ -73,7 +73,7 @@ fun ScrollToTopLayout(
             exit = fadeOut(),
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(contentPadding)
+                .padding(scrollToTopButtonPadding)
         ) {
             ExtendedFloatingActionButton(
                 text = {
@@ -98,7 +98,7 @@ fun ScrollToTopLayout(
 @Composable
 fun ScrollToTopLayout(
     gridState: LazyStaggeredGridState,
-    contentPadding: PaddingValues,
+    scrollToTopButtonPadding: PaddingValues,
     modifier: Modifier = Modifier,
     grid: @Composable () -> Unit
 ) {
@@ -119,7 +119,7 @@ fun ScrollToTopLayout(
             exit = fadeOut(),
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(contentPadding)
+                .padding(scrollToTopButtonPadding)
         ) {
             ExtendedFloatingActionButton(
                 text = {
@@ -144,7 +144,7 @@ fun ScrollToTopLayout(
 @Composable
 fun ScrollToTopLayout(
     gridState: LazyGridState,
-    contentPadding: PaddingValues,
+    scrollToTopButtonPadding: PaddingValues,
     modifier: Modifier = Modifier,
     grid: @Composable () -> Unit
 ) {
@@ -165,7 +165,7 @@ fun ScrollToTopLayout(
             exit = fadeOut(),
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(contentPadding)
+                .padding(scrollToTopButtonPadding)
         ) {
             ExtendedFloatingActionButton(
                 text = {

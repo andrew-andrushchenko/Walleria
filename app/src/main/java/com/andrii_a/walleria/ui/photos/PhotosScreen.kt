@@ -95,7 +95,7 @@ fun PhotosScreen(
                     },
                     onUserProfileClicked = navigateToUserDetails,
                     isCompact = false,
-                    addNavBarPadding = true,
+                    addNavigationBarPadding = true,
                     photosLoadQuality = photosLoadQuality,
                     listState = listState,
                     contentPadding = innerPadding,
@@ -113,7 +113,7 @@ fun PhotosScreen(
                     },
                     onUserProfileClicked = navigateToUserDetails,
                     isCompact = true,
-                    addNavBarPadding = true,
+                    addNavigationBarPadding = true,
                     photosLoadQuality = photosLoadQuality,
                     listState = listState,
                     contentPadding = innerPadding,
@@ -128,8 +128,8 @@ fun PhotosScreen(
                     lazyPhotoItems = lazyPhotoItems,
                     onPhotoClicked = navigateToPhotoDetailsScreen,
                     photosLoadQuality = photosLoadQuality,
-                    addNavBarPadding = true,
                     gridState = gridState,
+                    addNavigationBarPadding = true,
                     contentPadding = innerPadding,
                     modifier = Modifier.fillMaxSize()
                 )

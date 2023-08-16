@@ -14,9 +14,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
@@ -24,7 +22,6 @@ import com.andrii_a.walleria.domain.TopicsDisplayOrder
 import com.andrii_a.walleria.domain.models.topic.Topic
 import com.andrii_a.walleria.ui.common.SearchQuery
 import com.andrii_a.walleria.ui.common.TopicId
-import com.andrii_a.walleria.ui.common.components.ScrollToTopLayout
 import com.andrii_a.walleria.ui.common.components.WTitleDropdown
 import com.andrii_a.walleria.ui.common.components.lists.TopicsList
 import com.andrii_a.walleria.ui.util.titleRes
@@ -84,24 +81,12 @@ fun TopicsScreen(
     ) { innerPadding ->
         val listState = rememberLazyListState()
 
-        ScrollToTopLayout(
+        TopicsList(
+            lazyTopicItems = lazyTopicItems,
+            onClick = navigateToTopicDetails,
+            addNavigationBarPadding = true,
             listState = listState,
-            contentPadding = innerPadding,
-            /*contentPadding = PaddingValues(
-                bottom = WindowInsets.navigationBars.asPaddingValues()
-                    .calculateBottomPadding() + dimensionResource(id = R.dimen.navigation_bar_height) + 8.dp*/
-        ) {
-            TopicsList(
-                lazyTopicItems = lazyTopicItems,
-                onClick = navigateToTopicDetails,
-                listState = listState,
-                contentPadding = PaddingValues(
-                    top = WindowInsets.systemBars.asPaddingValues()
-                        .calculateTopPadding() + dimensionResource(id = R.dimen.top_bar_height),
-                    bottom = WindowInsets.navigationBars.asPaddingValues()
-                        .calculateBottomPadding() + 200.dp
-                )
-            )
-        }
+            contentPadding = innerPadding
+        )
     }
 }
