@@ -5,8 +5,6 @@ import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
@@ -15,11 +13,11 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -188,32 +186,6 @@ fun ScrollToTopLayout(
 }
 
 @Composable
-fun TagItem(
-    modifier: Modifier = Modifier,
-    title: String,
-    onClick: (String) -> Unit
-) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier
-            .clip(RoundedCornerShape(50))
-            .border(
-                width = 1.dp,
-                shape = RoundedCornerShape(50),
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            .clickable { onClick(title) }
-            .padding(8.dp)
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleSmall,
-            modifier = Modifier.padding(horizontal = 4.dp)
-        )
-    }
-}
-
-@Composable
 fun TagsRow(
     tags: List<Tag>,
     onTagClicked: (String) -> Unit,
@@ -221,10 +193,10 @@ fun TagsRow(
 ) {
     LazyRow(modifier = modifier) {
         itemsIndexed(tags) { index, item ->
-            TagItem(
-                title = item.title,
-                onClick = onTagClicked,
-                modifier = Modifier.padding(
+            AssistChip(
+                onClick = { onTagClicked(item.title) },
+                label = { Text(text = item.title) },
+                modifier = modifier.padding(
                     start = if (index == 0) 8.dp else 0.dp,
                     end = 8.dp
                 )
