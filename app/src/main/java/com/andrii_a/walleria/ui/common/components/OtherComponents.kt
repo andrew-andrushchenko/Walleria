@@ -24,7 +24,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -75,22 +75,22 @@ fun ScrollToTopLayout(
                 .align(Alignment.BottomCenter)
                 .padding(scrollToTopButtonPadding)
         ) {
-            ExtendedFloatingActionButton(
-                text = {
-                    Text(text = stringResource(id = R.string.to_top))
-                },
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.ArrowUpward,
-                        contentDescription = stringResource(id = R.string.to_top)
-                    )
-                },
+            FilledTonalButton(
                 onClick = {
                     scope.launch {
                         listState.scrollToItem(0)
                     }
                 }
-            )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowUpward,
+                    contentDescription = stringResource(id = R.string.to_top)
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Text(text = stringResource(id = R.string.to_top))
+            }
         }
     }
 }
@@ -121,22 +121,22 @@ fun ScrollToTopLayout(
                 .align(Alignment.BottomCenter)
                 .padding(scrollToTopButtonPadding)
         ) {
-            ExtendedFloatingActionButton(
-                text = {
-                    Text(text = stringResource(id = R.string.to_top))
-                },
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.ArrowUpward,
-                        contentDescription = stringResource(id = R.string.to_top)
-                    )
-                },
+            FilledTonalButton(
                 onClick = {
                     scope.launch {
                         gridState.scrollToItem(0)
                     }
                 }
-            )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowUpward,
+                    contentDescription = stringResource(id = R.string.to_top)
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Text(text = stringResource(id = R.string.to_top))
+            }
         }
     }
 }
@@ -167,22 +167,22 @@ fun ScrollToTopLayout(
                 .align(Alignment.BottomCenter)
                 .padding(scrollToTopButtonPadding)
         ) {
-            ExtendedFloatingActionButton(
-                text = {
-                    Text(text = stringResource(id = R.string.to_top))
-                },
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.ArrowUpward,
-                        contentDescription = stringResource(id = R.string.to_top)
-                    )
-                },
+            FilledTonalButton(
                 onClick = {
                     scope.launch {
                         gridState.scrollToItem(0)
                     }
                 }
-            )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowUpward,
+                    contentDescription = stringResource(id = R.string.to_top)
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Text(text = stringResource(id = R.string.to_top))
+            }
         }
     }
 }
