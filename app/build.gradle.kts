@@ -124,7 +124,7 @@ dependencies {
 
     // Accompanist libs
     //implementation("com.google.accompanist:accompanist-navigation-material:0.33.0-alpha")
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.33.0-alpha")
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.31.6-rc")
 
     // Dagger Hilt
     implementation("com.google.dagger:hilt-android:2.47")
