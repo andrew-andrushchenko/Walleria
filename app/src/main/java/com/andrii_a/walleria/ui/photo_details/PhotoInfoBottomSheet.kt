@@ -5,7 +5,11 @@ import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -45,7 +49,9 @@ fun PhotoInfoBottomSheet(
     val context = LocalContext.current
 
     Column(
-        modifier = Modifier.padding(contentPadding)
+        modifier = Modifier
+            .padding(contentPadding)
+            .verticalScroll(rememberScrollState())
     ) {
         photo.location?.let { location ->
             location.locationString?.let { locationString ->
@@ -64,7 +70,7 @@ fun PhotoInfoBottomSheet(
 
             Text(
                 text = it,
-                style = MaterialTheme.typography.titleSmall,
+                style = MaterialTheme.typography.bodyMedium,
                 maxLines = if (isExpanded) Int.MAX_VALUE else 2,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
@@ -84,6 +90,7 @@ fun PhotoInfoBottomSheet(
                 onTagClicked = { query ->
                     navigateToSearch(SearchQuery(query))
                 },
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp),
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -99,6 +106,8 @@ fun PhotoInfoBottomSheet(
                 .padding(horizontal = 16.dp)
         )
 
+        Spacer(modifier = Modifier.height(8.dp))
+
         photo.exif?.let {
             ExifGrid(
                 exif = it,
@@ -112,6 +121,10 @@ fun PhotoInfoBottomSheet(
                     .padding(horizontal = 16.dp)
             )
         }
+
+        Divider(
+            modifier = Modifier.padding(16.dp)
+        )
 
         photo.relatedCollections?.let {
             it.results?.let { collections ->
@@ -127,7 +140,8 @@ fun PhotoInfoBottomSheet(
 
                 RelatedCollectionsRow(
                     collections = collections,
-                    onCollectionSelected = navigateToCollectionDetails
+                    onCollectionSelected = navigateToCollectionDetails,
+                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp)
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -164,9 +178,9 @@ fun PhotoInfoBottomSheetPreview() {
         val exif = PhotoExif(
             make = "Google",
             model = "Pixel 4a",
-            exposureTime = "1/400s",
-            aperture = "f/2.8",
-            focalLength = "58.0mm",
+            exposureTime = "1/400",
+            aperture = "2.8",
+            focalLength = "58.0",
             iso = 100
         )
 
@@ -224,12 +238,13 @@ fun PhotoInfoBottomSheetPreview() {
             user = user
         )
 
-
-        PhotoInfoBottomSheet(
-            photo = photo,
-            navigateToSearch = {},
-            navigateToCollectionDetails = {}
-        )
+        Surface {
+            PhotoInfoBottomSheet(
+                photo = photo,
+                navigateToSearch = {},
+                navigateToCollectionDetails = {}
+            )
+        }
     }
 }
 

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.LazyGridState
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
@@ -189,17 +188,20 @@ fun ScrollToTopLayout(
 fun TagsRow(
     tags: List<Tag>,
     onTagClicked: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues()
 ) {
-    LazyRow(modifier = modifier) {
-        itemsIndexed(tags) { index, item ->
+    LazyRow(
+        contentPadding = contentPadding,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier
+    ) {
+        items(count = tags.size) { index ->
+            val tag = tags[index]
+
             AssistChip(
-                onClick = { onTagClicked(item.title) },
-                label = { Text(text = item.title) },
-                modifier = modifier.padding(
-                    start = if (index == 0) 8.dp else 0.dp,
-                    end = 8.dp
-                )
+                onClick = { onTagClicked(tag.title) },
+                label = { Text(text = tag.title) },
             )
         }
     }

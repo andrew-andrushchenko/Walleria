@@ -4,14 +4,12 @@ import android.graphics.drawable.ColorDrawable
 import android.text.SpannableStringBuilder
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -29,6 +27,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -101,7 +100,7 @@ fun LocationRow(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(16.dp))
             .clickable(onClick = onLocationClick)
     ) {
         Icon(imageVector = Icons.Outlined.LocationOn, contentDescription = null)
@@ -185,7 +184,8 @@ fun ExifGrid(
         columns = GridCells.Fixed(2),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = modifier.height(180.dp)
+        userScrollEnabled = false,
+        modifier = modifier.requiredHeight(120.dp)
     ) {
         items(gridItems) { (categoryName, categoryValue) ->
             ExifItem(title = categoryName, text = categoryValue.toString())
@@ -296,15 +296,25 @@ fun RelatedCollectionsItem(
                     .build(),
                 contentScale = ContentScale.Crop,
                 contentDescription = null,
-                modifier = Modifier.size(150.dp)
+                modifier = Modifier
+                    .size(
+                        width = 150.dp,
+                        height = 85.dp
+                    )
+                    .drawWithContent {
+                        drawContent()
+                        drawRect(Color.Black.copy(alpha = 0.5f))
+                    }
             )
 
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier
-                    .size(150.dp)
-                    .background(color = Color.Black.copy(alpha = 0.5f))
+                    .size(
+                        width = 150.dp,
+                        height = 85.dp
+                    )
                     .padding(horizontal = 8.dp)
             ) {
                 Text(
@@ -335,21 +345,22 @@ fun RelatedCollectionsItem(
 fun RelatedCollectionsRow(
     collections: List<Collection>,
     onCollectionSelected: (CollectionId) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues()
 ) {
-    LazyRow(modifier = modifier) {
-        itemsIndexed(collections) { index, item ->
+    LazyRow(
+        contentPadding = contentPadding,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier
+    ) {
+        items(count = collections.size) { index ->
+            val collection = collections[index]
+
             RelatedCollectionsItem(
-                title = item.title,
-                coverPhotoUrl = item.coverPhoto?.getUrlByQuality(PhotoQuality.MEDIUM).orEmpty(),
-                totalPhotos = item.totalPhotos,
-                onClick = {
-                    onCollectionSelected(CollectionId(item.id))
-                },
-                modifier = Modifier.padding(
-                    start = if (index == 0) 8.dp else 0.dp,
-                    end = 8.dp
-                )
+                title = collection.title,
+                coverPhotoUrl = collection.coverPhoto?.getUrlByQuality(PhotoQuality.MEDIUM).orEmpty(),
+                totalPhotos = collection.totalPhotos,
+                onClick = { onCollectionSelected(CollectionId(collection.id)) }
             )
         }
     }
