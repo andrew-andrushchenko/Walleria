@@ -1,6 +1,5 @@
 package com.andrii_a.walleria.ui.settings
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowRight
@@ -25,8 +25,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,7 +40,13 @@ fun SettingsGroup(
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column(modifier = modifier.padding(vertical = 8.dp)) {
-        Text(text = name, fontWeight = FontWeight.Bold)
+        Text(
+            text = name,
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.primary,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -61,7 +65,6 @@ fun SettingsGroup(
 
 @Composable
 fun SettingsItem(
-    @DrawableRes leadingIconRes: Int? = null,
     title: String,
     selectedValue: String,
     selectionOptions: List<String>,
@@ -83,22 +86,10 @@ fun SettingsItem(
     ConstraintLayout(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
             .clickable(onClick = { showDialog = true })
+            .padding(horizontal = 16.dp, vertical = 24.dp)
     ) {
-        val (leadingIcon, titleText, selectedValueText, trailingIcon) = createRefs()
-
-        leadingIconRes?.let {
-            Icon(
-                painter = painterResource(id = leadingIconRes),
-                contentDescription = title,
-                modifier = Modifier.constrainAs(leadingIcon) {
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                    start.linkTo(parent.start)
-                }
-            )
-        }
+        val (titleText, selectedValueText, trailingIcon) = createRefs()
 
         Text(
             text = title,
@@ -106,13 +97,8 @@ fun SettingsItem(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.constrainAs(titleText) {
-                if (leadingIconRes != null) {
-                    start.linkTo(leadingIcon.end, 8.dp)
-                    top.linkTo(leadingIcon.top)
-                } else {
-                    start.linkTo(parent.start)
-                    top.linkTo(parent.top)
-                }
+                start.linkTo(parent.start)
+                top.linkTo(parent.top)
                 end.linkTo(trailingIcon.start, 8.dp)
                 bottom.linkTo(selectedValueText.top, 4.dp)
 
@@ -126,13 +112,8 @@ fun SettingsItem(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.constrainAs(selectedValueText) {
-                if (leadingIconRes != null) {
-                    start.linkTo(leadingIcon.end, 8.dp)
-                    bottom.linkTo(leadingIcon.bottom)
-                } else {
-                    start.linkTo(parent.start)
-                    bottom.linkTo(parent.bottom)
-                }
+                start.linkTo(parent.start)
+                bottom.linkTo(parent.bottom)
 
                 end.linkTo(trailingIcon.start, 8.dp)
                 top.linkTo(titleText.bottom)
@@ -152,8 +133,6 @@ fun SettingsItem(
                 }
         )
     }
-
-
 }
 
 @Composable
@@ -171,13 +150,15 @@ fun SingleChoiceSelectionDialog(
                 horizontalAlignment = Alignment.Start,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 16.dp)
+                    .padding(vertical = 24.dp)
             ) {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
-                        .padding(start = 16.dp, end = 16.dp, top = 8.dp)
+                        .padding(start = 24.dp, end = 24.dp)
                 )
 
                 items.forEachIndexed { index, item ->
@@ -191,6 +172,8 @@ fun SingleChoiceSelectionDialog(
                                 onDismiss()
                             }
                     ) {
+                        Spacer(modifier = Modifier.width(8.dp))
+
                         RadioButton(
                             selected = index == selectedItemPositionOrdinal,
                             onClick = {
@@ -263,7 +246,7 @@ fun SettingsGroupPreview() {
 fun SingleChoiceSelectionDialog() {
     WalleriaTheme {
         SingleChoiceSelectionDialog(
-            title = "Multiselect",
+            title = "Select option",
             items = listOf("Option A", "Option B", "Option C"),
             selectedItemPositionOrdinal = 0,
             onSelect = {},
