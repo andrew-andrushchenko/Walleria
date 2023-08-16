@@ -1,30 +1,26 @@
 package com.andrii_a.walleria.ui.settings
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.andrii_a.walleria.R
@@ -34,6 +30,7 @@ import com.andrii_a.walleria.domain.PhotosListLayoutType
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.titleRes
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     currentPhotosListLayoutType: PhotosListLayoutType,
@@ -43,11 +40,32 @@ fun SettingsScreen(
     onEvent: (SettingsEvent) -> Unit,
     navigateBack: () -> Unit
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = stringResource(id = R.string.settings))
+                },
+                navigationIcon = {
+                    IconButton(onClick = navigateBack) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = stringResource(
+                                id = R.string.navigate_back
+                            )
+                        )
+                    }
+                },
+                scrollBehavior = scrollBehavior
+            )
+        },
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+    ) { innerPadding ->
         Column(
             modifier = Modifier
-                .statusBarsPadding()
-                .padding(top = dimensionResource(id = R.dimen.top_bar_height))
+                .padding(innerPadding)
                 .padding(horizontal = 16.dp)
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
@@ -56,7 +74,8 @@ fun SettingsScreen(
                 SettingsItem(
                     title = stringResource(id = R.string.photos_layout),
                     selectedValue = stringResource(id = currentPhotosListLayoutType.titleRes),
-                    selectionOptions = PhotosListLayoutType.values().map { stringResource(id = it.titleRes) },
+                    selectionOptions = PhotosListLayoutType.values()
+                        .map { stringResource(id = it.titleRes) },
                     selectedItemPositionOrdinal = currentPhotosListLayoutType.ordinal,
                     onChangeParameter = { selectedLayoutTypeOrdinal ->
                         onEvent(
@@ -70,7 +89,8 @@ fun SettingsScreen(
                 SettingsItem(
                     title = stringResource(id = R.string.collections_layout),
                     selectedValue = stringResource(id = currentCollectionListLayoutType.titleRes),
-                    selectionOptions = CollectionListLayoutType.values().map { stringResource(id = it.titleRes) },
+                    selectionOptions = CollectionListLayoutType.values()
+                        .map { stringResource(id = it.titleRes) },
                     selectedItemPositionOrdinal = currentCollectionListLayoutType.ordinal,
                     onChangeParameter = { selectedLayoutTypeOrdinal ->
                         onEvent(
@@ -88,7 +108,8 @@ fun SettingsScreen(
                 SettingsItem(
                     title = stringResource(id = R.string.photo_load_quality),
                     selectedValue = stringResource(id = currentPhotosLoadQuality.titleRes),
-                    selectionOptions = PhotoQuality.values().map { stringResource(id = it.titleRes) },
+                    selectionOptions = PhotoQuality.values()
+                        .map { stringResource(id = it.titleRes) },
                     selectedItemPositionOrdinal = currentPhotosLoadQuality.ordinal,
                     onChangeParameter = { selectedPhotoQualityOrdinal ->
                         onEvent(
@@ -102,7 +123,8 @@ fun SettingsScreen(
                 SettingsItem(
                     title = stringResource(id = R.string.photo_download_quality),
                     selectedValue = stringResource(id = currentPhotosDownloadQuality.titleRes),
-                    selectionOptions = PhotoQuality.values().map { stringResource(id = it.titleRes) },
+                    selectionOptions = PhotoQuality.values()
+                        .map { stringResource(id = it.titleRes) },
                     selectedItemPositionOrdinal = currentPhotosDownloadQuality.ordinal,
                     onChangeParameter = { selectedPhotoQualityOrdinal ->
                         onEvent(
@@ -114,43 +136,6 @@ fun SettingsScreen(
                 )
             }
         }
-
-        TopBar(
-            navigateBack = navigateBack,
-            modifier = Modifier
-                .statusBarsPadding()
-                .background(color = MaterialTheme.colors.primary)
-                .height(dimensionResource(id = R.dimen.top_bar_height))
-                .padding(horizontal = 8.dp)
-                .fillMaxWidth()
-                .align(Alignment.TopCenter)
-        )
-    }
-}
-
-@Composable
-private fun TopBar(
-    navigateBack: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-    ) {
-        IconButton(onClick = navigateBack) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_arrow_back),
-                contentDescription = stringResource(id = R.string.navigate_back)
-            )
-        }
-
-        Text(
-            text = stringResource(id = R.string.settings),
-            style = MaterialTheme.typography.h6,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
     }
 }
 

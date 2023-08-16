@@ -6,27 +6,19 @@ import android.graphics.drawable.ColorDrawable
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,7 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -45,21 +36,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.UserProfileImageQuality
 import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.domain.models.user.UserSocialMediaLinks
-import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.getProfileImageUrlOrEmpty
 import com.andrii_a.walleria.ui.util.openInstagramProfile
 import com.andrii_a.walleria.ui.util.openLinkInBrowser
 import com.andrii_a.walleria.ui.util.openTwitterProfile
-import com.andrii_a.walleria.ui.util.openUserProfileInBrowser
 import com.andrii_a.walleria.ui.util.userFullName
 
 @Composable
@@ -138,7 +125,7 @@ fun UserHeader(
 
             Text(
                 text = user.userFullName,
-                style = MaterialTheme.typography.h6,
+                style = MaterialTheme.typography.titleLarge,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -155,7 +142,7 @@ fun UserHeader(
 
                     Text(
                         text = user.location,
-                        style = MaterialTheme.typography.subtitle2,
+                        style = MaterialTheme.typography.titleSmall,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -194,150 +181,6 @@ fun UserHeader(
             }
         }
 
-    }
-}
-
-@Composable
-fun UserDetailsTopBar(
-    modifier: Modifier = Modifier,
-    titleText: String? = null,
-    isOwnProfile: Boolean = false,
-    onNavigateBack: () -> Unit,
-    onEditProfile: (() -> Unit)? = null,
-    onOpenMoreAboutProfile: (() -> Unit)? = null
-) {
-    val context = LocalContext.current
-
-    Surface(
-        modifier = modifier.height(
-            dimensionResource(id = R.dimen.top_bar_height) +
-                    WindowInsets.systemBars
-                        .asPaddingValues()
-                        .calculateTopPadding()
-        )
-    ) {
-        ConstraintLayout(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            val (backButton, title, editButton, dropdownMenuBox) = createRefs()
-
-            IconButton(
-                onClick = onNavigateBack,
-                modifier = Modifier
-                    .constrainAs(backButton) {
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                        start.linkTo(parent.start, 8.dp)
-                        if (!titleText.isNullOrBlank()) {
-                            end.linkTo(title.start)
-                        }
-                    }
-                    .statusBarsPadding()
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_arrow_back),
-                    contentDescription = stringResource(id = R.string.navigate_back)
-                )
-            }
-
-            titleText?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.h6,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier
-                        .constrainAs(title) {
-                            top.linkTo(backButton.top)
-                            bottom.linkTo(backButton.bottom)
-                            start.linkTo(backButton.end, 16.dp)
-                            if (isOwnProfile) {
-                                end.linkTo(editButton.start)
-                            } else {
-                                end.linkTo(dropdownMenuBox.end)
-                            }
-                            width = Dimension.fillToConstraints
-                        }
-                        .statusBarsPadding()
-                )
-            }
-
-            if (isOwnProfile) {
-                IconButton(
-                    onClick = { onEditProfile?.invoke() },
-                    modifier = Modifier
-                        .constrainAs(editButton) {
-                            top.linkTo(backButton.top)
-                            bottom.linkTo(backButton.bottom)
-                            end.linkTo(dropdownMenuBox.start)
-                        }
-                        .statusBarsPadding()
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_edit_outlined),
-                        contentDescription = stringResource(id = R.string.edit_collection)
-                    )
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .constrainAs(dropdownMenuBox) {
-                        top.linkTo(backButton.top)
-                        bottom.linkTo(backButton.bottom)
-                        end.linkTo(parent.end, 8.dp)
-                    }
-                    .statusBarsPadding()
-            ) {
-                var menuExpanded by rememberSaveable {
-                    mutableStateOf(false)
-                }
-
-                IconButton(
-                    onClick = { menuExpanded = !menuExpanded }
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_more_outlined),
-                        contentDescription = stringResource(id = R.string.edit_collection)
-                    )
-                }
-
-                DropdownMenu(
-                    expanded = menuExpanded,
-                    onDismissRequest = { menuExpanded = false }
-                ) {
-                    DropdownMenuItem(
-                        onClick = {
-                            titleText?.let {
-                                context.openUserProfileInBrowser(UserNickname(it))
-                            }
-                        },
-                    ) {
-                        Text(text = stringResource(id = R.string.open_in_browser))
-                    }
-
-                    DropdownMenuItem(
-                        onClick = { onOpenMoreAboutProfile?.invoke() },
-                    ) {
-                        Text(text = stringResource(id = R.string.more_about_profile))
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun UserDetailsTopBarPreview() {
-    WalleriaTheme {
-        UserDetailsTopBar(
-            titleText = "user_nickname",
-            isOwnProfile = true,
-            onNavigateBack = {},
-            onEditProfile = {},
-        )
     }
 }
 

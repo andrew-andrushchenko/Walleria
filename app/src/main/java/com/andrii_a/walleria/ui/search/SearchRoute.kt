@@ -33,12 +33,12 @@ fun NavGraphBuilder.searchRoute(
         )
     ) {
         val systemBarsColor = Color.Transparent
-        val isDark = isSystemInDarkTheme()
+        val areIconsDark = !isSystemInDarkTheme()
 
         LaunchedEffect(key1 = true) {
             systemUiController.setSystemBarsColor(
                 color = systemBarsColor,
-                darkIcons = !isDark
+                darkIcons = areIconsDark
             )
         }
 

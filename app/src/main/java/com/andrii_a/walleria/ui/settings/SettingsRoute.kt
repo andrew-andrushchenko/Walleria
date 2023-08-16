@@ -17,13 +17,13 @@ fun NavGraphBuilder.settingsRoute(
     systemUiController: SystemUiController
 ) {
     composable(route = Screen.Settings.route) {
-        val systemBarsColors = Color.Transparent
-        val isDark = isSystemInDarkTheme()
+        val systemBarsColor = Color.Transparent
+        val areIconsDark = !isSystemInDarkTheme()
 
         LaunchedEffect(key1 = true) {
             systemUiController.setSystemBarsColor(
-                color = systemBarsColors,
-                darkIcons = !isDark
+                color = systemBarsColor,
+                darkIcons = areIconsDark
             )
         }
 

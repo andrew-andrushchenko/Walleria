@@ -24,12 +24,12 @@ import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForwardIos
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -66,8 +66,6 @@ import com.andrii_a.walleria.ui.common.components.ErrorBanner
 import com.andrii_a.walleria.ui.common.components.ErrorItem
 import com.andrii_a.walleria.ui.common.components.LoadingListItem
 import com.andrii_a.walleria.ui.common.components.ScrollToTopLayout
-import com.andrii_a.walleria.ui.theme.PrimaryDark
-import com.andrii_a.walleria.ui.theme.PrimaryLight
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.abbreviatedNumberString
 import com.andrii_a.walleria.ui.util.getCoverPhotoUrl
@@ -450,7 +448,7 @@ private fun DetailsRow(
 
         Text(
             text = title,
-            style = MaterialTheme.typography.h6,
+            style = MaterialTheme.typography.titleMedium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.constrainAs(titleText) {
@@ -529,7 +527,7 @@ private fun SimpleCollectionItem(
                     drawContent()
                     drawRect(
                         brush = Brush.verticalGradient(
-                            colors = listOf(Color.Transparent, PrimaryDark.copy(alpha = 0.7f))
+                            colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.7f))
                         )
                     )
                 }
@@ -542,10 +540,10 @@ private fun SimpleCollectionItem(
         ) {
             Text(
                 text = collection.title,
-                style = MaterialTheme.typography.subtitle1,
+                style = MaterialTheme.typography.titleSmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                color = PrimaryLight
+                color = Color.White
             )
 
             Spacer(modifier = Modifier.height(4.dp))
@@ -556,10 +554,10 @@ private fun SimpleCollectionItem(
                     collection.username,
                     collection.totalPhotos.abbreviatedNumberString
                 ),
-                style = MaterialTheme.typography.caption,
+                style = MaterialTheme.typography.bodySmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                color = PrimaryLight
+                color = Color.White
             )
         }
     }

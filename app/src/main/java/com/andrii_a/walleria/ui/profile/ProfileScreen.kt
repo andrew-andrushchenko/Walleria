@@ -7,7 +7,6 @@ import android.graphics.drawable.ColorDrawable
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,12 +20,20 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AddCircleOutline
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Logout
+import androidx.compose.material.icons.outlined.RemoveRedEye
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,8 +56,6 @@ import coil.request.ImageRequest
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.models.preferences.MyProfileData
 import com.andrii_a.walleria.ui.common.UserNickname
-import com.andrii_a.walleria.ui.common.components.WButton
-import com.andrii_a.walleria.ui.common.components.WTextButton
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 
 @Composable
@@ -64,11 +69,7 @@ fun ProfileScreen(
     navigateToSettingsScreen: () -> Unit,
     navigateToAboutScreen: () -> Unit
 ) {
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .navigationBarsPadding()
-    ) {
+    Surface {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -76,17 +77,6 @@ fun ProfileScreen(
                 .navigationBarsPadding()
                 .animateContentSize()
         ) {
-            Spacer(
-                modifier = Modifier
-                    .padding(vertical = 22.dp)
-                    .size(width = 32.dp, height = 4.dp)
-                    .background(
-                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.4f),
-                        shape = RoundedCornerShape(50)
-                    )
-                    .align(Alignment.CenterHorizontally)
-            )
-
             if (isUserLoggedIn) {
                 LoggedInUserSection(
                     userProfilePhotoUrl = userProfileData.profilePhotoUrl,
@@ -119,29 +109,39 @@ fun ProfileScreen(
                     .padding(horizontal = 24.dp, vertical = 8.dp)
             )
 
-            WTextButton(
+            TextButton(
                 onClick = navigateToSettingsScreen,
-                iconPainter = painterResource(id = R.drawable.ic_settings_outlined),
-                text = stringResource(id = R.string.settings),
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(64.dp)
                     .padding(horizontal = 16.dp)
-            )
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Settings,
+                    contentDescription = stringResource(id = R.string.settings)
+                )
+
+                Text(text = stringResource(id = R.string.settings))
+            }
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            WTextButton(
+            TextButton(
                 onClick = navigateToAboutScreen,
-                iconPainter = painterResource(id = R.drawable.ic_about_outlined),
-                text = stringResource(id = R.string.about),
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(64.dp)
                     .padding(horizontal = 16.dp)
-            )
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Info,
+                    contentDescription = stringResource(id = R.string.about)
+                )
+
+                Text(text = stringResource(id = R.string.about))
+            }
 
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -175,7 +175,7 @@ private fun LoggedOutUserSection(
             Icon(
                 painter = painterResource(id = R.drawable.ic_launcher_foreground),
                 contentDescription = stringResource(id = R.string.app_name),
-                tint = MaterialTheme.colors.onSurface,
+                tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.size(64.dp)
             )
 
@@ -184,7 +184,7 @@ private fun LoggedOutUserSection(
             Column {
                 Text(
                     text = stringResource(id = R.string.app_name),
-                    style = MaterialTheme.typography.h6,
+                    style = MaterialTheme.typography.titleLarge,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Center
@@ -196,7 +196,7 @@ private fun LoggedOutUserSection(
                 ) {
                     Text(
                         text = stringResource(id = R.string.creation_starts_here),
-                        style = MaterialTheme.typography.subtitle2,
+                        style = MaterialTheme.typography.titleSmall,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Center,
@@ -215,15 +215,20 @@ private fun LoggedOutUserSection(
         }
 
         AnimatedVisibility(visible = showAddAccountSection) {
-            WTextButton(
+            TextButton(
                 onClick = navigateToLoginScreen,
-                iconPainter = painterResource(id = R.drawable.ic_add_outlined),
-                text = stringResource(id = R.string.add_account),
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(64.dp)
-            )
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.AddCircleOutline,
+                    contentDescription = stringResource(id = R.string.add_account)
+                )
+
+                Text(text = stringResource(id = R.string.add_account))
+            }
         }
     }
 }
@@ -259,21 +264,21 @@ private fun LoggedInUserSection(
 
         Text(
             text = userFullName,
-            style = MaterialTheme.typography.h6,
+            style = MaterialTheme.typography.titleLarge,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
 
         Text(
             text = stringResource(id = R.string.user_nickname_formatted, userNickname),
-            style = MaterialTheme.typography.subtitle2,
+            style = MaterialTheme.typography.titleSmall,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
 
         Text(
             text = userEmail,
-            style = MaterialTheme.typography.subtitle2,
+            style = MaterialTheme.typography.titleSmall,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
@@ -317,33 +322,48 @@ private fun ProfileActionRow(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
     ) {
-        WTextButton(
+        TextButton(
             onClick = navigateToViewProfileScreen,
-            iconPainter = painterResource(id = R.drawable.ic_view_outlined),
-            text = stringResource(id = R.string.user_profile_view),
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier.weight(0.33f)
-        )
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.RemoveRedEye,
+                contentDescription = stringResource(id = R.string.user_profile_view)
+            )
+
+            Text(text = stringResource(id = R.string.user_profile_view))
+        }
 
         Spacer(modifier = Modifier.width(4.dp))
 
-        WTextButton(
+        TextButton(
             onClick = navigateToEditProfileScreen,
-            iconPainter = painterResource(id = R.drawable.ic_edit_outlined),
-            text = stringResource(id = R.string.user_profile_edit),
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier.weight(0.33f)
-        )
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Edit,
+                contentDescription = stringResource(id = R.string.edit_my_profile)
+            )
+
+            Text(text = stringResource(id = R.string.user_profile_edit))
+        }
 
         Spacer(modifier = Modifier.width(4.dp))
 
-        WTextButton(
+        TextButton(
             onClick = onLogoutClick,
-            iconPainter = painterResource(id = R.drawable.ic_logout_outlined),
-            text = stringResource(id = R.string.logout),
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier.weight(0.33f)
-        )
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Logout,
+                contentDescription = stringResource(id = R.string.logout)
+            )
+
+            Text(text = stringResource(id = R.string.logout))
+        }
     }
 }
 
@@ -358,7 +378,7 @@ private fun LogoutConfirmationRow(
 
         Text(
             text = stringResource(id = R.string.logout_confirmation),
-            style = MaterialTheme.typography.subtitle1,
+            style = MaterialTheme.typography.titleMedium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.constrainAs(confirmationText) {
@@ -380,12 +400,12 @@ private fun LogoutConfirmationRow(
         ) {
             Text(
                 text = stringResource(id = R.string.action_yes),
-                style = MaterialTheme.typography.subtitle1,
-                color = MaterialTheme.colors.onSurface
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
 
-        WButton(
+        Button(
             onClick = onDismiss,
             modifier = Modifier.constrainAs(dismissButton) {
                 top.linkTo(parent.top)
@@ -395,7 +415,7 @@ private fun LogoutConfirmationRow(
         ) {
             Text(
                 stringResource(id = R.string.action_no),
-                style = MaterialTheme.typography.subtitle1
+                style = MaterialTheme.typography.titleMedium
             )
         }
     }

@@ -2,8 +2,8 @@ package com.andrii_a.walleria.ui.collect_photo
 
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,7 +36,7 @@ fun CollectPhotoScreen(
     val coroutineScope = rememberCoroutineScope()
 
     Surface(
-        color = MaterialTheme.colors.primary,
+        color = MaterialTheme.colorScheme.surface,
         shape = RoundedCornerShape(16.dp)
     ) {
         val lazyPagingItems = userCollections.collectAsLazyPagingItems()

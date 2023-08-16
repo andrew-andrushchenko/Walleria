@@ -1,7 +1,6 @@
 package com.andrii_a.walleria.ui.profile_edit
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
@@ -20,18 +19,13 @@ fun NavGraphBuilder.editUserProfileRoute(
     systemUiController: SystemUiController
 ) {
     composable(route = Screen.EditUserProfile.route) {
-        val statusBarColor = MaterialTheme.colors.primary.copy(alpha = 0.9f)
-        val navigationBarColor = Color.Transparent
-        val isDark = isSystemInDarkTheme()
+        val systemBarsColor = Color.Transparent
+        val areIconsDark = !isSystemInDarkTheme()
 
         LaunchedEffect(key1 = true) {
-            systemUiController.setStatusBarColor(
-                color = statusBarColor,
-                darkIcons = !isDark
-            )
-            systemUiController.setNavigationBarColor(
-                color = navigationBarColor,
-                darkIcons = !isDark
+            systemUiController.setSystemBarsColor(
+                color = systemBarsColor,
+                darkIcons = areIconsDark
             )
         }
 

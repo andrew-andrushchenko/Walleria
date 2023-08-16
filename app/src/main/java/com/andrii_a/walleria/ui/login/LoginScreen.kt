@@ -15,13 +15,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,8 +45,6 @@ import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.models.login.AccessToken
 import com.andrii_a.walleria.ui.common.components.LoadingBanner
 import com.andrii_a.walleria.ui.theme.LoginScreenAccentColor
-import com.andrii_a.walleria.ui.theme.PrimaryDark
-import com.andrii_a.walleria.ui.theme.PrimaryLight
 import com.andrii_a.walleria.ui.theme.WalleriaLogoTextStyle
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.toast
@@ -107,7 +105,7 @@ fun LoginScreen(
                 LoadingBanner(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(PrimaryDark.copy(alpha = 0.4f))
+                        .background(Color.Black.copy(alpha = 0.4f))
                 )
             }
 
@@ -143,14 +141,14 @@ private fun TopSection(
             Icon(
                 painter = painterResource(id = R.drawable.ic_arrow_back),
                 contentDescription = null,
-                tint = PrimaryLight
+                tint = Color.White
             )
         }
 
         Text(
             text = stringResource(id = R.string.app_name),
             style = WalleriaLogoTextStyle,
-            color = PrimaryLight,
+            color = Color.White,
             modifier = Modifier.constrainAs(appLogoText) {
                 top.linkTo(parent.top)
                 bottom.linkTo(parent.bottom)
@@ -190,14 +188,14 @@ private fun BottomSection(
         ) {
             Text(
                 text = stringResource(id = R.string.login_screen_slogan_p1),
-                color = PrimaryLight,
-                style = MaterialTheme.typography.h4
+                color = Color.White,
+                style = MaterialTheme.typography.headlineMedium
             )
 
             Text(
                 text = stringResource(id = R.string.login_screen_slogan_p2),
                 color = LoginScreenAccentColor,
-                style = MaterialTheme.typography.h4
+                style = MaterialTheme.typography.headlineMedium
             )
 
             Spacer(modifier = Modifier.padding(top = 16.dp))
@@ -205,14 +203,14 @@ private fun BottomSection(
             Button(
                 onClick = onLoginClicked,
                 shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.buttonColors(backgroundColor = LoginScreenAccentColor),
+                colors = ButtonDefaults.buttonColors(contentColor = LoginScreenAccentColor),
                 modifier = Modifier
                     .size(width = 250.dp, height = 80.dp)
                     .padding(8.dp)
             ) {
                 Text(
                     text = stringResource(id = R.string.login),
-                    color = PrimaryLight,
+                    color = Color.White,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )
@@ -227,7 +225,7 @@ private fun BottomSection(
                 Text(
                     text = stringResource(id = R.string.dont_have_an_account),
                     fontWeight = FontWeight.Bold,
-                    color = PrimaryLight
+                    color = Color.White
                 )
 
                 Spacer(modifier = Modifier.padding(end = 4.dp))

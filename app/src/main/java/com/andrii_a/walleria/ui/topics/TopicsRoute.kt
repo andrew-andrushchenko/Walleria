@@ -1,7 +1,6 @@
 package com.andrii_a.walleria.ui.topics
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
@@ -21,32 +20,23 @@ fun NavGraphBuilder.topicsBottomNavRoute(
     systemUiController: SystemUiController
 ) {
     composable(route = NavigationScreen.Topics.route) {
-        val statusBarColor = MaterialTheme.colors.primary.copy(alpha = 0.9f)
-        val navigationBarColor = Color.Transparent
-        val darkIcons = !isSystemInDarkTheme()
+        val systemBarsColor = Color.Transparent
+        val areIconsDark = !isSystemInDarkTheme()
 
         LaunchedEffect(key1 = true) {
-            systemUiController.setStatusBarColor(
-                color = statusBarColor,
-                darkIcons = darkIcons
-            )
-
-            systemUiController.setNavigationBarColor(
-                color = navigationBarColor,
-                darkIcons = darkIcons
+            systemUiController.setSystemBarsColor(
+                color = systemBarsColor,
+                darkIcons = areIconsDark
             )
         }
 
         val viewModel: TopicsViewModel = hiltViewModel()
-
-        val topics = viewModel.topics
         val order by viewModel.order.collectAsStateWithLifecycle()
-        val orderByFn = viewModel::orderBy
 
         TopicsScreen(
-            topics = topics,
+            topics = viewModel.topics,
             order = order,
-            orderBy = orderByFn,
+            orderBy = viewModel::orderBy,
             navigateToTopicDetails = navController::navigateToTopicDetails,
             navigateToProfileScreen = navController::navigateToProfileScreen,
             navigateToSearchScreen = navController::navigateToSearch

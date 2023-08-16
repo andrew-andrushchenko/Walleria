@@ -3,22 +3,20 @@ package com.andrii_a.walleria.ui.collection_details
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,15 +32,14 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.models.collection.Collection
-import com.andrii_a.walleria.ui.common.components.CheckBoxRow
 import com.andrii_a.walleria.ui.common.CollectionId
-import com.andrii_a.walleria.ui.common.components.WButton
-import com.andrii_a.walleria.ui.common.components.WOutlinedTextField
+import com.andrii_a.walleria.ui.common.components.CheckBoxRow
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 
 @Composable
 fun EditCollectionInfoBottomSheet(
     collection: Collection,
+    contentPadding: PaddingValues = PaddingValues(),
     onEvent: (CollectionDetailsEvent) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -58,96 +55,80 @@ fun EditCollectionInfoBottomSheet(
         mutableStateOf(collection.isPrivate)
     }
 
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .navigationBarsPadding()
-    ) {
-        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-            Spacer(
-                modifier = Modifier
-                    .padding(vertical = 22.dp)
-                    .size(width = 32.dp, height = 4.dp)
-                    .background(
-                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.4f),
-                        shape = RoundedCornerShape(50)
-                    )
-                    .align(Alignment.CenterHorizontally)
-            )
+    // horizontal = 16.dp
+    Column(modifier = Modifier.padding(contentPadding)) {
+        OutlinedTextField(
+            value = title,
+            onValueChange = { title = it },
+            label = { Text(text = stringResource(id = R.string.collection_name_hint)) },
+            modifier = Modifier.fillMaxWidth()
+        )
 
-            WOutlinedTextField(
-                value = title,
-                onValueChange = { title = it },
-                label = { Text(text = stringResource(id = R.string.collection_name_hint)) },
-                modifier = Modifier.fillMaxWidth()
-            )
+        Spacer(modifier = Modifier.height(8.dp))
 
-            Spacer(modifier = Modifier.height(8.dp))
+        OutlinedTextField(
+            value = description,
+            onValueChange = { description = it },
+            label = { Text(text = stringResource(id = R.string.collection_description_hint)) },
+            modifier = Modifier.fillMaxWidth()
+        )
 
-            WOutlinedTextField(
-                value = description,
-                onValueChange = { description = it },
-                label = { Text(text = stringResource(id = R.string.collection_description_hint)) },
-                modifier = Modifier.fillMaxWidth()
-            )
+        Spacer(modifier = Modifier.height(8.dp))
 
-            Spacer(modifier = Modifier.height(8.dp))
+        CheckBoxRow(
+            checked = isPrivate,
+            onCheckedChange = { isPrivate = it },
+            labelText = stringResource(id = R.string.collection_private),
+            modifier = Modifier.fillMaxWidth()
+        )
 
-            CheckBoxRow(
-                checked = isPrivate,
-                onCheckedChange = { isPrivate = it },
-                labelText = stringResource(id = R.string.collection_private),
-                modifier = Modifier.fillMaxWidth()
-            )
+        Spacer(modifier = Modifier.height(8.dp))
 
-            Spacer(modifier = Modifier.height(8.dp))
+        var showConfirmationRow by rememberSaveable {
+            mutableStateOf(false)
+        }
 
-            var showConfirmationRow by rememberSaveable {
-                mutableStateOf(false)
-            }
-
-            AnimatedContent(
-                targetState = showConfirmationRow,
-                label = "",
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                if (it) {
-                    DeleteConfirmationRow(
-                        onConfirm = {
+        AnimatedContent(
+            targetState = showConfirmationRow,
+            label = "",
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            if (it) {
+                DeleteConfirmationRow(
+                    onConfirm = {
+                        onEvent(
+                            CollectionDetailsEvent.DeleteCollection(
+                                CollectionId(collection.id)
+                            )
+                        )
+                    },
+                    onDismiss = { showConfirmationRow = false },
+                    modifier = Modifier
+                )
+            } else {
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    ActionRow(
+                        onUpdate = {
                             onEvent(
-                                CollectionDetailsEvent.DeleteCollection(
-                                    CollectionId(collection.id)
+                                CollectionDetailsEvent.UpdateCollection(
+                                    collectionId = CollectionId(collection.id),
+                                    title = title,
+                                    description = description,
+                                    isPrivate = isPrivate
                                 )
                             )
+                            onDismiss()
                         },
-                        onDismiss = { showConfirmationRow = false },
-                        modifier = Modifier
+                        onDelete = {
+                            showConfirmationRow = true
+                        },
+                        modifier = Modifier.align(Alignment.CenterEnd)
                     )
-                } else {
-                    Box(modifier = Modifier.fillMaxWidth()) {
-                        ActionRow(
-                            onUpdate = {
-                                onEvent(
-                                    CollectionDetailsEvent.UpdateCollection(
-                                        collectionId = CollectionId(collection.id),
-                                        title = title,
-                                        description = description,
-                                        isPrivate = isPrivate
-                                    )
-                                )
-                                onDismiss()
-                            },
-                            onDelete = {
-                                showConfirmationRow = true
-                            },
-                            modifier = Modifier.align(Alignment.CenterEnd)
-                        )
-                    }
                 }
             }
-
-            Spacer(modifier = Modifier.height(8.dp))
         }
+
+        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
@@ -161,17 +142,17 @@ private fun ActionRow(
         TextButton(onClick = onDelete) {
             Text(
                 text = stringResource(id = R.string.delete_collection_action),
-                style = MaterialTheme.typography.subtitle1,
-                color = MaterialTheme.colors.onSurface
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        WButton(onClick = onUpdate) {
+        Button(onClick = onUpdate) {
             Text(
                 text = stringResource(id = R.string.update_collection_action),
-                style = MaterialTheme.typography.subtitle1
+                style = MaterialTheme.typography.titleMedium
             )
         }
     }
@@ -188,7 +169,7 @@ private fun DeleteConfirmationRow(
 
         Text(
             text = stringResource(id = R.string.delete_collection_confirmation),
-            style = MaterialTheme.typography.subtitle1,
+            style = MaterialTheme.typography.titleMedium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.constrainAs(confirmationText) {
@@ -210,12 +191,12 @@ private fun DeleteConfirmationRow(
         ) {
             Text(
                 text = stringResource(id = R.string.action_yes),
-                style = MaterialTheme.typography.subtitle1,
-                color = MaterialTheme.colors.onSurface
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
 
-        WButton(
+        Button(
             onClick = onDismiss,
             modifier = Modifier.constrainAs(dismissButton) {
                 top.linkTo(parent.top)
@@ -225,7 +206,7 @@ private fun DeleteConfirmationRow(
         ) {
             Text(
                 stringResource(id = R.string.action_no),
-                style = MaterialTheme.typography.subtitle1
+                style = MaterialTheme.typography.titleMedium
             )
         }
     }

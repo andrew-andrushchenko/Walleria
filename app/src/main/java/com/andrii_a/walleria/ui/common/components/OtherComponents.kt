@@ -5,11 +5,8 @@ import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
@@ -19,24 +16,28 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.ArrowDropUp
+import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -44,84 +45,9 @@ import coil.request.ImageRequest
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.models.common.Tag
 import com.andrii_a.walleria.domain.models.user.User
-import com.andrii_a.walleria.ui.theme.OnButtonDark
-import com.andrii_a.walleria.ui.theme.OnButtonLight
 import com.andrii_a.walleria.ui.util.abbreviatedNumberString
 import com.andrii_a.walleria.ui.util.userFullName
 import kotlinx.coroutines.launch
-
-@Composable
-fun WTextButton(
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-    iconPainter: Painter? = null,
-    text: String,
-    enabled: Boolean = true,
-    elevation: ButtonElevation? = null,
-    shape: Shape = MaterialTheme.shapes.small,
-    border: BorderStroke? = null,
-    colors: ButtonColors = ButtonDefaults.textButtonColors(
-        contentColor = if (isSystemInDarkTheme()) OnButtonLight else OnButtonDark,
-        disabledContentColor = Color.LightGray
-    ),
-    contentPadding: PaddingValues = ButtonDefaults.TextButtonContentPadding,
-) {
-    TextButton(
-        onClick = onClick,
-        modifier = modifier,
-        enabled = enabled,
-        elevation = elevation,
-        shape = shape,
-        border = border,
-        colors = colors,
-        contentPadding = contentPadding
-    ) {
-        iconPainter?.let {
-            Icon(
-                painter = it,
-                contentDescription = text
-            )
-        }
-
-        Spacer(modifier = Modifier.padding(start = 4.dp, end = 4.dp))
-
-        Text(
-            text = text,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-    }
-}
-
-@Composable
-fun WButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    elevation: ButtonElevation? = ButtonDefaults.elevation(),
-    shape: Shape = RoundedCornerShape(16.dp),
-    border: BorderStroke? = null,
-    colors: ButtonColors = ButtonDefaults.buttonColors(
-        backgroundColor = MaterialTheme.colors.onPrimary,
-        contentColor = MaterialTheme.colors.primary
-    ),
-    contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
-    content: @Composable RowScope.() -> Unit
-) {
-    Button(
-        onClick = onClick,
-        modifier = modifier,
-        enabled = enabled,
-        interactionSource = interactionSource,
-        elevation = elevation,
-        shape = shape,
-        border = border,
-        colors = colors,
-        contentPadding = contentPadding,
-        content = content
-    )
-}
 
 @Composable
 fun ScrollToTopLayout(
@@ -155,7 +81,7 @@ fun ScrollToTopLayout(
                 },
                 icon = {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_arrow_up_alt),
+                        imageVector = Icons.Default.ArrowUpward,
                         contentDescription = stringResource(id = R.string.to_top)
                     )
                 },
@@ -201,7 +127,7 @@ fun ScrollToTopLayout(
                 },
                 icon = {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_arrow_up_alt),
+                        imageVector = Icons.Default.ArrowUpward,
                         contentDescription = stringResource(id = R.string.to_top)
                     )
                 },
@@ -247,7 +173,7 @@ fun ScrollToTopLayout(
                 },
                 icon = {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_arrow_up_alt),
+                        imageVector = Icons.Default.ArrowUpward,
                         contentDescription = stringResource(id = R.string.to_top)
                     )
                 },
@@ -274,14 +200,14 @@ fun TagItem(
             .border(
                 width = 1.dp,
                 shape = RoundedCornerShape(50),
-                color = MaterialTheme.colors.onPrimary
+                color = MaterialTheme.colorScheme.onSurface
             )
             .clickable { onClick(title) }
             .padding(8.dp)
     ) {
         Text(
             text = title,
-            style = MaterialTheme.typography.subtitle2,
+            style = MaterialTheme.typography.titleSmall,
             modifier = Modifier.padding(horizontal = 4.dp)
         )
     }
@@ -307,7 +233,7 @@ fun TagsRow(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WTitleDropdown(
     @StringRes selectedTitleRes: Int,
@@ -328,20 +254,24 @@ fun WTitleDropdown(
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.menuAnchor()
         ) {
             Text(
                 text = stringResource(
                     id = titleTemplateRes,
                     stringResource(id = selectedTitleRes)
                 ),
-                style = MaterialTheme.typography.h6,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
 
             Icon(
-                painter = painterResource(id = if (dropdownExpanded) R.drawable.ic_arrow_up_alt else R.drawable.ic_arrow_down_alt),
+                imageVector = if (dropdownExpanded) {
+                    Icons.Default.ArrowDropUp
+                } else {
+                    Icons.Default.ArrowDropDown
+                },
                 contentDescription = null
             )
         }
@@ -355,84 +285,24 @@ fun WTitleDropdown(
         ) {
             optionsStringRes.forEachIndexed { indexOrdinal, optionStringRes ->
                 DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = stringResource(
+                                id = titleTemplateRes,
+                                stringResource(id = optionStringRes)
+                            )
+                        )
+                    },
                     onClick = {
                         onItemSelected(indexOrdinal)
                         dropdownExpanded = false
                     }
-                ) {
-                    Text(
-                        text = stringResource(
-                            id = titleTemplateRes,
-                            stringResource(id = optionStringRes)
-                        )
-                    )
-                }
+                )
             }
         }
     }
 }
 
-@Composable
-fun WOutlinedTextField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    readOnly: Boolean = false,
-    textStyle: TextStyle = LocalTextStyle.current,
-    label: @Composable (() -> Unit)? = null,
-    placeholder: @Composable (() -> Unit)? = null,
-    leadingIcon: @Composable (() -> Unit)? = null,
-    trailingIcon: @Composable (() -> Unit)? = null,
-    isError: Boolean = false,
-    visualTransformation: VisualTransformation = VisualTransformation.None,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    keyboardActions: KeyboardActions = KeyboardActions.Default,
-    singleLine: Boolean = false,
-    maxLines: Int = Int.MAX_VALUE,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    shape: Shape = MaterialTheme.shapes.small,
-    colors: TextFieldColors = TextFieldDefaults.outlinedTextFieldColors(
-        textColor = if (isError) MaterialTheme.colors.error else MaterialTheme.colors.onBackground,
-        backgroundColor = MaterialTheme.colors.background,
-        cursorColor = MaterialTheme.colors.onBackground,
-        focusedBorderColor = MaterialTheme.colors.onBackground,
-        focusedLabelColor = MaterialTheme.colors.onBackground,
-        leadingIconColor = MaterialTheme.colors.onBackground,
-        trailingIconColor = MaterialTheme.colors.onBackground,
-        unfocusedLabelColor = MaterialTheme.colors.onBackground.copy(alpha = 0.7f),
-        unfocusedBorderColor = MaterialTheme.colors.onBackground.copy(alpha = 0.7f),
-        disabledLabelColor = Color.Gray,
-        disabledBorderColor = Color.Gray,
-        errorBorderColor = MaterialTheme.colors.error,
-        errorLabelColor = MaterialTheme.colors.error,
-        errorCursorColor = MaterialTheme.colors.error,
-        errorLeadingIconColor = MaterialTheme.colors.error,
-        errorTrailingIconColor = MaterialTheme.colors.error
-    )
-) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        modifier = modifier,
-        enabled = enabled,
-        readOnly = readOnly,
-        textStyle = textStyle,
-        label = label,
-        placeholder = placeholder,
-        leadingIcon = leadingIcon,
-        trailingIcon = trailingIcon,
-        isError = isError,
-        visualTransformation = visualTransformation,
-        keyboardOptions = keyboardOptions,
-        keyboardActions = keyboardActions,
-        singleLine = singleLine,
-        maxLines = maxLines,
-        interactionSource = interactionSource,
-        shape = shape,
-        colors = colors
-    )
-}
 
 @Composable
 fun CheckBoxRow(
@@ -442,25 +312,27 @@ fun CheckBoxRow(
     labelText: String
 ) {
     Row(
-        verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
+            .fillMaxWidth()
             .height(56.dp)
-            .clip(RoundedCornerShape(16.dp))
             .toggleable(
                 value = checked,
                 onValueChange = onCheckedChange,
                 role = Role.Checkbox
             )
-
+            .padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Checkbox(
             checked = checked,
-            onCheckedChange = null
+            onCheckedChange = null // null recommended for accessibility with screenreaders
         )
 
-        Spacer(modifier = Modifier.width(8.dp))
-
-        Text(text = labelText)
+        Text(
+            text = labelText,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(start = 16.dp)
+        )
     }
 }
 

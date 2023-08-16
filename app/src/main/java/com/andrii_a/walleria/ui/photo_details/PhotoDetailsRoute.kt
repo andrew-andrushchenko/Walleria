@@ -1,5 +1,6 @@
 package com.andrii_a.walleria.ui.photo_details
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
@@ -44,7 +45,32 @@ fun NavGraphBuilder.photoDetailsRoute(
 
         val viewModel: PhotoDetailsViewModel = hiltViewModel()
 
-        val loadResultState by viewModel.loadResult.collectAsStateWithLifecycle()
+        val loadResult by viewModel.loadResult.collectAsStateWithLifecycle()
+
+        val systemBarsColor = Color.Transparent
+        val areIconsDark = !isSystemInDarkTheme()
+
+        LaunchedEffect(key1 = loadResult) {
+            when (loadResult) {
+                is PhotoLoadResult.Empty,
+                is PhotoLoadResult.Error,
+                is PhotoLoadResult.Loading -> {
+                    systemUiController.setSystemBarsColor(
+                        color = systemBarsColor,
+                        darkIcons = areIconsDark
+                    )
+                }
+
+                is PhotoLoadResult.Success -> {
+                    systemUiController.setSystemBarsColor(
+                        color = systemBarsColor,
+                        darkIcons = false
+                    )
+                }
+
+            }
+        }
+
         val isUserLoggedIn by viewModel.isUserLoggedIn.collectAsStateWithLifecycle()
         val photosDownloadQuality by viewModel.photosDownloadQuality.collectAsStateWithLifecycle()
         val isPhotoLiked by viewModel.isLiked.collectAsStateWithLifecycle()
@@ -66,7 +92,7 @@ fun NavGraphBuilder.photoDetailsRoute(
         }
 
         PhotoDetailsScreen(
-            loadResult = loadResultState,
+            loadResult = loadResult,
             isUserLoggedIn = isUserLoggedIn,
             isPhotoLiked = isPhotoLiked,
             isPhotoCollected = isPhotoCollected,

@@ -1,24 +1,21 @@
 package com.andrii_a.walleria.ui.photos
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
@@ -33,7 +30,7 @@ import com.andrii_a.walleria.ui.common.components.lists.PhotosList
 import com.andrii_a.walleria.ui.util.titleRes
 import kotlinx.coroutines.flow.Flow
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PhotosScreen(
     photos: Flow<PagingData<Photo>>,
@@ -48,17 +45,45 @@ fun PhotosScreen(
 ) {
     val lazyPhotoItems = photos.collectAsLazyPagingItems()
 
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = lazyPhotoItems.loadState.refresh is LoadState.Loading,
-        onRefresh = lazyPhotoItems::refresh,
-        refreshingOffset = WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + 120.dp
-    )
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .pullRefresh(pullRefreshState)
-    ) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    val optionStringResources = PhotoListDisplayOrder.values().toList().map { it.titleRes }
+
+                    WTitleDropdown(
+                        selectedTitleRes = order.titleRes,
+                        titleTemplateRes = R.string.photos_title_template,
+                        optionsStringRes = optionStringResources,
+                        onItemSelected = orderBy
+                    )
+                },
+                actions = {
+                    IconButton(onClick = { navigateToSearchScreen(null) }) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = stringResource(
+                                id = R.string.search
+                            )
+                        )
+                    }
+
+                    IconButton(onClick = navigateToProfileScreen) {
+                        Icon(
+                            imageVector = Icons.Outlined.AccountCircle,
+                            contentDescription = stringResource(
+                                id = R.string.user_profile_image
+                            )
+                        )
+                    }
+                },
+                scrollBehavior = scrollBehavior
+            )
+        },
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+    ) { innerPadding ->
         when (photosListLayoutType) {
             PhotosListLayoutType.DEFAULT -> {
                 val listState = rememberLazyListState()
@@ -73,12 +98,7 @@ fun PhotosScreen(
                     addNavBarPadding = true,
                     photosLoadQuality = photosLoadQuality,
                     listState = listState,
-                    contentPadding = PaddingValues(
-                        top = WindowInsets.systemBars.asPaddingValues()
-                            .calculateTopPadding() + 64.dp,
-                        bottom = WindowInsets.navigationBars.asPaddingValues()
-                            .calculateBottomPadding() + 200.dp
-                    ),
+                    contentPadding = innerPadding,
                     modifier = Modifier.fillMaxSize()
                 )
             }
@@ -96,12 +116,7 @@ fun PhotosScreen(
                     addNavBarPadding = true,
                     photosLoadQuality = photosLoadQuality,
                     listState = listState,
-                    contentPadding = PaddingValues(
-                        top = WindowInsets.systemBars.asPaddingValues()
-                            .calculateTopPadding() + 64.dp,
-                        bottom = WindowInsets.navigationBars.asPaddingValues()
-                            .calculateBottomPadding() + 200.dp
-                    ),
+                    contentPadding = innerPadding,
                     modifier = Modifier.fillMaxSize()
                 )
             }
@@ -115,66 +130,9 @@ fun PhotosScreen(
                     photosLoadQuality = photosLoadQuality,
                     addNavBarPadding = true,
                     gridState = gridState,
-                    contentPadding = PaddingValues(
-                        top = WindowInsets.systemBars.asPaddingValues()
-                            .calculateTopPadding() + dimensionResource(id = R.dimen.top_bar_height),
-                        bottom = WindowInsets.navigationBars.asPaddingValues()
-                            .calculateBottomPadding() + 200.dp,
-                        start = 8.dp,
-                        end = 8.dp
-                    ),
+                    contentPadding = innerPadding,
                     modifier = Modifier.fillMaxSize()
                 )
-            }
-        }
-
-        PullRefreshIndicator(
-            refreshing = lazyPhotoItems.loadState.refresh is LoadState.Loading,
-            state = pullRefreshState,
-            modifier = Modifier.align(Alignment.TopCenter)
-        )
-
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .statusBarsPadding()
-                .background(color = MaterialTheme.colors.primary.copy(alpha = 0.9f))
-                .height(dimensionResource(id = R.dimen.top_bar_height))
-                .padding(start = 16.dp, end = 16.dp)
-                .fillMaxWidth()
-                .align(Alignment.TopCenter)
-        ) {
-            val optionStringResources = PhotoListDisplayOrder.values().toList().map { it.titleRes }
-
-            WTitleDropdown(
-                selectedTitleRes = order.titleRes,
-                titleTemplateRes = R.string.photos_title_template,
-                optionsStringRes = optionStringResources,
-                onItemSelected = orderBy
-            )
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = { navigateToSearchScreen(null) }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_search_outlined),
-                        contentDescription = stringResource(
-                            id = R.string.search
-                        )
-                    )
-                }
-
-                IconButton(onClick = navigateToProfileScreen) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_user_outlined),
-                        contentDescription = stringResource(
-                            id = R.string.user_profile_image
-                        )
-                    )
-                }
             }
         }
     }

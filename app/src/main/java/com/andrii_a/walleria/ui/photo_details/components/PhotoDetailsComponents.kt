@@ -2,7 +2,6 @@ package com.andrii_a.walleria.ui.photo_details.components
 
 import android.graphics.drawable.ColorDrawable
 import android.text.SpannableStringBuilder
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,15 +15,25 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.FileDownload
+import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.RemoveRedEye
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -37,8 +46,6 @@ import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.domain.models.photo.PhotoExif
 import com.andrii_a.walleria.ui.common.CollectionId
-import com.andrii_a.walleria.ui.theme.PrimaryDark
-import com.andrii_a.walleria.ui.theme.PrimaryLight
 import com.andrii_a.walleria.ui.util.abbreviatedNumberString
 import com.andrii_a.walleria.ui.util.formCameraNameOrEmpty
 import com.andrii_a.walleria.ui.util.getUrlByQuality
@@ -79,7 +86,7 @@ fun UserRow(
             text = username,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = PrimaryLight
+            color = Color.White
         )
     }
 }
@@ -97,11 +104,11 @@ fun LocationRow(
             .clip(RoundedCornerShape(12.dp))
             .clickable(onClick = onLocationClick)
     ) {
-        Icon(painter = painterResource(id = R.drawable.ic_location), contentDescription = null)
+        Icon(imageVector = Icons.Outlined.LocationOn, contentDescription = null)
 
         Text(
             text = locationString,
-            style = MaterialTheme.typography.subtitle1,
+            style = MaterialTheme.typography.titleMedium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
@@ -121,14 +128,14 @@ fun ExifItem(
     ) {
         Text(
             text = title,
-            style = MaterialTheme.typography.subtitle2,
+            style = MaterialTheme.typography.titleSmall,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
 
         Text(
             text = text,
-            style = MaterialTheme.typography.caption,
+            style = MaterialTheme.typography.bodySmall,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
@@ -188,7 +195,7 @@ fun ExifGrid(
 
 @Composable
 fun StatsItem(
-    @DrawableRes drawableRes: Int,
+    imageVector: ImageVector,
     @StringRes titleRes: Int,
     value: Long,
     modifier: Modifier = Modifier
@@ -202,11 +209,11 @@ fun StatsItem(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                Icon(painter = painterResource(id = drawableRes), contentDescription = null)
+                Icon(imageVector = imageVector, contentDescription = null)
 
                 Text(
                     text = stringResource(id = titleRes),
-                    style = MaterialTheme.typography.subtitle2,
+                    style = MaterialTheme.typography.titleSmall,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -216,7 +223,7 @@ fun StatsItem(
 
             Text(
                 text = value.abbreviatedNumberString,
-                style = MaterialTheme.typography.subtitle2,
+                style = MaterialTheme.typography.titleSmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -237,7 +244,7 @@ fun StatsRow(
         modifier = modifier
     ) {
         StatsItem(
-            drawableRes = R.drawable.ic_view_outlined,
+            imageVector = Icons.Outlined.RemoveRedEye,
             titleRes = R.string.views,
             value = views,
             modifier = Modifier.weight(0.33f)
@@ -246,7 +253,7 @@ fun StatsRow(
         Spacer(modifier = Modifier.padding(horizontal = 4.dp))
 
         StatsItem(
-            drawableRes = R.drawable.ic_like_outlined,
+            imageVector = Icons.Outlined.FavoriteBorder,
             titleRes = R.string.likes,
             value = likes,
             modifier = Modifier.weight(0.33f)
@@ -255,7 +262,7 @@ fun StatsRow(
         Spacer(modifier = Modifier.padding(horizontal = 4.dp))
 
         StatsItem(
-            drawableRes = R.drawable.ic_download_outlined,
+            imageVector = Icons.Outlined.FileDownload,
             titleRes = R.string.downloads,
             value = downloads,
             modifier = Modifier.weight(0.33f)
@@ -263,7 +270,7 @@ fun StatsRow(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RelatedCollectionsItem(
     title: String,
@@ -297,15 +304,15 @@ fun RelatedCollectionsItem(
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .size(150.dp)
-                    .background(color = PrimaryDark.copy(alpha = 0.5f))
+                    .background(color = Color.Black.copy(alpha = 0.5f))
                     .padding(horizontal = 8.dp)
             ) {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.subtitle1,
+                    style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = PrimaryLight
+                    color = Color.White
                 )
 
                 Text(
@@ -313,10 +320,10 @@ fun RelatedCollectionsItem(
                         id = R.string.topic_photos_formatted,
                         totalPhotos.abbreviatedNumberString
                     ),
-                    style = MaterialTheme.typography.subtitle2,
+                    style = MaterialTheme.typography.titleSmall,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = PrimaryLight
+                    color = Color.White
                 )
             }
         }

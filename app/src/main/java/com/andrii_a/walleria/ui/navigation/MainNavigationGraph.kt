@@ -1,18 +1,10 @@
 package com.andrii_a.walleria.ui.navigation
 
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navigation
-import androidx.navigation.plusAssign
 import com.andrii_a.walleria.ui.about.aboutRoute
 import com.andrii_a.walleria.ui.collect_photo.collectPhotoRoute
 import com.andrii_a.walleria.ui.collection_details.collectionDetailsRoute
@@ -26,64 +18,43 @@ import com.andrii_a.walleria.ui.settings.settingsRoute
 import com.andrii_a.walleria.ui.topic_details.topicDetailsRoute
 import com.andrii_a.walleria.ui.topics.topicsBottomNavRoute
 import com.andrii_a.walleria.ui.user_details.userDetailsRoute
-import com.google.accompanist.navigation.material.BottomSheetNavigator
-import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
-import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.systemuicontroller.SystemUiController
 
-@OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalMaterialApi::class)
 @Composable
-fun MainNavHost(
+fun MainNavigationHost(
     navHostController: NavHostController,
     systemUiController: SystemUiController
 ) {
-    val bottomSheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden,
-        skipHalfExpanded = false
-    )
-
-    val bottomSheetNavigator = remember {
-        BottomSheetNavigator(bottomSheetState)
-    }
-
-    navHostController.navigatorProvider += bottomSheetNavigator
-
-    ModalBottomSheetLayout(
-        bottomSheetNavigator = bottomSheetNavigator,
-        scrimColor = MaterialTheme.colors.primary.copy(alpha = 0.5f),
-        sheetShape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
+    NavHost(
+        navController = navHostController,
+        startDestination = NAVIGATION_BAR_GRAPH_ROUTE
     ) {
-        NavHost(
-            navController = navHostController,
-            startDestination = NAVIGATION_BAR_GRAPH_ROUTE
-        ) {
-            bottomNavigation(navHostController, systemUiController)
+        navigationBarGraph(navHostController, systemUiController)
 
-            searchRoute(navHostController, systemUiController)
+        searchRoute(navHostController, systemUiController)
 
-            profileRoute(navHostController)
+        profileRoute(navHostController)
 
-            editUserProfileRoute(navHostController, systemUiController)
+        editUserProfileRoute(navHostController, systemUiController)
 
-            photoDetailsRoute(navHostController, systemUiController)
+        photoDetailsRoute(navHostController, systemUiController)
 
-            collectPhotoRoute(navHostController, bottomSheetState)
+        collectPhotoRoute(navHostController)
 
-            collectionDetailsRoute(navHostController, systemUiController)
+        collectionDetailsRoute(navHostController, systemUiController)
 
-            userDetailsRoute(navHostController, systemUiController)
+        userDetailsRoute(navHostController, systemUiController)
 
-            topicDetailsRoute(navHostController, systemUiController)
+        topicDetailsRoute(navHostController, systemUiController)
 
-            settingsRoute(navHostController, systemUiController)
+        settingsRoute(navHostController, systemUiController)
 
-            aboutRoute(navHostController, systemUiController)
-        }
+        aboutRoute(navHostController, systemUiController)
     }
 
 }
 
-fun NavGraphBuilder.bottomNavigation(
+fun NavGraphBuilder.navigationBarGraph(
     navHostController: NavHostController,
     systemUiController: SystemUiController
 ) {

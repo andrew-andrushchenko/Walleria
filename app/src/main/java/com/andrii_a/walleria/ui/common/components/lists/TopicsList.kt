@@ -11,10 +11,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -136,7 +136,7 @@ fun TopicsList(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DefaultTopicItem(
     title: String,
@@ -181,7 +181,7 @@ fun DefaultTopicItem(
 
             Text(
                 text = title,
-                style = MaterialTheme.typography.h6,
+                style = MaterialTheme.typography.titleMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.constrainAs(titleText) {
@@ -194,7 +194,7 @@ fun DefaultTopicItem(
 
             Text(
                 text = stringResource(id = R.string.topic_curated_by_formatted, curatorUsername),
-                style = MaterialTheme.typography.subtitle2,
+                style = MaterialTheme.typography.titleSmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.constrainAs(curatorUsernameText) {
@@ -209,7 +209,7 @@ fun DefaultTopicItem(
                     id = R.string.topic_photos_formatted,
                     totalPhotos.abbreviatedNumberString
                 ),
-                style = MaterialTheme.typography.subtitle2,
+                style = MaterialTheme.typography.titleSmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.constrainAs(totalPhotosText) {
@@ -221,7 +221,7 @@ fun DefaultTopicItem(
 
             Text(
                 text = updatedAt.timeAgoLocalizedString.orEmpty(),
-                style = MaterialTheme.typography.subtitle1,
+                style = MaterialTheme.typography.titleMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.constrainAs(lastUpdatedText) {
@@ -248,7 +248,7 @@ fun DefaultTopicItem(
 fun StatusIndicatorText(status: TopicStatus, modifier: Modifier = Modifier) {
     Text(
         text = stringResource(id = status.titleRes),
-        style = MaterialTheme.typography.subtitle2,
+        style = MaterialTheme.typography.titleSmall,
         maxLines = 1,
         color = status.color,
         overflow = TextOverflow.Ellipsis,
@@ -265,12 +265,12 @@ private val TopicStatus.color: Color
         when (this) {
             TopicStatus.OPEN -> TopicStatusOpenTextColorDark
             TopicStatus.CLOSED -> TopicStatusClosedTextColorDark
-            else -> MaterialTheme.colors.onPrimary
+            else -> MaterialTheme.colorScheme.onSurface
         }
     } else {
         when (this) {
             TopicStatus.OPEN -> TopicStatusOpenTextColorLight
             TopicStatus.CLOSED -> TopicStatusClosedTextColorLight
-            else -> MaterialTheme.colors.onPrimary
+            else -> MaterialTheme.colorScheme.onSurface
         }
     }

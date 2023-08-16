@@ -12,9 +12,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
@@ -194,8 +194,8 @@ fun SingleChoiceSelector(
     selectedOptionOrdinal: Int,
     onOptionSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    selectedColor: Color = MaterialTheme.colors.surface,
-    unselectedColor: Color = MaterialTheme.colors.onSurface,
+    selectedColor: Color = MaterialTheme.colorScheme.primaryContainer,
+    unselectedColor: Color = MaterialTheme.colorScheme.primary,
     state: SingleChoiceSelectorState = rememberSingleChoiceSelectorState(
         options = options,
         selectedOptionOrdinal = selectedOptionOrdinal,
@@ -240,7 +240,7 @@ fun SingleChoiceSelector(
 
                                 Text(
                                     text = stringResource(id = option.titleRes),
-                                    style = MaterialTheme.typography.body1,
+                                    style = MaterialTheme.typography.bodyMedium,
                                     color = colors[index],
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
@@ -260,7 +260,7 @@ fun SingleChoiceSelector(
                         SelectorItemType.TextOnly -> {
                             Text(
                                 text = stringResource(id = option.titleRes),
-                                style = MaterialTheme.typography.body1,
+                                style = MaterialTheme.typography.bodyMedium,
                                 color = colors[index],
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
@@ -282,7 +282,7 @@ fun SingleChoiceSelector(
                             bottomEndPercent = state.endCornerPercent,
                         )
                     )
-                    .background(MaterialTheme.colors.onSurface),
+                    .background(MaterialTheme.colorScheme.primary),
             )
         }
     ) { measurables, constraints ->

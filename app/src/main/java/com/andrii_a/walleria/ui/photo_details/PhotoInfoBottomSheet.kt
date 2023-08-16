@@ -3,13 +3,10 @@ package com.andrii_a.walleria.ui.photo_details
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,112 +38,99 @@ import com.andrii_a.walleria.ui.util.*
 @Composable
 fun PhotoInfoBottomSheet(
     photo: Photo,
+    contentPadding: PaddingValues = PaddingValues(),
     navigateToSearch: (SearchQuery) -> Unit,
     navigateToCollectionDetails: (CollectionId) -> Unit
 ) {
     val context = LocalContext.current
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .navigationBarsPadding()
+
+    Column(
+        modifier = Modifier.padding(contentPadding)
     ) {
-        Column {
-            Spacer(
-                modifier = Modifier
-                    .padding(vertical = 22.dp)
-                    .size(width = 32.dp, height = 4.dp)
-                    .background(
-                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.4f),
-                        shape = RoundedCornerShape(50)
-                    )
-                    .align(Alignment.CenterHorizontally)
-            )
-
-            photo.location?.let { location ->
-                location.locationString?.let { locationString ->
-                    LocationRow(
-                        locationString = locationString,
-                        onLocationClick = { context.openLocationInMaps(location.position) },
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-            }
-
-            photo.description?.let {
-                var isExpanded by remember { mutableStateOf(false) }
-
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.subtitle2,
-                    maxLines = if (isExpanded) Int.MAX_VALUE else 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .align(Alignment.CenterHorizontally)
-                        .animateContentSize()
-                        .clickable { isExpanded = !isExpanded }
+        photo.location?.let { location ->
+            location.locationString?.let { locationString ->
+                LocationRow(
+                    locationString = locationString,
+                    onLocationClick = { context.openLocationInMaps(location.position) },
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
             }
+        }
 
-            photo.tags?.let {
-                TagsRow(
-                    tags = it,
-                    onTagClicked = { query ->
-                        navigateToSearch(SearchQuery(query))
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                )
+        photo.description?.let {
+            var isExpanded by remember { mutableStateOf(false) }
 
-                Spacer(modifier = Modifier.height(8.dp))
-            }
+            Text(
+                text = it,
+                style = MaterialTheme.typography.titleSmall,
+                maxLines = if (isExpanded) Int.MAX_VALUE else 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .align(Alignment.CenterHorizontally)
+                    .animateContentSize()
+                    .clickable { isExpanded = !isExpanded }
+            )
 
-            StatsRow(
-                views = photo.views,
-                likes = photo.likes,
-                downloads = photo.downloads,
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        photo.tags?.let {
+            TagsRow(
+                tags = it,
+                onTagClicked = { query ->
+                    navigateToSearch(SearchQuery(query))
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
+        StatsRow(
+            views = photo.views,
+            likes = photo.likes,
+            downloads = photo.downloads,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        )
+
+        photo.exif?.let {
+            ExifGrid(
+                exif = it,
+                resolution = stringResource(
+                    id = R.string.resolution_formatted,
+                    photo.width,
+                    photo.height
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
             )
+        }
 
-            photo.exif?.let {
-                ExifGrid(
-                    exif = it,
-                    resolution = stringResource(
-                        id = R.string.resolution_formatted,
-                        photo.width,
-                        photo.height
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+        photo.relatedCollections?.let {
+            it.results?.let { collections ->
+                Text(
+                    text = stringResource(id = R.string.related_collections),
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(horizontal = 16.dp)
                 )
-            }
 
-            photo.relatedCollections?.let {
-                it.results?.let { collections ->
-                    Text(
-                        text = stringResource(id = R.string.related_collections),
-                        style = MaterialTheme.typography.subtitle1,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
+                Spacer(modifier = Modifier.height(8.dp))
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                RelatedCollectionsRow(
+                    collections = collections,
+                    onCollectionSelected = navigateToCollectionDetails
+                )
 
-                    RelatedCollectionsRow(
-                        collections = collections,
-                        onCollectionSelected = navigateToCollectionDetails
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
+                Spacer(modifier = Modifier.height(8.dp))
             }
         }
     }

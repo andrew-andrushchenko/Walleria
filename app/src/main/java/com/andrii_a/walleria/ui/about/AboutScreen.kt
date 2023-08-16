@@ -1,33 +1,33 @@
 package com.andrii_a.walleria.ui.about
 
 import android.net.Uri
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -41,57 +41,35 @@ import com.andrii_a.walleria.ui.util.openInstagramProfile
 import com.andrii_a.walleria.ui.util.openLinkInBrowser
 import com.andrii_a.walleria.ui.util.writeALetterTo
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(
     navigateBack: () -> Unit,
     openPhoto: (PhotoId) -> Unit
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = stringResource(id = R.string.about))
+                },
+                navigationIcon = {
+                    IconButton(onClick = navigateBack) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = stringResource(id = R.string.navigate_back)
+                        )
+                    }
+                }
+            )
+        }
+    ) { innerPadding ->
         AboutScreenContent(
             openPhoto = openPhoto,
             modifier = Modifier
-                .statusBarsPadding()
-                .padding(top = dimensionResource(id = R.dimen.top_bar_height))
-                .padding(horizontal = 16.dp)
+                .padding(innerPadding)
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
-        )
-
-        TopBar(
-            navigateBack = navigateBack,
-            modifier = Modifier
-                .statusBarsPadding()
-                .background(color = MaterialTheme.colors.primary)
-                .height(dimensionResource(id = R.dimen.top_bar_height))
-                .padding(horizontal = 8.dp)
-                .fillMaxWidth()
-                .align(Alignment.TopCenter)
-        )
-    }
-}
-
-@Composable
-private fun TopBar(
-    navigateBack: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-    ) {
-        IconButton(onClick = navigateBack) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_arrow_back),
-                contentDescription = stringResource(id = R.string.navigate_back)
-            )
-        }
-
-        Text(
-            text = stringResource(id = R.string.about),
-            style = MaterialTheme.typography.h6,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
         )
     }
 }
@@ -111,7 +89,7 @@ fun AboutScreenContent(
         Icon(
             painter = painterResource(id = R.drawable.ic_launcher_foreground),
             contentDescription = stringResource(id = R.string.app_name),
-            tint = MaterialTheme.colors.onSurface,
+            tint = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.size(64.dp)
         )
 
@@ -119,13 +97,13 @@ fun AboutScreenContent(
 
         Text(
             text = stringResource(id = R.string.app_name),
-            style = MaterialTheme.typography.h6,
+            style = MaterialTheme.typography.titleLarge,
             maxLines = 1
         )
 
         Text(
             text = stringResource(id = R.string.powered_by_unsplash),
-            style = MaterialTheme.typography.subtitle2,
+            style = MaterialTheme.typography.titleSmall,
             maxLines = 1
         )
 
@@ -137,14 +115,14 @@ fun AboutScreenContent(
 
         Text(
             text = stringResource(id = R.string.developed_and_designed_by),
-            style = MaterialTheme.typography.subtitle2,
+            style = MaterialTheme.typography.titleSmall,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
 
         Text(
             text = stringResource(id = R.string.developer_username),
-            style = MaterialTheme.typography.h6,
+            style = MaterialTheme.typography.titleLarge,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
@@ -188,7 +166,7 @@ fun AboutScreenContent(
 
         Text(
             text = stringResource(id = R.string.login_screen_photo_owner),
-            style = MaterialTheme.typography.subtitle1,
+            style = MaterialTheme.typography.titleMedium,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
@@ -202,7 +180,7 @@ fun AboutScreenContent(
 
         Text(
             text = stringResource(id = R.string.project_icons),
-            style = MaterialTheme.typography.subtitle1,
+            style = MaterialTheme.typography.titleMedium,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier

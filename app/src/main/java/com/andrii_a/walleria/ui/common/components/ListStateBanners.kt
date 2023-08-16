@@ -9,9 +9,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -92,7 +92,7 @@ fun ErrorBanner(
 
         Spacer(modifier = Modifier.padding(bottom = 8.dp))
 
-        WButton(onClick = onRetry) {
+        Button(onClick = onRetry) {
             Text(text = stringResource(id = R.string.action_retry))
         }
     }
@@ -106,8 +106,6 @@ fun ErrorItem(
 ) {
     Card(
         shape = RoundedCornerShape(24.dp),
-        backgroundColor = MaterialTheme.colors.error,
-        contentColor = MaterialTheme.colors.onError,
         modifier = modifier
     ) {
         Row(
@@ -122,7 +120,7 @@ fun ErrorItem(
                 modifier = Modifier.weight(0.6f)
             )
 
-            WButton(
+            Button(
                 onClick = onRetry,
                 modifier = Modifier.weight(0.2f)
             ) {
@@ -138,7 +136,7 @@ fun ErrorItemPreview() {
     WalleriaTheme {
         ErrorItem(
             onRetry = {},
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
         )
     }
 }
@@ -171,7 +169,7 @@ fun EmptyContentBanner(
         Text(
             text = message,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(start = 32.dp, end = 32.dp)
+            modifier = Modifier.padding(horizontal = 32.dp)
         )
     }
 }

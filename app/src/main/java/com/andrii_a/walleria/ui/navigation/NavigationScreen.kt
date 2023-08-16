@@ -1,32 +1,39 @@
 package com.andrii_a.walleria.ui.navigation
 
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Collections
+import androidx.compose.material.icons.filled.Photo
+import androidx.compose.material.icons.filled.Topic
+import androidx.compose.material.icons.outlined.Collections
+import androidx.compose.material.icons.outlined.Photo
+import androidx.compose.material.icons.outlined.Topic
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.andrii_a.walleria.R
 
 enum class NavigationScreen(
     val route: String,
     @StringRes val titleRes: Int,
-    @DrawableRes val iconUnselected: Int,
-    @DrawableRes val iconSelected: Int
+    val iconUnselected: ImageVector,
+    val iconSelected: ImageVector
 ) {
     Photos(
         route = "photos",
         titleRes = R.string.photos,
-        iconUnselected = R.drawable.ic_photos_outlined,
-        iconSelected = R.drawable.ic_photos_filled
+        iconUnselected = Icons.Outlined.Photo,
+        iconSelected = Icons.Filled.Photo
     ),
     Collections(
         route = "collections",
         titleRes = R.string.collections,
-        iconUnselected = R.drawable.ic_collection_outlined,
-        iconSelected = R.drawable.ic_collection_filled
+        iconUnselected = Icons.Outlined.Collections,
+        iconSelected = Icons.Filled.Collections
     ),
     Topics(
         route = "topics",
         titleRes = R.string.topics,
-        iconUnselected = R.drawable.ic_topic_outlined,
-        iconSelected = R.drawable.ic_topic_filled
+        iconUnselected = Icons.Outlined.Topic,
+        iconSelected = Icons.Filled.Topic
     )
 }
 

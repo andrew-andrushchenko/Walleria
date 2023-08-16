@@ -23,12 +23,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -64,9 +66,6 @@ import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.ui.common.components.CheckBoxRow
 import com.andrii_a.walleria.ui.common.PhotoId
-import com.andrii_a.walleria.ui.common.components.WButton
-import com.andrii_a.walleria.ui.common.components.WOutlinedTextField
-import com.andrii_a.walleria.ui.theme.PrimaryLight
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.abbreviatedNumberString
 import com.andrii_a.walleria.ui.util.getUrlByQuality
@@ -102,12 +101,12 @@ fun UserCollectionsList(
         stickyHeader {
             Text(
                 text = stringResource(id = R.string.select_collections),
-                style = MaterialTheme.typography.h5,
+                style = MaterialTheme.typography.headlineSmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(color = MaterialTheme.colors.primary)
+                    .background(color = MaterialTheme.colorScheme.surface)
                     .padding(top = 16.dp, start = 16.dp, end = 16.dp)
             )
         }
@@ -239,7 +238,7 @@ fun UserCollectionItem(
         if (isPrivate) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_lock_outlined),
-                tint = PrimaryLight,
+                tint = Color.White,
                 contentDescription = null,
                 modifier = Modifier
                     .constrainAs(lockIcon) {
@@ -252,10 +251,10 @@ fun UserCollectionItem(
 
         Text(
             text = title,
-            style = MaterialTheme.typography.subtitle1,
+            style = MaterialTheme.typography.titleMedium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = PrimaryLight,
+            color = Color.White,
             modifier = Modifier.constrainAs(titleText) {
                 start.linkTo(parent.start, margin = 8.dp)
                 bottom.linkTo(photosCountText.top, margin = 4.dp)
@@ -269,10 +268,10 @@ fun UserCollectionItem(
                 id = R.string.photos_title_template,
                 totalPhotos.abbreviatedNumberString
             ),
-            style = MaterialTheme.typography.subtitle2,
+            style = MaterialTheme.typography.titleSmall,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = PrimaryLight,
+            color = Color.White,
             modifier = Modifier.constrainAs(photosCountText) {
                 start.linkTo(parent.start, margin = 8.dp)
                 bottom.linkTo(parent.bottom, margin = 8.dp)
@@ -292,7 +291,7 @@ fun UserCollectionItem(
             when (state) {
                 is CollectState.Loading -> {
                     CircularProgressIndicator(
-                        color = PrimaryLight,
+                        color = Color.White,
                         modifier = Modifier.size(24.dp)
                     )
                 }
@@ -301,7 +300,7 @@ fun UserCollectionItem(
                     IconButton(onClick = onClick) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_remove_outlined),
-                            tint = PrimaryLight,
+                            tint = Color.White,
                             contentDescription = null,
                             modifier = Modifier.size(24.dp)
                         )
@@ -312,7 +311,7 @@ fun UserCollectionItem(
                     IconButton(onClick = onClick) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_add_outlined),
-                            tint = PrimaryLight,
+                            tint = Color.White,
                             contentDescription = null,
                             modifier = Modifier.size(24.dp)
                         )
@@ -342,7 +341,7 @@ fun CreateNewCollectionButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val rectColor = MaterialTheme.colors.onPrimary
+    val rectColor = MaterialTheme.colorScheme.onSurface
     val stroke = Stroke(
         width = 3f,
         pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
@@ -399,19 +398,19 @@ fun CreateCollectionAndCollectDialog(
     Dialog(onDismissRequest = onDismiss) {
         Surface(
             shape = RoundedCornerShape(16.dp),
-            color = MaterialTheme.colors.background
+            color = MaterialTheme.colorScheme.background
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
                     text = stringResource(id = R.string.create_new_and_add),
-                    style = MaterialTheme.typography.h5,
+                    style = MaterialTheme.typography.headlineSmall,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                WOutlinedTextField(
+                OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
                     label = { Text(text = stringResource(id = R.string.collection_name_hint)) },
@@ -420,7 +419,7 @@ fun CreateCollectionAndCollectDialog(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                WOutlinedTextField(
+                OutlinedTextField(
                     value = description,
                     onValueChange = { description = it },
                     label = { Text(text = stringResource(id = R.string.collection_description_hint)) },
@@ -438,7 +437,7 @@ fun CreateCollectionAndCollectDialog(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                WButton(
+                Button(
                     onClick = {
                         scope.launch {
                             createAndCollect(
@@ -459,7 +458,7 @@ fun CreateCollectionAndCollectDialog(
                 ) {
                     Text(
                         text = stringResource(id = R.string.done_collection_creation),
-                        style = MaterialTheme.typography.subtitle1
+                        style = MaterialTheme.typography.titleMedium
                     )
                 }
             }
