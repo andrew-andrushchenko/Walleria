@@ -1,7 +1,11 @@
 package com.andrii_a.walleria.ui.profile
 
+import android.view.Gravity
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.DialogWindowProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -16,7 +20,15 @@ import com.andrii_a.walleria.ui.user_details.navigateToUserDetails
 import com.andrii_a.walleria.ui.util.startActivity
 
 fun NavGraphBuilder.profileRoute(navController: NavController) {
-    dialog(route = Screen.Profile.route) {
+    dialog(
+        route = Screen.Profile.route,
+        dialogProperties = DialogProperties(
+            usePlatformDefaultWidth = false,
+        )
+    ) {
+        val dialogWindowProvider = LocalView.current.parent as DialogWindowProvider
+        dialogWindowProvider.window.setGravity(Gravity.BOTTOM)
+
         val context = LocalContext.current
 
         val viewModel: ProfileViewModel = hiltViewModel()

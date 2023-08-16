@@ -14,13 +14,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Info
@@ -31,7 +32,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -69,82 +69,84 @@ fun ProfileScreen(
     navigateToSettingsScreen: () -> Unit,
     navigateToAboutScreen: () -> Unit
 ) {
-    Surface {
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .navigationBarsPadding()
-                .animateContentSize()
-        ) {
-            if (isUserLoggedIn) {
-                LoggedInUserSection(
-                    userProfilePhotoUrl = userProfileData.profilePhotoUrl,
-                    userFullName = stringResource(
-                        id = R.string.user_full_name_formatted,
-                        userProfileData.firstName,
-                        userProfileData.lastName
-                    ),
-                    userNickname = userProfileData.nickname,
-                    userEmail = userProfileData.email,
-                    navigateToViewProfileScreen = {
-                        navigateToViewProfileScreen(
-                            UserNickname(userProfileData.nickname)
-                        )
-                    },
-                    navigateToEditProfileScreen = navigateToEditProfileScreen,
-                    onLogout = onLogout
-                )
-
-            } else {
-                LoggedOutUserSection(
-                    navigateToLoginScreen = navigateToLoginScreen,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-            }
-
-            Divider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 8.dp)
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            //.navigationBarsPadding()
+            .animateContentSize()
+    ) {
+        if (isUserLoggedIn) {
+            LoggedInUserSection(
+                userProfilePhotoUrl = userProfileData.profilePhotoUrl,
+                userFullName = stringResource(
+                    id = R.string.user_full_name_formatted,
+                    userProfileData.firstName,
+                    userProfileData.lastName
+                ),
+                userNickname = userProfileData.nickname,
+                userEmail = userProfileData.email,
+                navigateToViewProfileScreen = {
+                    navigateToViewProfileScreen(
+                        UserNickname(userProfileData.nickname)
+                    )
+                },
+                navigateToEditProfileScreen = navigateToEditProfileScreen,
+                onLogout = onLogout
             )
 
-            TextButton(
-                onClick = navigateToSettingsScreen,
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(64.dp)
-                    .padding(horizontal = 16.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Settings,
-                    contentDescription = stringResource(id = R.string.settings)
-                )
-
-                Text(text = stringResource(id = R.string.settings))
-            }
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            TextButton(
-                onClick = navigateToAboutScreen,
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(64.dp)
-                    .padding(horizontal = 16.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Info,
-                    contentDescription = stringResource(id = R.string.about)
-                )
-
-                Text(text = stringResource(id = R.string.about))
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
+        } else {
+            LoggedOutUserSection(
+                navigateToLoginScreen = navigateToLoginScreen,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
         }
+
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp, vertical = 8.dp)
+        )
+
+        TextButton(
+            onClick = navigateToSettingsScreen,
+            shape = RoundedCornerShape(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp)
+                .padding(horizontal = 16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Settings,
+                contentDescription = stringResource(id = R.string.settings)
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Text(text = stringResource(id = R.string.settings))
+        }
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        TextButton(
+            onClick = navigateToAboutScreen,
+            shape = RoundedCornerShape(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp)
+                .padding(horizontal = 16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Info,
+                contentDescription = stringResource(id = R.string.about)
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Text(text = stringResource(id = R.string.about))
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
@@ -175,7 +177,6 @@ private fun LoggedOutUserSection(
             Icon(
                 painter = painterResource(id = R.drawable.ic_launcher_foreground),
                 contentDescription = stringResource(id = R.string.app_name),
-                tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.size(64.dp)
             )
 
@@ -203,10 +204,11 @@ private fun LoggedOutUserSection(
                     )
 
                     Icon(
-                        painter = painterResource(
-                            id = if (showAddAccountSection) R.drawable.ic_arrow_up_alt
-                            else R.drawable.ic_arrow_down_alt
-                        ),
+                        imageVector = if (showAddAccountSection) {
+                            Icons.Default.ArrowDropUp
+                        } else {
+                            Icons.Default.ArrowDropDown
+                        },
                         contentDescription = null,
                         modifier = Modifier.size(16.dp)
                     )
