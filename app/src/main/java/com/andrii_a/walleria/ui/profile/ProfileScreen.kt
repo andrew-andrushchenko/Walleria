@@ -9,6 +9,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -32,8 +33,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -69,84 +72,91 @@ fun ProfileScreen(
     navigateToSettingsScreen: () -> Unit,
     navigateToAboutScreen: () -> Unit
 ) {
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            //.navigationBarsPadding()
-            .animateContentSize()
-    ) {
-        if (isUserLoggedIn) {
-            LoggedInUserSection(
-                userProfilePhotoUrl = userProfileData.profilePhotoUrl,
-                userFullName = stringResource(
-                    id = R.string.user_full_name_formatted,
-                    userProfileData.firstName,
-                    userProfileData.lastName
-                ),
-                userNickname = userProfileData.nickname,
-                userEmail = userProfileData.email,
-                navigateToViewProfileScreen = {
-                    navigateToViewProfileScreen(
-                        UserNickname(userProfileData.nickname)
+    Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+        Surface(
+            color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+            shape = RoundedCornerShape(28.dp)
+        ) {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    //.navigationBarsPadding()
+                    .animateContentSize()
+            ) {
+                if (isUserLoggedIn) {
+                    LoggedInUserSection(
+                        userProfilePhotoUrl = userProfileData.profilePhotoUrl,
+                        userFullName = stringResource(
+                            id = R.string.user_full_name_formatted,
+                            userProfileData.firstName,
+                            userProfileData.lastName
+                        ),
+                        userNickname = userProfileData.nickname,
+                        userEmail = userProfileData.email,
+                        navigateToViewProfileScreen = {
+                            navigateToViewProfileScreen(
+                                UserNickname(userProfileData.nickname)
+                            )
+                        },
+                        navigateToEditProfileScreen = navigateToEditProfileScreen,
+                        onLogout = onLogout
                     )
-                },
-                navigateToEditProfileScreen = navigateToEditProfileScreen,
-                onLogout = onLogout
-            )
 
-        } else {
-            LoggedOutUserSection(
-                navigateToLoginScreen = navigateToLoginScreen,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
+                } else {
+                    LoggedOutUserSection(
+                        navigateToLoginScreen = navigateToLoginScreen,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
+
+                Divider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp, vertical = 8.dp)
+                )
+
+                TextButton(
+                    onClick = navigateToSettingsScreen,
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp)
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Settings,
+                        contentDescription = stringResource(id = R.string.settings)
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Text(text = stringResource(id = R.string.settings))
+                }
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                TextButton(
+                    onClick = navigateToAboutScreen,
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp)
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Info,
+                        contentDescription = stringResource(id = R.string.about)
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Text(text = stringResource(id = R.string.about))
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+            }
         }
-
-        Divider(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp, vertical = 8.dp)
-        )
-
-        TextButton(
-            onClick = navigateToSettingsScreen,
-            shape = RoundedCornerShape(16.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(64.dp)
-                .padding(horizontal = 16.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.Settings,
-                contentDescription = stringResource(id = R.string.settings)
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Text(text = stringResource(id = R.string.settings))
-        }
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        TextButton(
-            onClick = navigateToAboutScreen,
-            shape = RoundedCornerShape(16.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(64.dp)
-                .padding(horizontal = 16.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.Info,
-                contentDescription = stringResource(id = R.string.about)
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Text(text = stringResource(id = R.string.about))
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
