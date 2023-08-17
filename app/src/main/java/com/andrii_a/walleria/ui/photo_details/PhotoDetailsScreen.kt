@@ -494,7 +494,8 @@ private fun BottomControls(
         IconButton(
             onClick = onZoomToFillClick,
             modifier = Modifier.constrainAs(zoomToFillButton) {
-                top.linkTo(parent.top)
+                top.linkTo(collectButton.top)
+                bottom.linkTo(collectButton.bottom)
                 end.linkTo(parent.end)
             }
         ) {
