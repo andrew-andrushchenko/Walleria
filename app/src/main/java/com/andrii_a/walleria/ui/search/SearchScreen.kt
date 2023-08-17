@@ -1,11 +1,10 @@
 package com.andrii_a.walleria.ui.search
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -16,19 +15,16 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
@@ -36,15 +32,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -54,6 +49,7 @@ import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.PhotosListLayoutType
 import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.domain.models.photo.Photo
+import com.andrii_a.walleria.domain.models.search.RecentSearchItem
 import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.ui.common.CollectionId
 import com.andrii_a.walleria.ui.common.PhotoId
@@ -70,7 +66,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
-    query: StateFlow<String>,
+    query: String,
+    recentSearches: List<RecentSearchItem>,
     photos: Flow<PagingData<Photo>>,
     collections: Flow<PagingData<Collection>>,
     users: Flow<PagingData<User>>,
@@ -93,33 +90,109 @@ fun SearchScreen(
 
     val filters by photoFilters.collectAsStateWithLifecycle()
 
-    Column(
+    var text by rememberSaveable { mutableStateOf(query) }
+    var active by rememberSaveable { mutableStateOf(false) }
+
+    Box(
         modifier = Modifier
-            .statusBarsPadding()
-            .fillMaxWidth()
+            .fillMaxSize()
+            .semantics { isTraversalGroup = true }
     ) {
-        val queryValue = query.collectAsStateWithLifecycle()
+        Column(modifier = Modifier.fillMaxWidth()) {
+            SearchBar(
+                query = text,
+                onQueryChange = { text = it },
+                onSearch = {
+                    active = false
+                    onEvent(SearchScreenEvent.SaveRecentSearch(query = text))
+                    onEvent(SearchScreenEvent.ChangeQuery(query = text))
+                },
+                active = active,
+                onActiveChange = { active = it },
+                placeholder = { Text(stringResource(id = R.string.type_something)) },
+                leadingIcon = {
+                    AnimatedContent(
+                        targetState = active,
+                        label = ""
+                    ) { state ->
+                        if (state) {
+                            Icon(Icons.Default.Search, contentDescription = null)
+                        } else {
+                            IconButton(onClick = navigateBack) {
+                                Icon(
+                                    Icons.Default.ArrowBack,
+                                    contentDescription = stringResource(id = R.string.navigate_back)
+                                )
+                            }
+                        }
+                    }
+                },
+                trailingIcon = {
+                    AnimatedVisibility(
+                        visible = (pagerState.currentPage == SearchScreenTabs.Photos.ordinal) && !active,
+                        enter = fadeIn(),
+                        exit = fadeOut()
+                    ) {
+                        IconButton(onClick = { openBottomSheet = !openBottomSheet }) {
+                            Icon(
+                                imageVector = Icons.Outlined.FilterList,
+                                contentDescription = stringResource(id = R.string.photo_filters)
+                            )
+                        }
+                    }
+                },
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .semantics { traversalIndex = -1f },
+            ) {
+                Text(
+                    text = stringResource(id = R.string.recent_searches),
+                    style = MaterialTheme.typography.titleSmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(start = 16.dp, top = 16.dp)
+                )
 
-        TopBar(
-            query = queryValue.value,
-            pagerState = pagerState,
-            onEvent = onEvent,
-            onPhotoFiltersClick = { openBottomSheet = !openBottomSheet },
-            onNavigateBack = navigateBack
-        )
+                Spacer(modifier = Modifier.height(8.dp))
 
-        Pages(
-            pagerState = pagerState,
-            photos = photos,
-            collections = collections,
-            users = users,
-            photosListLayoutType = photosListLayoutType,
-            collectionListLayoutType = collectionListLayoutType,
-            photosLoadQuality = photosLoadQuality,
-            navigateToPhotoDetails = navigateToPhotoDetails,
-            navigateToCollectionDetails = navigateToCollectionDetails,
-            navigateToUserDetails = navigateToUserDetails
-        )
+                RecentSearchesList(
+                    recentSearches = recentSearches,
+                    onItemSelected = { item ->
+                        active = false
+                        text = item.title
+                        onEvent(SearchScreenEvent.SaveRecentSearch(query = text))
+                        onEvent(SearchScreenEvent.ChangeQuery(query = text))
+                    },
+                    onDeleteItem = { item ->
+                        onEvent(SearchScreenEvent.DeleteRecentSearch(item))
+                    },
+                    onDeleteAllItems = {
+                        onEvent(SearchScreenEvent.DeleteAllRecentSearches)
+                    }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            SearchTabs(
+                pagerState = pagerState,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Pages(
+                pagerState = pagerState,
+                photos = photos,
+                collections = collections,
+                users = users,
+                photosListLayoutType = photosListLayoutType,
+                collectionListLayoutType = collectionListLayoutType,
+                photosLoadQuality = photosLoadQuality,
+                navigateToPhotoDetails = navigateToPhotoDetails,
+                navigateToCollectionDetails = navigateToCollectionDetails,
+                navigateToUserDetails = navigateToUserDetails
+            )
+        }
     }
 
     val scope = rememberCoroutineScope()
@@ -147,113 +220,6 @@ fun SearchScreen(
                 }
             )
         }
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-private fun TopBar(
-    query: String,
-    pagerState: PagerState,
-    onEvent: (SearchScreenEvent) -> Unit,
-    onPhotoFiltersClick: () -> Unit,
-    onNavigateBack: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    ConstraintLayout(modifier = modifier.fillMaxWidth()) {
-        val (backButton, queryTextField, filterButton, tabs) = createRefs()
-
-        IconButton(
-            onClick = onNavigateBack,
-            modifier = Modifier.constrainAs(backButton) {
-                top.linkTo(parent.top)
-                bottom.linkTo(tabs.top)
-                start.linkTo(parent.start, 8.dp)
-            }
-        ) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = stringResource(id = R.string.photo_filters)
-            )
-        }
-
-        val focusManager = LocalFocusManager.current
-        var text by rememberSaveable { mutableStateOf(query) }
-
-        OutlinedTextField(
-            value = text,
-            placeholder = {
-                Text(
-                    text = stringResource(id = R.string.type_something),
-                    style = MaterialTheme.typography.titleMedium
-                )
-            },
-            onValueChange = { text = it },
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color.Transparent,
-                unfocusedBorderColor = Color.Transparent,
-
-            ),
-            singleLine = true,
-            trailingIcon = {
-                if (text.isNotEmpty()) {
-                    IconButton(onClick = { text = "" }) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = stringResource(id = R.string.clear_search_field)
-                        )
-                    }
-                }
-            },
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-            keyboardActions = KeyboardActions(
-                onSearch = {
-                    onEvent(SearchScreenEvent.ChangeQuery(query = text))
-                    focusManager.clearFocus()
-                }
-            ),
-            modifier = Modifier.constrainAs(queryTextField) {
-                top.linkTo(backButton.top)
-                bottom.linkTo(backButton.bottom)
-                start.linkTo(backButton.end)
-                if (pagerState.currentPage == SearchScreenTabs.Photos.ordinal) {
-                    end.linkTo(filterButton.start)
-                } else {
-                    end.linkTo(parent.end, 8.dp)
-                }
-                width = Dimension.fillToConstraints
-            }
-        )
-
-        AnimatedVisibility(
-            visible = pagerState.currentPage == SearchScreenTabs.Photos.ordinal,
-            enter = slideInHorizontally(initialOffsetX = { it }) + fadeIn(),
-            exit = slideOutHorizontally(targetOffsetX = { it }) + fadeOut(),
-            modifier = Modifier.constrainAs(filterButton) {
-                top.linkTo(queryTextField.top)
-                bottom.linkTo(queryTextField.bottom)
-                end.linkTo(parent.end, 8.dp)
-            }
-        ) {
-            IconButton(onClick = onPhotoFiltersClick) {
-                Icon(
-                    imageVector = Icons.Outlined.FilterList,
-                    contentDescription = stringResource(id = R.string.photo_filters)
-                )
-            }
-        }
-
-        SearchTabs(
-            pagerState = pagerState,
-            modifier = Modifier
-                .constrainAs(tabs) {
-                    top.linkTo(queryTextField.bottom)
-                    bottom.linkTo(parent.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    width = Dimension.fillToConstraints
-                }
-        )
     }
 }
 

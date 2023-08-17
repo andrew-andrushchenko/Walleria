@@ -81,6 +81,8 @@
     <string name="filter_color_blue">Blue</string>
     <string name="order">Order</string>
     <string name="clear_search_field">Clear search field</string>
+    <string name="recent_searches">Recent searches:</string>
+    <string name="clear_recent_searches">Clear all</string>
 
     <!--Authorization-->
     <string name="add_account">Add an account</string>
