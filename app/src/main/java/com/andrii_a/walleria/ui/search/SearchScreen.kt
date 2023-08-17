@@ -168,7 +168,7 @@ private fun TopBar(
             modifier = Modifier.constrainAs(backButton) {
                 top.linkTo(parent.top)
                 bottom.linkTo(tabs.top)
-                start.linkTo(parent.start, 16.dp)
+                start.linkTo(parent.start, 8.dp)
             }
         ) {
             Icon(
@@ -212,7 +212,6 @@ private fun TopBar(
                     focusManager.clearFocus()
                 }
             ),
-            textStyle = MaterialTheme.typography.titleMedium,
             modifier = Modifier.constrainAs(queryTextField) {
                 top.linkTo(backButton.top)
                 bottom.linkTo(backButton.bottom)
@@ -233,7 +232,7 @@ private fun TopBar(
             modifier = Modifier.constrainAs(filterButton) {
                 top.linkTo(queryTextField.top)
                 bottom.linkTo(queryTextField.bottom)
-                end.linkTo(parent.end, 16.dp)
+                end.linkTo(parent.end, 8.dp)
             }
         ) {
             IconButton(onClick = onPhotoFiltersClick) {
