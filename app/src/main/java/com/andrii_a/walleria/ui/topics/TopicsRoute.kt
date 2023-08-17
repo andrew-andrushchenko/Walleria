@@ -10,14 +10,14 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.andrii_a.walleria.ui.navigation.NavigationScreen
-import com.andrii_a.walleria.ui.profile.navigateToProfileScreen
 import com.andrii_a.walleria.ui.search.navigateToSearch
 import com.andrii_a.walleria.ui.topic_details.navigateToTopicDetails
 import com.google.accompanist.systemuicontroller.SystemUiController
 
 fun NavGraphBuilder.topicsBottomNavRoute(
     navController: NavController,
-    systemUiController: SystemUiController
+    systemUiController: SystemUiController,
+    openProfileBottomSheet: () -> Unit
 ) {
     composable(route = NavigationScreen.Topics.route) {
         val systemBarsColor = Color.Transparent
@@ -38,7 +38,7 @@ fun NavGraphBuilder.topicsBottomNavRoute(
             order = order,
             orderBy = viewModel::orderBy,
             navigateToTopicDetails = navController::navigateToTopicDetails,
-            navigateToProfileScreen = navController::navigateToProfileScreen,
+            navigateToProfileScreen = openProfileBottomSheet,
             navigateToSearchScreen = navController::navigateToSearch
         )
     }

@@ -1,7 +1,5 @@
 package com.andrii_a.walleria.ui.profile
 
-import android.content.res.Configuration.UI_MODE_NIGHT_NO
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import androidx.compose.animation.AnimatedContent
@@ -9,12 +7,12 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -33,10 +31,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -72,96 +68,89 @@ fun ProfileScreen(
     navigateToSettingsScreen: () -> Unit,
     navigateToAboutScreen: () -> Unit
 ) {
-    Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-        Surface(
-            color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
-            shape = RoundedCornerShape(28.dp)
-        ) {
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    //.navigationBarsPadding()
-                    .animateContentSize()
-            ) {
-                if (isUserLoggedIn) {
-                    LoggedInUserSection(
-                        userProfilePhotoUrl = userProfileData.profilePhotoUrl,
-                        userFullName = stringResource(
-                            id = R.string.user_full_name_formatted,
-                            userProfileData.firstName,
-                            userProfileData.lastName
-                        ),
-                        userNickname = userProfileData.nickname,
-                        userEmail = userProfileData.email,
-                        navigateToViewProfileScreen = {
-                            navigateToViewProfileScreen(
-                                UserNickname(userProfileData.nickname)
-                            )
-                        },
-                        navigateToEditProfileScreen = navigateToEditProfileScreen,
-                        onLogout = onLogout
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .navigationBarsPadding()
+            .animateContentSize()
+    ) {
+        if (isUserLoggedIn) {
+            LoggedInHeader(
+                userProfilePhotoUrl = userProfileData.profilePhotoUrl,
+                userFullName = stringResource(
+                    id = R.string.user_full_name_formatted,
+                    userProfileData.firstName,
+                    userProfileData.lastName
+                ),
+                userNickname = userProfileData.nickname,
+                userEmail = userProfileData.email,
+                navigateToViewProfileScreen = {
+                    navigateToViewProfileScreen(
+                        UserNickname(userProfileData.nickname)
                     )
+                },
+                navigateToEditProfileScreen = navigateToEditProfileScreen,
+                onLogout = onLogout
+            )
 
-                } else {
-                    LoggedOutUserSection(
-                        navigateToLoginScreen = navigateToLoginScreen,
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
-                }
-
-                Divider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp, vertical = 8.dp)
-                )
-
-                TextButton(
-                    onClick = navigateToSettingsScreen,
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(64.dp)
-                        .padding(horizontal = 16.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Settings,
-                        contentDescription = stringResource(id = R.string.settings)
-                    )
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Text(text = stringResource(id = R.string.settings))
-                }
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                TextButton(
-                    onClick = navigateToAboutScreen,
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(64.dp)
-                        .padding(horizontal = 16.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Info,
-                        contentDescription = stringResource(id = R.string.about)
-                    )
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Text(text = stringResource(id = R.string.about))
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-            }
+        } else {
+            LoggedOutHeader(
+                navigateToLoginScreen = navigateToLoginScreen,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
         }
+
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp, vertical = 8.dp)
+        )
+
+        TextButton(
+            onClick = navigateToSettingsScreen,
+            shape = RoundedCornerShape(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp)
+                .padding(horizontal = 16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Settings,
+                contentDescription = stringResource(id = R.string.settings)
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Text(text = stringResource(id = R.string.settings))
+        }
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        TextButton(
+            onClick = navigateToAboutScreen,
+            shape = RoundedCornerShape(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp)
+                .padding(horizontal = 16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Info,
+                contentDescription = stringResource(id = R.string.about)
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Text(text = stringResource(id = R.string.about))
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
 @Composable
-private fun LoggedOutUserSection(
+private fun LoggedOutHeader(
     navigateToLoginScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -246,7 +235,7 @@ private fun LoggedOutUserSection(
 }
 
 @Composable
-private fun LoggedInUserSection(
+private fun LoggedInHeader(
     userProfilePhotoUrl: String,
     userFullName: String,
     userNickname: String,
@@ -256,7 +245,7 @@ private fun LoggedInUserSection(
     onLogout: () -> Unit
 ) {
     Column(
-        verticalArrangement = Arrangement.SpaceAround,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
@@ -344,7 +333,13 @@ private fun ProfileActionRow(
                 contentDescription = stringResource(id = R.string.user_profile_view)
             )
 
-            Text(text = stringResource(id = R.string.user_profile_view))
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Text(
+                text = stringResource(id = R.string.user_profile_view),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         }
 
         Spacer(modifier = Modifier.width(4.dp))
@@ -359,7 +354,13 @@ private fun ProfileActionRow(
                 contentDescription = stringResource(id = R.string.edit_my_profile)
             )
 
-            Text(text = stringResource(id = R.string.user_profile_edit))
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Text(
+                text = stringResource(id = R.string.user_profile_edit),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         }
 
         Spacer(modifier = Modifier.width(4.dp))
@@ -374,7 +375,13 @@ private fun ProfileActionRow(
                 contentDescription = stringResource(id = R.string.logout)
             )
 
-            Text(text = stringResource(id = R.string.logout))
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Text(
+                text = stringResource(id = R.string.logout),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         }
     }
 }
@@ -433,8 +440,7 @@ private fun LogoutConfirmationRow(
     }
 }
 
-@Preview(uiMode = UI_MODE_NIGHT_NO)
-@Preview(uiMode = UI_MODE_NIGHT_YES)
+@Preview
 @Composable
 fun ProfileScreenPreview() {
     WalleriaTheme {

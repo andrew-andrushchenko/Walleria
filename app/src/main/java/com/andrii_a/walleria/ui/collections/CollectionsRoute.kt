@@ -12,14 +12,14 @@ import androidx.navigation.compose.composable
 import com.andrii_a.walleria.ui.collection_details.navigateToCollectionDetails
 import com.andrii_a.walleria.ui.navigation.NavigationScreen
 import com.andrii_a.walleria.ui.photo_details.navigateToPhotoDetails
-import com.andrii_a.walleria.ui.profile.navigateToProfileScreen
 import com.andrii_a.walleria.ui.search.navigateToSearch
 import com.andrii_a.walleria.ui.user_details.navigateToUserDetails
 import com.google.accompanist.systemuicontroller.SystemUiController
 
 fun NavGraphBuilder.collectionsBottomNavRoute(
     navController: NavController,
-    systemUiController: SystemUiController
+    systemUiController: SystemUiController,
+    openProfileBottomSheet: () -> Unit
 ) {
     composable(route = NavigationScreen.Collections.route) {
         val systemBarsColor = Color.Transparent
@@ -40,7 +40,7 @@ fun NavGraphBuilder.collectionsBottomNavRoute(
             collections = viewModel.collections,
             collectionsLayoutType = collectionsLayoutType,
             photosLoadQuality = photosLoadQuality,
-            navigateToProfileScreen = navController::navigateToProfileScreen,
+            navigateToProfileScreen = openProfileBottomSheet,
             navigateToSearchScreen = navController::navigateToSearch,
             navigateToPhotoDetails = navController::navigateToPhotoDetails,
             navigateToCollectionDetails = navController::navigateToCollectionDetails,

@@ -11,7 +11,6 @@ import com.andrii_a.walleria.ui.collection_details.collectionDetailsRoute
 import com.andrii_a.walleria.ui.collections.collectionsBottomNavRoute
 import com.andrii_a.walleria.ui.photo_details.photoDetailsRoute
 import com.andrii_a.walleria.ui.photos.photosBottomNavRoute
-import com.andrii_a.walleria.ui.profile.profileRoute
 import com.andrii_a.walleria.ui.profile_edit.editUserProfileRoute
 import com.andrii_a.walleria.ui.search.searchRoute
 import com.andrii_a.walleria.ui.settings.settingsRoute
@@ -23,17 +22,18 @@ import com.google.accompanist.systemuicontroller.SystemUiController
 @Composable
 fun MainNavigationHost(
     navHostController: NavHostController,
-    systemUiController: SystemUiController
+    systemUiController: SystemUiController,
+    openProfileBottomSheet: () -> Unit
 ) {
     NavHost(
         navController = navHostController,
         startDestination = NAVIGATION_BAR_GRAPH_ROUTE
     ) {
-        navigationBarGraph(navHostController, systemUiController)
+        navigationBarGraph(navHostController, systemUiController, openProfileBottomSheet)
 
         searchRoute(navHostController, systemUiController)
 
-        profileRoute(navHostController)
+        //profileRoute(navHostController)
 
         editUserProfileRoute(navHostController, systemUiController)
 
@@ -56,15 +56,16 @@ fun MainNavigationHost(
 
 fun NavGraphBuilder.navigationBarGraph(
     navHostController: NavHostController,
-    systemUiController: SystemUiController
+    systemUiController: SystemUiController,
+    openProfileBottomSheet: () -> Unit
 ) {
     navigation(
         route = NAVIGATION_BAR_GRAPH_ROUTE,
         startDestination = NavigationScreen.Photos.route
     ) {
-        photosBottomNavRoute(navHostController, systemUiController)
-        collectionsBottomNavRoute(navHostController, systemUiController)
-        topicsBottomNavRoute(navHostController, systemUiController)
+        photosBottomNavRoute(navHostController, systemUiController, openProfileBottomSheet)
+        collectionsBottomNavRoute(navHostController, systemUiController, openProfileBottomSheet)
+        topicsBottomNavRoute(navHostController, systemUiController, openProfileBottomSheet)
     }
 }
 
