@@ -4,13 +4,14 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,6 +23,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
@@ -105,24 +108,35 @@ fun ErrorItem(
     onRetry: () -> Unit
 ) {
     Card(
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(16.dp),
         modifier = modifier
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 16.dp)
-        ) {
+        ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
+            val (text, button) = createRefs()
+
             Text(
                 text = message,
+                style = MaterialTheme.typography.titleSmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(0.6f)
+                modifier = Modifier.constrainAs(text) {
+                    top.linkTo(parent.top, 16.dp)
+                    bottom.linkTo(parent.bottom, 16.dp)
+                    start.linkTo(parent.start, 16.dp)
+                    end.linkTo(button.start, 8.dp)
+
+                    width = Dimension.fillToConstraints
+                }
             )
 
             Button(
                 onClick = onRetry,
-                modifier = Modifier.weight(0.2f)
+                modifier = Modifier.constrainAs(button) {
+                    top.linkTo(text.top, 8.dp)
+                    bottom.linkTo(text.bottom, 8.dp)
+                    start.linkTo(text.end)
+                    end.linkTo(parent.end, 16.dp)
+                }
             ) {
                 Text(text = stringResource(id = R.string.action_retry))
             }
@@ -134,10 +148,7 @@ fun ErrorItem(
 @Composable
 fun ErrorItemPreview() {
     WalleriaTheme {
-        ErrorItem(
-            onRetry = {},
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-        )
+        ErrorItem(onRetry = {})
     }
 }
 
