@@ -1,6 +1,5 @@
 package com.andrii_a.walleria.ui.common.components
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -79,25 +78,33 @@ fun ErrorBanner(
         verticalArrangement = Arrangement.Center,
         modifier = modifier
     ) {
-        val composition by rememberLottieComposition(
-            spec = LottieCompositionSpec.RawRes(
-                if (isSystemInDarkTheme()) R.raw.error_animation_dark
-                else R.raw.error_animation_light
+        val dynamicProperties = rememberLottieDynamicProperties(
+            rememberLottieDynamicProperty(
+                property = LottieProperty.COLOR_FILTER,
+                value = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
+                    MaterialTheme.colorScheme.primary.hashCode(),
+                    BlendModeCompat.OVERLAY
+                ),
+                keyPath = arrayOf("**")
             )
+        )
+
+        val composition by rememberLottieComposition(
+            spec = LottieCompositionSpec.RawRes(R.raw.error_state_anim)
         )
 
         LottieAnimation(
             composition = composition,
-            iterations = Int.MAX_VALUE,
+            dynamicProperties = dynamicProperties,
+            iterations = 1,
             modifier = Modifier
-                .requiredSize(250.dp)
-                .scale(1.3f, 1.3f)
         )
 
         Text(
             text = message,
+            style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(start = 32.dp, end = 32.dp)
+            modifier = Modifier.padding(horizontal = 32.dp)
         )
 
         Spacer(modifier = Modifier.padding(bottom = 8.dp))
@@ -209,6 +216,19 @@ fun EmptyContentBannerPreview() {
         Surface {
             EmptyContentBanner(
                 modifier = Modifier.padding(16.dp)
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun ErrorBannerPreview() {
+    WalleriaTheme {
+        Surface {
+            ErrorBanner(
+                modifier = Modifier.padding(16.dp),
+                onRetry = {}
             )
         }
     }
