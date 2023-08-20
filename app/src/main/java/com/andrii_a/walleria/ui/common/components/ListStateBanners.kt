@@ -6,12 +6,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,9 +27,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.core.graphics.BlendModeColorFilterCompat
+import androidx.core.graphics.BlendModeCompat
+import com.airbnb.lottie.LottieProperty
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.airbnb.lottie.compose.rememberLottieDynamicProperties
+import com.airbnb.lottie.compose.rememberLottieDynamicProperty
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 
@@ -162,25 +169,47 @@ fun EmptyContentBanner(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
-        val composition by rememberLottieComposition(
-            spec = LottieCompositionSpec.RawRes(
-                if (isSystemInDarkTheme()) R.raw.empty_animation_dark
-                else R.raw.empty_animation_light
+        val dynamicProperties = rememberLottieDynamicProperties(
+            rememberLottieDynamicProperty(
+                property = LottieProperty.COLOR_FILTER,
+                value = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
+                    MaterialTheme.colorScheme.primary.hashCode(),
+                    BlendModeCompat.OVERLAY
+                ),
+                keyPath = arrayOf("**")
             )
+        )
+
+        val composition by rememberLottieComposition(
+            spec = LottieCompositionSpec.RawRes(R.raw.empty_state_anim)
         )
 
         LottieAnimation(
             composition = composition,
+            dynamicProperties = dynamicProperties,
             iterations = 1,
-            modifier = Modifier
-                .requiredSize(250.dp)
-                .scale(1.6f, 1.6f)
+            modifier = Modifier.scale(1.5f)
         )
+
+        Spacer(modifier = Modifier.height(48.dp))
 
         Text(
             text = message,
+            style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(horizontal = 32.dp)
         )
+    }
+}
+
+@Preview
+@Composable
+fun EmptyContentBannerPreview() {
+    WalleriaTheme {
+        Surface {
+            EmptyContentBanner(
+                modifier = Modifier.padding(16.dp)
+            )
+        }
     }
 }
