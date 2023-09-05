@@ -76,7 +76,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
 
     packaging {
@@ -92,7 +92,7 @@ dependencies {
 
     // Jetpack compose BOM
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))
-    implementation("androidx.compose.compiler:compiler:1.5.1")
+    implementation("androidx.compose.compiler:compiler:1.5.3")
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-util")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -108,7 +108,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
 
     // Navigation + compose
-    implementation("androidx.navigation:navigation-compose:2.7.0")
+    implementation("androidx.navigation:navigation-compose:2.7.1")
     implementation("androidx.hilt:hilt-navigation:1.0.0")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
@@ -124,12 +124,11 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.4.0")
 
     // Accompanist libs
-    //implementation("com.google.accompanist:accompanist-navigation-material:0.33.0-alpha")
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.31.6-rc")
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.32.0")
 
     // Dagger Hilt
-    implementation("com.google.dagger:hilt-android:2.47")
-    kapt("com.google.dagger:hilt-compiler:2.47")
+    implementation("com.google.dagger:hilt-android:2.48")
+    kapt("com.google.dagger:hilt-compiler:2.48")
 
     // Retrofit + GSON
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
