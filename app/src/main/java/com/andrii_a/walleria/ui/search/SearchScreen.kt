@@ -304,7 +304,7 @@ private fun Pages(
                             contentPadding = PaddingValues(
                                 top = 8.dp,
                                 bottom = WindowInsets.navigationBars.asPaddingValues()
-                                    .calculateBottomPadding() + 200.dp
+                                    .calculateBottomPadding() + 64.dp
                             ),
                             modifier = Modifier.fillMaxSize()
                         )
@@ -323,7 +323,7 @@ private fun Pages(
                             contentPadding = PaddingValues(
                                 top = 8.dp,
                                 bottom = WindowInsets.navigationBars.asPaddingValues()
-                                    .calculateBottomPadding() + 200.dp
+                                    .calculateBottomPadding() + 64.dp
                             ),
                             modifier = Modifier.fillMaxSize()
                         )
@@ -340,7 +340,7 @@ private fun Pages(
                             contentPadding = PaddingValues(
                                 top = 8.dp,
                                 bottom = WindowInsets.navigationBars.asPaddingValues()
-                                    .calculateBottomPadding() + 200.dp,
+                                    .calculateBottomPadding() + 64.dp,
                                 start = 8.dp,
                                 end = 8.dp
                             ),
