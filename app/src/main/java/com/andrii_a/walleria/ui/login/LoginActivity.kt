@@ -20,9 +20,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.andrii_a.walleria.R
 import com.andrii_a.walleria.data.util.UNSPLASH_AUTH_CALLBACK
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.CustomTabsHelper
+import com.andrii_a.walleria.ui.util.toast
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -51,8 +53,11 @@ class LoginActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
         setupCustomTabs()
+
         setContent {
             val systemUiController = rememberSystemUiController()
 
@@ -60,12 +65,27 @@ class LoginActivity : ComponentActivity() {
                 systemUiController.setSystemBarsColor(color = Color.Transparent)
             }
 
-            WalleriaTheme {
-                val state by viewModel.loginState.collectAsStateWithLifecycle()
+            val state by viewModel.loginState.collectAsStateWithLifecycle()
 
+            LaunchedEffect(key1 = state) {
+                when (state) {
+                    is LoginState.Empty -> Unit
+                    is LoginState.Loading -> Unit
+                    is LoginState.Error -> {
+                        applicationContext.toast(R.string.login_failed)
+                    }
+
+                    is LoginState.Success -> {
+                        viewModel.retrieveAndSaveUserData((state as LoginState.Success).accessToken)
+                        applicationContext.toast(R.string.login_successful)
+                        finish()
+                    }
+                }
+            }
+
+            WalleriaTheme {
                 LoginScreen(
-                    loginState = state,
-                    retrieveUserData = viewModel::retrieveAndSaveUserData,
+                    isLoading = state is LoginState.Loading,
                     onLoginClicked = { openChromeCustomTab(viewModel.loginUrl) },
                     onJoinClicked = { openChromeCustomTab(viewModel.joinUrl) },
                     onNavigateBack = ::finish
