@@ -62,11 +62,6 @@ val md_theme_dark_surfaceTint = Color(0xFFD0BCFF)
 val md_theme_dark_outlineVariant = Color(0xFF49454F)
 val md_theme_dark_scrim = Color(0xFF000000)
 
-val TopicStatusOpenTextColorLight = Color(0xFF006AF6)
-val TopicStatusOpenTextColorDark = Color(0xFF009AF6)
-val TopicStatusClosedTextColorLight = Color(0xFFEB5757)
-val TopicStatusClosedTextColorDark = Color(0xFFEB9797)
-
 val LoginScreenAccentColor = Color(0xFFB08C67)
 val PhotoDetailsActionButtonContainerColor = Color(0xFFF3F4F8)
 val PhotoDetailsActionButtonContentColor = Color(0xFF303030)

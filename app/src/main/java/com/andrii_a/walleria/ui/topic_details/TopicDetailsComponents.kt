@@ -1,5 +1,6 @@
 package com.andrii_a.walleria.ui.topic_details
 
+import android.content.res.Configuration
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,7 +42,6 @@ fun TopicDetailsDescriptionHeader(
             Text(
                 text = it,
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onBackground,
                 maxLines = if (expanded) Int.MAX_VALUE else 4,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
@@ -66,7 +67,8 @@ fun TopicDetailsDescriptionHeader(
     }
 }
 
-@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun TopicDetailsDescriptionHeaderPreview() {
     WalleriaTheme {
@@ -105,11 +107,13 @@ fun TopicDetailsDescriptionHeaderPreview() {
             previewPhotos = null
         )
 
-        TopicDetailsDescriptionHeader(
-            topic = topic,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp, vertical = 16.dp)
-        )
+        Surface {
+            TopicDetailsDescriptionHeader(
+                topic = topic,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp, vertical = 16.dp)
+            )
+        }
     }
 }

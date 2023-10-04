@@ -2,7 +2,6 @@ package com.andrii_a.walleria.ui.common.components.lists
 
 import android.graphics.drawable.ColorDrawable
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -21,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
@@ -46,10 +44,6 @@ import com.andrii_a.walleria.ui.common.components.ErrorBanner
 import com.andrii_a.walleria.ui.common.components.ErrorItem
 import com.andrii_a.walleria.ui.common.components.LoadingListItem
 import com.andrii_a.walleria.ui.common.components.ScrollToTopLayout
-import com.andrii_a.walleria.ui.theme.TopicStatusClosedTextColorDark
-import com.andrii_a.walleria.ui.theme.TopicStatusClosedTextColorLight
-import com.andrii_a.walleria.ui.theme.TopicStatusOpenTextColorDark
-import com.andrii_a.walleria.ui.theme.TopicStatusOpenTextColorLight
 import com.andrii_a.walleria.ui.util.abbreviatedNumberString
 import com.andrii_a.walleria.ui.util.getUrlByQuality
 import com.andrii_a.walleria.ui.util.ownerUsername
@@ -268,29 +262,12 @@ fun DefaultTopicItem(
 fun StatusIndicatorText(status: TopicStatus, modifier: Modifier = Modifier) {
     Text(
         text = stringResource(id = status.titleRes),
-        style = MaterialTheme.typography.titleSmall,
         maxLines = 1,
-        color = status.color,
+        color = MaterialTheme.colorScheme.secondaryContainer,
         overflow = TextOverflow.Ellipsis,
         modifier = modifier
             .clip(RoundedCornerShape(50))
-            .background(color = status.color.copy(alpha = 0.1f))
-            .padding(8.dp)
+            .background(color = MaterialTheme.colorScheme.secondary)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
     )
 }
-
-private val TopicStatus.color: Color
-    @Composable
-    get() = if (isSystemInDarkTheme()) {
-        when (this) {
-            TopicStatus.OPEN -> TopicStatusOpenTextColorDark
-            TopicStatus.CLOSED -> TopicStatusClosedTextColorDark
-            else -> MaterialTheme.colorScheme.onSurface
-        }
-    } else {
-        when (this) {
-            TopicStatus.OPEN -> TopicStatusOpenTextColorLight
-            TopicStatus.CLOSED -> TopicStatusClosedTextColorLight
-            else -> MaterialTheme.colorScheme.onSurface
-        }
-    }
