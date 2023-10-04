@@ -11,6 +11,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AlternateEmail
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.outlined.EditNote
+import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.MailOutline
+import androidx.compose.material.icons.outlined.WorkOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -78,7 +82,7 @@ fun EditUserProfileScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(innerPadding)
-                .padding(horizontal = 8.dp)
+                .padding(horizontal = 16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
             OutlinedTextField(
@@ -126,13 +130,8 @@ fun EditUserProfileScreen(
                 },
                 leadingIcon = {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_email_outlined),
+                        imageVector = Icons.Outlined.MailOutline,
                         contentDescription = stringResource(id = R.string.email_hint)
-                    )
-                },
-                supportingText = {
-                    Text(
-                        text = stringResource(id = R.string.enter_valid_email),
                     )
                 },
                 isError = !state.isEmailValid,
@@ -147,7 +146,7 @@ fun EditUserProfileScreen(
                 },
                 leadingIcon = {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_portfolio_outlined),
+                        imageVector = Icons.Outlined.WorkOutline,
                         contentDescription = stringResource(id = R.string.portfolio_hint)
                     )
                 },
@@ -177,7 +176,7 @@ fun EditUserProfileScreen(
                 },
                 leadingIcon = {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_location),
+                        imageVector = Icons.Outlined.LocationOn,
                         contentDescription = stringResource(id = R.string.location_hint)
                     )
                 },
@@ -192,7 +191,7 @@ fun EditUserProfileScreen(
                 },
                 leadingIcon = {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_edit_outlined),
+                        imageVector = Icons.Outlined.EditNote,
                         contentDescription = stringResource(id = R.string.bio_hint)
                     )
                 },
