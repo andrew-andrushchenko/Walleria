@@ -47,7 +47,7 @@ class NestedScrollLayoutState(
             scope: CoroutineScope,
         ): Saver<NestedScrollLayoutState, *> = listSaver(
             save = {
-                listOf(it.offset, it._maxOffset.value)
+                listOf(it.offset, it._maxOffset.floatValue)
             },
             restore = {
                 NestedScrollLayoutState(
@@ -92,7 +92,7 @@ class NestedScrollLayoutState(
 
     private var changes = 0f
     private var _offset = Animatable(initialOffset)
-    private val _maxOffset = mutableStateOf(initialMaxOffset)
+    private val _maxOffset = mutableFloatStateOf(initialMaxOffset)
 
     private suspend fun snapTo(value: Float) {
         _offset.snapTo(value)
@@ -104,7 +104,7 @@ class NestedScrollLayoutState(
         }
         val realVelocity = velocity.withSign(changes)
         changes = 0f
-        return if (offset > _maxOffset.value && offset <= 0) {
+        return if (offset > _maxOffset.floatValue && offset <= 0) {
             _offset.animateDecay(
                 realVelocity,
                 exponentialDecay()
@@ -121,10 +121,10 @@ class NestedScrollLayoutState(
     }
 
     fun drag(delta: Float): Float =
-        if (delta < 0 && offset > _maxOffset.value || delta > 0 && offset < 0f) {
+        if (delta < 0 && offset > _maxOffset.floatValue || delta > 0 && offset < 0f) {
             changes = delta
             scope.launch {
-                snapTo((offset + delta).coerceIn(_maxOffset.value, 0f))
+                snapTo((offset + delta).coerceIn(_maxOffset.floatValue, 0f))
             }
             delta
         } else {
@@ -132,7 +132,7 @@ class NestedScrollLayoutState(
         }
 
     fun updateBounds(maxOffset: Float) {
-        _maxOffset.value = maxOffset
+        _maxOffset.floatValue = maxOffset
         _offset.updateBounds(maxOffset, 0f)
     }
 }
