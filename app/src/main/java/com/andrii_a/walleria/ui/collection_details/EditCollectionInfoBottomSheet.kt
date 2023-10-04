@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -55,7 +56,6 @@ fun EditCollectionInfoBottomSheet(
         mutableStateOf(collection.isPrivate)
     }
 
-    // horizontal = 16.dp
     Column(modifier = Modifier.padding(contentPadding)) {
         OutlinedTextField(
             value = title,
@@ -217,23 +217,26 @@ private fun DeleteConfirmationRow(
 @Composable
 fun EditCollectionInfoBottomSheetPreview() {
     WalleriaTheme {
-        EditCollectionInfoBottomSheet(
-            collection = Collection(
-                id = "",
-                title = "Title",
-                description = null,
-                curated = false,
-                featured = false,
-                totalPhotos = 100,
-                isPrivate = false,
-                tags = null,
-                coverPhoto = null,
-                previewPhotos = null,
-                links = null,
-                user = null
-            ),
-            onEvent = {},
-            onDismiss = {}
-        )
+        Surface {
+            EditCollectionInfoBottomSheet(
+                collection = Collection(
+                    id = "",
+                    title = "Title",
+                    description = null,
+                    curated = false,
+                    featured = false,
+                    totalPhotos = 100,
+                    isPrivate = false,
+                    tags = null,
+                    coverPhoto = null,
+                    previewPhotos = null,
+                    links = null,
+                    user = null
+                ),
+                contentPadding = PaddingValues(16.dp),
+                onEvent = {},
+                onDismiss = {}
+            )
+        }
     }
 }
