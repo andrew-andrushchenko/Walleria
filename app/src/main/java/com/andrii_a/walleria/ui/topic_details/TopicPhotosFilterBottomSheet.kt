@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -133,13 +134,16 @@ fun TopicPhotosFilterBottomSheet(
 @Composable
 fun TopicPhotosFilterBottomSheetPreview() {
     WalleriaTheme {
-        TopicPhotosFilterBottomSheet(
-            topicPhotosFilters = TopicPhotosFilters(
-                order = PhotoListDisplayOrder.LATEST,
-                orientation = TopicPhotosOrientation.LANDSCAPE
-            ),
-            onApplyClick = {},
-            onDismiss = {}
-        )
+        Surface {
+            TopicPhotosFilterBottomSheet(
+                topicPhotosFilters = TopicPhotosFilters(
+                    order = PhotoListDisplayOrder.LATEST,
+                    orientation = TopicPhotosOrientation.LANDSCAPE
+                ),
+                contentPadding = PaddingValues(16.dp),
+                onApplyClick = {},
+                onDismiss = {}
+            )
+        }
     }
 }
