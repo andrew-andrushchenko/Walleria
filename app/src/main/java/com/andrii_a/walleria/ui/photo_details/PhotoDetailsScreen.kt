@@ -61,6 +61,8 @@ import com.andrii_a.walleria.ui.common.*
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
 import com.andrii_a.walleria.ui.login.LoginActivity
 import com.andrii_a.walleria.ui.photo_details.components.*
+import com.andrii_a.walleria.ui.theme.PhotoDetailsActionButtonContainerColor
+import com.andrii_a.walleria.ui.theme.PhotoDetailsActionButtonContentColor
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.*
 import kotlinx.coroutines.launch
@@ -457,6 +459,8 @@ private fun BottomControls(
                 likeCount?.let { photoLikes = it.value }
             },
             elevation = FloatingActionButtonDefaults.elevation(0.dp),
+            containerColor = PhotoDetailsActionButtonContainerColor,
+            contentColor = PhotoDetailsActionButtonContentColor,
             modifier = Modifier.constrainAs(likeButton) {
                 top.linkTo(parent.top, 4.dp)
                 start.linkTo(parent.start, 8.dp)
@@ -484,6 +488,8 @@ private fun BottomControls(
             },
             onClick = onNavigateToCollectPhoto,
             elevation = FloatingActionButtonDefaults.elevation(0.dp),
+            containerColor = PhotoDetailsActionButtonContainerColor,
+            contentColor = PhotoDetailsActionButtonContentColor,
             modifier = Modifier.constrainAs(collectButton) {
                 top.linkTo(likeButton.top)
                 start.linkTo(likeButton.end, 4.dp)
