@@ -2,7 +2,6 @@ package com.andrii_a.walleria.ui.user_details
 
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
@@ -18,8 +17,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.FileDownload
+import androidx.compose.material.icons.outlined.GroupAdd
+import androidx.compose.material.icons.outlined.PeopleOutline
+import androidx.compose.material.icons.outlined.Photo
+import androidx.compose.material.icons.outlined.PhotoAlbum
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,7 +35,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -74,6 +81,7 @@ fun UserInfoBottomSheet(
                 onTagClicked = { query ->
                     navigateToSearch(SearchQuery(query))
                 },
+                contentPadding = PaddingValues(horizontal = 16.dp),
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -91,7 +99,7 @@ fun UserInfoBottomSheet(
 
 @Composable
 private fun UserStatsItem(
-    @DrawableRes icon: Int,
+    icon: ImageVector,
     @StringRes titleRes: Int,
     value: Long,
     modifier: Modifier = Modifier
@@ -99,7 +107,7 @@ private fun UserStatsItem(
     Column(modifier = modifier) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
-                painter = painterResource(id = icon),
+                imageVector = icon,
                 contentDescription = stringResource(id = titleRes)
             )
 
@@ -130,13 +138,13 @@ private fun UserStatistics(
     modifier: Modifier = Modifier
 ) {
     // Triples of (icon, title, value)
-    val statsGridItems = listOf<Triple<@DrawableRes Int, @StringRes Int, Long>>(
-        Triple(R.drawable.ic_download_outlined, R.string.downloads, user.downloads),
-        Triple(R.drawable.ic_photos_outlined, R.string.photos, user.totalPhotos),
-        Triple(R.drawable.ic_liked_photo_outlined, R.string.total_likes, user.totalLikes),
-        Triple(R.drawable.ic_collection_outlined, R.string.collections, user.totalCollections),
-        Triple(R.drawable.ic_followers_outlined, R.string.followers, user.followersCount),
-        Triple(R.drawable.ic_following_outlined, R.string.following, user.followingCount)
+    val statsGridItems = listOf<Triple<ImageVector, @StringRes Int, Long>>(
+        Triple(Icons.Outlined.FileDownload, R.string.downloads, user.downloads),
+        Triple(Icons.Outlined.Photo, R.string.photos, user.totalPhotos),
+        Triple(Icons.Outlined.FavoriteBorder, R.string.total_likes, user.totalLikes),
+        Triple(Icons.Outlined.PhotoAlbum, R.string.collections, user.totalCollections),
+        Triple(Icons.Outlined.PeopleOutline, R.string.followers, user.followersCount),
+        Triple(Icons.Outlined.GroupAdd, R.string.following, user.followingCount)
     )
 
     LazyVerticalGrid(
@@ -179,6 +187,8 @@ fun UserInfoBottomSheetPreview() {
             photos = null
         )
 
-        UserInfoBottomSheet(user = user, navigateToSearch = {})
+        Surface {
+            UserInfoBottomSheet(user = user, navigateToSearch = {})
+        }
     }
 }

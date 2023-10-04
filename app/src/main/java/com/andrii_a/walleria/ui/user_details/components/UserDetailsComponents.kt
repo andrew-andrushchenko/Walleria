@@ -14,6 +14,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Cases
+import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -61,7 +64,7 @@ private fun UserSocialMediaRow(userSocial: UserSocialMediaLinks) {
         userSocial.portfolioUrl?.let {
             IconButton(onClick = { context.openLinkInBrowser(it) }) {
                 Icon(
-                    painterResource(id = R.drawable.ic_portfolio_outlined),
+                    imageVector = Icons.Outlined.Cases,
                     contentDescription = stringResource(id = R.string.portfolio_url)
                 )
             }
@@ -136,7 +139,7 @@ fun UserHeader(
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_location),
+                        imageVector = Icons.Outlined.LocationOn,
                         contentDescription = stringResource(id = R.string.location_hint)
                     )
 
