@@ -67,9 +67,9 @@ val SearchResultsPhotoOrientation.iconRes: Int
     @DrawableRes
     get() = when (this) {
         SearchResultsPhotoOrientation.ANY -> 0
-        SearchResultsPhotoOrientation.LANDSCAPE -> R.drawable.ic_landscape
-        SearchResultsPhotoOrientation.PORTRAIT -> R.drawable.ic_portrait
-        SearchResultsPhotoOrientation.SQUARISH -> R.drawable.ic_squarish
+        SearchResultsPhotoOrientation.LANDSCAPE -> R.drawable.ic_landscape_outlined
+        SearchResultsPhotoOrientation.PORTRAIT -> R.drawable.ic_portrait_outlined
+        SearchResultsPhotoOrientation.SQUARISH -> R.drawable.ic_square_outlined
     }
 
 val TopicPhotosOrientation.titleRes: Int
@@ -83,9 +83,9 @@ val TopicPhotosOrientation.titleRes: Int
 val TopicPhotosOrientation.iconRes: Int
     @DrawableRes
     get() = when (this) {
-        TopicPhotosOrientation.LANDSCAPE -> R.drawable.ic_landscape
-        TopicPhotosOrientation.PORTRAIT -> R.drawable.ic_portrait
-        TopicPhotosOrientation.SQUARISH -> R.drawable.ic_squarish
+        TopicPhotosOrientation.LANDSCAPE -> R.drawable.ic_landscape_outlined
+        TopicPhotosOrientation.PORTRAIT -> R.drawable.ic_portrait_outlined
+        TopicPhotosOrientation.SQUARISH -> R.drawable.ic_square_outlined
     }
 
 val TopicsDisplayOrder.titleRes: Int
