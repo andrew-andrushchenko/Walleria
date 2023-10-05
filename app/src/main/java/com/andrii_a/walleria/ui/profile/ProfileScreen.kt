@@ -31,6 +31,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -190,6 +191,8 @@ private fun LoggedOutHeader(
                     textAlign = TextAlign.Center
                 )
 
+                Spacer(modifier = Modifier.height(4.dp))
+
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -227,6 +230,8 @@ private fun LoggedOutHeader(
                     imageVector = Icons.Outlined.AddCircleOutline,
                     contentDescription = stringResource(id = R.string.add_account)
                 )
+
+                Spacer(modifier = Modifier.width(8.dp))
 
                 Text(text = stringResource(id = R.string.add_account))
             }
@@ -448,20 +453,22 @@ fun ProfileScreenPreview() {
             mutableStateOf(false)
         }
 
-        ProfileScreen(
-            isUserLoggedIn = isUserLoggedIn,
-            userProfileData = MyProfileData(
-                nickname = "john",
-                firstName = "John",
-                lastName = "Smith",
-                email = "john.smith@example.com"
-            ),
-            navigateToLoginScreen = { isUserLoggedIn = true },
-            onLogout = { isUserLoggedIn = false },
-            navigateToViewProfileScreen = {},
-            navigateToEditProfileScreen = {},
-            navigateToSettingsScreen = {},
-            navigateToAboutScreen = {}
-        )
+        Surface {
+            ProfileScreen(
+                isUserLoggedIn = isUserLoggedIn,
+                userProfileData = MyProfileData(
+                    nickname = "john",
+                    firstName = "John",
+                    lastName = "Smith",
+                    email = "john.smith@example.com"
+                ),
+                navigateToLoginScreen = { isUserLoggedIn = true },
+                onLogout = { isUserLoggedIn = false },
+                navigateToViewProfileScreen = {},
+                navigateToEditProfileScreen = {},
+                navigateToSettingsScreen = {},
+                navigateToAboutScreen = {}
+            )
+        }
     }
 }
