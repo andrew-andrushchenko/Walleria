@@ -62,7 +62,8 @@ fun TopicDetailsDescriptionHeader(
 
         StatusChip(
             status = topic.status,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            color = MaterialTheme.colorScheme.secondary
         )
     }
 }
