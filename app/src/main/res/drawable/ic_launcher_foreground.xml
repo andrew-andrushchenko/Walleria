@@ -3,22 +3,18 @@
     android:height="108dp"
     android:viewportWidth="84"
     android:viewportHeight="60">
-    <group
-        android:scaleX="0.43516484"
-        android:scaleY="0.31083202"
-        android:translateX="24.907692"
-        android:translateY="20.916798">
-        <path
-            android:fillColor="#2A313C"
-            android:pathData="M54.213,12.5m-12.5,0a12.5,12.5 0,1 1,25 0a12.5,12.5 0,1 1,-25 0" />
-        <path
-            android:fillColor="#F3F4F8"
-            android:pathData="M54.213,12.5m-7.031,0a7.031,7.031 0,1 1,14.062 0a7.031,7.031 0,1 1,-14.062 0" />
-        <path
-            android:fillColor="#2A313C"
-            android:pathData="M57.25,56.842a3,3 0,0 1,-4.572 0.76L15.459,25.12c-2.594,-2.265 0.049,-6.402 3.194,-5.001l35.011,15.596a3,3 0,0 0,3.208 -0.493l12.483,-11.035c2.548,-2.253 6.285,0.802 4.585,3.747L57.25,56.842Z" />
-        <path
-            android:fillColor="#2A313C"
-            android:pathData="M30.462,57.582a3,3 0,0 1,-4.58 -0.753L4.65,20.052c-1.456,-2.522 1.174,-5.43 3.83,-4.235l41.7,18.771c1.989,0.896 2.388,3.547 0.75,4.988L30.462,57.582Z" />
-    </group>
+  <group android:scaleX="0.43516484"
+      android:scaleY="0.31083202"
+      android:translateX="24.907692"
+      android:translateY="20.916798">
+    <path
+        android:pathData="M66.713,12.5c0,6.904 -5.597,12.5 -12.5,12.5 -6.904,0 -12.5,-5.596 -12.5,-12.5S47.309,0 54.213,0c6.903,0 12.5,5.596 12.5,12.5ZM47.486,12.5a6.727,6.727 0,1 0,13.454 0,6.727 6.727,0 0,0 -13.454,0Z"
+        android:fillColor="#2A313C"/>
+    <path
+        android:pathData="M57.25,56.842a3,3 0,0 1,-4.572 0.76L15.459,25.12c-2.594,-2.265 0.049,-6.402 3.194,-5.001l35.011,15.596a3,3 0,0 0,3.208 -0.493l12.483,-11.035c2.548,-2.253 6.285,0.802 4.585,3.747L57.25,56.842Z"
+        android:fillColor="#2A313C"/>
+    <path
+        android:pathData="M30.462,57.582a3,3 0,0 1,-4.58 -0.753L4.65,20.052c-1.456,-2.522 1.174,-5.43 3.83,-4.235l41.7,18.771c1.989,0.896 2.388,3.547 0.75,4.988L30.462,57.582Z"
+        android:fillColor="#2A313C"/>
+  </group>
 </vector>
