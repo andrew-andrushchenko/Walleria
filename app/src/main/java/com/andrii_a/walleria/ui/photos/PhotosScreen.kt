@@ -15,7 +15,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
@@ -98,7 +100,13 @@ fun PhotosScreen(
                     addNavigationBarPadding = true,
                     photosLoadQuality = photosLoadQuality,
                     listState = listState,
-                    contentPadding = innerPadding,
+                    contentPadding = PaddingValues(
+                        start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+                        end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
+                        top = innerPadding.calculateTopPadding(),
+                        bottom = innerPadding.calculateBottomPadding() +
+                                dimensionResource(id = R.dimen.navigation_bar_height) * 2
+                    ),
                     modifier = Modifier.fillMaxSize()
                 )
             }
@@ -116,7 +124,13 @@ fun PhotosScreen(
                     addNavigationBarPadding = true,
                     photosLoadQuality = photosLoadQuality,
                     listState = listState,
-                    contentPadding = innerPadding,
+                    contentPadding = PaddingValues(
+                        start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+                        end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
+                        top = innerPadding.calculateTopPadding(),
+                        bottom = innerPadding.calculateBottomPadding() +
+                                dimensionResource(id = R.dimen.navigation_bar_height) * 2
+                    ),
                     modifier = Modifier.fillMaxSize()
                 )
             }
@@ -130,7 +144,13 @@ fun PhotosScreen(
                     photosLoadQuality = photosLoadQuality,
                     gridState = gridState,
                     addNavigationBarPadding = true,
-                    contentPadding = innerPadding,
+                    contentPadding = PaddingValues(
+                        start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+                        end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
+                        top = innerPadding.calculateTopPadding(),
+                        bottom = innerPadding.calculateBottomPadding() +
+                                dimensionResource(id = R.dimen.navigation_bar_height) * 2
+                    ),
                     modifier = Modifier.fillMaxSize()
                 )
             }
