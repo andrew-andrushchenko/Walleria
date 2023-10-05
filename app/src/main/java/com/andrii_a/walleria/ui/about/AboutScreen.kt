@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -26,6 +27,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -83,14 +85,21 @@ fun AboutScreenContent(
         verticalArrangement = Arrangement.Center,
         modifier = modifier
     ) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground),
-            contentDescription = stringResource(id = R.string.app_name),
-            tint = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.size(64.dp)
-        )
+        Surface(
+            shape = CircleShape,
+            tonalElevation = 8.dp
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                contentDescription = stringResource(id = R.string.app_name),
+                tint = MaterialTheme.colorScheme.surfaceTint,
+                modifier = Modifier
+                    .size(64.dp)
+                    .scale(1.5f)
+            )
+        }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         Text(
             text = stringResource(id = R.string.app_name),
@@ -166,7 +175,7 @@ fun AboutScreenContent(
 fun AboutScreenPreview() {
     WalleriaTheme {
         Surface {
-            AboutScreen(navigateBack = {}, /*openPhoto = {}*/)
+            AboutScreen(navigateBack = {} /*openPhoto = {}*/)
         }
     }
 }
