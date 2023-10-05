@@ -1,7 +1,5 @@
 package com.andrii_a.walleria.ui.about
 
-import android.net.Uri
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +13,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.outlined.MailOutline
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -34,18 +33,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.andrii_a.walleria.R
-import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.openGithubProfile
 import com.andrii_a.walleria.ui.util.openInstagramProfile
-import com.andrii_a.walleria.ui.util.openLinkInBrowser
 import com.andrii_a.walleria.ui.util.writeALetterTo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(
     navigateBack: () -> Unit,
-    openPhoto: (PhotoId) -> Unit
+    //openPhoto: (PhotoId) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -65,7 +62,7 @@ fun AboutScreen(
         }
     ) { innerPadding ->
         AboutScreenContent(
-            openPhoto = openPhoto,
+            //openPhoto = openPhoto,
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxWidth()
@@ -76,7 +73,7 @@ fun AboutScreen(
 
 @Composable
 fun AboutScreenContent(
-    openPhoto: (PhotoId) -> Unit,
+    //openPhoto: (PhotoId) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -101,6 +98,8 @@ fun AboutScreenContent(
             maxLines = 1
         )
 
+        Spacer(modifier = Modifier.height(8.dp))
+
         Text(
             text = stringResource(id = R.string.powered_by_unsplash),
             style = MaterialTheme.typography.titleSmall,
@@ -119,6 +118,8 @@ fun AboutScreenContent(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         Text(
             text = stringResource(id = R.string.developer_username),
@@ -143,7 +144,7 @@ fun AboutScreenContent(
 
             IconButton(onClick = { context.writeALetterTo(context.getString(R.string.developer_email)) }) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_email_outlined),
+                    imageVector = Icons.Outlined.MailOutline,
                     contentDescription = stringResource(id = R.string.developer_email)
                 )
             }
@@ -157,39 +158,6 @@ fun AboutScreenContent(
                 )
             }
         }
-
-        Divider(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-        )
-
-        Text(
-            text = stringResource(id = R.string.login_screen_photo_owner),
-            style = MaterialTheme.typography.titleMedium,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier
-                .clickable {
-                    openPhoto(PhotoId("9fHMo1-5Io8"))
-                }
-                .padding(8.dp)
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = stringResource(id = R.string.project_icons),
-            style = MaterialTheme.typography.titleMedium,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier
-                .clickable {
-                    val link = Uri.decode(context.getString(R.string.link_to_icons_project))
-                    context.openLinkInBrowser(link)
-                }
-                .padding(8.dp)
-        )
     }
 }
 
@@ -198,7 +166,7 @@ fun AboutScreenContent(
 fun AboutScreenPreview() {
     WalleriaTheme {
         Surface {
-            AboutScreen(navigateBack = {}, openPhoto = {})
+            AboutScreen(navigateBack = {}, /*openPhoto = {}*/)
         }
     }
 }

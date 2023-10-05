@@ -7,7 +7,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.andrii_a.walleria.ui.navigation.Screen
-import com.andrii_a.walleria.ui.photo_details.navigateToPhotoDetails
 import com.google.accompanist.systemuicontroller.SystemUiController
 
 fun NavGraphBuilder.aboutRoute(
@@ -27,7 +26,7 @@ fun NavGraphBuilder.aboutRoute(
 
         AboutScreen(
             navigateBack = navController::navigateUp,
-            openPhoto = navController::navigateToPhotoDetails
+            //openPhoto = navController::navigateToPhotoDetails
         )
     }
 }
