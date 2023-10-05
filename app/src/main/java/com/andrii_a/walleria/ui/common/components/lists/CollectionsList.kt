@@ -27,8 +27,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -57,6 +59,7 @@ import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.domain.models.photo.Photo
+import com.andrii_a.walleria.domain.models.photo.PhotoUrls
 import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.ui.common.CollectionId
 import com.andrii_a.walleria.ui.common.PhotoId
@@ -145,7 +148,7 @@ fun CollectionsList(
                                                 top = 8.dp,
                                                 start = 16.dp,
                                                 end = 16.dp,
-                                                bottom = 48.dp
+                                                bottom = 32.dp
                                             )
                                     )
                                 }
@@ -306,10 +309,7 @@ private fun DefaultCollectionItem(
         }
     }
 
-    Column(
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        modifier = modifier
-    ) {
+    Column(modifier = modifier) {
         PhotoTiles(
             previewPhotos = previewPhotos,
             previewPhotosQuality = photoQuality,
@@ -453,13 +453,13 @@ private fun DetailsRow(
 
         Text(
             text = title,
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.titleLarge,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.constrainAs(titleText) {
-                top.linkTo(parent.top)
-                start.linkTo(parent.start)
+                start.linkTo(parent.start, 8.dp)
                 end.linkTo(openButton.start, 8.dp)
+                bottom.linkTo(infoText.top, 4.dp)
                 width = Dimension.fillToConstraints
             }
         )
@@ -470,12 +470,12 @@ private fun DetailsRow(
                 curatorUsername,
                 totalPhotos.abbreviatedNumberString
             ),
+            style = MaterialTheme.typography.titleSmall,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .constrainAs(infoText) {
-                    top.linkTo(titleText.bottom, 4.dp)
-                    bottom.linkTo(parent.bottom)
+                    bottom.linkTo(openButton.bottom)
                     start.linkTo(titleText.start)
                     end.linkTo(openButton.start, 8.dp)
                     width = Dimension.fillToConstraints
@@ -486,6 +486,9 @@ private fun DetailsRow(
         FloatingActionButton(
             onClick = onOpenCollectionClick,
             shape = RoundedCornerShape(16.dp),
+            elevation = FloatingActionButtonDefaults.elevation(
+                defaultElevation = 0.dp
+            ),
             content = {
                 Icon(
                     imageVector = Icons.Default.ArrowForwardIos,
@@ -493,9 +496,9 @@ private fun DetailsRow(
                 )
             },
             modifier = Modifier.constrainAs(openButton) {
-                top.linkTo(titleText.top)
-                bottom.linkTo(infoText.bottom)
-                end.linkTo(parent.end, 4.dp)
+                top.linkTo(parent.top, 8.dp)
+                bottom.linkTo(parent.bottom, 8.dp)
+                end.linkTo(parent.end, 8.dp)
                 start.linkTo(infoText.end)
             }
         )
@@ -563,6 +566,140 @@ private fun SimpleCollectionItem(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 color = Color.White
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun DefaultCollectionItemPreview() {
+    WalleriaTheme {
+        Surface {
+            val user = User(
+                id = "",
+                username = "ABC",
+                firstName = "John",
+                lastName = "Smith",
+                bio = "",
+                location = "",
+                totalLikes = 100,
+                totalPhotos = 100,
+                totalCollections = 100,
+                followersCount = 100_000,
+                followingCount = 56,
+                downloads = 99_000,
+                profileImage = null,
+                social = null,
+                tags = null,
+                photos = null
+            )
+
+            val photos = listOf(
+                Photo(
+                    id = "",
+                    width = 200,
+                    height = 300,
+                    color = "#E0E0E0",
+                    blurHash = "",
+                    views = 200,
+                    downloads = 200,
+                    likes = 10,
+                    likedByUser = false,
+                    description = "",
+                    exif = null,
+                    location = null,
+                    tags = null,
+                    relatedCollections = null,
+                    currentUserCollections = null,
+                    sponsorship = null,
+                    urls = PhotoUrls("", "", "", "", ""),
+                    links = null,
+                    user = user
+                ),
+                Photo(
+                    id = "",
+                    width = 200,
+                    height = 300,
+                    color = "#E0E0E0",
+                    blurHash = "",
+                    views = 200,
+                    downloads = 200,
+                    likes = 10,
+                    likedByUser = false,
+                    description = "",
+                    exif = null,
+                    location = null,
+                    tags = null,
+                    relatedCollections = null,
+                    currentUserCollections = null,
+                    sponsorship = null,
+                    urls = PhotoUrls("", "", "", "", ""),
+                    links = null,
+                    user = user
+                ),
+                Photo(
+                    id = "",
+                    width = 200,
+                    height = 300,
+                    color = "#E0E0E0",
+                    blurHash = "",
+                    views = 200,
+                    downloads = 200,
+                    likes = 10,
+                    likedByUser = false,
+                    description = "",
+                    exif = null,
+                    location = null,
+                    tags = null,
+                    relatedCollections = null,
+                    currentUserCollections = null,
+                    sponsorship = null,
+                    urls = PhotoUrls("", "", "", "", ""),
+                    links = null,
+                    user = user
+                ),
+            )
+
+            val collection = Collection(
+                id = "",
+                title = "Walleria",
+                description = null,
+                curated = false,
+                featured = false,
+                totalPhotos = 856_000,
+                isPrivate = false,
+                tags = null,
+                coverPhoto = photos[0],
+                previewPhotos = photos,
+                links = null,
+                user = user
+            )
+
+            DefaultCollectionItem(
+                collection = collection,
+                photoQuality = PhotoQuality.MEDIUM,
+                onPhotoClicked = {},
+                onOpenCollectionClick = {},
+                onUserProfileClick = {},
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun DetailsRowPreview() {
+    WalleriaTheme {
+        Surface {
+            DetailsRow(
+                title = "Walleria",
+                curatorUsername = "John Smith",
+                totalPhotos = 180_000,
+                onUserProfileClick = {},
+                onOpenCollectionClick = {},
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
