@@ -293,8 +293,7 @@ fun CheckBoxRow(
                 value = checked,
                 onValueChange = onCheckedChange,
                 role = Role.Checkbox
-            )
-            .padding(horizontal = 16.dp),
+            ),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Checkbox(

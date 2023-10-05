@@ -39,7 +39,7 @@ fun MainNavigationHost(
 
         photoDetailsRoute(navHostController, systemUiController)
 
-        collectPhotoRoute(navHostController)
+        collectPhotoRoute(navHostController, systemUiController)
 
         collectionDetailsRoute(navHostController, systemUiController)
 

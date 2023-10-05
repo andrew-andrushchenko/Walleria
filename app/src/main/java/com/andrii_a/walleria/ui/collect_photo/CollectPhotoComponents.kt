@@ -4,7 +4,6 @@ import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.graphics.drawable.ColorDrawable
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,24 +11,25 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AddCircleOutline
+import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material.icons.outlined.RemoveCircleOutline
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -49,12 +49,10 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.paging.compose.LazyPagingItems
@@ -64,8 +62,8 @@ import coil.request.ImageRequest
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.collection.Collection
-import com.andrii_a.walleria.ui.common.components.CheckBoxRow
 import com.andrii_a.walleria.ui.common.PhotoId
+import com.andrii_a.walleria.ui.common.components.CheckBoxRow
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.abbreviatedNumberString
 import com.andrii_a.walleria.ui.util.getUrlByQuality
@@ -76,7 +74,6 @@ import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun UserCollectionsList(
     lazyCollectionItems: LazyPagingItems<Collection>,
@@ -86,31 +83,17 @@ fun UserCollectionsList(
     collectPhoto: (collectionId: String, photoId: String) -> SharedFlow<CollectState>,
     dropPhoto: (collectionId: String, photoId: String) -> SharedFlow<CollectState>,
     photoId: PhotoId,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues()
 ) {
     val scope = rememberCoroutineScope()
 
     LazyColumn(
         state = listState,
-        contentPadding = PaddingValues(
-            bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-        ),
+        contentPadding = contentPadding,
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = modifier.defaultMinSize(minHeight = 500.dp)
+        modifier = modifier
     ) {
-        stickyHeader {
-            Text(
-                text = stringResource(id = R.string.select_collections),
-                style = MaterialTheme.typography.headlineSmall,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(color = MaterialTheme.colorScheme.surface)
-                    .padding(top = 16.dp, start = 16.dp, end = 16.dp)
-            )
-        }
-
         item {
             CreateNewCollectionButton(
                 onClick = onCreateNewCollection,
@@ -237,13 +220,13 @@ fun UserCollectionItem(
 
         if (isPrivate) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_lock_outlined),
+                imageVector = Icons.Outlined.Lock,
                 tint = Color.White,
                 contentDescription = null,
                 modifier = Modifier
                     .constrainAs(lockIcon) {
                         start.linkTo(parent.start, margin = 8.dp)
-                        bottom.linkTo(titleText.top, margin = 4.dp)
+                        bottom.linkTo(titleText.top, margin = 8.dp)
                     }
                     .size(18.dp)
             )
@@ -257,8 +240,8 @@ fun UserCollectionItem(
             color = Color.White,
             modifier = Modifier.constrainAs(titleText) {
                 start.linkTo(parent.start, margin = 8.dp)
-                bottom.linkTo(photosCountText.top, margin = 4.dp)
-                end.linkTo(actionButton.start, margin = 0.dp)
+                bottom.linkTo(photosCountText.top, margin = 8.dp)
+                end.linkTo(actionButton.start, margin = 8.dp)
                 width = Dimension.fillToConstraints
             }
         )
@@ -268,7 +251,7 @@ fun UserCollectionItem(
                 id = R.string.photos_title_template,
                 totalPhotos.abbreviatedNumberString
             ),
-            style = MaterialTheme.typography.titleSmall,
+            style = MaterialTheme.typography.bodySmall,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             color = Color.White,
@@ -299,7 +282,7 @@ fun UserCollectionItem(
                 is CollectState.Collected -> {
                     IconButton(onClick = onClick) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_remove_outlined),
+                            imageVector = Icons.Outlined.RemoveCircleOutline,
                             tint = Color.White,
                             contentDescription = null,
                             modifier = Modifier.size(24.dp)
@@ -310,7 +293,7 @@ fun UserCollectionItem(
                 is CollectState.NotCollected -> {
                     IconButton(onClick = onClick) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_add_outlined),
+                            imageVector = Icons.Outlined.AddCircleOutline,
                             tint = Color.White,
                             contentDescription = null,
                             modifier = Modifier.size(24.dp)
@@ -319,20 +302,6 @@ fun UserCollectionItem(
                 }
             }
         }
-    }
-}
-
-@Preview
-@Composable
-fun UserCollectionItemPreview() {
-    WalleriaTheme {
-        UserCollectionItem(
-            title = "My collection has extremely huge title and it does not fit anymore",
-            totalPhotos = 100000,
-            isPrivate = true,
-            collectState = CollectState.Loading,
-            onClick = {},
-        )
     }
 }
 
@@ -364,20 +333,6 @@ fun CreateNewCollectionButton(
     }
 }
 
-@Preview(uiMode = UI_MODE_NIGHT_NO)
-@Preview(uiMode = UI_MODE_NIGHT_YES)
-@Composable
-fun CreateNewCollectionButtonPrev() {
-    WalleriaTheme {
-        CreateNewCollectionButton(
-            onClick = {},
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-        )
-    }
-}
-
 @Composable
 fun CreateCollectionAndCollectDialog(
     photoId: String,
@@ -395,21 +350,17 @@ fun CreateCollectionAndCollectDialog(
     var description by rememberSaveable { mutableStateOf("") }
     var isPrivate by rememberSaveable { mutableStateOf(false) }
 
-    Dialog(onDismissRequest = onDismiss) {
-        Surface(
-            shape = RoundedCornerShape(16.dp),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = stringResource(id = R.string.create_new_and_add),
-                    style = MaterialTheme.typography.headlineSmall,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        icon = {
+            Icon(
+                Icons.Outlined.AddCircleOutline,
+                contentDescription = null,
+            )
+        },
+        title = { Text(text = stringResource(id = R.string.create_new_and_add)) },
+        text = {
+            Column {
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
@@ -434,35 +385,62 @@ fun CreateCollectionAndCollectDialog(
                     labelText = stringResource(id = R.string.collection_private),
                     modifier = Modifier.fillMaxWidth()
                 )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Button(
-                    onClick = {
-                        scope.launch {
-                            createAndCollect(
-                                title,
-                                description,
-                                isPrivate,
-                                photoId
-                            ).collect { result ->
-                                when (result) {
-                                    is CollectionCreationResult.Success -> onDismiss()
-                                    is CollectionCreationResult.Loading -> Unit
-                                    is CollectionCreationResult.Error -> Unit
-                                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    scope.launch {
+                        createAndCollect(
+                            title,
+                            description,
+                            isPrivate,
+                            photoId
+                        ).collect { result ->
+                            when (result) {
+                                is CollectionCreationResult.Success -> onDismiss()
+                                is CollectionCreationResult.Loading -> Unit
+                                is CollectionCreationResult.Error -> Unit
                             }
                         }
-                    },
-                    modifier = Modifier.align(Alignment.End)
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.done_collection_creation),
-                        style = MaterialTheme.typography.titleMedium
-                    )
+                    }
                 }
+            ) {
+                Text(text = stringResource(id = R.string.action_done))
+            }
+        },
+        dismissButton = {
+            OutlinedButton(onClick = onDismiss) {
+                Text(text = stringResource(id = R.string.action_cancel))
             }
         }
+    )
+}
+
+@Preview
+@Composable
+fun UserCollectionItemPreview() {
+    WalleriaTheme {
+        UserCollectionItem(
+            title = "My collection has extremely huge title and it does not fit anymore",
+            totalPhotos = 100000,
+            isPrivate = true,
+            collectState = CollectState.NotCollected(null),
+            onClick = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+fun CreateNewCollectionButtonPrev() {
+    WalleriaTheme {
+        CreateNewCollectionButton(
+            onClick = {},
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+        )
     }
 }
 

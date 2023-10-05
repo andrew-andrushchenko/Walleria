@@ -19,11 +19,13 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -48,13 +50,14 @@ class CollectPhotoViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val userNickname: SharedFlow<String> =
+    private val userNickname: StateFlow<String> =
         userAccountPreferencesRepository
             .myProfileData
             .map { it.nickname }
-            .shareIn(
+            .stateIn(
                 scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000L)
+                started = SharingStarted.WhileSubscribed(5000L),
+                initialValue = "",
             )
 
     private val _userCollectionsContainingPhoto: MutableStateFlow<MutableList<String>> =
