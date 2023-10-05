@@ -4,7 +4,7 @@ import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.andrii_a.walleria.R
-import com.andrii_a.walleria.core.BackendResult
+import com.andrii_a.walleria.domain.network.BackendResult
 import com.andrii_a.walleria.domain.models.preferences.MyProfileData
 import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
 import com.andrii_a.walleria.domain.repository.LoginRepository

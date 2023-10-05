@@ -1,4 +1,4 @@
-package com.andrii_a.walleria.core
+package com.andrii_a.walleria.domain.network
 
 sealed interface BackendResult<out T> {
     data object Empty : BackendResult<Nothing>

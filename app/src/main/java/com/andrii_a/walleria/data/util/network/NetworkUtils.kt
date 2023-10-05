@@ -1,6 +1,6 @@
 package com.andrii_a.walleria.data.util.network
 
-import com.andrii_a.walleria.core.BackendResult
+import com.andrii_a.walleria.domain.network.BackendResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

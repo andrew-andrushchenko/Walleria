@@ -2,7 +2,7 @@ package com.andrii_a.walleria.domain.repository
 
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
-import com.andrii_a.walleria.core.BackendResult
+import com.andrii_a.walleria.domain.network.BackendResult
 import com.andrii_a.walleria.domain.models.collect_photo.CollectionPhotoResult
 import com.andrii_a.walleria.domain.models.collection.Collection
 

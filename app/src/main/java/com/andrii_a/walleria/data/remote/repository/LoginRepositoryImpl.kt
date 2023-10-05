@@ -6,7 +6,7 @@ import com.andrii_a.walleria.data.util.CLIENT_ID
 import com.andrii_a.walleria.data.util.CLIENT_SECRET
 import com.andrii_a.walleria.data.util.UNSPLASH_AUTH_CALLBACK
 import com.andrii_a.walleria.data.util.WALLERIA_SCHEMA
-import com.andrii_a.walleria.core.BackendResult
+import com.andrii_a.walleria.domain.network.BackendResult
 import com.andrii_a.walleria.data.util.network.backendRequest
 import com.andrii_a.walleria.domain.models.login.AccessToken
 import com.andrii_a.walleria.domain.models.login.MyProfile

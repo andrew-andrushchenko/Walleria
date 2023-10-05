@@ -3,7 +3,7 @@ package com.andrii_a.walleria.data.remote.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.andrii_a.walleria.core.BackendResult
+import com.andrii_a.walleria.domain.network.BackendResult
 import com.andrii_a.walleria.domain.PhotoListDisplayOrder
 import com.andrii_a.walleria.domain.TopicPhotosOrientation
 import com.andrii_a.walleria.data.remote.services.PhotoService

@@ -3,7 +3,7 @@ package com.andrii_a.walleria.domain.repository
 import androidx.paging.PagingData
 import com.andrii_a.walleria.domain.PhotoListDisplayOrder
 import com.andrii_a.walleria.domain.TopicPhotosOrientation
-import com.andrii_a.walleria.core.BackendResult
+import com.andrii_a.walleria.domain.network.BackendResult
 import com.andrii_a.walleria.domain.models.photo.Photo
 import kotlinx.coroutines.flow.Flow
 

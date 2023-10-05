@@ -1,4 +1,4 @@
-package com.andrii_a.walleria.core
+package com.andrii_a.walleria.domain
 
 import javax.inject.Qualifier
 

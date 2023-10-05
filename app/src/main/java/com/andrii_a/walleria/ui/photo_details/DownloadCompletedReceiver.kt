@@ -7,7 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.database.Cursor
 import com.andrii_a.walleria.R
-import com.andrii_a.walleria.core.ApplicationScope
+import com.andrii_a.walleria.domain.ApplicationScope
 import com.andrii_a.walleria.domain.repository.PhotoRepository
 import com.andrii_a.walleria.ui.util.toast
 import dagger.hilt.android.AndroidEntryPoint

@@ -1,6 +1,6 @@
 package com.andrii_a.walleria.di
 
-import com.andrii_a.walleria.core.ApplicationScope
+import com.andrii_a.walleria.domain.ApplicationScope
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

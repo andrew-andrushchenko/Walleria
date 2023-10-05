@@ -2,8 +2,8 @@ package com.andrii_a.walleria.ui.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.andrii_a.walleria.core.ApplicationScope
-import com.andrii_a.walleria.core.BackendResult
+import com.andrii_a.walleria.domain.ApplicationScope
+import com.andrii_a.walleria.domain.network.BackendResult
 import com.andrii_a.walleria.domain.models.login.AccessToken
 import com.andrii_a.walleria.domain.repository.LoginRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
