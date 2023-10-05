@@ -1,5 +1,6 @@
 package com.andrii_a.walleria.ui.profile
 
+import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import androidx.compose.animation.AnimatedContent
@@ -42,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -174,13 +176,21 @@ private fun LoggedOutHeader(
                 .clickable(onClick = { showAddAccountSection = !showAddAccountSection })
                 .padding(8.dp)
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                contentDescription = stringResource(id = R.string.app_name),
-                modifier = Modifier.size(64.dp)
-            )
+            Surface(
+                shape = CircleShape,
+                tonalElevation = 8.dp
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                    contentDescription = stringResource(id = R.string.app_name),
+                    tint = MaterialTheme.colorScheme.surfaceTint,
+                    modifier = Modifier
+                        .size(64.dp)
+                        .scale(1.5f)
+                )
+            }
 
-            Spacer(modifier = Modifier.width(4.dp))
+            Spacer(modifier = Modifier.width(12.dp))
 
             Column {
                 Text(
@@ -445,7 +455,8 @@ private fun LogoutConfirmationRow(
     }
 }
 
-@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun ProfileScreenPreview() {
     WalleriaTheme {
