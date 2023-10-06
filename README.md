@@ -1,7 +1,7 @@
 # Walleria
 ![Walleria](screenshots/Walleria.png)
 
-The simple and beautiful Material You photo client for Android powered by [Unsplash](https://unsplash.com). This is an **unofficial** application, exploring the feasibility of some conceptions is the goal of this project.
+A simple and beautiful Material You photo client for Android powered by [Unsplash](https://unsplash.com). This is an **unofficial** application, exploring the feasibility of some conceptions is the goal of this project.
 
 If you like this project or inspired by any ideas of this project, please star it without any hesitation. Also, feel free to suggest something or contribute 😊.
 # About
