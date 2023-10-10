@@ -56,6 +56,17 @@ interface PhotoService {
         @Path("id") id: String
     ): PhotoDTO
 
+    @GET("photos/random")
+    suspend fun getRandomPhotos(
+        @Query("collections") collectionId: String?,
+        @Query("featured") featured: Boolean?,
+        @Query("username") username: String?,
+        @Query("query") query: String?,
+        @Query("orientation") orientation: String?,
+        @Query("content_filter") contentFilter: String?,
+        @Query("count") count: Int?
+    ): List<PhotoDTO>
+
     @POST("photos/{id}/like")
     suspend fun likePhoto(
         @Path("id") id: String,

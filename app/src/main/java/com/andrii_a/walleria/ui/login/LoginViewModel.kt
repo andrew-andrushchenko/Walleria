@@ -3,12 +3,22 @@ package com.andrii_a.walleria.ui.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.andrii_a.walleria.domain.ApplicationScope
-import com.andrii_a.walleria.domain.network.BackendResult
 import com.andrii_a.walleria.domain.models.login.AccessToken
+import com.andrii_a.walleria.domain.models.photo.Photo
+import com.andrii_a.walleria.domain.network.BackendResult
 import com.andrii_a.walleria.domain.repository.LoginRepository
+import com.andrii_a.walleria.domain.repository.PhotoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,6 +32,7 @@ sealed interface LoginState {
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginRepository: LoginRepository,
+    photoRepository: PhotoRepository,
     @ApplicationScope private val applicationScope: CoroutineScope
 ) : ViewModel() {
 
@@ -31,6 +42,22 @@ class LoginViewModel @Inject constructor(
 
     private val _loginState: MutableStateFlow<LoginState> = MutableStateFlow(LoginState.Empty)
     val loginState: StateFlow<LoginState> = _loginState.asStateFlow()
+
+    private val _bannerPhoto: MutableStateFlow<Photo?> = MutableStateFlow(null)
+    val bannerPhoto: StateFlow<Photo?> = _bannerPhoto.asStateFlow()
+
+    init {
+        photoRepository.getRandomPhoto().onEach { result ->
+            when (result) {
+                is BackendResult.Empty,
+                is BackendResult.Error,
+                is BackendResult.Loading -> Unit
+                is BackendResult.Success -> {
+                    _bannerPhoto.update { result.value }
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
 
     fun getAccessToken(code: String) {
         flow {

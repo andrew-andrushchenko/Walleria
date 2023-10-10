@@ -83,8 +83,11 @@ class LoginActivity : ComponentActivity() {
                 }
             }
 
+            val bannerPhoto by viewModel.bannerPhoto.collectAsStateWithLifecycle()
+
             WalleriaTheme {
                 LoginScreen(
+                    bannerPhoto = bannerPhoto,
                     isLoading = state is LoginState.Loading,
                     onLoginClicked = { openChromeCustomTab(viewModel.loginUrl) },
                     onJoinClicked = { openChromeCustomTab(viewModel.joinUrl) },

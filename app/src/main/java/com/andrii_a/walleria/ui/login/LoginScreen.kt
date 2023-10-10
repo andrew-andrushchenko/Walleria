@@ -24,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,13 +47,18 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.andrii_a.walleria.R
+import com.andrii_a.walleria.domain.PhotoQuality
+import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.ui.common.components.LoadingBanner
-import com.andrii_a.walleria.ui.theme.LoginScreenAccentColor
 import com.andrii_a.walleria.ui.theme.WalleriaLogoTextStyle
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
+import com.andrii_a.walleria.ui.util.accentColorForLoginScreen
+import com.andrii_a.walleria.ui.util.getUrlByQuality
+import com.andrii_a.walleria.ui.util.primaryColorInt
 
 @Composable
 fun LoginScreen(
+    bannerPhoto: Photo?,
     isLoading: Boolean,
     onLoginClicked: () -> Unit,
     onJoinClicked: () -> Unit,
@@ -61,9 +67,9 @@ fun LoginScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(stringResource(id = R.string.login_screen_image_asset_url))
+                .data(bannerPhoto?.getUrlByQuality(quality = PhotoQuality.HIGH))
                 .crossfade(durationMillis = 1000)
-                .placeholder(ColorDrawable(LoginScreenAccentColor.toArgb()))
+                .placeholder(ColorDrawable(bannerPhoto?.primaryColorInt ?: Color.Gray.toArgb()))
                 .build(),
             contentDescription = stringResource(id = R.string.topic_cover_photo),
             contentScale = ContentScale.Crop,
@@ -92,6 +98,7 @@ fun LoginScreen(
         )
 
         BottomSection(
+            accentColor = bannerPhoto?.accentColorForLoginScreen ?: Color.White,
             onLoginClicked = onLoginClicked,
             onJoinClicked = onJoinClicked,
             modifier = Modifier
@@ -148,6 +155,7 @@ private fun TopSection(
 
 @Composable
 private fun BottomSection(
+    accentColor: Color,
     onLoginClicked: () -> Unit,
     onJoinClicked: () -> Unit,
     modifier: Modifier = Modifier
@@ -175,7 +183,7 @@ private fun BottomSection(
                         append(stringResource(id = R.string.login_screen_slogan_p1))
                     }
 
-                    withStyle(style = SpanStyle(LoginScreenAccentColor)) {
+                    withStyle(style = SpanStyle(accentColor)) {
                         append(stringResource(id = R.string.login_screen_slogan_p2))
                     }
                 },
@@ -188,7 +196,10 @@ private fun BottomSection(
 
             Button(
                 onClick = onLoginClicked,
-                colors = ButtonDefaults.buttonColors(containerColor = LoginScreenAccentColor),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = accentColor,
+                    contentColor = contentColorFor(accentColor)
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp)
@@ -218,7 +229,7 @@ private fun BottomSection(
                 Text(
                     text = stringResource(id = R.string.join),
                     fontWeight = FontWeight.Bold,
-                    color = LoginScreenAccentColor,
+                    color = accentColor,
                     modifier = Modifier
                         .clip(RoundedCornerShape(16.dp))
                         .clickable { onJoinClicked() }
@@ -235,6 +246,7 @@ private fun BottomSection(
 fun LoginScreenPreview() {
     WalleriaTheme {
         LoginScreen(
+            bannerPhoto = null,
             isLoading = false,
             onLoginClicked = {},
             onJoinClicked = {},

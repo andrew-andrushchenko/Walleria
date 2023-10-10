@@ -42,5 +42,13 @@ val Photo.primaryColorInt: Int
 val Photo.primaryColorComposable: ComposeColor
     get() = ComposeColor(this.primaryColorInt)
 
+val Photo.accentColorForLoginScreen: ComposeColor
+    @Composable
+    get() = if (!isBrightColor(this.primaryColorInt)) {
+        contentColorFor(this.primaryColorComposable)
+    } else {
+        this.primaryColorComposable
+    }
+
 val Photo.downloadFilename: String
     get() = "${this.id}_${this.userNickname}_unsplash.jpg"

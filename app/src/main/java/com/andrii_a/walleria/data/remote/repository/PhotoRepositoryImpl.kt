@@ -15,6 +15,8 @@ import com.andrii_a.walleria.data.remote.source.photo.UserPhotosPagingSource
 import com.andrii_a.walleria.data.util.PAGE_SIZE
 import com.andrii_a.walleria.data.util.network.backendRequest
 import com.andrii_a.walleria.data.util.network.backendRequestFlow
+import com.andrii_a.walleria.domain.SearchResultsContentFilter
+import com.andrii_a.walleria.domain.SearchResultsPhotoOrientation
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.repository.PhotoRepository
 import kotlinx.coroutines.flow.Flow
@@ -81,6 +83,25 @@ class PhotoRepositoryImpl(private val photoService: PhotoService) : PhotoReposit
         backendRequestFlow {
             photoService.getPhoto(photoId).toPhoto()
         }
+
+    override fun getRandomPhoto(
+        collectionId: String?,
+        featured: Boolean,
+        username: String?,
+        query: String?,
+        orientation: SearchResultsPhotoOrientation,
+        contentFilter: SearchResultsContentFilter
+    ): Flow<BackendResult<Photo>> = backendRequestFlow {
+        photoService.getRandomPhotos(
+            collectionId = collectionId,
+            featured = featured,
+            username = username,
+            query = query,
+            orientation = orientation.value,
+            contentFilter = contentFilter.value,
+            count = 1
+        ).first().toPhoto()
+    }
 
     override suspend fun likePhoto(id: String): BackendResult<Unit> = backendRequest {
         photoService.likePhoto(id)
