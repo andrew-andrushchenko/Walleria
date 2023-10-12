@@ -1,5 +1,11 @@
 package com.andrii_a.walleria.ui.photo_details
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -31,7 +37,23 @@ fun NavGraphBuilder.photoDetailsRoute(
                 type = NavType.StringType
                 nullable = false
             }
-        )
+        ),
+        enterTransition = {
+            fadeIn(
+                animationSpec = tween(300, easing = LinearEasing)
+            ) + slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Start,
+                animationSpec = spring(stiffness = Spring.StiffnessMedium)
+            )
+        },
+        popEnterTransition = {
+            fadeIn(
+                animationSpec = tween(300, easing = LinearEasing)
+            ) + slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.End,
+                animationSpec = spring(stiffness = Spring.StiffnessMedium)
+            )
+        },
     ) {
         val systemBarsColors = Color.Transparent
         val isDark = false
