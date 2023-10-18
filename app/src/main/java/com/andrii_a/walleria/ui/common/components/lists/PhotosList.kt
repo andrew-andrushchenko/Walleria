@@ -1,10 +1,10 @@
 package com.andrii_a.walleria.ui.common.components.lists
 
+import android.graphics.Bitmap
 import android.graphics.drawable.ColorDrawable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -27,14 +27,16 @@ import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridS
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -43,14 +45,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.drawable.toDrawable
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
+import com.andrii_a.walleria.domain.models.photo.PhotoUrls
+import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.common.components.EmptyContentBanner
@@ -59,11 +65,14 @@ import com.andrii_a.walleria.ui.common.components.ErrorItem
 import com.andrii_a.walleria.ui.common.components.LoadingListItem
 import com.andrii_a.walleria.ui.common.components.ScrollToTopLayout
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
+import com.andrii_a.walleria.ui.util.BlurHashDecoder
 import com.andrii_a.walleria.ui.util.getUrlByQuality
 import com.andrii_a.walleria.ui.util.getUserProfileImageUrlOrEmpty
-import com.andrii_a.walleria.ui.util.primaryColorComposable
+import com.andrii_a.walleria.ui.util.primaryColorInt
 import com.andrii_a.walleria.ui.util.userFullName
 import com.andrii_a.walleria.ui.util.userNickname
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun PhotosList(
@@ -112,12 +121,11 @@ fun PhotosList(
                             photo?.let {
                                 if (isCompact) {
                                     SimplePhotoItem(
-                                        width = photo.width.toFloat(),
-                                        height = photo.height.toFloat(),
-                                        photoUrl = photo.getUrlByQuality(photosLoadQuality),
-                                        photoPlaceholderColor = photo.primaryColorComposable,
+                                        photo = photo,
+                                        photosLoadQuality = photosLoadQuality,
                                         onPhotoClicked = { onPhotoClicked(PhotoId(it.id)) },
                                         modifier = Modifier
+                                            .fillMaxWidth()
                                             .padding(
                                                 start = 16.dp,
                                                 end = 16.dp,
@@ -126,15 +134,12 @@ fun PhotosList(
                                     )
                                 } else {
                                     DefaultPhotoItem(
-                                        width = photo.width.toFloat(),
-                                        height = photo.height.toFloat(),
-                                        photoUrl = photo.getUrlByQuality(photosLoadQuality),
-                                        photoPlaceholderColor = photo.primaryColorComposable,
-                                        userProfileImageUrl = photo.getUserProfileImageUrlOrEmpty(),
-                                        username = photo.userFullName,
+                                        photo = photo,
+                                        photosLoadQuality = photosLoadQuality,
                                         onPhotoClicked = { onPhotoClicked(PhotoId(it.id)) },
                                         onUserClick = { onUserProfileClicked(UserNickname(photo.userNickname)) },
                                         modifier = Modifier
+                                            .fillMaxWidth()
                                             .padding(
                                                 start = 16.dp,
                                                 end = 16.dp,
@@ -235,10 +240,8 @@ fun PhotosGrid(
                             val photo = lazyPhotoItems[index]
                             photo?.let {
                                 SimplePhotoItem(
-                                    width = photo.width.toFloat(),
-                                    height = photo.height.toFloat(),
-                                    photoUrl = photo.getUrlByQuality(quality = photosLoadQuality),
-                                    photoPlaceholderColor = photo.primaryColorComposable,
+                                    photo = photo,
+                                    photosLoadQuality = photosLoadQuality,
                                     onPhotoClicked = { onPhotoClicked(PhotoId(photo.id)) },
                                     shape = RoundedCornerShape(16.dp)
                                 )
@@ -288,110 +291,65 @@ fun PhotosGrid(
 }
 
 @Composable
+fun SimplePhotoItem(
+    photo: Photo,
+    photosLoadQuality: PhotoQuality,
+    onPhotoClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+    shape: Shape = RoundedCornerShape(16.dp)
+) {
+    val context = LocalContext.current
+
+    val placeholderBitmap by produceState<Bitmap?>(initialValue = null) {
+        value = withContext(Dispatchers.Default) {
+            BlurHashDecoder.decode(
+                blurHash = photo.blurHash,
+                width = 4,
+                height = 3
+            )
+        }
+    }
+
+    AsyncImage(
+        model = ImageRequest.Builder(context)
+            .data(photo.getUrlByQuality(quality = photosLoadQuality))
+            .crossfade(durationMillis = 1000)
+            .placeholder(placeholderBitmap?.toDrawable(context.resources))
+            .fallback(placeholderBitmap?.toDrawable(context.resources))
+            .error(ColorDrawable(photo.primaryColorInt))
+            .build(),
+        contentScale = ContentScale.Crop,
+        contentDescription = stringResource(id = R.string.photo),
+        modifier = modifier
+            .aspectRatio(photo.width.toFloat() / photo.height.toFloat())
+            .fillMaxWidth()
+            .clip(shape)
+            .clickable(onClick = onPhotoClicked)
+    )
+}
+
+@Composable
 fun DefaultPhotoItem(
-    width: Float,
-    height: Float,
-    photoUrl: String,
-    photoPlaceholderColor: Color,
-    userProfileImageUrl: String,
-    username: String,
+    photo: Photo,
+    photosLoadQuality: PhotoQuality,
     onPhotoClicked: () -> Unit,
     onUserClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
-        horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
     ) {
         UserRow(
-            userProfileImageUrl = userProfileImageUrl,
-            username = username,
+            userProfileImageUrl = photo.getUserProfileImageUrlOrEmpty(),
+            username = photo.userFullName,
             onUserClick = onUserClick
         )
 
-        val painter = rememberAsyncImagePainter(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(photoUrl)
-                .crossfade(durationMillis = 1000)
-                .placeholder(ColorDrawable(photoPlaceholderColor.toArgb()))
-                .error(ColorDrawable(photoPlaceholderColor.toArgb()))
-                .build(),
-            contentScale = ContentScale.Fit
-        )
-
-        AspectRatioImage(
-            width = width,
-            height = height,
-            description = stringResource(id = R.string.photo),
-            painter = painter,
-            onClick = onPhotoClicked
-        )
-    }
-}
-
-@Composable
-fun SimplePhotoItem(
-    width: Float,
-    height: Float,
-    photoUrl: String,
-    photoPlaceholderColor: Color,
-    onPhotoClicked: () -> Unit,
-    modifier: Modifier = Modifier,
-    shape: Shape = RoundedCornerShape(16.dp)
-) {
-    val painter = rememberAsyncImagePainter(
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(photoUrl)
-            .crossfade(durationMillis = 1000)
-            .placeholder(ColorDrawable(photoPlaceholderColor.toArgb()))
-            .error(ColorDrawable(photoPlaceholderColor.toArgb()))
-            .build(),
-        contentScale = ContentScale.Fit
-    )
-
-    AspectRatioImage(
-        width = width,
-        height = height,
-        description = stringResource(id = R.string.photo),
-        painter = painter,
-        onClick = onPhotoClicked,
-        shape = shape,
-        modifier = modifier
-    )
-}
-
-@Composable
-fun AspectRatioImage(
-    width: Float,
-    height: Float,
-    description: String,
-    painter: Painter,
-    modifier: Modifier = Modifier,
-    shape: Shape = RoundedCornerShape(16.dp),
-    clickable: Boolean = true,
-    onClick: () -> Unit = {}
-) {
-    Box(modifier = modifier) {
-        val aspectRatio = width / height
-        val imageModifier = if (clickable) {
-            Modifier
-                .aspectRatio(aspectRatio)
-                .fillMaxWidth()
-                .clip(shape)
-                .clickable(onClick = onClick)
-        } else {
-            Modifier
-                .aspectRatio(aspectRatio)
-                .fillMaxWidth()
-                .clip(shape)
-        }
-
-        Image(
-            painter = painter,
-            contentDescription = description,
-            contentScale = ContentScale.Fit,
-            modifier = imageModifier
+        SimplePhotoItem(
+            photo = photo,
+            photosLoadQuality = photosLoadQuality,
+            onPhotoClicked = onPhotoClicked
         )
     }
 }
@@ -441,29 +399,54 @@ fun UserRow(
 @Composable
 fun DefaultPhotoItemPreview() {
     WalleriaTheme {
-        DefaultPhotoItem(
-            width = 100f,
-            height = 70f,
-            photoUrl = "",
-            photoPlaceholderColor = Color.Gray,
-            userProfileImageUrl = "",
-            username = "John Smith",
-            onPhotoClicked = {},
-            onUserClick = {}
+        val user = User(
+            id = "",
+            username = "ABC",
+            firstName = "John",
+            lastName = "Smith",
+            bio = null,
+            location = null,
+            totalLikes = 0,
+            totalPhotos = 0,
+            totalCollections = 0,
+            followersCount = 0,
+            followingCount = 0,
+            downloads = 0,
+            profileImage = null,
+            social = null,
+            tags = null,
+            photos = null
         )
-    }
-}
 
-@Preview
-@Composable
-fun SimplePhotoItemPreview() {
-    WalleriaTheme {
-        SimplePhotoItem(
-            width = 100f,
-            height = 50f,
-            photoUrl = "",
-            photoPlaceholderColor = Color.Gray,
-            onPhotoClicked = {}
+        val photo = Photo(
+            id = "",
+            width = 4000,
+            height = 3000,
+            color = "#E0E0E0",
+            blurHash = "LFC\$yHwc8^\$yIAS\$%M%00KxukYIp",
+            views = 200,
+            downloads = 200,
+            likes = 10,
+            likedByUser = false,
+            description = "",
+            exif = null,
+            location = null,
+            tags = null,
+            relatedCollections = null,
+            currentUserCollections = null,
+            sponsorship = null,
+            urls = PhotoUrls("", "", "", "", ""),
+            links = null,
+            user = user
         )
+
+        Surface {
+            DefaultPhotoItem(
+                photo = photo,
+                photosLoadQuality = PhotoQuality.MEDIUM,
+                onPhotoClicked = {},
+                onUserClick = {}
+            )
+        }
     }
 }

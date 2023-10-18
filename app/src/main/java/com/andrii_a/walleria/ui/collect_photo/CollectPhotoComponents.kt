@@ -2,6 +2,7 @@ package com.andrii_a.walleria.ui.collect_photo
 
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.graphics.Bitmap
 import android.graphics.drawable.ColorDrawable
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
@@ -34,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -55,6 +57,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.core.graphics.drawable.toDrawable
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
@@ -65,14 +68,17 @@ import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.common.components.CheckBoxRow
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
+import com.andrii_a.walleria.ui.util.BlurHashDecoder
 import com.andrii_a.walleria.ui.util.abbreviatedNumberString
 import com.andrii_a.walleria.ui.util.getUrlByQuality
-import com.andrii_a.walleria.ui.util.primaryColorComposable
+import com.andrii_a.walleria.ui.util.primaryColorInt
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun UserCollectionsList(
@@ -167,6 +173,8 @@ fun UserCollectionItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+
     ConstraintLayout(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
@@ -177,26 +185,32 @@ fun UserCollectionItem(
         val (coverPhoto, dimmedOverlay, titleText,
             lockIcon, photosCountText, actionButton) = createRefs()
 
+        val placeholderBitmap by produceState<Bitmap?>(initialValue = null) {
+            value = withContext(Dispatchers.Default) {
+                BlurHashDecoder.decode(
+                    blurHash = collectState.newCoverPhoto?.blurHash,
+                    width = 4,
+                    height = 3
+                )
+            }
+        }
+
         AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
+            model = ImageRequest.Builder(context)
                 .data(collectState.newCoverPhoto?.getUrlByQuality(quality = PhotoQuality.MEDIUM))
                 .crossfade(durationMillis = 1000)
-                .placeholder(
-                    ColorDrawable(
-                        collectState.newCoverPhoto?.primaryColorComposable?.toArgb()
-                            ?: Color.Gray.toArgb()
-                    )
-                )
+                .placeholder(placeholderBitmap?.toDrawable(context.resources))
+                .fallback(placeholderBitmap?.toDrawable(context.resources))
                 .error(
                     ColorDrawable(
-                        collectState.newCoverPhoto?.primaryColorComposable?.toArgb()
-                            ?: Color.Gray.toArgb()
+                        collectState.newCoverPhoto?.primaryColorInt ?: Color.Gray.toArgb()
                     )
                 )
                 .build(),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
+                .fillMaxWidth()
                 .constrainAs(coverPhoto) {
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)

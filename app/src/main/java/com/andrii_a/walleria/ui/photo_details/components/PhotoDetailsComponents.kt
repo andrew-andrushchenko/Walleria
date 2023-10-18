@@ -1,5 +1,6 @@
 package com.andrii_a.walleria.ui.photo_details.components
 
+import android.graphics.Bitmap
 import android.graphics.drawable.ColorDrawable
 import android.text.SpannableStringBuilder
 import androidx.annotation.StringRes
@@ -36,6 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.text.italic
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
@@ -45,9 +47,13 @@ import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.domain.models.photo.PhotoExif
 import com.andrii_a.walleria.ui.common.CollectionId
+import com.andrii_a.walleria.ui.util.BlurHashDecoder
 import com.andrii_a.walleria.ui.util.abbreviatedNumberString
 import com.andrii_a.walleria.ui.util.formCameraNameOrEmpty
 import com.andrii_a.walleria.ui.util.getUrlByQuality
+import com.andrii_a.walleria.ui.util.primaryColorInt
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun UserRow(
@@ -273,26 +279,35 @@ fun StatsRow(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RelatedCollectionsItem(
-    title: String,
-    coverPhotoUrl: String,
-    totalPhotos: Long,
+    collection: Collection,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+
     Card(
         shape = RoundedCornerShape(16.dp),
         onClick = onClick,
         modifier = modifier
     ) {
-        Box(
-            contentAlignment = Alignment.Center
-        ) {
+        Box(contentAlignment = Alignment.Center) {
+            val placeholderBitmap by produceState<Bitmap?>(initialValue = null) {
+                value = withContext(Dispatchers.Default) {
+                    BlurHashDecoder.decode(
+                        blurHash = collection.coverPhoto?.blurHash,
+                        width = 4,
+                        height = 3
+                    )
+                }
+            }
+
             AsyncImage(
-                model = ImageRequest
-                    .Builder(LocalContext.current)
-                    .data(coverPhotoUrl)
+                model = ImageRequest.Builder(context)
+                    .data(collection.coverPhoto?.getUrlByQuality(quality = PhotoQuality.MEDIUM))
                     .crossfade(durationMillis = 1000)
-                    .placeholder(ColorDrawable(Color.Gray.toArgb()))
+                    .placeholder(placeholderBitmap?.toDrawable(context.resources))
+                    .fallback(placeholderBitmap?.toDrawable(context.resources))
+                    .error(ColorDrawable(collection.coverPhoto?.primaryColorInt ?: Color.Gray.toArgb()))
                     .build(),
                 contentScale = ContentScale.Crop,
                 contentDescription = null,
@@ -318,7 +333,7 @@ fun RelatedCollectionsItem(
                     .padding(horizontal = 8.dp)
             ) {
                 Text(
-                    text = title,
+                    text = collection.title,
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -328,7 +343,7 @@ fun RelatedCollectionsItem(
                 Text(
                     text = stringResource(
                         id = R.string.topic_photos_formatted,
-                        totalPhotos.abbreviatedNumberString
+                        collection.totalPhotos.abbreviatedNumberString
                     ),
                     style = MaterialTheme.typography.titleSmall,
                     maxLines = 1,
@@ -357,9 +372,7 @@ fun RelatedCollectionsRow(
             val collection = collections[index]
 
             RelatedCollectionsItem(
-                title = collection.title,
-                coverPhotoUrl = collection.coverPhoto?.getUrlByQuality(PhotoQuality.MEDIUM).orEmpty(),
-                totalPhotos = collection.totalPhotos,
+                collection = collection,
                 onClick = { onCollectionSelected(CollectionId(collection.id)) }
             )
         }

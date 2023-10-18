@@ -1,5 +1,6 @@
 package com.andrii_a.walleria.ui.common.components.lists
 
+import android.graphics.Bitmap
 import android.graphics.drawable.ColorDrawable
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -33,6 +34,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +44,7 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalContext
@@ -51,6 +55,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.core.graphics.drawable.toDrawable
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImage
@@ -70,12 +75,15 @@ import com.andrii_a.walleria.ui.common.components.ErrorItem
 import com.andrii_a.walleria.ui.common.components.LoadingListItem
 import com.andrii_a.walleria.ui.common.components.ScrollToTopLayout
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
+import com.andrii_a.walleria.ui.util.BlurHashDecoder
 import com.andrii_a.walleria.ui.util.abbreviatedNumberString
 import com.andrii_a.walleria.ui.util.getCoverPhotoUrl
 import com.andrii_a.walleria.ui.util.getPreviewPhotos
 import com.andrii_a.walleria.ui.util.getUrlByQuality
 import com.andrii_a.walleria.ui.util.primaryColorInt
 import com.andrii_a.walleria.ui.util.username
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun CollectionsList(
@@ -337,13 +345,26 @@ private fun PhotoTiles(
     Layout(
         content = {
             require(previewPhotos.size <= 3) { "Requires at most 3 photos for the grid." }
+            val context = LocalContext.current
 
             previewPhotos.forEachIndexed { index, photo ->
+                val placeholderBitmap by produceState<Bitmap?>(initialValue = null) {
+                    value = withContext(Dispatchers.Default) {
+                        BlurHashDecoder.decode(
+                            blurHash = photo.blurHash,
+                            width = 4,
+                            height = 3
+                        )
+                    }
+                }
+
                 AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(photo.getUrlByQuality(previewPhotosQuality))
+                    model = ImageRequest.Builder(context)
+                        .data(photo.getUrlByQuality(quality = previewPhotosQuality))
                         .crossfade(durationMillis = 1000)
-                        .placeholder(ColorDrawable(photo.primaryColorInt))
+                        .placeholder(placeholderBitmap?.toDrawable(context.resources))
+                        .fallback(placeholderBitmap?.toDrawable(context.resources))
+                        .error(ColorDrawable(photo.primaryColorInt))
                         .build(),
                     contentDescription = stringResource(id = R.string.description_first_photo),
                     contentScale = ContentScale.Crop,
@@ -513,17 +534,26 @@ private fun SimpleCollectionItem(
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(16.dp)
 ) {
+    val context = LocalContext.current
+
     Box(modifier = modifier.clickable(onClick = onOpenCollectionClick)) {
+        val placeholderBitmap by produceState<Bitmap?>(initialValue = null) {
+            value = withContext(Dispatchers.Default) {
+                BlurHashDecoder.decode(
+                    blurHash = collection.coverPhoto?.blurHash,
+                    width = 4,
+                    height = 3
+                )
+            }
+        }
+
         AsyncImage(
-            model = ImageRequest
-                .Builder(LocalContext.current)
+            model = ImageRequest.Builder(LocalContext.current)
                 .data(collection.getCoverPhotoUrl(quality = photoQuality))
                 .crossfade(durationMillis = 1000)
-                .placeholder(
-                    ColorDrawable(
-                        collection.coverPhoto?.primaryColorInt ?: android.graphics.Color.GRAY
-                    )
-                )
+                .placeholder(placeholderBitmap?.toDrawable(context.resources))
+                .fallback(placeholderBitmap?.toDrawable(context.resources))
+                .error(ColorDrawable(collection.coverPhoto?.primaryColorInt ?: Color.Gray.toArgb()))
                 .build(),
             contentScale = ContentScale.Crop,
             contentDescription = stringResource(id = R.string.collection_cover_photo),
@@ -601,7 +631,7 @@ fun DefaultCollectionItemPreview() {
                     width = 200,
                     height = 300,
                     color = "#E0E0E0",
-                    blurHash = "",
+                    blurHash = "LFC\$yHwc8^\$yIAS\$%M%00KxukYIp",
                     views = 200,
                     downloads = 200,
                     likes = 10,
@@ -622,7 +652,7 @@ fun DefaultCollectionItemPreview() {
                     width = 200,
                     height = 300,
                     color = "#E0E0E0",
-                    blurHash = "",
+                    blurHash = "LFC\$yHwc8^\$yIAS\$%M%00KxukYIp",
                     views = 200,
                     downloads = 200,
                     likes = 10,
@@ -643,7 +673,7 @@ fun DefaultCollectionItemPreview() {
                     width = 200,
                     height = 300,
                     color = "#E0E0E0",
-                    blurHash = "",
+                    blurHash = "LFC\$yHwc8^\$yIAS\$%M%00KxukYIp",
                     views = 200,
                     downloads = 200,
                     likes = 10,

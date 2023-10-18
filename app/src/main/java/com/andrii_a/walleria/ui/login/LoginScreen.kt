@@ -1,5 +1,6 @@
 package com.andrii_a.walleria.ui.login
 
+import android.graphics.Bitmap
 import android.graphics.drawable.ColorDrawable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,6 +27,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,6 +47,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.core.graphics.drawable.toDrawable
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.andrii_a.walleria.R
@@ -52,9 +56,12 @@ import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.ui.common.components.LoadingBanner
 import com.andrii_a.walleria.ui.theme.WalleriaLogoTextStyle
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
+import com.andrii_a.walleria.ui.util.BlurHashDecoder
 import com.andrii_a.walleria.ui.util.accentColorForLoginScreen
 import com.andrii_a.walleria.ui.util.getUrlByQuality
 import com.andrii_a.walleria.ui.util.primaryColorInt
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun LoginScreen(
@@ -64,12 +71,26 @@ fun LoginScreen(
     onJoinClicked: () -> Unit,
     onNavigateBack: () -> Unit
 ) {
+    val context = LocalContext.current
+
     Box(modifier = Modifier.fillMaxSize()) {
+        val placeholderBitmap by produceState<Bitmap?>(initialValue = null) {
+            value = withContext(Dispatchers.Default) {
+                BlurHashDecoder.decode(
+                    blurHash = bannerPhoto?.blurHash,
+                    width = 4,
+                    height = 3
+                )
+            }
+        }
+
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(bannerPhoto?.getUrlByQuality(quality = PhotoQuality.HIGH))
                 .crossfade(durationMillis = 1000)
-                .placeholder(ColorDrawable(bannerPhoto?.primaryColorInt ?: Color.Gray.toArgb()))
+                .placeholder(placeholderBitmap?.toDrawable(context.resources))
+                .fallback(placeholderBitmap?.toDrawable(context.resources))
+                .error(ColorDrawable(bannerPhoto?.primaryColorInt ?: Color.Gray.toArgb()))
                 .build(),
             contentDescription = stringResource(id = R.string.topic_cover_photo),
             contentScale = ContentScale.Crop,

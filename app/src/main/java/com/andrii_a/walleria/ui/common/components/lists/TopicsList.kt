@@ -1,6 +1,7 @@
 package com.andrii_a.walleria.ui.common.components.lists
 
 import android.content.res.Configuration
+import android.graphics.Bitmap
 import android.graphics.drawable.ColorDrawable
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,10 +20,13 @@ import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
@@ -32,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.core.graphics.drawable.toDrawable
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
@@ -52,12 +57,15 @@ import com.andrii_a.walleria.ui.common.components.ScrollToTopLayout
 import com.andrii_a.walleria.ui.theme.PhotoDetailsActionButtonContainerColor
 import com.andrii_a.walleria.ui.theme.PhotoDetailsActionButtonContentColor
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
+import com.andrii_a.walleria.ui.util.BlurHashDecoder
 import com.andrii_a.walleria.ui.util.abbreviatedNumberString
 import com.andrii_a.walleria.ui.util.getUrlByQuality
 import com.andrii_a.walleria.ui.util.ownerUsername
 import com.andrii_a.walleria.ui.util.primaryColorInt
 import com.andrii_a.walleria.ui.util.timeAgoLocalizedString
 import com.andrii_a.walleria.ui.util.titleRes
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun TopicsList(
@@ -170,6 +178,18 @@ fun DefaultTopicItem(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
+    val context = LocalContext.current
+
+    val placeholderBitmap by produceState<Bitmap?>(initialValue = null) {
+        value = withContext(Dispatchers.Default) {
+            BlurHashDecoder.decode(
+                blurHash = coverPhoto?.blurHash,
+                width = 4,
+                height = 3
+            )
+        }
+    }
+
     ConstraintLayout(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
@@ -186,15 +206,14 @@ fun DefaultTopicItem(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(coverPhoto?.getUrlByQuality(coverPhotoQuality))
                 .crossfade(durationMillis = 1000)
-                .placeholder(
-                    ColorDrawable(
-                        coverPhoto?.primaryColorInt ?: android.graphics.Color.GRAY
-                    )
-                )
+                .placeholder(placeholderBitmap?.toDrawable(context.resources))
+                .fallback(placeholderBitmap?.toDrawable(context.resources))
+                .error(ColorDrawable(coverPhoto?.primaryColorInt ?: Color.Gray.toArgb()))
                 .build(),
             contentDescription = stringResource(id = R.string.topic_cover_photo),
             contentScale = ContentScale.Crop,
             modifier = Modifier
+                .fillMaxWidth()
                 .constrainAs(coverPhotoImage) {
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
@@ -305,7 +324,7 @@ fun DefaultTopicItemPreview() {
             width = 200,
             height = 300,
             color = "#E0E0E0",
-            blurHash = "",
+            blurHash = "LFC\$yHwc8^\$yIAS\$%M%00KxukYIp",
             views = 200,
             downloads = 200,
             likes = 10,
