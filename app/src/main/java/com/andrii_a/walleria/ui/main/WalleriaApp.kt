@@ -116,7 +116,7 @@ fun WalleriaApp() {
 
                     if (navController.currentRoute in NavigationScreenRoutes) {
                         NavigationBar(modifier = Modifier.align(Alignment.BottomCenter)) {
-                            NavigationScreen.values().forEach { item ->
+                            NavigationScreen.entries.forEach { item ->
                                 NavigationBarItem(
                                     icon = {
                                         Icon(
