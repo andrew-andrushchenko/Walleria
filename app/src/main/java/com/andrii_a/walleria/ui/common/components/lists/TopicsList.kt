@@ -48,6 +48,8 @@ import com.andrii_a.walleria.domain.TopicStatus
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.photo.PhotoUrls
 import com.andrii_a.walleria.domain.models.topic.Topic
+import com.andrii_a.walleria.domain.models.user.User
+import com.andrii_a.walleria.domain.models.user.UserSocialMediaLinks
 import com.andrii_a.walleria.ui.common.TopicId
 import com.andrii_a.walleria.ui.common.components.EmptyContentBanner
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
@@ -104,13 +106,8 @@ fun TopicsList(
                             val topic = lazyTopicItems[index]
                             topic?.let {
                                 DefaultTopicItem(
-                                    title = topic.title,
-                                    coverPhoto = topic.coverPhoto,
+                                    topic = topic,
                                     coverPhotoQuality = coverPhotoQuality,
-                                    totalPhotos = topic.totalPhotos,
-                                    curatorUsername = topic.ownerUsername,
-                                    status = topic.status,
-                                    updatedAt = topic.updatedAt.orEmpty(),
                                     onClick = {
                                         onClick(TopicId(topic.id))
                                     },
@@ -168,13 +165,8 @@ fun TopicsList(
 
 @Composable
 fun DefaultTopicItem(
-    title: String,
-    coverPhoto: Photo?,
+    topic: Topic,
     coverPhotoQuality: PhotoQuality,
-    totalPhotos: Long,
-    curatorUsername: String,
-    status: TopicStatus,
-    updatedAt: String,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
@@ -183,7 +175,7 @@ fun DefaultTopicItem(
     val placeholderBitmap by produceState<Bitmap?>(initialValue = null) {
         value = withContext(Dispatchers.Default) {
             BlurHashDecoder.decode(
-                blurHash = coverPhoto?.blurHash,
+                blurHash = topic.coverPhoto?.blurHash,
                 width = 4,
                 height = 3
             )
@@ -204,11 +196,11 @@ fun DefaultTopicItem(
 
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(coverPhoto?.getUrlByQuality(coverPhotoQuality))
+                .data(topic.coverPhoto?.getUrlByQuality(coverPhotoQuality))
                 .crossfade(durationMillis = 1000)
                 .placeholder(placeholderBitmap?.toDrawable(context.resources))
                 .fallback(placeholderBitmap?.toDrawable(context.resources))
-                .error(ColorDrawable(coverPhoto?.primaryColorInt ?: Color.Gray.toArgb()))
+                .error(ColorDrawable(topic.coverPhoto?.primaryColorInt ?: Color.Gray.toArgb()))
                 .build(),
             contentDescription = stringResource(id = R.string.topic_cover_photo),
             contentScale = ContentScale.Crop,
@@ -227,7 +219,7 @@ fun DefaultTopicItem(
         )
 
         Text(
-            text = title,
+            text = topic.title,
             style = MaterialTheme.typography.titleLarge,
             color = PhotoDetailsActionButtonContainerColor,
             maxLines = 1,
@@ -241,7 +233,7 @@ fun DefaultTopicItem(
         )
 
         Text(
-            text = stringResource(id = R.string.topic_curated_by_formatted, curatorUsername),
+            text = stringResource(id = R.string.topic_curated_by_formatted, topic.ownerUsername),
             style = MaterialTheme.typography.titleSmall,
             color = PhotoDetailsActionButtonContainerColor,
             maxLines = 1,
@@ -256,7 +248,7 @@ fun DefaultTopicItem(
         Text(
             text = stringResource(
                 id = R.string.topic_photos_formatted,
-                totalPhotos.abbreviatedNumberString
+                topic.totalPhotos.abbreviatedNumberString
             ),
             style = MaterialTheme.typography.titleMedium,
             color = PhotoDetailsActionButtonContainerColor,
@@ -271,7 +263,7 @@ fun DefaultTopicItem(
         )
 
         Text(
-            text = updatedAt.timeAgoLocalizedString.orEmpty(),
+            text = topic.updatedAt.timeAgoLocalizedString.orEmpty(),
             style = MaterialTheme.typography.titleMedium,
             color = PhotoDetailsActionButtonContainerColor,
             maxLines = 1,
@@ -284,7 +276,7 @@ fun DefaultTopicItem(
         )
 
         StatusChip(
-            status = status,
+            status = topic.status,
             modifier = Modifier
                 .constrainAs(statusChip) {
                     end.linkTo(parent.end, 16.dp)
@@ -341,14 +333,49 @@ fun DefaultTopicItemPreview() {
             user = null
         )
 
-        DefaultTopicItem(
+        val user = User(
+            id = "",
+            username = "johny_smith",
+            firstName = "John",
+            lastName = "Smith",
+            bio = "",
+            location = "",
+            totalLikes = 0,
+            totalPhotos = 0,
+            totalCollections = 0,
+            followersCount = 0,
+            followingCount = 0,
+            downloads = 0,
+            profileImage = null,
+            social = UserSocialMediaLinks(
+                instagramUsername = "abc",
+                portfolioUrl = "abc",
+                twitterUsername = "abc",
+                paypalEmail = "abc"
+            ),
+            tags = null,
+            photos = null
+        )
+
+        val topic = Topic(
+            id = "",
             title = "Topic title",
-            coverPhoto = photo,
-            coverPhotoQuality = PhotoQuality.MEDIUM,
-            totalPhotos = 180_000,
-            curatorUsername = "John Smith",
-            status = TopicStatus.OPEN,
+            description = "",
+            featured = false,
+            startsAt = "",
+            endsAt = "",
             updatedAt = "2023-09-13T10:39:35Z",
+            totalPhotos = 100_000,
+            links = null,
+            status = TopicStatus.OPEN,
+            owners = listOf(user),
+            coverPhoto = photo,
+            previewPhotos = null
+        )
+
+        DefaultTopicItem(
+            topic = topic,
+            coverPhotoQuality = PhotoQuality.MEDIUM,
             onClick = {}
         )
     }
