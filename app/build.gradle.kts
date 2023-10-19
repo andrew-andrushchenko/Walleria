@@ -126,15 +126,15 @@ dependencies {
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.32.0")
 
     // Dagger Hilt
-    implementation("com.google.dagger:hilt-android:2.48")
-    kapt("com.google.dagger:hilt-compiler:2.48")
+    implementation("com.google.dagger:hilt-android:2.48.1")
+    kapt("com.google.dagger:hilt-compiler:2.48.1")
 
     // Retrofit + GSON
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
     // OkHttp
-    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.6")
+    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.11")
 
     // Android splash screen
     implementation("androidx.core:core-splashscreen:1.0.1")
