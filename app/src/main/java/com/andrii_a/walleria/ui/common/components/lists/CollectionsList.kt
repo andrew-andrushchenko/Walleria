@@ -18,15 +18,18 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForwardIos
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
@@ -117,60 +120,26 @@ fun CollectionsList(
         ) {
             when (lazyCollectionItems.loadState.refresh) {
                 is LoadState.NotLoading -> {
-                    if (lazyCollectionItems.itemCount > 0) {
-                        if (isCompact) {
-                            items(count = lazyCollectionItems.itemCount) { index ->
-                                val collection = lazyCollectionItems[index]
-                                collection?.let {
-                                    SimpleCollectionItem(
-                                        collection = collection,
-                                        photoQuality = photosLoadQuality,
-                                        onOpenCollectionClick = {
-                                            onCollectionClicked(CollectionId(collection.id))
-                                        },
-                                        modifier = Modifier.padding(
-                                            start = 16.dp,
-                                            end = 16.dp,
-                                            bottom = 16.dp
-                                        )
-                                    )
-                                }
-                            }
-                        } else {
-                            items(count = lazyCollectionItems.itemCount) { index ->
-                                val collection = lazyCollectionItems[index]
-                                collection?.let {
-                                    DefaultCollectionItem(
-                                        collection = collection,
-                                        photoQuality = photosLoadQuality,
-                                        onPhotoClicked = onPhotoClicked,
-                                        onOpenCollectionClick = {
-                                            onCollectionClicked(CollectionId(collection.id))
-                                        },
-                                        onUserProfileClick = {
-                                            val userNickname = UserNickname(collection.username)
-                                            onUserProfileClicked(userNickname)
-                                        },
-                                        modifier = Modifier
-                                            .padding(
-                                                top = 8.dp,
-                                                start = 16.dp,
-                                                end = 16.dp,
-                                                bottom = 32.dp
-                                            )
-                                    )
-                                }
-                            }
-                        }
+                    loadedStateContent(
+                        lazyCollectionItems = lazyCollectionItems,
+                        photosLoadQuality = photosLoadQuality,
+                        isItemCompact = isCompact,
+                        onCollectionClicked = onCollectionClicked,
+                        onPhotoClicked = onPhotoClicked,
+                        onUserProfileClicked = onUserProfileClicked
+                    )
+                }
 
-                    } else {
-                        item {
-                            EmptyContentBanner(modifier = Modifier.fillParentMaxSize())
+                is LoadState.Loading -> {
+                    item {
+                        Box(
+                            modifier = Modifier.fillParentMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
                         }
                     }
                 }
-
-                is LoadState.Loading -> Unit
 
                 is LoadState.Error -> {
                     item {
@@ -202,6 +171,66 @@ fun CollectionsList(
                     }
                 }
             }
+        }
+    }
+}
+
+private fun LazyListScope.loadedStateContent(
+    lazyCollectionItems: LazyPagingItems<Collection>,
+    photosLoadQuality: PhotoQuality,
+    isItemCompact: Boolean,
+    onCollectionClicked: (CollectionId) -> Unit,
+    onPhotoClicked: (PhotoId) -> Unit,
+    onUserProfileClicked: (UserNickname) -> Unit
+) {
+    if (lazyCollectionItems.itemCount > 0) {
+        if (isItemCompact) {
+            items(count = lazyCollectionItems.itemCount) { index ->
+                val collection = lazyCollectionItems[index]
+                collection?.let {
+                    SimpleCollectionItem(
+                        collection = collection,
+                        photoQuality = photosLoadQuality,
+                        onOpenCollectionClick = {
+                            onCollectionClicked(CollectionId(collection.id))
+                        },
+                        modifier = Modifier.padding(
+                            start = 16.dp,
+                            end = 16.dp,
+                            bottom = 16.dp
+                        )
+                    )
+                }
+            }
+        } else {
+            items(count = lazyCollectionItems.itemCount) { index ->
+                val collection = lazyCollectionItems[index]
+                collection?.let {
+                    DefaultCollectionItem(
+                        collection = collection,
+                        photoQuality = photosLoadQuality,
+                        onPhotoClicked = onPhotoClicked,
+                        onOpenCollectionClick = {
+                            onCollectionClicked(CollectionId(collection.id))
+                        },
+                        onUserProfileClick = {
+                            val userNickname = UserNickname(collection.username)
+                            onUserProfileClicked(userNickname)
+                        },
+                        modifier = Modifier
+                            .padding(
+                                top = 8.dp,
+                                start = 16.dp,
+                                end = 16.dp,
+                                bottom = 32.dp
+                            )
+                    )
+                }
+            }
+        }
+    } else {
+        item {
+            EmptyContentBanner(modifier = Modifier.fillParentMaxSize())
         }
     }
 }
@@ -239,27 +268,23 @@ fun CollectionsGrid(
         ) {
             when (lazyCollectionItems.loadState.refresh) {
                 is LoadState.NotLoading -> {
-                    if (lazyCollectionItems.itemCount > 0) {
-                        items(count = lazyCollectionItems.itemCount) { index ->
-                            val collection = lazyCollectionItems[index]
-                            collection?.let {
-                                SimpleCollectionItem(
-                                    collection = collection,
-                                    photoQuality = photosLoadQuality,
-                                    onOpenCollectionClick = {
-                                        onCollectionClicked(CollectionId(collection.id))
-                                    }
-                                )
-                            }
-                        }
-                    } else {
-                        item(span = { GridItemSpan(2) }) {
-                            EmptyContentBanner(modifier = Modifier.fillMaxSize())
+                    loadedStateContent(
+                        lazyCollectionItems = lazyCollectionItems,
+                        photosLoadQuality = photosLoadQuality,
+                        onCollectionClicked = onCollectionClicked
+                    )
+                }
+
+                is LoadState.Loading -> {
+                    item(span = { GridItemSpan(2) }) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
                         }
                     }
                 }
-
-                is LoadState.Loading -> Unit
 
                 is LoadState.Error -> {
                     item(span = { GridItemSpan(2) }) {
@@ -291,6 +316,31 @@ fun CollectionsGrid(
                     }
                 }
             }
+        }
+    }
+}
+
+private fun LazyGridScope.loadedStateContent(
+    lazyCollectionItems: LazyPagingItems<Collection>,
+    photosLoadQuality: PhotoQuality,
+    onCollectionClicked: (CollectionId) -> Unit
+) {
+    if (lazyCollectionItems.itemCount > 0) {
+        items(count = lazyCollectionItems.itemCount) { index ->
+            val collection = lazyCollectionItems[index]
+            collection?.let {
+                SimpleCollectionItem(
+                    collection = collection,
+                    photoQuality = photosLoadQuality,
+                    onOpenCollectionClick = {
+                        onCollectionClicked(CollectionId(collection.id))
+                    }
+                )
+            }
+        }
+    } else {
+        item(span = { GridItemSpan(2) }) {
+            EmptyContentBanner(modifier = Modifier.fillMaxSize())
         }
     }
 }
