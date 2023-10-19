@@ -5,6 +5,7 @@ import android.graphics.drawable.ColorDrawable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -17,8 +18,10 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
@@ -26,6 +29,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -106,57 +110,26 @@ fun PhotosList(
         ) {
             when (lazyPhotoItems.loadState.refresh) {
                 is LoadState.NotLoading -> {
-                    headerContent?.let { header ->
-                        item {
-                            header.invoke()
-                        }
-                    }
+                    loadedStateContent(
+                        lazyPhotoItems = lazyPhotoItems,
+                        headerContent = headerContent,
+                        isItemCompact = isCompact,
+                        photosLoadQuality = photosLoadQuality,
+                        onPhotoClicked = onPhotoClicked,
+                        onUserProfileClicked = onUserProfileClicked
+                    )
+                }
 
-                    if (lazyPhotoItems.itemCount > 0) {
-                        items(
-                            count = lazyPhotoItems.itemCount,
-                            key = lazyPhotoItems.itemKey { it.id }
-                        ) { index ->
-                            val photo = lazyPhotoItems[index]
-                            photo?.let {
-                                if (isCompact) {
-                                    SimplePhotoItem(
-                                        photo = photo,
-                                        photosLoadQuality = photosLoadQuality,
-                                        onPhotoClicked = { onPhotoClicked(PhotoId(it.id)) },
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(
-                                                start = 16.dp,
-                                                end = 16.dp,
-                                                bottom = 16.dp
-                                            )
-                                    )
-                                } else {
-                                    DefaultPhotoItem(
-                                        photo = photo,
-                                        photosLoadQuality = photosLoadQuality,
-                                        onPhotoClicked = { onPhotoClicked(PhotoId(it.id)) },
-                                        onUserClick = { onUserProfileClicked(UserNickname(photo.userNickname)) },
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(
-                                                start = 16.dp,
-                                                end = 16.dp,
-                                                bottom = 16.dp
-                                            )
-                                    )
-                                }
-                            }
-                        }
-                    } else {
-                        item {
-                            EmptyContentBanner(modifier = Modifier.fillParentMaxSize())
+                is LoadState.Loading -> {
+                    item {
+                        Box(
+                            modifier = Modifier.fillParentMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
                         }
                     }
                 }
-
-                is LoadState.Loading -> Unit
 
                 is LoadState.Error -> {
                     item {
@@ -188,6 +161,64 @@ fun PhotosList(
                     }
                 }
             }
+        }
+    }
+}
+
+private fun LazyListScope.loadedStateContent(
+    lazyPhotoItems: LazyPagingItems<Photo>,
+    headerContent: (@Composable () -> Unit)? = null,
+    isItemCompact: Boolean,
+    photosLoadQuality: PhotoQuality,
+    onPhotoClicked: (PhotoId) -> Unit,
+    onUserProfileClicked: (UserNickname) -> Unit
+) {
+    headerContent?.let { header ->
+        item {
+            header.invoke()
+        }
+    }
+
+    if (lazyPhotoItems.itemCount > 0) {
+        items(
+            count = lazyPhotoItems.itemCount,
+            key = lazyPhotoItems.itemKey { it.id }
+        ) { index ->
+            val photo = lazyPhotoItems[index]
+            photo?.let {
+                if (isItemCompact) {
+                    SimplePhotoItem(
+                        photo = photo,
+                        photosLoadQuality = photosLoadQuality,
+                        onPhotoClicked = { onPhotoClicked(PhotoId(it.id)) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                start = 16.dp,
+                                end = 16.dp,
+                                bottom = 16.dp
+                            )
+                    )
+                } else {
+                    DefaultPhotoItem(
+                        photo = photo,
+                        photosLoadQuality = photosLoadQuality,
+                        onPhotoClicked = { onPhotoClicked(PhotoId(it.id)) },
+                        onUserClick = { onUserProfileClicked(UserNickname(photo.userNickname)) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                start = 16.dp,
+                                end = 16.dp,
+                                bottom = 16.dp
+                            )
+                    )
+                }
+            }
+        }
+    } else {
+        item {
+            EmptyContentBanner(modifier = Modifier.fillParentMaxSize())
         }
     }
 }
@@ -226,35 +257,24 @@ fun PhotosGrid(
         ) {
             when (lazyPhotoItems.loadState.refresh) {
                 is LoadState.NotLoading -> {
-                    headerContent?.let { header ->
-                        item(span = StaggeredGridItemSpan.FullLine) {
-                            header.invoke()
-                        }
-                    }
+                    loadedStateContent(
+                        lazyPhotoItems = lazyPhotoItems,
+                        headerContent = headerContent,
+                        photosLoadQuality = photosLoadQuality,
+                        onPhotoClicked = onPhotoClicked
+                    )
+                }
 
-                    if (lazyPhotoItems.itemCount > 0) {
-                        items(
-                            count = lazyPhotoItems.itemCount,
-                            key = lazyPhotoItems.itemKey { it.id }
-                        ) { index ->
-                            val photo = lazyPhotoItems[index]
-                            photo?.let {
-                                SimplePhotoItem(
-                                    photo = photo,
-                                    photosLoadQuality = photosLoadQuality,
-                                    onPhotoClicked = { onPhotoClicked(PhotoId(photo.id)) },
-                                    shape = RoundedCornerShape(16.dp)
-                                )
-                            }
-                        }
-                    } else {
-                        item(span = StaggeredGridItemSpan.FullLine) {
-                            EmptyContentBanner(modifier = Modifier.fillMaxSize())
+                is LoadState.Loading -> {
+                    item(span = StaggeredGridItemSpan.FullLine) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
                         }
                     }
                 }
-
-                is LoadState.Loading -> Unit
 
                 is LoadState.Error -> {
                     item(span = StaggeredGridItemSpan.FullLine) {
@@ -286,6 +306,40 @@ fun PhotosGrid(
                     }
                 }
             }
+        }
+    }
+}
+
+private fun LazyStaggeredGridScope.loadedStateContent(
+    lazyPhotoItems: LazyPagingItems<Photo>,
+    headerContent: (@Composable () -> Unit)? = null,
+    photosLoadQuality: PhotoQuality,
+    onPhotoClicked: (PhotoId) -> Unit
+) {
+    headerContent?.let { header ->
+        item(span = StaggeredGridItemSpan.FullLine) {
+            header.invoke()
+        }
+    }
+
+    if (lazyPhotoItems.itemCount > 0) {
+        items(
+            count = lazyPhotoItems.itemCount,
+            key = lazyPhotoItems.itemKey { it.id }
+        ) { index ->
+            val photo = lazyPhotoItems[index]
+            photo?.let {
+                SimplePhotoItem(
+                    photo = photo,
+                    photosLoadQuality = photosLoadQuality,
+                    onPhotoClicked = { onPhotoClicked(PhotoId(photo.id)) },
+                    shape = RoundedCornerShape(16.dp)
+                )
+            }
+        }
+    } else {
+        item(span = StaggeredGridItemSpan.FullLine) {
+            EmptyContentBanner(modifier = Modifier.fillMaxSize())
         }
     }
 }
