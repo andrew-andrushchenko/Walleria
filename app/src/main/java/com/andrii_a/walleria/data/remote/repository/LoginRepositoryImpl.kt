@@ -6,15 +6,15 @@ import com.andrii_a.walleria.data.util.CLIENT_ID
 import com.andrii_a.walleria.data.util.CLIENT_SECRET
 import com.andrii_a.walleria.data.util.UNSPLASH_AUTH_CALLBACK
 import com.andrii_a.walleria.data.util.WALLERIA_SCHEMA
-import com.andrii_a.walleria.domain.network.BackendResult
 import com.andrii_a.walleria.data.util.network.backendRequest
+import com.andrii_a.walleria.data.util.network.backendRequestFlow
 import com.andrii_a.walleria.domain.models.login.AccessToken
-import com.andrii_a.walleria.domain.models.login.MyProfile
-import com.andrii_a.walleria.domain.models.preferences.MyProfileData
-import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
+import com.andrii_a.walleria.domain.models.login.UserPrivateProfile
+import com.andrii_a.walleria.domain.models.preferences.UserPrivateProfileData
+import com.andrii_a.walleria.domain.network.BackendResult
 import com.andrii_a.walleria.domain.repository.LoginRepository
+import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 
 class LoginRepositoryImpl(
     private val loginService: LoginService,
@@ -36,50 +36,44 @@ class LoginRepositoryImpl(
         get() = "https://unsplash.com/join"
 
 
-    override fun login(code: String): Flow<BackendResult<AccessToken>> {
-        return flow {
-            emit(BackendResult.Loading)
-            emit(getAccessToken(code))
-        }
+    override fun login(code: String): Flow<BackendResult<AccessToken>> = backendRequestFlow {
+        loginService.getAccessToken(
+            clientId = CLIENT_ID,
+            clientSecret = CLIENT_SECRET,
+            redirectUri = "$WALLERIA_SCHEMA$UNSPLASH_AUTH_CALLBACK",
+            code = code,
+            grantType = "authorization_code"
+        ).toAccessToken()
     }
 
-    override suspend fun getAccessToken(code: String): BackendResult<AccessToken> =
-        backendRequest {
-            loginService.getAccessToken(
-                clientId = CLIENT_ID,
-                clientSecret = CLIENT_SECRET,
-                redirectUri = "$WALLERIA_SCHEMA$UNSPLASH_AUTH_CALLBACK",
-                code = code,
-                grantType = "authorization_code"
-            ).toAccessToken()
-        }
+    override suspend fun logout() = userAccountPreferencesRepository.clearAccountInfo()
 
     override suspend fun saveAccessToken(accessToken: AccessToken) {
         userAccountPreferencesRepository.saveAccessToken(accessToken)
     }
 
-    override suspend fun getMyProfile(): BackendResult<MyProfile> = backendRequest {
-        userService.getMyProfile().toMyProfile()
-    }
-
-    override suspend fun saveMyProfile(myProfile: MyProfile) {
-        userAccountPreferencesRepository.saveMyProfileInfo(myProfile)
-    }
-
-    override suspend fun updateMyProfile(myProfileData: MyProfileData): BackendResult<MyProfile> =
+    override suspend fun getPrivateUserProfile(): BackendResult<UserPrivateProfile> =
         backendRequest {
-            userService.updateMyProfile(
-                username = myProfileData.nickname,
-                firstName = myProfileData.firstName,
-                lastName = myProfileData.lastName,
-                email = myProfileData.email,
-                url = myProfileData.portfolioLink,
-                instagramUsername = myProfileData.instagramUsername,
-                location = myProfileData.location,
-                bio = myProfileData.bio
-            ).toMyProfile()
+            userService.getUserPrivateProfile().toUserPrivateProfile()
         }
 
-    override suspend fun logout() = userAccountPreferencesRepository.reset()
+    override suspend fun savePrivateUserProfile(userPrivateProfile: UserPrivateProfile) {
+        userAccountPreferencesRepository.saveAccountInfo(userPrivateProfile)
+    }
 
+    override suspend fun updatePrivateUserProfile(
+        userPrivateProfileData: UserPrivateProfileData
+    ): BackendResult<UserPrivateProfile> =
+        backendRequest {
+            userService.updateUserPrivateProfile(
+                username = userPrivateProfileData.nickname,
+                firstName = userPrivateProfileData.firstName,
+                lastName = userPrivateProfileData.lastName,
+                email = userPrivateProfileData.email,
+                url = userPrivateProfileData.portfolioLink,
+                instagramUsername = userPrivateProfileData.instagramUsername,
+                location = userPrivateProfileData.location,
+                bio = userPrivateProfileData.bio
+            ).toUserPrivateProfile()
+        }
 }

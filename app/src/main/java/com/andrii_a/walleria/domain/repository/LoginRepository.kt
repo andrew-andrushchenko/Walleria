@@ -2,8 +2,8 @@ package com.andrii_a.walleria.domain.repository
 
 import com.andrii_a.walleria.domain.network.BackendResult
 import com.andrii_a.walleria.domain.models.login.AccessToken
-import com.andrii_a.walleria.domain.models.login.MyProfile
-import com.andrii_a.walleria.domain.models.preferences.MyProfileData
+import com.andrii_a.walleria.domain.models.login.UserPrivateProfile
+import com.andrii_a.walleria.domain.models.preferences.UserPrivateProfileData
 import kotlinx.coroutines.flow.Flow
 
 interface LoginRepository {
@@ -14,16 +14,14 @@ interface LoginRepository {
 
     fun login(code: String): Flow<BackendResult<AccessToken>>
 
-    suspend fun getAccessToken(code: String): BackendResult<AccessToken>
+    suspend fun logout()
 
     suspend fun saveAccessToken(accessToken: AccessToken)
 
-    suspend fun getMyProfile(): BackendResult<MyProfile>
+    suspend fun getPrivateUserProfile(): BackendResult<UserPrivateProfile>
 
-    suspend fun saveMyProfile(myProfile: MyProfile)
+    suspend fun savePrivateUserProfile(userPrivateProfile: UserPrivateProfile)
 
-    suspend fun updateMyProfile(myProfileData: MyProfileData): BackendResult<MyProfile>
-
-    suspend fun logout()
+    suspend fun updatePrivateUserProfile(userPrivateProfileData: UserPrivateProfileData): BackendResult<UserPrivateProfile>
 
 }

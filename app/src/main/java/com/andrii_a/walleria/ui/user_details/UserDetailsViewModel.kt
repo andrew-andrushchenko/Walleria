@@ -101,7 +101,7 @@ class UserDetailsViewModel @Inject constructor(
                     _loadResult.update {
                         UserLoadResult.Success(
                             user = user,
-                            loggedInUserNickname = userAccountPreferencesRepository.myProfileData.first().nickname,
+                            loggedInUserNickname = userAccountPreferencesRepository.userPrivateProfileData.first().nickname,
                             userPhotos = photoRepository.getUserPhotos(user.username).cachedIn(viewModelScope),
                             userLikedPhotos = photoRepository.getUserLikedPhotos(user.username).cachedIn(viewModelScope),
                             userCollections = collectionRepository.getUserCollections(user.username).cachedIn(viewModelScope)

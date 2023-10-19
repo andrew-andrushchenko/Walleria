@@ -52,7 +52,7 @@ class CollectPhotoViewModel @Inject constructor(
 
     private val userNickname: StateFlow<String> =
         userAccountPreferencesRepository
-            .myProfileData
+            .userPrivateProfileData
             .map { it.nickname }
             .stateIn(
                 scope = viewModelScope,

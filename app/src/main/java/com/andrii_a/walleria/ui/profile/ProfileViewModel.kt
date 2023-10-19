@@ -2,7 +2,7 @@ package com.andrii_a.walleria.ui.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.andrii_a.walleria.domain.models.preferences.MyProfileData
+import com.andrii_a.walleria.domain.models.preferences.UserPrivateProfileData
 import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -16,23 +16,23 @@ class ProfileViewModel @Inject constructor(
     private val userAccountPreferencesRepository: UserAccountPreferencesRepository
 ) : ViewModel() {
 
-    val isUserLoggedIn: StateFlow<Boolean> = userAccountPreferencesRepository.isUserAuthorized
+    val isUserLoggedIn: StateFlow<Boolean> = userAccountPreferencesRepository.isUserLoggedIn
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),
             initialValue = false
         )
 
-    val myProfileData: StateFlow<MyProfileData> = userAccountPreferencesRepository.myProfileData
+    val userPrivateProfileData: StateFlow<UserPrivateProfileData> = userAccountPreferencesRepository.userPrivateProfileData
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),
-            initialValue = MyProfileData()
+            initialValue = UserPrivateProfileData()
         )
 
     fun logout() {
         viewModelScope.launch {
-            userAccountPreferencesRepository.reset()
+            userAccountPreferencesRepository.clearAccountInfo()
         }
     }
 }

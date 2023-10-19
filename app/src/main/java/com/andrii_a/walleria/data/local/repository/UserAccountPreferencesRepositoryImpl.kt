@@ -9,8 +9,8 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.andrii_a.walleria.domain.models.login.AccessToken
-import com.andrii_a.walleria.domain.models.login.MyProfile
-import com.andrii_a.walleria.domain.models.preferences.MyProfileData
+import com.andrii_a.walleria.domain.models.login.UserPrivateProfile
+import com.andrii_a.walleria.domain.models.preferences.UserPrivateProfileData
 import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -37,7 +37,7 @@ class UserAccountPreferencesRepositoryImpl(context: Context) : UserAccountPrefer
             }
         }
 
-    override val isUserAuthorized: Flow<Boolean> = preferencesFlow.map { preferences ->
+    override val isUserLoggedIn: Flow<Boolean> = preferencesFlow.map { preferences ->
         preferences[UserAccountPreferencesKeys.ACCESS_TOKEN_KEY].isNullOrBlank().not()
     }
 
@@ -45,7 +45,7 @@ class UserAccountPreferencesRepositoryImpl(context: Context) : UserAccountPrefer
         preferences[UserAccountPreferencesKeys.ACCESS_TOKEN_KEY].orEmpty()
     }
 
-    override val myProfileData: Flow<MyProfileData> = preferencesFlow.map { preferences ->
+    override val userPrivateProfileData: Flow<UserPrivateProfileData> = preferencesFlow.map { preferences ->
         val nickname = preferences[UserAccountPreferencesKeys.USER_NICKNAME_KEY].orEmpty()
         val firstName = preferences[UserAccountPreferencesKeys.USER_FIRST_NAME_KEY].orEmpty()
         val lastName = preferences[UserAccountPreferencesKeys.USER_LAST_NAME_KEY].orEmpty()
@@ -56,7 +56,7 @@ class UserAccountPreferencesRepositoryImpl(context: Context) : UserAccountPrefer
         val location = preferences[UserAccountPreferencesKeys.USER_LOCATION_KEY].orEmpty()
         val bio = preferences[UserAccountPreferencesKeys.USER_BIO_KEY].orEmpty()
 
-        MyProfileData(
+        UserPrivateProfileData(
             nickname = nickname,
             firstName = firstName,
             lastName = lastName,
@@ -75,21 +75,21 @@ class UserAccountPreferencesRepositoryImpl(context: Context) : UserAccountPrefer
         }
     }
 
-    override suspend fun saveMyProfileInfo(myProfile: MyProfile) {
+    override suspend fun saveAccountInfo(userPrivateProfile: UserPrivateProfile) {
         localUserAccountDataStore.edit { preferences ->
-            preferences[UserAccountPreferencesKeys.USER_NICKNAME_KEY] = myProfile.username
-            preferences[UserAccountPreferencesKeys.USER_FIRST_NAME_KEY] = myProfile.firstName
-            preferences[UserAccountPreferencesKeys.USER_LAST_NAME_KEY] = myProfile.lastName
-            preferences[UserAccountPreferencesKeys.USER_PROFILE_PHOTO_URL_KEY] = myProfile.profileImage?.medium.orEmpty()
-            preferences[UserAccountPreferencesKeys.USER_EMAIL_KEY] = myProfile.email.orEmpty()
-            preferences[UserAccountPreferencesKeys.USER_PORTFOLIO_LINK_KEY] = myProfile.portfolioUrl.orEmpty()
-            preferences[UserAccountPreferencesKeys.USER_INSTAGRAM_USERNAME_KEY] = myProfile.instagramUsername.orEmpty()
-            preferences[UserAccountPreferencesKeys.USER_LOCATION_KEY] = myProfile.location.orEmpty()
-            preferences[UserAccountPreferencesKeys.USER_BIO_KEY] = myProfile.bio.orEmpty()
+            preferences[UserAccountPreferencesKeys.USER_NICKNAME_KEY] = userPrivateProfile.username
+            preferences[UserAccountPreferencesKeys.USER_FIRST_NAME_KEY] = userPrivateProfile.firstName
+            preferences[UserAccountPreferencesKeys.USER_LAST_NAME_KEY] = userPrivateProfile.lastName
+            preferences[UserAccountPreferencesKeys.USER_PROFILE_PHOTO_URL_KEY] = userPrivateProfile.profileImage?.medium.orEmpty()
+            preferences[UserAccountPreferencesKeys.USER_EMAIL_KEY] = userPrivateProfile.email.orEmpty()
+            preferences[UserAccountPreferencesKeys.USER_PORTFOLIO_LINK_KEY] = userPrivateProfile.portfolioUrl.orEmpty()
+            preferences[UserAccountPreferencesKeys.USER_INSTAGRAM_USERNAME_KEY] = userPrivateProfile.instagramUsername.orEmpty()
+            preferences[UserAccountPreferencesKeys.USER_LOCATION_KEY] = userPrivateProfile.location.orEmpty()
+            preferences[UserAccountPreferencesKeys.USER_BIO_KEY] = userPrivateProfile.bio.orEmpty()
         }
     }
 
-    override suspend fun reset() {
+    override suspend fun clearAccountInfo() {
         localUserAccountDataStore.edit { preferences ->
             preferences[UserAccountPreferencesKeys.ACCESS_TOKEN_KEY] = ""
             preferences[UserAccountPreferencesKeys.USER_NICKNAME_KEY] = ""

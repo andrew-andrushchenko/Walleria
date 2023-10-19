@@ -1,6 +1,6 @@
 package com.andrii_a.walleria.domain.models.preferences
 
-data class MyProfileData(
+data class UserPrivateProfileData(
     val nickname: String = "",
     val firstName: String = "",
     val lastName: String = "",

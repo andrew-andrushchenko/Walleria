@@ -72,11 +72,11 @@ fun WalleriaApp() {
                     val viewModel: ProfileViewModel = hiltViewModel()
 
                     val isUserLoggedIn by viewModel.isUserLoggedIn.collectAsStateWithLifecycle()
-                    val userProfileData by viewModel.myProfileData.collectAsStateWithLifecycle()
+                    val userProfileData by viewModel.userPrivateProfileData.collectAsStateWithLifecycle()
 
                     ProfileScreen(
                         isUserLoggedIn = isUserLoggedIn,
-                        userProfileData = userProfileData,
+                        userPrivateProfileData = userProfileData,
                         navigateToLoginScreen = {
                             context.startActivity(LoginActivity::class.java)
                         },

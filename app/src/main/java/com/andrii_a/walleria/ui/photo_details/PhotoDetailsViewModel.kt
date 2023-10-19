@@ -53,7 +53,7 @@ class PhotoDetailsViewModel @Inject constructor(
     private val photoDownloader: PhotoDownloader,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    val isUserLoggedIn: StateFlow<Boolean> = userAccountPreferencesRepository.isUserAuthorized
+    val isUserLoggedIn: StateFlow<Boolean> = userAccountPreferencesRepository.isUserLoggedIn
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),

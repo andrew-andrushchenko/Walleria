@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.network.BackendResult
-import com.andrii_a.walleria.domain.models.preferences.MyProfileData
+import com.andrii_a.walleria.domain.models.preferences.UserPrivateProfileData
 import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
 import com.andrii_a.walleria.domain.repository.LoginRepository
 import com.andrii_a.walleria.ui.util.UiText
@@ -61,7 +61,7 @@ class EditUserProfileViewModel @Inject constructor(
     private val _state: MutableStateFlow<EditUserProfileScreenState> =
         MutableStateFlow(
             runBlocking {
-                userAccountPreferencesRepository.myProfileData.map {
+                userAccountPreferencesRepository.userPrivateProfileData.map {
                     EditUserProfileScreenState(
                         nickname = it.nickname,
                         firstName = it.firstName,
@@ -122,7 +122,7 @@ class EditUserProfileViewModel @Inject constructor(
 
             is EditUserProfileEvent.SaveProfile -> {
                 with(_state.value) {
-                    val myProfileData = MyProfileData(
+                    val userPrivateProfileData = UserPrivateProfileData(
                         nickname = nickname,
                         firstName = firstName,
                         lastName = lastName,
@@ -133,7 +133,7 @@ class EditUserProfileViewModel @Inject constructor(
                         bio = bio
                     )
 
-                    saveUserProfileData(myProfileData)
+                    saveUserProfileData(userPrivateProfileData)
                 }
             }
         }
@@ -145,9 +145,9 @@ class EditUserProfileViewModel @Inject constructor(
     private fun validateEmail(emailAddress: String): Boolean =
         Patterns.EMAIL_ADDRESS.matcher(emailAddress).matches()
 
-    private fun saveUserProfileData(myProfileData: MyProfileData) {
+    private fun saveUserProfileData(userPrivateProfileData: UserPrivateProfileData) {
         viewModelScope.launch {
-            val updateResult = loginRepository.updateMyProfile(myProfileData)
+            val updateResult = loginRepository.updatePrivateUserProfile(userPrivateProfileData)
 
             when (updateResult) {
                 is BackendResult.Empty, is BackendResult.Loading -> Unit
@@ -156,7 +156,7 @@ class EditUserProfileViewModel @Inject constructor(
                 }
 
                 is BackendResult.Success -> {
-                    loginRepository.saveMyProfile(updateResult.value)
+                    loginRepository.savePrivateUserProfile(updateResult.value)
                     _profileUpdateMessageFlow.emit(UiText.StringResource(R.string.profile_data_updated_successfully))
                 }
             }

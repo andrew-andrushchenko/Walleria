@@ -56,14 +56,14 @@ import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.andrii_a.walleria.R
-import com.andrii_a.walleria.domain.models.preferences.MyProfileData
+import com.andrii_a.walleria.domain.models.preferences.UserPrivateProfileData
 import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 
 @Composable
 fun ProfileScreen(
     isUserLoggedIn: Boolean,
-    userProfileData: MyProfileData,
+    userPrivateProfileData: UserPrivateProfileData,
     navigateToLoginScreen: () -> Unit,
     onLogout: () -> Unit,
     navigateToViewProfileScreen: (UserNickname) -> Unit,
@@ -80,17 +80,17 @@ fun ProfileScreen(
     ) {
         if (isUserLoggedIn) {
             LoggedInHeader(
-                userProfilePhotoUrl = userProfileData.profilePhotoUrl,
+                userProfilePhotoUrl = userPrivateProfileData.profilePhotoUrl,
                 userFullName = stringResource(
                     id = R.string.user_full_name_formatted,
-                    userProfileData.firstName,
-                    userProfileData.lastName
+                    userPrivateProfileData.firstName,
+                    userPrivateProfileData.lastName
                 ),
-                userNickname = userProfileData.nickname,
-                userEmail = userProfileData.email,
+                userNickname = userPrivateProfileData.nickname,
+                userEmail = userPrivateProfileData.email,
                 navigateToViewProfileScreen = {
                     navigateToViewProfileScreen(
-                        UserNickname(userProfileData.nickname)
+                        UserNickname(userPrivateProfileData.nickname)
                     )
                 },
                 navigateToEditProfileScreen = navigateToEditProfileScreen,
@@ -467,7 +467,7 @@ fun ProfileScreenPreview() {
         Surface {
             ProfileScreen(
                 isUserLoggedIn = isUserLoggedIn,
-                userProfileData = MyProfileData(
+                userPrivateProfileData = UserPrivateProfileData(
                     nickname = "john",
                     firstName = "John",
                     lastName = "Smith",

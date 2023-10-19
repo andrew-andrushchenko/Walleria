@@ -1,22 +1,22 @@
 package com.andrii_a.walleria.domain.repository
 
 import com.andrii_a.walleria.domain.models.login.AccessToken
-import com.andrii_a.walleria.domain.models.login.MyProfile
-import com.andrii_a.walleria.domain.models.preferences.MyProfileData
+import com.andrii_a.walleria.domain.models.login.UserPrivateProfile
+import com.andrii_a.walleria.domain.models.preferences.UserPrivateProfileData
 import kotlinx.coroutines.flow.Flow
 
 interface UserAccountPreferencesRepository {
 
-    val isUserAuthorized: Flow<Boolean>
+    val isUserLoggedIn: Flow<Boolean>
 
     val accessToken: Flow<String>
 
-    val myProfileData: Flow<MyProfileData>
+    val userPrivateProfileData: Flow<UserPrivateProfileData>
 
     suspend fun saveAccessToken(accessToken: AccessToken)
 
-    suspend fun saveMyProfileInfo(myProfile: MyProfile)
+    suspend fun saveAccountInfo(userPrivateProfile: UserPrivateProfile)
 
-    suspend fun reset()
+    suspend fun clearAccountInfo()
 
 }

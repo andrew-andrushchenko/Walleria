@@ -4,7 +4,7 @@ import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.photo.PhotoLinks
 import com.andrii_a.walleria.domain.models.user.UserProfileImage
 
-data class MyProfile(
+data class UserPrivateProfile(
     val id: String,
     val updatedAt: String?,
     val username: String,

@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
@@ -60,11 +59,7 @@ class LoginViewModel @Inject constructor(
     }
 
     fun getAccessToken(code: String) {
-        flow {
-            emit(BackendResult.Loading)
-            val accessTokenResult = loginRepository.getAccessToken(code)
-            emit(accessTokenResult)
-        }.onEach { backendResult ->
+        loginRepository.login(code).onEach { backendResult ->
             _loginState.update {
                 when (backendResult) {
                     is BackendResult.Empty -> LoginState.Empty
@@ -92,9 +87,9 @@ class LoginViewModel @Inject constructor(
     }
 
     private suspend fun getAndSaveUserProfile() {
-        loginRepository.getMyProfile().let { backendResult ->
+        loginRepository.getPrivateUserProfile().let { backendResult ->
             if (backendResult is BackendResult.Success) {
-                loginRepository.saveMyProfile(myProfile = backendResult.value)
+                loginRepository.savePrivateUserProfile(userPrivateProfile = backendResult.value)
             }
         }
     }

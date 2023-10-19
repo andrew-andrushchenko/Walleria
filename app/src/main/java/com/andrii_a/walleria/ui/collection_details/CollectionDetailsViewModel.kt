@@ -64,7 +64,7 @@ class CollectionDetailsViewModel @Inject constructor(
 ) : ViewModel() {
 
     val loggedInUsername: StateFlow<String> =
-        userAccountPreferencesRepository.myProfileData
+        userAccountPreferencesRepository.userPrivateProfileData
             .map {
                 it.nickname
             }.stateIn(

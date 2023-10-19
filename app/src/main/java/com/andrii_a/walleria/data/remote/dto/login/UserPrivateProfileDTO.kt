@@ -1,12 +1,12 @@
 package com.andrii_a.walleria.data.remote.dto.login
 
-import com.andrii_a.walleria.domain.models.login.MyProfile
+import com.andrii_a.walleria.domain.models.login.UserPrivateProfile
 import com.google.gson.annotations.SerializedName
 import com.andrii_a.walleria.data.remote.dto.photo.PhotoDTO
 import com.andrii_a.walleria.data.remote.dto.photo.PhotoLinksDTO
 import com.andrii_a.walleria.data.remote.dto.user.UserProfileImageDTO
 
-data class MyProfileDTO(
+data class UserPrivateProfileDTO(
     val id: String,
     @SerializedName("updatedAt")
     val updatedAt: String?,
@@ -44,7 +44,7 @@ data class MyProfileDTO(
     val uploadsRemaining: Long?,
     val email: String?
 ) {
-    fun toMyProfile(): MyProfile = MyProfile(
+    fun toUserPrivateProfile(): UserPrivateProfile = UserPrivateProfile(
         id = id,
         updatedAt = updatedAt,
         username = username.orEmpty(),
