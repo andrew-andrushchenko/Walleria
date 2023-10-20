@@ -106,16 +106,16 @@ class SearchViewModel @Inject constructor(
             contentFilter = filters.contentFilter,
             color = filters.color,
             orientation = filters.orientation
-        ).cachedIn(viewModelScope)
-    }
+        )
+    }.cachedIn(viewModelScope)
 
     val collections: Flow<PagingData<Collection>> = _query.flatMapLatest {
-        searchRepository.searchCollections(it).cachedIn(viewModelScope)
-    }
+        searchRepository.searchCollections(it)
+    }.cachedIn(viewModelScope)
 
     val users: Flow<PagingData<User>> = _query.flatMapLatest {
-        searchRepository.searchUsers(it).cachedIn(viewModelScope)
-    }
+        searchRepository.searchUsers(it)
+    }.cachedIn(viewModelScope)
 
     fun onEvent(event: SearchScreenEvent) {
         when (event) {
