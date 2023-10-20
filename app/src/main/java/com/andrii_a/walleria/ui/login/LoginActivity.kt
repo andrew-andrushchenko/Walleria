@@ -1,11 +1,13 @@
 package com.andrii_a.walleria.ui.login
 
+import android.app.Activity
 import android.content.ComponentName
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.browser.customtabs.CustomTabsCallback
 import androidx.browser.customtabs.CustomTabsClient
@@ -14,7 +16,7 @@ import androidx.browser.customtabs.CustomTabsServiceConnection
 import androidx.browser.customtabs.CustomTabsSession
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -25,7 +27,6 @@ import com.andrii_a.walleria.data.util.UNSPLASH_AUTH_CALLBACK
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.CustomTabsHelper
 import com.andrii_a.walleria.ui.util.toast
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -52,17 +53,16 @@ class LoginActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-
         setupCustomTabs()
 
         setContent {
-            val systemUiController = rememberSystemUiController()
+            val view = LocalView.current
 
-            LaunchedEffect(key1 = true) {
-                systemUiController.setSystemBarsColor(color = Color.Transparent)
+            LaunchedEffect(key1 = Unit) {
+                val window = (view.context as Activity).window
+                WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
             }
 
             val state by viewModel.loginState.collectAsStateWithLifecycle()

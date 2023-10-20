@@ -8,9 +8,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -22,12 +20,8 @@ import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.util.InterScreenCommunicationKeys
 import com.andrii_a.walleria.ui.util.toast
-import com.google.accompanist.systemuicontroller.SystemUiController
 
-fun NavGraphBuilder.collectPhotoRoute(
-    navController: NavController,
-    systemUiController: SystemUiController
-) {
+fun NavGraphBuilder.collectPhotoRoute(navController: NavController) {
     composable(
         route = "${Screen.CollectPhoto.route}/{${CollectPhotoArgs.PHOTO_ID}}",
         arguments = listOf(
@@ -53,16 +47,6 @@ fun NavGraphBuilder.collectPhotoRoute(
             )
         }
     ) { navBackStackEntry ->
-        val systemBarsColor = Color.Transparent
-        val areIconsDark = !isSystemInDarkTheme()
-
-        LaunchedEffect(key1 = true) {
-            systemUiController.setSystemBarsColor(
-                color = systemBarsColor,
-                darkIcons = areIconsDark
-            )
-        }
-
         val id = navBackStackEntry.arguments?.getString(CollectPhotoArgs.PHOTO_ID).orEmpty()
 
         val viewModel: CollectPhotoViewModel = hiltViewModel()
@@ -72,7 +56,10 @@ fun NavGraphBuilder.collectPhotoRoute(
             onBack = {
                 navController.previousBackStackEntry
                     ?.savedStateHandle
-                    ?.set(InterScreenCommunicationKeys.COLLECT_SCREEN_RESULT_KEY, viewModel.isPhotoCollected)
+                    ?.set(
+                        InterScreenCommunicationKeys.COLLECT_SCREEN_RESULT_KEY,
+                        viewModel.isPhotoCollected
+                    )
 
                 navController.popBackStack()
             }
@@ -95,7 +82,10 @@ fun NavGraphBuilder.collectPhotoRoute(
             onNavigateBack = {
                 navController.previousBackStackEntry
                     ?.savedStateHandle
-                    ?.set(InterScreenCommunicationKeys.COLLECT_SCREEN_RESULT_KEY, viewModel.isPhotoCollected)
+                    ?.set(
+                        InterScreenCommunicationKeys.COLLECT_SCREEN_RESULT_KEY,
+                        viewModel.isPhotoCollected
+                    )
 
                 navController.popBackStack()
             }

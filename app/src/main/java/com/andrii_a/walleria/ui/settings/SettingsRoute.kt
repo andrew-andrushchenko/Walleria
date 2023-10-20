@@ -7,22 +7,15 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.andrii_a.walleria.ui.navigation.Screen
-import com.google.accompanist.systemuicontroller.SystemUiController
 
-fun NavGraphBuilder.settingsRoute(
-    navController: NavController,
-    systemUiController: SystemUiController
-) {
+fun NavGraphBuilder.settingsRoute(navController: NavController) {
     composable(
         route = Screen.Settings.route,
         enterTransition = {
@@ -42,16 +35,6 @@ fun NavGraphBuilder.settingsRoute(
             )
         }
     ) {
-        val systemBarsColor = Color.Transparent
-        val areIconsDark = !isSystemInDarkTheme()
-
-        LaunchedEffect(key1 = true) {
-            systemUiController.setSystemBarsColor(
-                color = systemBarsColor,
-                darkIcons = areIconsDark
-            )
-        }
-
         val viewModel: SettingsViewModel = hiltViewModel()
 
         val photosListLayoutType by viewModel.photosListLayoutType.collectAsStateWithLifecycle()

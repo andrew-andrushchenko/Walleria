@@ -40,7 +40,6 @@ import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.user_details.navigateToUserDetails
 import com.andrii_a.walleria.ui.util.currentRoute
 import com.andrii_a.walleria.ui.util.startActivity
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,7 +50,6 @@ fun WalleriaApp() {
             color = MaterialTheme.colorScheme.background,
             modifier = Modifier.fillMaxSize()
         ) {
-            val systemUiController = rememberSystemUiController()
             val navController = rememberNavController()
 
             val bottomSheetState = rememberStandardBottomSheetState(
@@ -110,7 +108,6 @@ fun WalleriaApp() {
                 ) {
                     MainNavigationHost(
                         navHostController = navController,
-                        systemUiController = systemUiController,
                         openProfileBottomSheet = { scope.launch { scaffoldState.bottomSheetState.expand() } }
                     )
 

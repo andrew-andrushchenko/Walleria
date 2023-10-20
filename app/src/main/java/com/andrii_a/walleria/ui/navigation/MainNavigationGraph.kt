@@ -17,55 +17,50 @@ import com.andrii_a.walleria.ui.settings.settingsRoute
 import com.andrii_a.walleria.ui.topic_details.topicDetailsRoute
 import com.andrii_a.walleria.ui.topics.topicsBottomNavRoute
 import com.andrii_a.walleria.ui.user_details.userDetailsRoute
-import com.google.accompanist.systemuicontroller.SystemUiController
 
 @Composable
 fun MainNavigationHost(
     navHostController: NavHostController,
-    systemUiController: SystemUiController,
     openProfileBottomSheet: () -> Unit
 ) {
     NavHost(
         navController = navHostController,
         startDestination = NAVIGATION_BAR_GRAPH_ROUTE
     ) {
-        navigationBarGraph(navHostController, systemUiController, openProfileBottomSheet)
+        navigationBarGraph(navHostController, openProfileBottomSheet)
 
-        searchRoute(navHostController, systemUiController)
+        searchRoute(navHostController)
 
-        //profileRoute(navHostController)
+        editUserProfileRoute(navHostController)
 
-        editUserProfileRoute(navHostController, systemUiController)
+        photoDetailsRoute(navHostController)
 
-        photoDetailsRoute(navHostController, systemUiController)
+        collectPhotoRoute(navHostController)
 
-        collectPhotoRoute(navHostController, systemUiController)
+        collectionDetailsRoute(navHostController)
 
-        collectionDetailsRoute(navHostController, systemUiController)
+        userDetailsRoute(navHostController)
 
-        userDetailsRoute(navHostController, systemUiController)
+        topicDetailsRoute(navHostController)
 
-        topicDetailsRoute(navHostController, systemUiController)
+        settingsRoute(navHostController)
 
-        settingsRoute(navHostController, systemUiController)
-
-        aboutRoute(navHostController, systemUiController)
+        aboutRoute(navHostController)
     }
 
 }
 
 fun NavGraphBuilder.navigationBarGraph(
     navHostController: NavHostController,
-    systemUiController: SystemUiController,
     openProfileBottomSheet: () -> Unit
 ) {
     navigation(
         route = NAVIGATION_BAR_GRAPH_ROUTE,
         startDestination = NavigationScreen.Photos.route
     ) {
-        photosBottomNavRoute(navHostController, systemUiController, openProfileBottomSheet)
-        collectionsBottomNavRoute(navHostController, systemUiController, openProfileBottomSheet)
-        topicsBottomNavRoute(navHostController, systemUiController, openProfileBottomSheet)
+        photosBottomNavRoute(navHostController, openProfileBottomSheet)
+        collectionsBottomNavRoute(navHostController, openProfileBottomSheet)
+        topicsBottomNavRoute(navHostController, openProfileBottomSheet)
     }
 }
 

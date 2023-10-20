@@ -6,10 +6,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -22,12 +19,8 @@ import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.photo_details.navigateToPhotoDetails
 import com.andrii_a.walleria.ui.user_details.navigateToUserDetails
-import com.google.accompanist.systemuicontroller.SystemUiController
 
-fun NavGraphBuilder.collectionDetailsRoute(
-    navController: NavController,
-    systemUiController: SystemUiController
-) {
+fun NavGraphBuilder.collectionDetailsRoute(navController: NavController) {
     composable(
         route = "${Screen.CollectionDetails.route}/{${CollectionDetailsArgs.ID}}",
         arguments = listOf(
@@ -53,16 +46,6 @@ fun NavGraphBuilder.collectionDetailsRoute(
             )
         }
     ) {
-        val systemBarsColor = Color.Transparent
-        val areIconsDark = !isSystemInDarkTheme()
-
-        LaunchedEffect(key1 = true) {
-            systemUiController.setSystemBarsColor(
-                color = systemBarsColor,
-                darkIcons = areIconsDark
-            )
-        }
-
         val viewModel: CollectionDetailsViewModel = hiltViewModel()
 
         val loadResult by viewModel.loadResult.collectAsStateWithLifecycle()

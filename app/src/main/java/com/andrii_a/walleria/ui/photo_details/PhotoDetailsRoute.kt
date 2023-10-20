@@ -1,5 +1,6 @@
 package com.andrii_a.walleria.ui.photo_details
 
+import android.app.Activity
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.Spring
@@ -7,9 +8,11 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -24,12 +27,8 @@ import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.search.navigateToSearch
 import com.andrii_a.walleria.ui.user_details.navigateToUserDetails
 import com.andrii_a.walleria.ui.util.InterScreenCommunicationKeys
-import com.google.accompanist.systemuicontroller.SystemUiController
 
-fun NavGraphBuilder.photoDetailsRoute(
-    navController: NavController,
-    systemUiController: SystemUiController
-) {
+fun NavGraphBuilder.photoDetailsRoute(navController: NavController) {
     composable(
         route = "${Screen.PhotoDetails.route}/{${PhotoDetailsArgs.ID}}",
         arguments = listOf(
@@ -55,41 +54,36 @@ fun NavGraphBuilder.photoDetailsRoute(
             )
         },
     ) {
-        val systemBarsColors = Color.Transparent
-        val isDark = false
-
-        LaunchedEffect(key1 = true) {
-            systemUiController.setSystemBarsColor(
-                color = systemBarsColors,
-                darkIcons = isDark
-            )
-        }
-
         val viewModel: PhotoDetailsViewModel = hiltViewModel()
 
         val loadResult by viewModel.loadResult.collectAsStateWithLifecycle()
 
-        val systemBarsColor = Color.Transparent
-        val areIconsDark = !isSystemInDarkTheme()
+        val shouldUseDarkIcons = !isSystemInDarkTheme()
+        val view = LocalView.current
 
-        LaunchedEffect(key1 = loadResult) {
+        DisposableEffect(key1 = loadResult) {
             when (loadResult) {
                 is PhotoLoadResult.Empty,
                 is PhotoLoadResult.Error,
-                is PhotoLoadResult.Loading -> {
-                    systemUiController.setSystemBarsColor(
-                        color = systemBarsColor,
-                        darkIcons = areIconsDark
-                    )
-                }
+                is PhotoLoadResult.Loading -> Unit
 
                 is PhotoLoadResult.Success -> {
-                    systemUiController.setSystemBarsColor(
-                        color = systemBarsColor,
-                        darkIcons = false
-                    )
+                    val window = (view.context as Activity).window
+                    WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
                 }
+            }
 
+            onDispose {
+                when (loadResult) {
+                    is PhotoLoadResult.Empty,
+                    is PhotoLoadResult.Error,
+                    is PhotoLoadResult.Loading -> Unit
+
+                    is PhotoLoadResult.Success -> {
+                        val window = (view.context as Activity).window
+                        WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = shouldUseDarkIcons
+                    }
+                }
             }
         }
 

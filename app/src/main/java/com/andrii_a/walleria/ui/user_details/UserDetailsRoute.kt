@@ -6,10 +6,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -23,12 +20,8 @@ import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.photo_details.navigateToPhotoDetails
 import com.andrii_a.walleria.ui.profile_edit.navigateToEditUserProfile
 import com.andrii_a.walleria.ui.search.navigateToSearch
-import com.google.accompanist.systemuicontroller.SystemUiController
 
-fun NavGraphBuilder.userDetailsRoute(
-    navController: NavController,
-    systemUiController: SystemUiController
-) {
+fun NavGraphBuilder.userDetailsRoute(navController: NavController) {
     composable(
         route = "${Screen.UserDetails.route}/{${UserDetailsArgs.NICKNAME}}",
         arguments = listOf(
@@ -54,16 +47,6 @@ fun NavGraphBuilder.userDetailsRoute(
             )
         }
     ) {
-        val systemBarsColor = Color.Transparent
-        val areIconsDark = !isSystemInDarkTheme()
-
-        LaunchedEffect(key1 = true) {
-            systemUiController.setSystemBarsColor(
-                color = systemBarsColor,
-                darkIcons = areIconsDark
-            )
-        }
-
         val viewModel: UserDetailsViewModel = hiltViewModel()
 
         val loadResult by viewModel.loadResult.collectAsStateWithLifecycle()

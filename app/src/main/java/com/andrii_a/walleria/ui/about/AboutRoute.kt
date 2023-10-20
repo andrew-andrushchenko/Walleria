@@ -7,19 +7,12 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.andrii_a.walleria.ui.navigation.Screen
-import com.google.accompanist.systemuicontroller.SystemUiController
 
-fun NavGraphBuilder.aboutRoute(
-    navController: NavController,
-    systemUiController: SystemUiController
-) {
+fun NavGraphBuilder.aboutRoute(navController: NavController) {
     composable(
         route = Screen.About.route,
         enterTransition = {
@@ -39,16 +32,6 @@ fun NavGraphBuilder.aboutRoute(
             )
         }
     ) {
-        val systemBarsColor = Color.Transparent
-        val areIconsDark = !isSystemInDarkTheme()
-
-        LaunchedEffect(key1 = true) {
-            systemUiController.setSystemBarsColor(
-                color = systemBarsColor,
-                darkIcons = areIconsDark
-            )
-        }
-
         AboutScreen(
             navigateBack = navController::navigateUp,
             //openPhoto = navController::navigateToPhotoDetails
