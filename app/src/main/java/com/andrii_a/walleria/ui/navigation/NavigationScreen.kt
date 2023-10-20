@@ -38,5 +38,5 @@ enum class NavigationScreen(
 }
 
 val NavigationScreenRoutes: List<String> by lazy {
-    NavigationScreen.values().map { it.route }
+    NavigationScreen.entries.map { it.route }
 }

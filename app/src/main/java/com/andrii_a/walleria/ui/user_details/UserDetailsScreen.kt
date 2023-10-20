@@ -225,7 +225,7 @@ fun SuccessStateContent(
         }
     ) { innerPadding ->
         val scope = rememberCoroutineScope()
-        val pagerState = rememberPagerState(initialPage = 0) { UserDetailsScreenTabs.values().size }
+        val pagerState = rememberPagerState(initialPage = 0) { UserDetailsScreenTabs.entries.size }
 
         val nestedScrollLayoutState = rememberNestedScrollLayoutState()
 
@@ -252,7 +252,7 @@ fun SuccessStateContent(
                         )
                     }
                 ) {
-                    UserDetailsScreenTabs.values().forEachIndexed { index, tabPage ->
+                    UserDetailsScreenTabs.entries.forEachIndexed { index, tabPage ->
                         Tab(
                             selected = index == pagerState.currentPage,
                             onClick = {

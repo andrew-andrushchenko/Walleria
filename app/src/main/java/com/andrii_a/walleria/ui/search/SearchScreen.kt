@@ -81,7 +81,7 @@ fun SearchScreen(
     navigateToUserDetails: (UserNickname) -> Unit,
     navigateBack: () -> Unit
 ) {
-    val pagerState = rememberPagerState(initialPage = 0) { SearchScreenTabs.values().size }
+    val pagerState = rememberPagerState(initialPage = 0) { SearchScreenTabs.entries.size }
 
     val bottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
@@ -247,7 +247,7 @@ private fun SearchTabs(
         },
         modifier = modifier
     ) {
-        SearchScreenTabs.values().forEachIndexed { index, tabPage ->
+        SearchScreenTabs.entries.forEachIndexed { index, tabPage ->
             Tab(
                 selected = index == pagerState.currentPage,
                 onClick = {

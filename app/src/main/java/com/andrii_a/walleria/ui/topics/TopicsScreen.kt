@@ -48,7 +48,7 @@ fun TopicsScreen(
             TopAppBar(
                 title = {
                     val optionStringResources =
-                        TopicsDisplayOrder.values().toList().map { it.titleRes }
+                        TopicsDisplayOrder.entries.map { it.titleRes }
 
                     WTitleDropdown(
                         selectedTitleRes = order.titleRes,

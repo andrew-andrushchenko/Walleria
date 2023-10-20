@@ -65,12 +65,12 @@ fun SearchPhotoFiltersBottomSheet(
         Spacer(modifier = Modifier.height(8.dp))
 
         SingleChoiceSelector(
-            options = SearchResultsDisplayOrder.values().map {
+            options = SearchResultsDisplayOrder.entries.map {
                 SingleChoiceSelectorItem(titleRes = it.titleRes)
             },
             selectedOptionOrdinal = order.ordinal,
             onOptionSelect = { orderOrdinal ->
-                order = SearchResultsDisplayOrder.values()[orderOrdinal]
+                order = SearchResultsDisplayOrder.entries[orderOrdinal]
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -94,13 +94,13 @@ fun SearchPhotoFiltersBottomSheet(
         Spacer(modifier = Modifier.height(8.dp))
 
         SingleChoiceSelector(
-            options = SearchResultsContentFilter.values().map {
+            options = SearchResultsContentFilter.entries.map {
                 SingleChoiceSelectorItem(titleRes = it.titleRes)
             },
             selectedOptionOrdinal = contentFilter.ordinal,
             onOptionSelect = { contentFilterOrdinal ->
                 contentFilter =
-                    SearchResultsContentFilter.values()[contentFilterOrdinal]
+                    SearchResultsContentFilter.entries[contentFilterOrdinal]
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -124,7 +124,7 @@ fun SearchPhotoFiltersBottomSheet(
         Spacer(modifier = Modifier.height(8.dp))
 
         SingleChoiceSelector(
-            options = SearchResultsPhotoOrientation.values().mapIndexed { index, item ->
+            options = SearchResultsPhotoOrientation.entries.mapIndexed { index, item ->
                 if (index == 0) {
                     SingleChoiceSelectorItem(titleRes = item.titleRes)
                 } else {
@@ -137,7 +137,7 @@ fun SearchPhotoFiltersBottomSheet(
             },
             selectedOptionOrdinal = orientation.ordinal,
             onOptionSelect = { orderOrdinal ->
-                orientation = SearchResultsPhotoOrientation.values()[orderOrdinal]
+                orientation = SearchResultsPhotoOrientation.entries[orderOrdinal]
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -190,7 +190,7 @@ fun SearchPhotoFiltersBottomSheet(
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                SearchResultsPhotoColor.values().forEach { colorOption ->
+                SearchResultsPhotoColor.entries.forEach { colorOption ->
                     DropdownMenuItem(
                         text = {
                             Text(text = stringResource(id = colorOption.titleRes))

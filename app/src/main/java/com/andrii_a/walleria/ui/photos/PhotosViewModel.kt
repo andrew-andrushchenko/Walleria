@@ -51,6 +51,6 @@ class PhotosViewModel @Inject constructor(
     }.cachedIn(viewModelScope)
 
     fun orderBy(orderOptionOrdinalNum: Int) {
-        _order.update { PhotoListDisplayOrder.values()[orderOptionOrdinalNum] }
+        _order.update { PhotoListDisplayOrder.entries[orderOptionOrdinalNum] }
     }
 }

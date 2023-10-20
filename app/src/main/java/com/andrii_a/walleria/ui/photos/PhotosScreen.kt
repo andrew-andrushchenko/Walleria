@@ -53,7 +53,7 @@ fun PhotosScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    val optionStringResources = PhotoListDisplayOrder.values().toList().map { it.titleRes }
+                    val optionStringResources = PhotoListDisplayOrder.entries.map { it.titleRes }
 
                     WTitleDropdown(
                         selectedTitleRes = order.titleRes,

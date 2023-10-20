@@ -74,13 +74,13 @@ fun SettingsScreen(
                 SettingsItem(
                     title = stringResource(id = R.string.photos_layout),
                     selectedValue = stringResource(id = currentPhotosListLayoutType.titleRes),
-                    selectionOptions = PhotosListLayoutType.values()
+                    selectionOptions = PhotosListLayoutType.entries
                         .map { stringResource(id = it.titleRes) },
                     selectedItemPositionOrdinal = currentPhotosListLayoutType.ordinal,
                     onChangeParameter = { selectedLayoutTypeOrdinal ->
                         onEvent(
                             SettingsEvent.UpdatePhotosListLayoutType(
-                                PhotosListLayoutType.values()[selectedLayoutTypeOrdinal]
+                                PhotosListLayoutType.entries[selectedLayoutTypeOrdinal]
                             )
                         )
                     }
@@ -89,13 +89,13 @@ fun SettingsScreen(
                 SettingsItem(
                     title = stringResource(id = R.string.collections_layout),
                     selectedValue = stringResource(id = currentCollectionListLayoutType.titleRes),
-                    selectionOptions = CollectionListLayoutType.values()
+                    selectionOptions = CollectionListLayoutType.entries
                         .map { stringResource(id = it.titleRes) },
                     selectedItemPositionOrdinal = currentCollectionListLayoutType.ordinal,
                     onChangeParameter = { selectedLayoutTypeOrdinal ->
                         onEvent(
                             SettingsEvent.UpdateCollectionsListLayoutType(
-                                CollectionListLayoutType.values()[selectedLayoutTypeOrdinal]
+                                CollectionListLayoutType.entries[selectedLayoutTypeOrdinal]
                             )
                         )
                     },
@@ -108,13 +108,13 @@ fun SettingsScreen(
                 SettingsItem(
                     title = stringResource(id = R.string.photo_load_quality),
                     selectedValue = stringResource(id = currentPhotosLoadQuality.titleRes),
-                    selectionOptions = PhotoQuality.values()
+                    selectionOptions = PhotoQuality.entries
                         .map { stringResource(id = it.titleRes) },
                     selectedItemPositionOrdinal = currentPhotosLoadQuality.ordinal,
                     onChangeParameter = { selectedPhotoQualityOrdinal ->
                         onEvent(
                             SettingsEvent.UpdatePhotosLoadQuality(
-                                PhotoQuality.values()[selectedPhotoQualityOrdinal]
+                                PhotoQuality.entries[selectedPhotoQualityOrdinal]
                             )
                         )
                     }
@@ -123,13 +123,13 @@ fun SettingsScreen(
                 SettingsItem(
                     title = stringResource(id = R.string.photo_download_quality),
                     selectedValue = stringResource(id = currentPhotosDownloadQuality.titleRes),
-                    selectionOptions = PhotoQuality.values()
+                    selectionOptions = PhotoQuality.entries
                         .map { stringResource(id = it.titleRes) },
                     selectedItemPositionOrdinal = currentPhotosDownloadQuality.ordinal,
                     onChangeParameter = { selectedPhotoQualityOrdinal ->
                         onEvent(
                             SettingsEvent.UpdatePhotosDownloadQuality(
-                                PhotoQuality.values()[selectedPhotoQualityOrdinal]
+                                PhotoQuality.entries[selectedPhotoQualityOrdinal]
                             )
                         )
                     }
@@ -141,7 +141,7 @@ fun SettingsScreen(
 
 @Preview
 @Composable
-fun SettingsScreen() {
+fun SettingsScreenPreview() {
     WalleriaTheme {
         Surface {
             SettingsScreen(

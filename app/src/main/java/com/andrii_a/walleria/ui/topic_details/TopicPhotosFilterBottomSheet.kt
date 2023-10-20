@@ -58,12 +58,12 @@ fun TopicPhotosFilterBottomSheet(
         Spacer(modifier = Modifier.height(8.dp))
 
         SingleChoiceSelector(
-            options = PhotoListDisplayOrder.values().map {
+            options = PhotoListDisplayOrder.entries.map {
                 SingleChoiceSelectorItem(titleRes = it.titleRes)
             },
             selectedOptionOrdinal = order.ordinal,
             onOptionSelect = { orderOrdinal ->
-                order = PhotoListDisplayOrder.values()[orderOrdinal]
+                order = PhotoListDisplayOrder.entries[orderOrdinal]
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -85,7 +85,7 @@ fun TopicPhotosFilterBottomSheet(
         Spacer(modifier = Modifier.height(8.dp))
 
         SingleChoiceSelector(
-            options = TopicPhotosOrientation.values().map {
+            options = TopicPhotosOrientation.entries.map {
                 SingleChoiceSelectorItem(
                     titleRes = it.titleRes,
                     iconRes = it.iconRes,
@@ -94,7 +94,7 @@ fun TopicPhotosFilterBottomSheet(
             },
             selectedOptionOrdinal = orientation.ordinal,
             onOptionSelect = { orderOrdinal ->
-                orientation = TopicPhotosOrientation.values()[orderOrdinal]
+                orientation = TopicPhotosOrientation.entries[orderOrdinal]
             },
             modifier = Modifier
                 .fillMaxWidth()

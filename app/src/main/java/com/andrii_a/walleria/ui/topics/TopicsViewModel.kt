@@ -26,7 +26,7 @@ class TopicsViewModel @Inject constructor(
     }.cachedIn(viewModelScope)
 
     fun orderBy(orderOptionOrdinalNum: Int) {
-        _order.update { TopicsDisplayOrder.values()[orderOptionOrdinalNum] }
+        _order.update { TopicsDisplayOrder.entries[orderOptionOrdinalNum] }
     }
 
 }
