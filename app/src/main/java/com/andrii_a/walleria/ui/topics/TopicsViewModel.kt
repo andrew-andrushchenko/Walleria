@@ -22,8 +22,8 @@ class TopicsViewModel @Inject constructor(
     val order: StateFlow<TopicsDisplayOrder> = _order.asStateFlow()
 
     val topics = _order.flatMapLatest { order ->
-        topicRepository.getTopics(order).cachedIn(viewModelScope)
-    }
+        topicRepository.getTopics(order)
+    }.cachedIn(viewModelScope)
 
     fun orderBy(orderOptionOrdinalNum: Int) {
         _order.update { TopicsDisplayOrder.values()[orderOptionOrdinalNum] }
