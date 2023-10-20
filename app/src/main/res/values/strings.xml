@@ -103,7 +103,6 @@
     <string name="dont_have_an_account">Don\'t have an account?</string>
     <string name="action_yes">Yes</string>
     <string name="action_no">No</string>
-    <string name="login_screen_image_asset_url">file:///android_asset/login_screen_bg.jpg</string>
 
     <!--Time-->
     <string name="just_now">just now</string>
@@ -224,8 +223,6 @@
     <!-- About -->
     <string name="developed_and_designed_by">Developed and designed by</string>
     <string name="developer_username" translatable="false">Andrii Andrushchenko</string>
-    <string name="login_screen_photo_by">Login screen photo by</string>
-    <string name="login_screen_photo_owner">Brooke Cagle</string>
     <string name="powered_by_unsplash">powered by Unsplash</string>
     <string name="developer_email">aw.andrushchenko\@gmail.com</string>
     <string name="developer_github_username">andrew-andrushchenko</string>
