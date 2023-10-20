@@ -15,7 +15,7 @@ class AccessTokenInterceptor(
         val accessToken = runBlocking {
             userAccountPreferencesRepository.accessToken.firstOrNull()
         }
-        return if (accessToken.isNullOrBlank().not()) {
+        return if (!accessToken.isNullOrBlank()) {
             val authenticatedRequest = chain.request()
                 .newBuilder()
                 .addHeader("Authorization", "Bearer $accessToken")
