@@ -1,9 +1,9 @@
 # Walleria
 ![Walleria](screenshots/Walleria.png)
 
-A simple and beautiful Material You photo client for Android powered by [Unsplash](https://unsplash.com). This is an **unofficial** application, exploring the feasibility of some conceptions is the goal of this project.
+A simple and beautiful Material You photo client for Android powered by [Unsplash](https://unsplash.com). This is an **unofficial** application. The goal of this project is to explore the feasibility of some conceptions.
 
-If you like this project or inspired by any ideas of this project, please star it without any hesitation. Also, feel free to suggest something or contribute 😊.
+If you like this project or are inspired by any ideas implemented here, please rate it without any hesitation. Also, feel free to suggest something or contribute 😊.
 # About
 The Internet's source of freely-usable images. Powered by creators everywhere.
 
@@ -40,6 +40,7 @@ unsplash_secret_key_release = "<Release Secret Key>"
 * Room
 * DataStore
 * Chrome custom tabs
+* [BlurHash](https://blurha.sh/)
 
 # Special thanks
 * [Albert Chang](https://github.com/mxalbert1996) and [Tlaster](https://github.com/Tlaster)
