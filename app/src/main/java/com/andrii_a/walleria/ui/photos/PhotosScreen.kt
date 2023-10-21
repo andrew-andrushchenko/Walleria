@@ -103,9 +103,8 @@ fun PhotosScreen(
                     contentPadding = PaddingValues(
                         start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
                         end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
-                        top = innerPadding.calculateTopPadding(),
-                        bottom = innerPadding.calculateBottomPadding() +
-                                dimensionResource(id = R.dimen.navigation_bar_height) * 2
+                        top = innerPadding.calculateTopPadding() + dimensionResource(id = R.dimen.list_top_padding),
+                        bottom = innerPadding.calculateBottomPadding() + dimensionResource(id = R.dimen.navigation_bar_height) * 2
                     ),
                     modifier = Modifier.fillMaxSize()
                 )
@@ -127,9 +126,8 @@ fun PhotosScreen(
                     contentPadding = PaddingValues(
                         start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
                         end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
-                        top = innerPadding.calculateTopPadding(),
-                        bottom = innerPadding.calculateBottomPadding() +
-                                dimensionResource(id = R.dimen.navigation_bar_height) * 2
+                        top = innerPadding.calculateTopPadding() + dimensionResource(id = R.dimen.list_top_padding),
+                        bottom = innerPadding.calculateBottomPadding() + dimensionResource(id = R.dimen.navigation_bar_height) * 2
                     ),
                     modifier = Modifier.fillMaxSize()
                 )
@@ -147,9 +145,8 @@ fun PhotosScreen(
                     contentPadding = PaddingValues(
                         start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
                         end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
-                        top = innerPadding.calculateTopPadding(),
-                        bottom = innerPadding.calculateBottomPadding() +
-                                dimensionResource(id = R.dimen.navigation_bar_height) * 2
+                        top = innerPadding.calculateTopPadding() + dimensionResource(id = R.dimen.list_top_padding),
+                        bottom = innerPadding.calculateBottomPadding() + dimensionResource(id = R.dimen.navigation_bar_height) * 2
                     ),
                     modifier = Modifier.fillMaxSize()
                 )

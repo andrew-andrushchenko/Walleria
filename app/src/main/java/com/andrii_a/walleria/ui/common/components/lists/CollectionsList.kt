@@ -219,7 +219,6 @@ private fun LazyListScope.loadedStateContent(
                         },
                         modifier = Modifier
                             .padding(
-                                top = 8.dp,
                                 start = 16.dp,
                                 end = 16.dp,
                                 bottom = 32.dp

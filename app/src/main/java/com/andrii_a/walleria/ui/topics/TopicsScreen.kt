@@ -1,6 +1,8 @@
 package com.andrii_a.walleria.ui.topics
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -91,9 +93,8 @@ fun TopicsScreen(
             contentPadding = PaddingValues(
                 start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
                 end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
-                top = innerPadding.calculateTopPadding(),
-                bottom = innerPadding.calculateBottomPadding() +
-                        dimensionResource(id = R.dimen.navigation_bar_height) * 2
+                top = innerPadding.calculateTopPadding() + dimensionResource(id = R.dimen.list_top_padding),
+                bottom = innerPadding.calculateBottomPadding() + dimensionResource(id = R.dimen.navigation_bar_height) * 2
             )
         )
     }

@@ -338,6 +338,10 @@ private fun Pages(
                             isCompact = false,
                             photosLoadQuality = photosLoadQuality,
                             listState = listState,
+                            contentPadding = PaddingValues(
+                                top = dimensionResource(id = R.dimen.list_top_padding),
+                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+                            ),
                             modifier = Modifier.fillMaxSize()
                         )
                     }
@@ -352,6 +356,10 @@ private fun Pages(
                             isCompact = true,
                             photosLoadQuality = photosLoadQuality,
                             listState = listState,
+                            contentPadding = PaddingValues(
+                                top = dimensionResource(id = R.dimen.list_top_padding),
+                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+                            ),
                             modifier = Modifier.fillMaxSize()
                         )
                     }
@@ -364,6 +372,10 @@ private fun Pages(
                             onPhotoClicked = navigateToPhotoDetails,
                             photosLoadQuality = photosLoadQuality,
                             gridState = gridState,
+                            contentPadding = PaddingValues(
+                                top = dimensionResource(id = R.dimen.list_top_padding),
+                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+                            ),
                             modifier = Modifier.fillMaxSize()
                         )
                     }
@@ -382,6 +394,10 @@ private fun Pages(
                             isCompact = false,
                             photosLoadQuality = photosLoadQuality,
                             listState = listState,
+                            contentPadding = PaddingValues(
+                                top = dimensionResource(id = R.dimen.list_top_padding),
+                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+                            ),
                             modifier = Modifier.fillMaxSize()
                         )
                     }
@@ -396,6 +412,10 @@ private fun Pages(
                             isCompact = true,
                             photosLoadQuality = photosLoadQuality,
                             listState = listState,
+                            contentPadding = PaddingValues(
+                                top = dimensionResource(id = R.dimen.list_top_padding),
+                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+                            ),
                             modifier = Modifier.fillMaxSize()
                         )
                     }
@@ -408,6 +428,10 @@ private fun Pages(
                             onPhotoClicked = navigateToPhotoDetails,
                             photosLoadQuality = photosLoadQuality,
                             gridState = gridState,
+                            contentPadding = PaddingValues(
+                                top = dimensionResource(id = R.dimen.list_top_padding),
+                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+                            ),
                             modifier = Modifier.fillMaxSize()
                         )
                     }
@@ -425,6 +449,10 @@ private fun Pages(
                             onUserProfileClicked = navigateToUserDetails,
                             onPhotoClicked = navigateToPhotoDetails,
                             photosLoadQuality = photosLoadQuality,
+                            contentPadding = PaddingValues(
+                                top = dimensionResource(id = R.dimen.list_top_padding),
+                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+                            ),
                             listState = listState,
                         )
                     }
@@ -440,6 +468,10 @@ private fun Pages(
                             photosLoadQuality = photosLoadQuality,
                             isCompact = true,
                             listState = listState,
+                            contentPadding = PaddingValues(
+                                top = dimensionResource(id = R.dimen.list_top_padding),
+                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+                            )
                         )
                     }
 
@@ -451,6 +483,10 @@ private fun Pages(
                             onCollectionClicked = navigateToCollectionDetails,
                             gridState = gridState,
                             photosLoadQuality = photosLoadQuality,
+                            contentPadding = PaddingValues(
+                                top = dimensionResource(id = R.dimen.list_top_padding),
+                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+                            )
                         )
                     }
                 }
