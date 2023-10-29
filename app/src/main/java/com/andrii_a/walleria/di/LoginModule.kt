@@ -15,11 +15,11 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AuthModule {
+object LoginModule {
 
     @Provides
     @Singleton
-    fun provideAuthorizationService(retrofitBuilder: Retrofit.Builder): LoginService =
+    fun provideLoginService(retrofitBuilder: Retrofit.Builder): LoginService =
         retrofitBuilder.baseUrl(BASE_URL).build().create(LoginService::class.java)
 
     @Provides
