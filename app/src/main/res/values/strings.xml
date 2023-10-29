@@ -17,7 +17,6 @@
     <string name="collections">Collections</string>
     <string name="topics">Topics</string>
     <string name="search">Search</string>
-    <string name="profile">Profile</string>
 
     <!--Photos tab-->
     <string name="photos_title_template">%s photos</string>
@@ -29,18 +28,12 @@
     <!--Collections tab-->
     <string name="all_collections">All collections</string>
     <string name="description_first_photo">The first preview photo in collection</string>
-    <string name="description_second_photo">The second preview photo in collection</string>
-    <string name="description_third_photo">The third preview photo in collection</string>
     <string name="description_open_collection">Open collection</string>
     <string name="bullet_template">%s \u2022 %s photos</string>
 
     <!--Topics-->
     <string name="order_position">Position</string>
     <string name="order_featured">Featured</string>
-    <string name="curated_by_formatted">curated by %s</string>
-    <string name="status">Status:</string>
-    <string name="topic_photos_filter">Topic photos filter</string>
-    <string name="show">Show</string>
     <string name="topic_status_open">Open</string>
     <string name="topic_status_closed">Closed</string>
     <string name="topic_status_other">Other</string>
@@ -53,7 +46,6 @@
     <string name="apply">Apply</string>
     <string name="type_something">Type something</string>
     <string name="empty_content_banner_text">Uh oh…\n Looks like it\'s nothing here</string>
-    <string name="no_search_results_subtitle">Try searching for something</string>
     <string name="filter">Filter</string>
     <string name="photo_filters">Photo filters</string>
     <string name="filter_order_relevance">Relevance</string>
@@ -80,23 +72,17 @@
     <string name="filter_color_teal">Teal</string>
     <string name="filter_color_blue">Blue</string>
     <string name="order">Order</string>
-    <string name="clear_search_field">Clear search field</string>
     <string name="recent_searches">Recent searches:</string>
     <string name="clear_recent_searches">Clear all</string>
 
     <!--Login-->
     <string name="add_account">Add an account</string>
-    <string name="user_authorization_title">Authorization</string>
     <string name="join">Join</string>
     <string name="login">Login</string>
     <string name="logout">Logout</string>
     <string name="logout_confirmation">Are you sure?</string>
-    <string name="login_prompt">Please login to %s</string>
-    <string name="like_photo">like photo</string>
-    <string name="save_photo">save photo</string>
     <string name="login_successful">Login successful</string>
     <string name="login_failed">Login failed</string>
-    <string name="user_full_name_with_nickname_formatted" translatable="false">%s %s (%s)</string>
     <string name="login_screen_greetings_text">Hey there!</string>
     <string name="login_screen_slogan_p1" translatable="false">Compel your audience.\u0020</string>
     <string name="login_screen_slogan_p2" translatable="false">Capture the moment. Light with purpose.</string>
@@ -136,11 +122,8 @@
     <string name="instagram_username_hint">Instagram username</string>
     <string name="location_hint">Location</string>
     <string name="bio_hint">Bio</string>
-    <string name="enter_valid_email">Please enter an email address.</string>
 
     <!--Photo details-->
-    <string name="photo_info">Info</string>
-    <string name="location_template" translatable="false">%s, %s</string>
     <string name="open_in_browser">Open in browser</string>
     <string name="share">Share</string>
     <string name="camera">Camera</string>
@@ -148,20 +131,15 @@
     <string name="unknown">Unknown</string>
     <string name="focal_length">Focal length</string>
     <string name="shutter_speed">Shutter speed</string>
-    <string name="exposure_time">Exposure time</string>
     <string name="iso" translatable="false">ISO</string>
     <string name="resolution">Resolution</string>
     <string name="resolution_formatted" translatable="false">%d × %d</string>
-    <string name="like">Like</string>
-    <string name="download">Download</string>
     <string name="collect">Collect</string>
     <string name="drop">Drop</string>
-    <string name="gmaps_does_not_installed">Google Maps does not installed on this device</string>
     <string name="related_collections">Related collections:</string>
     <string name="views">Views</string>
     <string name="likes">Likes</string>
     <string name="downloads">Downloads</string>
-    <string name="description">Description:</string>
 
     <!-- Collect photo-->
     <string name="select_collections">Select collections</string>
@@ -187,10 +165,8 @@
     <!-- Collection details-->
     <string name="edit_collection">Edit collection</string>
     <string name="update_collection_action">Update</string>
-    <string name="delete_collection">Delete collection</string>
     <string name="delete_collection_confirmation">Are you sure?</string>
     <string name="delete_collection_action">Delete</string>
-    <string name="collection_details_screen_top_bar_color_animation_label">collection_details_screen_top_bar_color_animation_label</string>
 
     <!-- Photo download-->
     <string name="download_started">Download started!</string>
