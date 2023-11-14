@@ -76,7 +76,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.3"
+        kotlinCompilerExtensionVersion = "1.5.4"
     }
 
     packaging {
@@ -107,9 +107,9 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
 
     // Navigation + compose
-    implementation("androidx.navigation:navigation-compose:2.7.4")
-    implementation("androidx.hilt:hilt-navigation:1.0.0")
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+    implementation("androidx.navigation:navigation-compose:2.7.5")
+    implementation("androidx.hilt:hilt-navigation:1.1.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
 
     // Paging + compose
     implementation("androidx.paging:paging-runtime-ktx:3.2.1")
