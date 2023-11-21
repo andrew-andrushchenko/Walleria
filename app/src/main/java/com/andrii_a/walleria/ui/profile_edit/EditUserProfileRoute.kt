@@ -7,7 +7,6 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -16,6 +15,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.andrii_a.walleria.ui.navigation.Screen
+import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 import com.andrii_a.walleria.ui.util.toast
 
 fun NavGraphBuilder.editUserProfileRoute(navController: NavController) {
@@ -43,10 +43,8 @@ fun NavGraphBuilder.editUserProfileRoute(navController: NavController) {
         val state by viewModel.state.collectAsStateWithLifecycle()
 
         val context = LocalContext.current
-        LaunchedEffect(key1 = true) {
-            viewModel.profileUpdateMessageFlow.collect { message ->
-                context.toast(message.asString(context))
-            }
+        viewModel.profileUpdateMessageFlow.collectAsOneTimeEvents { uiText ->
+            context.toast(uiText.asString(context))
         }
 
         EditUserProfileScreen(

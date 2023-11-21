@@ -8,7 +8,6 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -19,6 +18,7 @@ import androidx.navigation.navArgument
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.util.InterScreenCommunicationKeys
+import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 import com.andrii_a.walleria.ui.util.toast
 
 fun NavGraphBuilder.collectPhotoRoute(navController: NavController) {
@@ -66,10 +66,8 @@ fun NavGraphBuilder.collectPhotoRoute(navController: NavController) {
         )
 
         val context = LocalContext.current
-        LaunchedEffect(true) {
-            viewModel.errorFlow.collect { errorText ->
-                context.toast(errorText.asString(context))
-            }
+        viewModel.errorFlow.collectAsOneTimeEvents { errorText ->
+            context.toast(errorText.asString(context))
         }
 
         CollectPhotoScreen(
