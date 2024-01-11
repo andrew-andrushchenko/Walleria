@@ -47,57 +47,15 @@ import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.domain.models.user.UserSocialMediaLinks
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.getProfileImageUrlOrEmpty
-import com.andrii_a.walleria.ui.util.openInstagramProfile
-import com.andrii_a.walleria.ui.util.openLinkInBrowser
-import com.andrii_a.walleria.ui.util.openTwitterProfile
 import com.andrii_a.walleria.ui.util.userFullName
-
-@Composable
-private fun UserSocialMediaRow(userSocial: UserSocialMediaLinks) {
-    val context = LocalContext.current
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        userSocial.portfolioUrl?.let {
-            IconButton(onClick = { context.openLinkInBrowser(it) }) {
-                Icon(
-                    imageVector = Icons.Outlined.Cases,
-                    contentDescription = stringResource(id = R.string.portfolio_url)
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.padding(8.dp))
-
-        userSocial.instagramUsername?.let {
-            IconButton(onClick = { context.openInstagramProfile(it) }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_instagram_outlined),
-                    contentDescription = stringResource(id = R.string.instagram_profile)
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.padding(8.dp))
-
-        userSocial.twitterUsername?.let {
-            IconButton(onClick = { context.openTwitterProfile(it) }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_twitter_x_outlined),
-                    contentDescription = stringResource(id = R.string.x_twitter_profile)
-                )
-            }
-        }
-    }
-}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun UserHeader(
     user: User,
+    onOpenPortfolio: (String) -> Unit,
+    onOpenInstagramProfile: (String) -> Unit,
+    onOpenTwitterProfile: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Surface(modifier = modifier) {
@@ -153,7 +111,12 @@ fun UserHeader(
             }
 
             user.social?.let { userSocial ->
-                UserSocialMediaRow(userSocial = userSocial)
+                UserSocialMediaRow(
+                    userSocial = userSocial,
+                    onOpenPortfolio = onOpenPortfolio,
+                    onOpenInstagramProfile = onOpenInstagramProfile,
+                    onOpenTwitterProfile = onOpenTwitterProfile,
+                )
             }
         }
 
@@ -187,6 +150,51 @@ fun UserHeader(
     }
 }
 
+@Composable
+private fun UserSocialMediaRow(
+    userSocial: UserSocialMediaLinks,
+    onOpenPortfolio: (String) -> Unit,
+    onOpenInstagramProfile: (String) -> Unit,
+    onOpenTwitterProfile: (String) -> Unit,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        userSocial.portfolioUrl?.let {
+            IconButton(onClick = { onOpenPortfolio(it) }) {
+                Icon(
+                    imageVector = Icons.Outlined.Cases,
+                    contentDescription = stringResource(id = R.string.portfolio_url)
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.padding(8.dp))
+
+        userSocial.instagramUsername?.let {
+            IconButton(onClick = { onOpenInstagramProfile(it) }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_instagram_outlined),
+                    contentDescription = stringResource(id = R.string.instagram_profile)
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.padding(8.dp))
+
+        userSocial.twitterUsername?.let {
+            IconButton(onClick = { onOpenTwitterProfile(it) }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_twitter_x_outlined),
+                    contentDescription = stringResource(id = R.string.x_twitter_profile)
+                )
+            }
+        }
+    }
+}
+
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
@@ -194,7 +202,7 @@ fun UserHeaderPreview() {
     WalleriaTheme {
         val user = User(
             id = "",
-            username = "ABC",
+            username = "abc",
             firstName = "John",
             lastName = "Smith",
             bio = null,
@@ -216,6 +224,11 @@ fun UserHeaderPreview() {
             photos = null
         )
 
-        UserHeader(user = user)
+        UserHeader(
+            user = user,
+            onOpenPortfolio = {},
+            onOpenInstagramProfile = {},
+            onOpenTwitterProfile = {}
+        )
     }
 }

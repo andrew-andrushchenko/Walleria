@@ -19,6 +19,7 @@ import com.andrii_a.walleria.ui.common.SearchQuery
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.photo_details.navigateToPhotoDetails
 import com.andrii_a.walleria.ui.user_details.navigateToUserDetails
+import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 
 fun NavGraphBuilder.searchRoute(navController: NavController) {
     composable(
@@ -49,28 +50,31 @@ fun NavGraphBuilder.searchRoute(navController: NavController) {
     ) {
         val viewModel: SearchViewModel = hiltViewModel()
 
-        val query by viewModel.query.collectAsStateWithLifecycle()
-        val recentSearches by viewModel.recentSearches.collectAsStateWithLifecycle()
+        val state by viewModel.state.collectAsStateWithLifecycle()
 
-        val photosLayoutType by viewModel.photosLayoutType.collectAsStateWithLifecycle()
-        val collectionsLayoutType by viewModel.collectionsLayoutType.collectAsStateWithLifecycle()
-        val photosLoadQuality by viewModel.photosLoadQuality.collectAsStateWithLifecycle()
+        viewModel.navigationEventsChannelFlow.collectAsOneTimeEvents { event ->
+            when (event) {
+                is SearchNavigationEvent.NavigateBack -> {
+                    navController.navigateUp()
+                }
+
+                is SearchNavigationEvent.NavigateToPhotoDetails -> {
+                    navController.navigateToPhotoDetails(event.photoId)
+                }
+
+                is SearchNavigationEvent.NavigateToCollectionDetails -> {
+                    navController.navigateToCollectionDetails(event.collectionId)
+                }
+
+                is SearchNavigationEvent.NavigateToUserDetails -> {
+                    navController.navigateToUserDetails(event.userNickname)
+                }
+            }
+        }
 
         SearchScreen(
-            query = query,
-            recentSearches = recentSearches,
-            photos = viewModel.photos,
-            collections = viewModel.collections,
-            users = viewModel.users,
-            photoFilters = viewModel.photoFilters,
-            photosListLayoutType = photosLayoutType,
-            collectionListLayoutType = collectionsLayoutType,
-            photosLoadQuality = photosLoadQuality,
-            onEvent = viewModel::onEvent,
-            navigateToPhotoDetails = navController::navigateToPhotoDetails,
-            navigateToCollectionDetails = navController::navigateToCollectionDetails,
-            navigateToUserDetails = navController::navigateToUserDetails,
-            navigateBack = navController::navigateUp
+            state = state,
+            onEvent = viewModel::onEvent
         )
     }
 }

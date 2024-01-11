@@ -17,6 +17,7 @@ import com.andrii_a.walleria.ui.navigation.NavigationScreen
 import com.andrii_a.walleria.ui.photo_details.navigateToPhotoDetails
 import com.andrii_a.walleria.ui.search.navigateToSearch
 import com.andrii_a.walleria.ui.user_details.navigateToUserDetails
+import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 
 fun NavGraphBuilder.collectionsBottomNavRoute(
     navController: NavController,
@@ -42,18 +43,36 @@ fun NavGraphBuilder.collectionsBottomNavRoute(
         }
     ) {
         val viewModel: CollectionsViewModel = hiltViewModel()
-        val collectionsLayoutType by viewModel.collectionsLayoutType.collectAsStateWithLifecycle()
-        val photosLoadQuality by viewModel.photosLoadQuality.collectAsStateWithLifecycle()
+
+        val state by viewModel.state.collectAsStateWithLifecycle()
+
+        viewModel.navigationEventsChannelFlow.collectAsOneTimeEvents { event ->
+            when (event) {
+                is CollectionsNavigationEvent.NavigateToCollectionDetails -> {
+                    navController.navigateToCollectionDetails(event.collectionId)
+                }
+
+                is CollectionsNavigationEvent.NavigateToPhotoDetailsScreen -> {
+                    navController.navigateToPhotoDetails(event.photoId)
+                }
+
+                is CollectionsNavigationEvent.NavigateToProfileScreen -> {
+                    openProfileBottomSheet()
+                }
+
+                is CollectionsNavigationEvent.NavigateToSearchScreen -> {
+                    navController.navigateToSearch()
+                }
+
+                is CollectionsNavigationEvent.NavigateToUserDetails -> {
+                    navController.navigateToUserDetails(event.userNickname)
+                }
+            }
+        }
 
         CollectionsScreen(
-            collections = viewModel.collections,
-            collectionsLayoutType = collectionsLayoutType,
-            photosLoadQuality = photosLoadQuality,
-            navigateToProfileScreen = openProfileBottomSheet,
-            navigateToSearchScreen = navController::navigateToSearch,
-            navigateToPhotoDetails = navController::navigateToPhotoDetails,
-            navigateToCollectionDetails = navController::navigateToCollectionDetails,
-            navigateToUserDetails = navController::navigateToUserDetails
+            state = state,
+            onEvent = viewModel::onEvent
         )
     }
 }

@@ -47,10 +47,17 @@ fun NavGraphBuilder.editUserProfileRoute(navController: NavController) {
             context.toast(uiText.asString(context))
         }
 
+        viewModel.navigationEventsChannelFlow.collectAsOneTimeEvents { event ->
+            when (event) {
+                is EditUserProfileNavigationEvent.NavigateBack -> {
+                    navController.navigateUp()
+                }
+            }
+        }
+
         EditUserProfileScreen(
             state = state,
-            onEvent = viewModel::onEvent,
-            onNavigateBack = navController::navigateUp
+            onEvent = viewModel::onEvent
         )
     }
 }

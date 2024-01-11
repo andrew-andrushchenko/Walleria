@@ -5,11 +5,22 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bookmark
@@ -30,12 +41,19 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,6 +62,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -55,64 +75,55 @@ import coil.size.Size
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
+import com.andrii_a.walleria.domain.models.photo.PhotoUrls
 import com.andrii_a.walleria.domain.models.user.User
-import com.andrii_a.walleria.domain.models.user.UserProfileImage
-import com.andrii_a.walleria.ui.common.*
+import com.andrii_a.walleria.ui.common.PhotoId
+import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
-import com.andrii_a.walleria.ui.login.LoginActivity
-import com.andrii_a.walleria.ui.photo_details.components.*
+import com.andrii_a.walleria.ui.photo_details.components.OverZoomConfig
+import com.andrii_a.walleria.ui.photo_details.components.UserRow
+import com.andrii_a.walleria.ui.photo_details.components.Zoomable
+import com.andrii_a.walleria.ui.photo_details.components.rememberZoomableState
 import com.andrii_a.walleria.ui.theme.PhotoDetailsActionButtonContainerColor
 import com.andrii_a.walleria.ui.theme.PhotoDetailsActionButtonContentColor
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
-import com.andrii_a.walleria.ui.util.*
+import com.andrii_a.walleria.ui.util.UiError
+import com.andrii_a.walleria.ui.util.UiText
+import com.andrii_a.walleria.ui.util.abbreviatedNumberString
+import com.andrii_a.walleria.ui.util.getProfileImageUrlOrEmpty
+import com.andrii_a.walleria.ui.util.getUrlByQuality
+import com.andrii_a.walleria.ui.util.toast
+import com.andrii_a.walleria.ui.util.userFullName
+import com.andrii_a.walleria.ui.util.userNickname
 import kotlinx.coroutines.launch
 import kotlin.math.max
 
 @Composable
 fun PhotoDetailsScreen(
-    loadResult: PhotoLoadResult,
-    isUserLoggedIn: Boolean,
-    isPhotoLiked: Boolean,
-    isPhotoCollected: Boolean,
-    photosDownloadQuality: PhotoQuality,
+    state: PhotoDetailsUiState,
     onEvent: (PhotoDetailsEvent) -> Unit,
-    navigateBack: () -> Unit,
-    navigateToUserDetails: (UserNickname) -> Unit,
-    navigateToCollectPhoto: (PhotoId) -> Unit,
-    navigateToSearch: (SearchQuery) -> Unit,
-    navigateToCollectionDetails: (CollectionId) -> Unit
 ) {
-    when (loadResult) {
-        is PhotoLoadResult.Empty -> Unit
-        is PhotoLoadResult.Loading -> {
+    when {
+        state.isLoading -> {
             LoadingStateContent(
-                onNavigateBack = navigateBack
+                onNavigateBack = { onEvent(PhotoDetailsEvent.GoBack) }
             )
         }
 
-        is PhotoLoadResult.Error -> {
-            ErrorStateContent(
-                onRetry = {
-                    onEvent(PhotoDetailsEvent.RequestPhoto(loadResult.photoId))
-                },
-                onNavigateBack = navigateBack
-            )
-        }
-
-        is PhotoLoadResult.Success -> {
+        !state.isLoading && state.error == null && state.photo != null -> {
             SuccessStateContent(
-                photo = loadResult.photo,
-                isUserLoggedIn = isUserLoggedIn,
-                isPhotoLiked = isPhotoLiked,
-                isPhotoCollected = isPhotoCollected,
-                photosDownloadQuality = photosDownloadQuality,
-                navigateBack = navigateBack,
-                navigateToUserDetails = navigateToUserDetails,
-                navigateToCollectPhoto = navigateToCollectPhoto,
-                navigateToSearch = navigateToSearch,
-                navigateToCollectionDetails = navigateToCollectionDetails,
+                state = state,
                 onEvent = onEvent,
                 modifier = Modifier.fillMaxSize()
+            )
+        }
+
+        else -> {
+            ErrorStateContent(
+                onRetry = {
+                    state.error?.onRetry?.invoke()
+                },
+                onNavigateBack = { onEvent(PhotoDetailsEvent.GoBack) }
             )
         }
     }
@@ -124,18 +135,9 @@ value class LikeCount(val value: Long)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SuccessStateContent(
-    photo: Photo,
-    isUserLoggedIn: Boolean,
-    isPhotoLiked: Boolean,
-    isPhotoCollected: Boolean,
-    photosDownloadQuality: PhotoQuality,
+    state: PhotoDetailsUiState,
+    onEvent: (PhotoDetailsEvent) -> Unit,
     modifier: Modifier = Modifier,
-    navigateBack: () -> Unit,
-    navigateToUserDetails: (UserNickname) -> Unit,
-    navigateToCollectPhoto: (PhotoId) -> Unit,
-    navigateToSearch: (SearchQuery) -> Unit,
-    navigateToCollectionDetails: (CollectionId) -> Unit,
-    onEvent: (PhotoDetailsEvent) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -144,7 +146,8 @@ private fun SuccessStateContent(
     val bottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
-    var openBottomSheet by rememberSaveable { mutableStateOf(false) }
+
+    val photo = state.photo!!
 
     BoxWithConstraints(modifier = modifier.background(Color.Black)) {
         val constraints = this
@@ -152,24 +155,24 @@ private fun SuccessStateContent(
         var areControlsVisible by rememberSaveable { mutableStateOf(true) }
         var zoomToFillCoefficient by rememberSaveable { mutableFloatStateOf(1f) }
 
-        val state = rememberZoomableState(
+        val zoomableState = rememberZoomableState(
             minScale = 0.5f,
             maxScale = 6f,
             overZoomConfig = OverZoomConfig(1f, 4f)
         )
 
         Zoomable(
-            state = state,
+            state = zoomableState,
             enabled = true,
             onTap = { areControlsVisible = !areControlsVisible },
             dismissGestureEnabled = true,
             onDismiss = {
-                navigateBack()
+                onEvent(PhotoDetailsEvent.GoBack)
                 true
             },
             modifier = Modifier.graphicsLayer {
                 clip = true
-                alpha = 1 - state.dismissDragProgress
+                alpha = 1 - zoomableState.dismissDragProgress
             },
         ) {
             val painter = rememberAsyncImagePainter(
@@ -207,12 +210,12 @@ private fun SuccessStateContent(
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .graphicsLayer {
-                    alpha = 1 - state.dismissDragProgress
+                    alpha = 1 - zoomableState.dismissDragProgress
                 }
         ) {
             TopBar(
-                onNavigateBack = navigateBack,
-                onOpenInBrowser = { context.openLinkInBrowser(photo.links?.html) }
+                onNavigateBack = { onEvent(PhotoDetailsEvent.GoBack) },
+                onOpenInBrowser = { onEvent(PhotoDetailsEvent.OpenInBrowser(photo.links?.html)) }
             )
         }
 
@@ -227,29 +230,29 @@ private fun SuccessStateContent(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .graphicsLayer {
-                    alpha = 1 - state.dismissDragProgress
+                    alpha = 1 - zoomableState.dismissDragProgress
                 }
         ) {
             BottomControls(
                 likes = photo.likes,
                 photoOwner = photo.user,
-                isPhotoLiked = isPhotoLiked,
-                isPhotoCollected = isPhotoCollected,
-                zoomIcon = if (state.scale == 1f) Icons.Outlined.ZoomOutMap else Icons.Outlined.ZoomInMap,
+                isPhotoLiked = state.isLiked,
+                isPhotoCollected = state.isCollected,
+                zoomIcon = if (zoomableState.scale == 1f) Icons.Outlined.ZoomOutMap else Icons.Outlined.ZoomInMap,
                 onNavigateToUserDetails = {
-                    navigateToUserDetails(UserNickname(photo.userNickname))
+                    onEvent(PhotoDetailsEvent.SelectUser(UserNickname(photo.userNickname)))
                 },
                 onNavigateToCollectPhoto = {
-                    if (isUserLoggedIn) {
-                        navigateToCollectPhoto(PhotoId(photo.id))
+                    if (state.isUserLoggedIn) {
+                        onEvent(PhotoDetailsEvent.SelectCollectOption(PhotoId(photo.id)))
                     } else {
                         context.toast(stringRes = R.string.login_to_collect_photo)
-                        context.startActivity(LoginActivity::class.java)
+                        onEvent(PhotoDetailsEvent.RedirectToLogin)
                     }
                 },
                 onLikeButtonClick = {
-                    if (isUserLoggedIn) {
-                        if (isPhotoLiked) {
+                    if (state.isUserLoggedIn) {
+                        if (state.isLiked) {
                             onEvent(PhotoDetailsEvent.DislikePhoto(PhotoId(photo.id)))
                             LikeCount(value = photo.likes)
                         } else {
@@ -258,15 +261,17 @@ private fun SuccessStateContent(
                         }
                     } else {
                         context.toast(stringRes = R.string.login_to_like_photo)
-                        context.startActivity(LoginActivity::class.java)
+                        onEvent(PhotoDetailsEvent.RedirectToLogin)
                         null
                     }
                 },
-                onInfoButtonClick = { openBottomSheet = !openBottomSheet },
+                onInfoButtonClick = { onEvent(PhotoDetailsEvent.ShowInfoDialog) },
                 onShareButtonClick = {
-                    context.sharePhoto(
-                        photo.links?.html,
-                        photo.description.orEmpty()
+                    onEvent(
+                        PhotoDetailsEvent.SharePhoto(
+                            link = photo.links?.html,
+                            description = photo.description
+                        )
                     )
                 },
                 onDownloadButtonClick = {
@@ -286,15 +291,15 @@ private fun SuccessStateContent(
                         onEvent(
                             PhotoDetailsEvent.DownloadPhoto(
                                 photo = photo,
-                                quality = photosDownloadQuality
+                                quality = state.photoDownloadQuality
                             )
                         )
                     }
                 },
                 onZoomToFillClick = {
                     scope.launch {
-                        state.animateScaleTo(
-                            if (state.scale >= zoomToFillCoefficient) 1f
+                        zoomableState.animateScaleTo(
+                            if (zoomableState.scale >= zoomToFillCoefficient) 1f
                             else zoomToFillCoefficient
                         )
                     }
@@ -309,19 +314,23 @@ private fun SuccessStateContent(
     }
 
 
-    if (openBottomSheet) {
+    if (state.isInfoDialogOpened) {
         val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
         ModalBottomSheet(
-            onDismissRequest = { openBottomSheet = false },
+            onDismissRequest = { onEvent(PhotoDetailsEvent.DismissInfoDialog) },
             sheetState = bottomSheetState,
             windowInsets = WindowInsets(0)
         ) {
             PhotoInfoBottomSheet(
                 photo = photo,
                 contentPadding = PaddingValues(bottom = bottomPadding),
-                navigateToSearch = navigateToSearch,
-                navigateToCollectionDetails = navigateToCollectionDetails
+                navigateToSearch = { query ->
+                    onEvent(PhotoDetailsEvent.SearchByTag(query))
+                },
+                navigateToCollectionDetails = { id ->
+                    onEvent(PhotoDetailsEvent.SelectCollection(id))
+                }
             )
         }
     }
@@ -571,49 +580,6 @@ private fun BottomControls(
     }
 }
 
-@Preview
-@Composable
-fun BottomControlsPreview() {
-    WalleriaTheme {
-        BottomControls(
-            likes = 10,
-            photoOwner = User(
-                id = "",
-                username = "",
-                firstName = "Very very very long name",
-                lastName = "Smith",
-                bio = null,
-                location = null,
-                totalLikes = 0,
-                totalPhotos = 0,
-                totalCollections = 0,
-                followersCount = 0,
-                followingCount = 0,
-                downloads = 0,
-                profileImage = UserProfileImage(
-                    small = "",
-                    medium = "",
-                    large = ""
-                ),
-                social = null,
-                tags = null,
-                photos = null
-            ),
-            isPhotoLiked = true,
-            isPhotoCollected = false,
-            zoomIcon = Icons.Outlined.ZoomOutMap,
-            onNavigateToUserDetails = {},
-            onNavigateToCollectPhoto = {},
-            onLikeButtonClick = { LikeCount(0) },
-            onInfoButtonClick = {},
-            onShareButtonClick = {},
-            onDownloadButtonClick = {},
-            onZoomToFillClick = {},
-            modifier = Modifier.fillMaxWidth()
-        )
-    }
-}
-
 @Composable
 private fun getZoomToFillScaleCoefficient(
     imageWidth: Float,
@@ -630,5 +596,73 @@ private fun getZoomToFillScaleCoefficient(
     val zoomScaleW = containerWidth / width
 
     return max(zoomScaleW, zoomScaleH)
+}
+
+private class PhotoDetailsUiStateProvider : PreviewParameterProvider<PhotoDetailsUiState> {
+    private val user = User(
+        id = "",
+        username = "ABC",
+        firstName = "John",
+        lastName = "Smith",
+        bio = null,
+        location = null,
+        totalLikes = 0,
+        totalPhotos = 0,
+        totalCollections = 0,
+        followersCount = 0,
+        followingCount = 0,
+        downloads = 0,
+        profileImage = null,
+        social = null,
+        tags = null,
+        photos = null
+    )
+
+    private val photo = Photo(
+        id = "",
+        width = 4000,
+        height = 3000,
+        color = "#E0E0E0",
+        blurHash = "LFC\$yHwc8^\$yIAS\$%M%00KxukYIp",
+        views = 200,
+        downloads = 200,
+        likes = 10,
+        likedByUser = false,
+        description = "",
+        exif = null,
+        location = null,
+        tags = null,
+        relatedCollections = null,
+        currentUserCollections = null,
+        sponsorship = null,
+        urls = PhotoUrls("", "", "", "", ""),
+        links = null,
+        user = user
+    )
+
+    override val values = sequenceOf(
+        PhotoDetailsUiState(isLoading = true),
+        PhotoDetailsUiState(error = UiError(reason = UiText.DynamicString("ABC"))),
+        PhotoDetailsUiState(
+            photo = photo,
+            isLiked = true,
+        )
+    )
+}
+
+@Preview
+@Composable
+fun PhotoDetailsScreenPreview(
+    @PreviewParameter(PhotoDetailsUiStateProvider::class)
+    state: PhotoDetailsUiState
+) {
+    WalleriaTheme {
+        Surface {
+            PhotoDetailsScreen(
+                state = state,
+                onEvent = {}
+            )
+        }
+    }
 }
 

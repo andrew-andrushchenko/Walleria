@@ -5,10 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.andrii_a.walleria.domain.models.preferences.UserPrivateProfileData
 import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,7 +34,9 @@ class ProfileViewModel @Inject constructor(
 
     fun logout() {
         viewModelScope.launch {
-            userAccountPreferencesRepository.clearAccountInfo()
+            withContext(NonCancellable) {
+                userAccountPreferencesRepository.clearAccountInfo()
+            }
         }
     }
 }

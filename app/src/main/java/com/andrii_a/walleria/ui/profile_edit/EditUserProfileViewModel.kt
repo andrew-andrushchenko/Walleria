@@ -4,53 +4,25 @@ import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.andrii_a.walleria.R
-import com.andrii_a.walleria.domain.network.BackendResult
 import com.andrii_a.walleria.domain.models.preferences.UserPrivateProfileData
-import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
+import com.andrii_a.walleria.domain.network.BackendResult
 import com.andrii_a.walleria.domain.repository.LoginRepository
+import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
 import com.andrii_a.walleria.ui.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.util.regex.Pattern
 import javax.inject.Inject
-
-data class EditUserProfileScreenState(
-    val nickname: String = "",
-    val firstName: String = "",
-    val lastName: String = "",
-    val email: String = "",
-    val portfolioLink: String = "",
-    val instagramUsername: String = "",
-    val location: String = "",
-    val bio: String = "",
-    val isNicknameValid: Boolean = true,
-    val isEmailValid: Boolean = true
-) {
-    val isInputValid: Boolean
-        get() = isNicknameValid && isEmailValid
-}
-
-sealed interface EditUserProfileEvent {
-    data class NicknameChanged(val value: String) : EditUserProfileEvent
-    data class FirstNameChanged(val value: String) : EditUserProfileEvent
-    data class LastNameChanged(val value: String) : EditUserProfileEvent
-    data class EmailChanged(val value: String) : EditUserProfileEvent
-    data class PortfolioLinkChanged(val value: String) : EditUserProfileEvent
-    data class InstagramUsernameChanged(val value: String) : EditUserProfileEvent
-    data class LocationChanged(val value: String) : EditUserProfileEvent
-    data class BioChanged(val value: String) : EditUserProfileEvent
-    data object SaveProfile : EditUserProfileEvent
-}
 
 @HiltViewModel
 class EditUserProfileViewModel @Inject constructor(
@@ -58,66 +30,84 @@ class EditUserProfileViewModel @Inject constructor(
     userAccountPreferencesRepository: UserAccountPreferencesRepository
 ) : ViewModel() {
 
-    private val _state: MutableStateFlow<EditUserProfileScreenState> =
-        MutableStateFlow(
-            runBlocking {
-                userAccountPreferencesRepository.userPrivateProfileData.map {
-                    EditUserProfileScreenState(
-                        nickname = it.nickname,
-                        firstName = it.firstName,
-                        lastName = it.lastName,
-                        email = it.email,
-                        portfolioLink = it.portfolioLink,
-                        instagramUsername = it.instagramUsername,
-                        location = it.location,
-                        bio = it.bio
-                    )
-                }.first()
-            }
+    private val _state: MutableStateFlow<EditUserProfileUiState> =
+        MutableStateFlow(EditUserProfileUiState())
+    val state = combine(
+        userAccountPreferencesRepository.userPrivateProfileData,
+        _state
+    ) { userPrivateProfileData, state ->
+        state.copy(
+            nickname = userPrivateProfileData.nickname,
+            firstName = userPrivateProfileData.firstName,
+            lastName = userPrivateProfileData.lastName,
+            email = userPrivateProfileData.email,
+            portfolioLink = userPrivateProfileData.portfolioLink,
+            instagramUsername = userPrivateProfileData.instagramUsername,
+            location = userPrivateProfileData.location,
+            bio = userPrivateProfileData.bio
         )
-    val state: StateFlow<EditUserProfileScreenState> = _state.asStateFlow()
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000L),
+        initialValue = _state.value
+    )
 
     private val _profileUpdateMessageFlow: MutableSharedFlow<UiText> = MutableSharedFlow()
     val profileUpdateMessageFlow: SharedFlow<UiText> = _profileUpdateMessageFlow.asSharedFlow()
+
+    private val navigationChannel = Channel<EditUserProfileNavigationEvent>()
+    val navigationEventsChannelFlow = navigationChannel.receiveAsFlow()
 
     fun onEvent(event: EditUserProfileEvent) {
         when (event) {
             is EditUserProfileEvent.NicknameChanged -> {
                 val isNicknameValid = validateNickname(event.value)
                 _state.update {
-                    _state.value.copy(nickname = event.value, isNicknameValid = isNicknameValid)
+                    it.copy(nickname = event.value, isNicknameValid = isNicknameValid)
                 }
             }
 
             is EditUserProfileEvent.FirstNameChanged -> {
-                _state.update { _state.value.copy(firstName = event.value) }
+                _state.update {
+                    it.copy(firstName = event.value)
+                }
             }
 
             is EditUserProfileEvent.LastNameChanged -> {
-                _state.update { _state.value.copy(lastName = event.value) }
+                _state.update {
+                    it.copy(lastName = event.value)
+                }
             }
 
             is EditUserProfileEvent.EmailChanged -> {
                 val isEmailValid = validateEmail(event.value)
                 _state.update {
-                    _state.value.copy(email = event.value, isEmailValid = isEmailValid)
+                    it.copy(email = event.value, isEmailValid = isEmailValid)
                 }
             }
 
             is EditUserProfileEvent.PortfolioLinkChanged -> {
-                _state.update { _state.value.copy(portfolioLink = event.value) }
+                _state.update {
+                    it.copy(portfolioLink = event.value)
+                }
             }
 
             is EditUserProfileEvent.InstagramUsernameChanged -> {
-                _state.update { _state.value.copy(instagramUsername = event.value) }
+                _state.update {
+                    it.copy(instagramUsername = event.value)
+                }
             }
 
             is EditUserProfileEvent.LocationChanged -> {
-                _state.update { _state.value.copy(location = event.value) }
+                _state.update {
+                    it.copy(location = event.value)
+                }
             }
 
             is EditUserProfileEvent.BioChanged -> {
-                _state.update { _state.value.copy(bio = event.value) }
+                _state.update {
+                    it.copy(bio = event.value)
+                }
             }
 
             is EditUserProfileEvent.SaveProfile -> {
@@ -134,6 +124,12 @@ class EditUserProfileViewModel @Inject constructor(
                     )
 
                     saveUserProfileData(userPrivateProfileData)
+                }
+            }
+
+            is EditUserProfileEvent.GoBack -> {
+                viewModelScope.launch {
+                    navigationChannel.send(EditUserProfileNavigationEvent.NavigateBack)
                 }
             }
         }

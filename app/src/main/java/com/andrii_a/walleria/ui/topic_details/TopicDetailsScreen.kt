@@ -25,72 +25,46 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
-import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.PhotosListLayoutType
-import com.andrii_a.walleria.domain.models.photo.Photo
-import com.andrii_a.walleria.domain.models.topic.Topic
-import com.andrii_a.walleria.ui.common.PhotoId
-import com.andrii_a.walleria.ui.common.TopicId
-import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
 import com.andrii_a.walleria.ui.common.components.lists.PhotosGrid
 import com.andrii_a.walleria.ui.common.components.lists.PhotosList
-import com.andrii_a.walleria.ui.util.openLinkInBrowser
 import kotlinx.coroutines.launch
 
 @Composable
 fun TopicDetailsScreen(
-    loadResult: TopicLoadResult,
-    photosListLayoutType: PhotosListLayoutType,
-    photosLoadQuality: PhotoQuality,
-    onEvent: (TopicDetailsEvent) -> Unit,
-    navigateBack: () -> Unit,
-    navigateToPhotoDetails: (PhotoId) -> Unit,
-    navigateToUserDetails: (UserNickname) -> Unit,
+    state: TopicDetailsUiState,
+    onEvent: (TopicDetailsEvent) -> Unit
 ) {
-    when (loadResult) {
-        is TopicLoadResult.Empty -> Unit
-        is TopicLoadResult.Loading -> {
+    when {
+        state.isLoading -> {
             LoadingStateContent(
-                onNavigateBack = navigateBack
+                onNavigateBack = { onEvent(TopicDetailsEvent.GoBack) }
             )
         }
 
-        is TopicLoadResult.Error -> {
+        !state.isLoading && state.error == null && state.topic != null -> {
+            SuccessStateContent(
+                state = state,
+                onEvent = onEvent,
+            )
+        }
+
+        else -> {
             ErrorStateContent(
                 onRetry = {
-                    onEvent(TopicDetailsEvent.RequestTopic(TopicId(loadResult.topicId)))
+                    state.error?.onRetry?.invoke()
                 },
-                onNavigateBack = navigateBack
-            )
-        }
-
-        is TopicLoadResult.Success -> {
-            SuccessStateContent(
-                topic = loadResult.topic,
-                topicPhotosFilters = loadResult.currentFilters,
-                photosListLayoutType = photosListLayoutType,
-                photosLoadQuality = photosLoadQuality,
-                onEvent = onEvent,
-                topicPhotosLazyItems = loadResult.topicPhotos.collectAsLazyPagingItems(),
-                navigateToPhotoDetails = navigateToPhotoDetails,
-                navigateToUserDetails = navigateToUserDetails,
-                navigateBack = navigateBack
+                onNavigateBack = { onEvent(TopicDetailsEvent.GoBack) }
             )
         }
     }
@@ -157,22 +131,14 @@ private fun ErrorStateContent(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SuccessStateContent(
-    topic: Topic,
-    topicPhotosFilters: TopicPhotosFilters,
-    photosListLayoutType: PhotosListLayoutType,
-    photosLoadQuality: PhotoQuality,
+    state: TopicDetailsUiState,
     onEvent: (TopicDetailsEvent) -> Unit,
-    topicPhotosLazyItems: LazyPagingItems<Photo>,
-    navigateToPhotoDetails: (PhotoId) -> Unit,
-    navigateToUserDetails: (UserNickname) -> Unit,
-    navigateBack: () -> Unit
 ) {
-    val context = LocalContext.current
+    val topic = state.topic!!
 
     val bottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
-    var openBottomSheet by rememberSaveable { mutableStateOf(false) }
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -187,7 +153,7 @@ private fun SuccessStateContent(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = navigateBack) {
+                    IconButton(onClick = { onEvent(TopicDetailsEvent.GoBack) }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = stringResource(id = R.string.navigate_back)
@@ -195,14 +161,18 @@ private fun SuccessStateContent(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { openBottomSheet = !openBottomSheet }) {
+                    IconButton(onClick = { onEvent(TopicDetailsEvent.OpenFilterDialog) }) {
                         Icon(
                             imageVector = Icons.Outlined.FilterList,
                             contentDescription = stringResource(id = R.string.filter)
                         )
                     }
 
-                    IconButton(onClick = { context.openLinkInBrowser(topic.links?.html) }) {
+                    IconButton(
+                        onClick = {
+                            onEvent(TopicDetailsEvent.OpenInBrowser(topic.links?.html))
+                        }
+                    ) {
                         Icon(
                             imageVector = Icons.Outlined.OpenInBrowser,
                             contentDescription = stringResource(id = R.string.open_in_browser)
@@ -217,7 +187,9 @@ private fun SuccessStateContent(
         val listState = rememberLazyListState()
         val gridState = rememberLazyStaggeredGridState()
 
-        when (photosListLayoutType) {
+        val topicPhotosLazyItems = state.topicPhotos.collectAsLazyPagingItems()
+
+        when (state.photosListLayoutType) {
             PhotosListLayoutType.DEFAULT -> {
                 PhotosList(
                     lazyPhotoItems = topicPhotosLazyItems,
@@ -229,10 +201,14 @@ private fun SuccessStateContent(
                                 .padding(horizontal = 24.dp, vertical = 16.dp)
                         )
                     },
-                    onPhotoClicked = navigateToPhotoDetails,
-                    onUserProfileClicked = navigateToUserDetails,
+                    onPhotoClicked = { id ->
+                        onEvent(TopicDetailsEvent.SelectPhoto(id))
+                    },
+                    onUserProfileClicked = { nickname ->
+                        onEvent(TopicDetailsEvent.SelectUser(nickname))
+                    },
                     isCompact = false,
-                    photosLoadQuality = photosLoadQuality,
+                    photosLoadQuality = state.photosLoadQuality,
                     listState = listState,
                     contentPadding = innerPadding,
                     modifier = Modifier.fillMaxSize(),
@@ -250,10 +226,14 @@ private fun SuccessStateContent(
                                 .padding(horizontal = 24.dp, vertical = 16.dp)
                         )
                     },
-                    onPhotoClicked = navigateToPhotoDetails,
-                    onUserProfileClicked = navigateToUserDetails,
+                    onPhotoClicked = { id ->
+                        onEvent(TopicDetailsEvent.SelectPhoto(id))
+                    },
+                    onUserProfileClicked = { nickname ->
+                        onEvent(TopicDetailsEvent.SelectUser(nickname))
+                    },
                     isCompact = true,
-                    photosLoadQuality = photosLoadQuality,
+                    photosLoadQuality = state.photosLoadQuality,
                     listState = listState,
                     contentPadding = innerPadding,
                     modifier = Modifier.fillMaxSize(),
@@ -271,8 +251,10 @@ private fun SuccessStateContent(
                                 .padding(horizontal = 24.dp, vertical = 16.dp)
                         )
                     },
-                    onPhotoClicked = navigateToPhotoDetails,
-                    photosLoadQuality = photosLoadQuality,
+                    onPhotoClicked = { id ->
+                        onEvent(TopicDetailsEvent.SelectPhoto(id))
+                    },
+                    photosLoadQuality = state.photosLoadQuality,
                     gridState = gridState,
                     contentPadding = innerPadding,
                     modifier = Modifier.fillMaxSize()
@@ -282,16 +264,17 @@ private fun SuccessStateContent(
 
         val scope = rememberCoroutineScope()
 
-        if (openBottomSheet) {
-            val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+        if (state.isFilterDialogOpened) {
+            val bottomPadding =
+                WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
             ModalBottomSheet(
-                onDismissRequest = { openBottomSheet = false },
+                onDismissRequest = { onEvent(TopicDetailsEvent.DismissFilterDialog) },
                 sheetState = bottomSheetState,
                 windowInsets = WindowInsets(0)
             ) {
                 TopicPhotosFilterBottomSheet(
-                    topicPhotosFilters = topicPhotosFilters,
+                    topicPhotosFilters = state.topicPhotosFilters,
                     contentPadding = PaddingValues(
                         start = 16.dp,
                         end = 16.dp,
@@ -301,7 +284,7 @@ private fun SuccessStateContent(
                     onDismiss = {
                         scope.launch { bottomSheetState.hide() }.invokeOnCompletion {
                             if (!bottomSheetState.isVisible) {
-                                openBottomSheet = false
+                                onEvent(TopicDetailsEvent.DismissFilterDialog)
                             }
                         }
                     }

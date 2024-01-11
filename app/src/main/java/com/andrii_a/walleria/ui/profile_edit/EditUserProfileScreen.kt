@@ -38,9 +38,8 @@ import com.andrii_a.walleria.ui.theme.WalleriaTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditUserProfileScreen(
-    state: EditUserProfileScreenState,
-    onEvent: (EditUserProfileEvent) -> Unit,
-    onNavigateBack: () -> Unit
+    state: EditUserProfileUiState,
+    onEvent: (EditUserProfileEvent) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -51,7 +50,7 @@ fun EditUserProfileScreen(
                     Text(text = stringResource(id = R.string.edit_my_profile))
                 },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
+                    IconButton(onClick = { onEvent(EditUserProfileEvent.GoBack) }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = stringResource(id = R.string.navigate_back)
@@ -207,9 +206,8 @@ fun EditUserProfileScreen(
 fun EditUserProfileScreenPreview() {
     WalleriaTheme {
         EditUserProfileScreen(
-            state = EditUserProfileScreenState(),
-            onEvent = {},
-            onNavigateBack = {}
+            state = EditUserProfileUiState(),
+            onEvent = {}
         )
     }
 }

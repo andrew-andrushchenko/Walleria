@@ -21,13 +21,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-sealed interface LoginState {
-    data object Empty : LoginState
-    data object Loading : LoginState
-    data object Error : LoginState
-    data class Success(val accessToken: AccessToken) : LoginState
-}
-
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginRepository: LoginRepository,

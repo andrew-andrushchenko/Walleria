@@ -15,10 +15,10 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.andrii_a.walleria.ui.common.CollectionId
-import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.photo_details.navigateToPhotoDetails
 import com.andrii_a.walleria.ui.user_details.navigateToUserDetails
+import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 
 fun NavGraphBuilder.collectionDetailsRoute(navController: NavController) {
     composable(
@@ -48,20 +48,27 @@ fun NavGraphBuilder.collectionDetailsRoute(navController: NavController) {
     ) {
         val viewModel: CollectionDetailsViewModel = hiltViewModel()
 
-        val loadResult by viewModel.loadResult.collectAsStateWithLifecycle()
-        val loggedInUsername by viewModel.loggedInUsername.collectAsStateWithLifecycle()
-        val photosLayoutType by viewModel.photosLayoutType.collectAsStateWithLifecycle()
-        val photosLoadQuality by viewModel.photosLoadQuality.collectAsStateWithLifecycle()
+        val state by viewModel.state.collectAsStateWithLifecycle()
+
+        viewModel.navigationEventsChannelFlow.collectAsOneTimeEvents { event ->
+            when (event) {
+                is CollectionDetailsNavigationEvent.NavigateBack -> {
+                    navController.navigateUp()
+                }
+
+                is CollectionDetailsNavigationEvent.NavigateToPhotoDetails -> {
+                    navController.navigateToPhotoDetails(event.photoId)
+                }
+
+                is CollectionDetailsNavigationEvent.NavigateToUserDetails -> {
+                    navController.navigateToUserDetails(event.userNickname)
+                }
+            }
+        }
 
         CollectionDetailsScreen(
-            loadResult = loadResult,
-            loggedInUsername = UserNickname(loggedInUsername),
-            photosListLayoutType = photosLayoutType,
-            photosLoadQuality = photosLoadQuality,
+            state = state,
             onEvent = viewModel::onEvent,
-            navigateBack = navController::navigateUp,
-            navigateToPhotoDetails = navController::navigateToPhotoDetails,
-            navigateToUserDetails = navController::navigateToUserDetails
         )
     }
 }

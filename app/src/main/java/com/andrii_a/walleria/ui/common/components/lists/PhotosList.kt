@@ -104,60 +104,64 @@ fun PhotosList(
         ),
         modifier = modifier
     ) {
-        LazyColumn(
-            state = listState,
-            contentPadding = contentPadding
-        ) {
-            when (lazyPhotoItems.loadState.refresh) {
-                is LoadState.NotLoading -> {
-                    loadedStateContent(
-                        lazyPhotoItems = lazyPhotoItems,
-                        headerContent = headerContent,
-                        isItemCompact = isCompact,
-                        photosLoadQuality = photosLoadQuality,
-                        onPhotoClicked = onPhotoClicked,
-                        onUserProfileClicked = onUserProfileClicked
-                    )
-                }
+        if (lazyPhotoItems.itemCount < 0) {
+            EmptyContentBanner(modifier = Modifier.fillMaxSize())
+        } else {
+            LazyColumn(
+                state = listState,
+                contentPadding = contentPadding
+            ) {
+                when (lazyPhotoItems.loadState.refresh) {
+                    is LoadState.NotLoading -> {
+                        loadedStateContent(
+                            lazyPhotoItems = lazyPhotoItems,
+                            headerContent = headerContent,
+                            isItemCompact = isCompact,
+                            photosLoadQuality = photosLoadQuality,
+                            onPhotoClicked = onPhotoClicked,
+                            onUserProfileClicked = onUserProfileClicked
+                        )
+                    }
 
-                is LoadState.Loading -> {
-                    item {
-                        Box(
-                            modifier = Modifier.fillParentMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator()
+                    is LoadState.Loading -> {
+                        item {
+                            Box(
+                                modifier = Modifier.fillParentMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        }
+                    }
+
+                    is LoadState.Error -> {
+                        item {
+                            ErrorBanner(
+                                onRetry = lazyPhotoItems::retry,
+                                modifier = Modifier.fillParentMaxSize()
+                            )
                         }
                     }
                 }
 
-                is LoadState.Error -> {
-                    item {
-                        ErrorBanner(
-                            onRetry = lazyPhotoItems::retry,
-                            modifier = Modifier.fillParentMaxSize()
-                        )
+                when (lazyPhotoItems.loadState.append) {
+                    is LoadState.NotLoading -> Unit
+
+                    is LoadState.Loading -> {
+                        item {
+                            LoadingListItem(modifier = Modifier.fillParentMaxWidth())
+                        }
                     }
-                }
-            }
 
-            when (lazyPhotoItems.loadState.append) {
-                is LoadState.NotLoading -> Unit
-
-                is LoadState.Loading -> {
-                    item {
-                        LoadingListItem(modifier = Modifier.fillParentMaxWidth())
-                    }
-                }
-
-                is LoadState.Error -> {
-                    item {
-                        ErrorItem(
-                            onRetry = lazyPhotoItems::retry,
-                            modifier = Modifier
-                                .fillParentMaxWidth()
-                                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                        )
+                    is LoadState.Error -> {
+                        item {
+                            ErrorItem(
+                                onRetry = lazyPhotoItems::retry,
+                                modifier = Modifier
+                                    .fillParentMaxWidth()
+                                    .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                            )
+                        }
                     }
                 }
             }

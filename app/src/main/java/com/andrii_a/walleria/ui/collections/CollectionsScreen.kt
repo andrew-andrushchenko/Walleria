@@ -1,6 +1,8 @@
 package com.andrii_a.walleria.ui.collections
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -20,33 +22,19 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.CollectionListLayoutType
-import com.andrii_a.walleria.domain.PhotoQuality
-import com.andrii_a.walleria.domain.models.collection.Collection
-import com.andrii_a.walleria.ui.common.CollectionId
-import com.andrii_a.walleria.ui.common.PhotoId
-import com.andrii_a.walleria.ui.common.SearchQuery
-import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.common.components.lists.CollectionsGrid
 import com.andrii_a.walleria.ui.common.components.lists.CollectionsList
-import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CollectionsScreen(
-    collections: Flow<PagingData<Collection>>,
-    collectionsLayoutType: CollectionListLayoutType,
-    photosLoadQuality: PhotoQuality,
-    navigateToProfileScreen: () -> Unit,
-    navigateToSearchScreen: (SearchQuery?) -> Unit,
-    navigateToPhotoDetails: (PhotoId) -> Unit,
-    navigateToCollectionDetails: (CollectionId) -> Unit,
-    navigateToUserDetails: (UserNickname) -> Unit
+    state: CollectionsUiState,
+    onEvent: (CollectionsEvent) -> Unit
 ) {
-    val lazyCollectionItems = collections.collectAsLazyPagingItems()
+    val lazyCollectionItems = state.collections.collectAsLazyPagingItems()
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -61,7 +49,7 @@ fun CollectionsScreen(
                     )
                 },
                 actions = {
-                    IconButton(onClick = { navigateToSearchScreen(null) }) {
+                    IconButton(onClick = { onEvent(CollectionsEvent.SelectSearch) }) {
                         Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = stringResource(
@@ -70,7 +58,7 @@ fun CollectionsScreen(
                         )
                     }
 
-                    IconButton(onClick = navigateToProfileScreen) {
+                    IconButton(onClick = { onEvent(CollectionsEvent.SelectPrivateUserProfile) }) {
                         Icon(
                             imageVector = Icons.Outlined.AccountCircle,
                             contentDescription = stringResource(
@@ -84,15 +72,21 @@ fun CollectionsScreen(
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { innerPadding ->
-        when (collectionsLayoutType) {
+        when (state.collectionsLayoutType) {
             CollectionListLayoutType.DEFAULT -> {
                 val listState = rememberLazyListState()
 
                 CollectionsList(
                     lazyCollectionItems = lazyCollectionItems,
-                    onCollectionClicked = navigateToCollectionDetails,
-                    onUserProfileClicked = navigateToUserDetails,
-                    onPhotoClicked = navigateToPhotoDetails,
+                    onCollectionClicked = { id ->
+                        onEvent(CollectionsEvent.SelectCollection(id))
+                    },
+                    onUserProfileClicked = { nickname ->
+                        onEvent(CollectionsEvent.SelectUser(nickname))
+                    },
+                    onPhotoClicked = { id ->
+                        onEvent(CollectionsEvent.SelectPhoto(id))
+                    },
                     isCompact = false,
                     addNavigationBarPadding = true,
                     listState = listState,
@@ -110,12 +104,18 @@ fun CollectionsScreen(
 
                 CollectionsList(
                     lazyCollectionItems = lazyCollectionItems,
-                    onCollectionClicked = navigateToCollectionDetails,
-                    onUserProfileClicked = navigateToUserDetails,
-                    onPhotoClicked = navigateToPhotoDetails,
+                    onCollectionClicked = { id ->
+                        onEvent(CollectionsEvent.SelectCollection(id))
+                    },
+                    onUserProfileClicked = { nickname ->
+                        onEvent(CollectionsEvent.SelectUser(nickname))
+                    },
+                    onPhotoClicked = { id ->
+                        onEvent(CollectionsEvent.SelectPhoto(id))
+                    },
                     isCompact = true,
                     addNavigationBarPadding = true,
-                    photosLoadQuality = photosLoadQuality,
+                    photosLoadQuality = state.photosLoadQuality,
                     listState = listState,
                     contentPadding = PaddingValues(
                         start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
@@ -131,10 +131,12 @@ fun CollectionsScreen(
 
                 CollectionsGrid(
                     lazyCollectionItems = lazyCollectionItems,
-                    onCollectionClicked = navigateToCollectionDetails,
+                    onCollectionClicked = { id ->
+                        onEvent(CollectionsEvent.SelectCollection(id))
+                    },
                     addNavigationBarPadding = true,
                     gridState = gridState,
-                    photosLoadQuality = photosLoadQuality,
+                    photosLoadQuality = state.photosLoadQuality,
                     contentPadding = PaddingValues(
                         start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
                         end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),

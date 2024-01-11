@@ -7,6 +7,8 @@ interface RecentSearchesRepository {
 
     fun getAllRecentSearches(): Flow<List<RecentSearchItem>>
 
+    suspend fun getRecentSearchByTitle(title: String): RecentSearchItem?
+
     suspend fun insertItem(item: RecentSearchItem)
 
     suspend fun updateItem(item: RecentSearchItem)

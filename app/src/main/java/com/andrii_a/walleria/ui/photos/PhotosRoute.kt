@@ -16,6 +16,7 @@ import com.andrii_a.walleria.ui.navigation.NavigationScreen
 import com.andrii_a.walleria.ui.photo_details.navigateToPhotoDetails
 import com.andrii_a.walleria.ui.search.navigateToSearch
 import com.andrii_a.walleria.ui.user_details.navigateToUserDetails
+import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 
 fun NavGraphBuilder.photosBottomNavRoute(
     navController: NavController,
@@ -42,20 +43,31 @@ fun NavGraphBuilder.photosBottomNavRoute(
     ) {
         val viewModel: PhotosViewModel = hiltViewModel()
 
-        val order by viewModel.order.collectAsStateWithLifecycle()
-        val photosLayoutType by viewModel.photosLayoutType.collectAsStateWithLifecycle()
-        val photosLoadQuality by viewModel.photosLoadQuality.collectAsStateWithLifecycle()
+        val state by viewModel.state.collectAsStateWithLifecycle()
+
+        viewModel.navigationEventsChannelFlow.collectAsOneTimeEvents { event ->
+            when (event) {
+                is PhotosNavigationEvent.NavigateToPhotoDetailsScreen -> {
+                    navController.navigateToPhotoDetails(event.photoId)
+                }
+
+                is PhotosNavigationEvent.NavigateToUserDetails -> {
+                    navController.navigateToUserDetails(event.userNickname)
+                }
+
+                is PhotosNavigationEvent.NavigateToSearchScreen -> {
+                    navController.navigateToSearch()
+                }
+
+                is PhotosNavigationEvent.NavigateToProfileScreen -> {
+                    openProfileBottomSheet()
+                }
+            }
+        }
 
         PhotosScreen(
-            photos = viewModel.photos,
-            order = order,
-            photosListLayoutType = photosLayoutType,
-            photosLoadQuality = photosLoadQuality,
-            orderBy = viewModel::orderBy,
-            navigateToProfileScreen = openProfileBottomSheet,
-            navigateToSearchScreen = navController::navigateToSearch,
-            navigateToPhotoDetailsScreen = navController::navigateToPhotoDetails,
-            navigateToUserDetails = navController::navigateToUserDetails
+            state = state,
+            onEvent = viewModel::onEvent
         )
     }
 }

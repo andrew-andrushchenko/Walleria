@@ -21,6 +21,10 @@ class RecentSearchesRepositoryImpl(
         }
     }
 
+    override suspend fun getRecentSearchByTitle(title: String): RecentSearchItem? {
+        return recentSearchesDao.getRecentSearchByTitle(title)?.toRecentSearchItem()
+    }
+
     override suspend fun insertItem(item: RecentSearchItem) {
         val entity = RecentSearchItemEntity(title = item.title, timeMillis = item.timeMillis)
         recentSearchesDao.insert(entity)

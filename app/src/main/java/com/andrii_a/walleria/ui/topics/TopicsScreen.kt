@@ -19,29 +19,20 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.TopicsDisplayOrder
-import com.andrii_a.walleria.domain.models.topic.Topic
-import com.andrii_a.walleria.ui.common.SearchQuery
-import com.andrii_a.walleria.ui.common.TopicId
 import com.andrii_a.walleria.ui.common.components.WTitleDropdown
 import com.andrii_a.walleria.ui.common.components.lists.TopicsList
 import com.andrii_a.walleria.ui.util.titleRes
-import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopicsScreen(
-    topics: Flow<PagingData<Topic>>,
-    order: TopicsDisplayOrder,
-    orderBy: (Int) -> Unit,
-    navigateToTopicDetails: (TopicId) -> Unit,
-    navigateToProfileScreen: () -> Unit,
-    navigateToSearchScreen: (SearchQuery?) -> Unit
+    state: TopicsUiState,
+    onEvent: (TopicsEvent) -> Unit
 ) {
-    val lazyTopicItems = topics.collectAsLazyPagingItems()
+    val lazyTopicItems = state.topics.collectAsLazyPagingItems()
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -53,14 +44,16 @@ fun TopicsScreen(
                         TopicsDisplayOrder.entries.map { it.titleRes }
 
                     WTitleDropdown(
-                        selectedTitleRes = order.titleRes,
+                        selectedTitleRes = state.topicsDisplayOrder.titleRes,
                         titleTemplateRes = R.string.topics_title_template,
                         optionsStringRes = optionStringResources,
-                        onItemSelected = orderBy
+                        onItemSelected = { orderOptionOrdinalNum ->
+                            onEvent(TopicsEvent.ChangeListOrder(orderOptionOrdinalNum))
+                        }
                     )
                 },
                 actions = {
-                    IconButton(onClick = { navigateToSearchScreen(null) }) {
+                    IconButton(onClick = { onEvent(TopicsEvent.SelectSearch) }) {
                         Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = stringResource(
@@ -69,7 +62,7 @@ fun TopicsScreen(
                         )
                     }
 
-                    IconButton(onClick = navigateToProfileScreen) {
+                    IconButton(onClick = { onEvent(TopicsEvent.SelectPrivateUserProfile) }) {
                         Icon(
                             imageVector = Icons.Outlined.AccountCircle,
                             contentDescription = stringResource(
@@ -87,7 +80,9 @@ fun TopicsScreen(
 
         TopicsList(
             lazyTopicItems = lazyTopicItems,
-            onClick = navigateToTopicDetails,
+            onClick = { id ->
+                onEvent(TopicsEvent.SelectTopic(id))
+            },
             addNavigationBarPadding = true,
             listState = listState,
             contentPadding = PaddingValues(

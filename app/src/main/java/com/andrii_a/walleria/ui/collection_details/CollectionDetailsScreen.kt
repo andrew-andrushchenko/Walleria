@@ -35,15 +35,9 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
-import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.PhotosListLayoutType
-import com.andrii_a.walleria.domain.models.collection.Collection
-import com.andrii_a.walleria.domain.models.photo.Photo
-import com.andrii_a.walleria.ui.common.PhotoId
-import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
 import com.andrii_a.walleria.ui.common.components.lists.PhotosGrid
 import com.andrii_a.walleria.ui.common.components.lists.PhotosList
@@ -52,43 +46,29 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun CollectionDetailsScreen(
-    loadResult: CollectionLoadResult,
-    loggedInUsername: UserNickname,
-    photosListLayoutType: PhotosListLayoutType,
-    photosLoadQuality: PhotoQuality,
+    state: CollectionDetailsUiState,
     onEvent: (CollectionDetailsEvent) -> Unit,
-    navigateBack: () -> Unit,
-    navigateToPhotoDetails: (PhotoId) -> Unit,
-    navigateToUserDetails: (UserNickname) -> Unit,
 ) {
-    when (loadResult) {
-        is CollectionLoadResult.Empty -> Unit
-        is CollectionLoadResult.Loading -> {
+    when {
+        state.isLoading -> {
             LoadingStateContent(
-                onNavigateBack = navigateBack
+                onNavigateBack = { onEvent(CollectionDetailsEvent.GoBack) }
             )
         }
 
-        is CollectionLoadResult.Error -> {
+        !state.isLoading && state.error == null && state.collection != null -> {
+            SuccessStateContent(
+                state = state,
+                onEvent = onEvent
+            )
+        }
+
+        else -> {
             ErrorStateContent(
                 onRetry = {
-                    onEvent(CollectionDetailsEvent.RequestCollection(loadResult.collectionId))
+                    state.error?.onRetry?.invoke()
                 },
-                onNavigateBack = navigateBack
-            )
-        }
-
-        is CollectionLoadResult.Success -> {
-            SuccessStateContent(
-                collection = loadResult.collection,
-                collectionPhotosLazyItems = loadResult.collectionPhotos.collectAsLazyPagingItems(),
-                photosListLayoutType = photosListLayoutType,
-                photosLoadQuality = photosLoadQuality,
-                onEvent = onEvent,
-                loggedInUsername = loggedInUsername,
-                navigateToPhotoDetails = navigateToPhotoDetails,
-                navigateToUserDetails = navigateToUserDetails,
-                navigateBack = navigateBack
+                onNavigateBack = { onEvent(CollectionDetailsEvent.GoBack) }
             )
         }
     }
@@ -155,16 +135,11 @@ private fun ErrorStateContent(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SuccessStateContent(
-    collection: Collection,
+    state: CollectionDetailsUiState,
     onEvent: (CollectionDetailsEvent) -> Unit,
-    collectionPhotosLazyItems: LazyPagingItems<Photo>,
-    photosListLayoutType: PhotosListLayoutType,
-    photosLoadQuality: PhotoQuality,
-    loggedInUsername: UserNickname,
-    navigateToPhotoDetails: (PhotoId) -> Unit,
-    navigateToUserDetails: (UserNickname) -> Unit,
-    navigateBack: () -> Unit
 ) {
+    val collection = state.collection!!
+
     val bottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
@@ -183,7 +158,7 @@ private fun SuccessStateContent(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = navigateBack) {
+                    IconButton(onClick = { onEvent(CollectionDetailsEvent.GoBack) }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = stringResource(id = R.string.navigate_back)
@@ -191,7 +166,7 @@ private fun SuccessStateContent(
                     }
                 },
                 actions = {
-                    if (loggedInUsername.value == collection.username) {
+                    if (state.loggedInUserNickname == collection.username) {
                         IconButton(onClick = { openBottomSheet = !openBottomSheet }) {
                             Icon(
                                 imageVector = Icons.Outlined.Edit,
@@ -208,12 +183,18 @@ private fun SuccessStateContent(
         val listState = rememberLazyListState()
         val gridState = rememberLazyStaggeredGridState()
 
-        when (photosListLayoutType) {
+        val collectionPhotosLazyItems = state.collectionPhotos.collectAsLazyPagingItems()
+
+        when (state.photosListLayoutType) {
             PhotosListLayoutType.DEFAULT -> {
                 PhotosList(
                     lazyPhotoItems = collectionPhotosLazyItems,
-                    onPhotoClicked = navigateToPhotoDetails,
-                    onUserProfileClicked = navigateToUserDetails,
+                    onPhotoClicked = { id ->
+                        onEvent(CollectionDetailsEvent.SelectPhoto(id))
+                    },
+                    onUserProfileClicked = { nickname ->
+                        onEvent(CollectionDetailsEvent.SelectUser(nickname))
+                    },
                     headerContent = {
                         CollectionDescriptionHeader(
                             owner = collection.user,
@@ -225,7 +206,7 @@ private fun SuccessStateContent(
                         )
                     },
                     isCompact = false,
-                    photosLoadQuality = photosLoadQuality,
+                    photosLoadQuality = state.photosLoadQuality,
                     listState = listState,
                     contentPadding = innerPadding,
                     modifier = Modifier.fillMaxSize()
@@ -235,8 +216,12 @@ private fun SuccessStateContent(
             PhotosListLayoutType.MINIMAL_LIST -> {
                 PhotosList(
                     lazyPhotoItems = collectionPhotosLazyItems,
-                    onPhotoClicked = navigateToPhotoDetails,
-                    onUserProfileClicked = navigateToUserDetails,
+                    onPhotoClicked = { id ->
+                        onEvent(CollectionDetailsEvent.SelectPhoto(id))
+                    },
+                    onUserProfileClicked = { nickname ->
+                        onEvent(CollectionDetailsEvent.SelectUser(nickname))
+                    },
                     headerContent = {
                         CollectionDescriptionHeader(
                             owner = collection.user,
@@ -248,7 +233,7 @@ private fun SuccessStateContent(
                         )
                     },
                     isCompact = true,
-                    photosLoadQuality = photosLoadQuality,
+                    photosLoadQuality = state.photosLoadQuality,
                     listState = listState,
                     contentPadding = innerPadding,
                     modifier = Modifier.fillMaxSize()
@@ -258,8 +243,9 @@ private fun SuccessStateContent(
             PhotosListLayoutType.STAGGERED_GRID -> {
                 PhotosGrid(
                     lazyPhotoItems = collectionPhotosLazyItems,
-                    onPhotoClicked = navigateToPhotoDetails,
-                    photosLoadQuality = photosLoadQuality,
+                    onPhotoClicked = { id ->
+                        onEvent(CollectionDetailsEvent.SelectPhoto(id))
+                    },
                     headerContent = {
                         CollectionDescriptionHeader(
                             owner = collection.user,
@@ -280,7 +266,8 @@ private fun SuccessStateContent(
         val scope = rememberCoroutineScope()
 
         if (openBottomSheet) {
-            val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+            val bottomPadding =
+                WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
             ModalBottomSheet(
                 onDismissRequest = { openBottomSheet = false },

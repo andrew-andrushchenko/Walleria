@@ -7,6 +7,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -18,6 +19,8 @@ import com.andrii_a.walleria.ui.common.TopicId
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.photo_details.navigateToPhotoDetails
 import com.andrii_a.walleria.ui.user_details.navigateToUserDetails
+import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
+import com.andrii_a.walleria.ui.util.openLinkInBrowser
 
 fun NavGraphBuilder.topicDetailsRoute(navController: NavController) {
     composable(
@@ -47,18 +50,32 @@ fun NavGraphBuilder.topicDetailsRoute(navController: NavController) {
     ) {
         val viewModel: TopicDetailsViewModel = hiltViewModel()
 
-        val loadResult by viewModel.loadResult.collectAsStateWithLifecycle()
-        val photosLayoutType by viewModel.photosLayoutType.collectAsStateWithLifecycle()
-        val photosLoadQuality by viewModel.photosLoadQuality.collectAsStateWithLifecycle()
+        val state by viewModel.state.collectAsStateWithLifecycle()
+
+        val context = LocalContext.current
+        viewModel.navigationEventsChannelFlow.collectAsOneTimeEvents { event ->
+            when (event) {
+                is TopicDetailsNavigationEvent.NavigateBack -> {
+                    navController.navigateUp()
+                }
+
+                is TopicDetailsNavigationEvent.NavigateToChromeCustomTab -> {
+                    context.openLinkInBrowser(event.url)
+                }
+
+                is TopicDetailsNavigationEvent.NavigateToPhotoDetails -> {
+                    navController.navigateToPhotoDetails(event.photoId)
+                }
+
+                is TopicDetailsNavigationEvent.NavigateToUserDetails -> {
+                    navController.navigateToUserDetails(event.userNickname)
+                }
+            }
+        }
 
         TopicDetailsScreen(
-            loadResult = loadResult,
-            photosListLayoutType = photosLayoutType,
-            photosLoadQuality = photosLoadQuality,
+            state = state,
             onEvent = viewModel::onEvent,
-            navigateBack = navController::navigateUp,
-            navigateToPhotoDetails = navController::navigateToPhotoDetails,
-            navigateToUserDetails = navController::navigateToUserDetails
         )
     }
 }

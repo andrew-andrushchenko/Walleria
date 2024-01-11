@@ -3,47 +3,29 @@ package com.andrii_a.walleria.ui.photo_details
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.andrii_a.walleria.domain.network.BackendResult
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
+import com.andrii_a.walleria.domain.network.BackendResult
 import com.andrii_a.walleria.domain.repository.LocalPreferencesRepository
-import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
 import com.andrii_a.walleria.domain.repository.PhotoRepository
+import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
 import com.andrii_a.walleria.domain.services.PhotoDownloader
 import com.andrii_a.walleria.ui.common.PhotoId
+import com.andrii_a.walleria.ui.util.UiError
+import com.andrii_a.walleria.ui.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
-
-sealed interface PhotoDetailsEvent {
-    data class RequestPhoto(val photoId: PhotoId) : PhotoDetailsEvent
-    data class LikePhoto(val photoId: PhotoId) : PhotoDetailsEvent
-    data class DislikePhoto(val photoId: PhotoId) : PhotoDetailsEvent
-    data object CollectPhoto : PhotoDetailsEvent
-    data object DropPhoto : PhotoDetailsEvent
-    data class DownloadPhoto(
-        val photo: Photo,
-        val quality: PhotoQuality = PhotoQuality.HIGH
-    ) : PhotoDetailsEvent
-}
-
-sealed interface PhotoLoadResult {
-    data object Empty : PhotoLoadResult
-    data object Loading : PhotoLoadResult
-    data class Error(val photoId: PhotoId) : PhotoLoadResult
-    data class Success(val photo: Photo) : PhotoLoadResult
-}
 
 @HiltViewModel
 class PhotoDetailsViewModel @Inject constructor(
@@ -53,28 +35,27 @@ class PhotoDetailsViewModel @Inject constructor(
     private val photoDownloader: PhotoDownloader,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    val isUserLoggedIn: StateFlow<Boolean> = userAccountPreferencesRepository.isUserLoggedIn
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = false
+
+    private val _state: MutableStateFlow<PhotoDetailsUiState> = MutableStateFlow(
+        PhotoDetailsUiState()
+    )
+    val state = combine(
+        userAccountPreferencesRepository.isUserLoggedIn,
+        localPreferencesRepository.photosDownloadQuality,
+        _state
+    ) { isUserLoggedIn, photosDownloadQuality, state ->
+        state.copy(
+            isUserLoggedIn = isUserLoggedIn,
+            photoDownloadQuality = photosDownloadQuality
         )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000L),
+        initialValue = _state.value
+    )
 
-    val photosDownloadQuality: StateFlow<PhotoQuality> = localPreferencesRepository.photosDownloadQuality
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = runBlocking { localPreferencesRepository.photosLoadQuality.first() }
-        )
-
-    private val _loadResult: MutableStateFlow<PhotoLoadResult> = MutableStateFlow(PhotoLoadResult.Empty)
-    val loadResult: StateFlow<PhotoLoadResult> = _loadResult.asStateFlow()
-
-    private val _isLiked: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val isLiked: StateFlow<Boolean> = _isLiked.asStateFlow()
-
-    private val _isCollected: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val isCollected: StateFlow<Boolean> = _isCollected.asStateFlow()
+    private val navigationChannel = Channel<PhotoDetailsNavigationEvent>()
+    val navigationEventsChannelFlow = navigationChannel.receiveAsFlow()
 
     init {
         savedStateHandle.get<String>(PhotoDetailsArgs.ID)?.let { photoId ->
@@ -84,12 +65,106 @@ class PhotoDetailsViewModel @Inject constructor(
 
     fun onEvent(event: PhotoDetailsEvent) {
         when (event) {
-            is PhotoDetailsEvent.RequestPhoto -> getPhoto(event.photoId)
-            is PhotoDetailsEvent.LikePhoto -> likePhoto(event.photoId)
-            is PhotoDetailsEvent.DislikePhoto -> dislikePhoto(event.photoId)
-            is PhotoDetailsEvent.CollectPhoto -> _isCollected.update { true }
-            is PhotoDetailsEvent.DropPhoto -> _isCollected.update { false }
-            is PhotoDetailsEvent.DownloadPhoto -> downloadPhoto(event.photo, event.quality)
+            is PhotoDetailsEvent.RequestPhoto -> {
+                getPhoto(event.photoId)
+            }
+
+            is PhotoDetailsEvent.LikePhoto -> {
+                likePhoto(event.photoId)
+            }
+
+            is PhotoDetailsEvent.DislikePhoto -> {
+                dislikePhoto(event.photoId)
+            }
+
+            is PhotoDetailsEvent.MakeCollected -> {
+                _state.update { it.copy(isCollected = true) }
+            }
+
+            is PhotoDetailsEvent.MakeDropped -> {
+                _state.update { it.copy(isCollected = false) }
+            }
+
+            is PhotoDetailsEvent.DownloadPhoto -> {
+                downloadPhoto(event.photo, event.quality)
+            }
+
+            is PhotoDetailsEvent.GoBack -> {
+                viewModelScope.launch {
+                    navigationChannel.send(PhotoDetailsNavigationEvent.NavigateBack)
+                }
+            }
+
+            is PhotoDetailsEvent.SearchByTag -> {
+                viewModelScope.launch {
+                    navigationChannel.send(PhotoDetailsNavigationEvent.NavigateToSearch(event.query))
+                }
+            }
+
+            is PhotoDetailsEvent.SelectCollection -> {
+                viewModelScope.launch {
+                    navigationChannel.send(
+                        PhotoDetailsNavigationEvent.NavigateToCollectionDetails(
+                            event.collectionId
+                        )
+                    )
+                }
+            }
+
+            is PhotoDetailsEvent.SelectUser -> {
+                viewModelScope.launch {
+                    navigationChannel.send(PhotoDetailsNavigationEvent.NavigateToUserDetails(event.userNickname))
+                }
+            }
+
+            is PhotoDetailsEvent.SelectCollectOption -> {
+                viewModelScope.launch {
+                    navigationChannel.send(
+                        PhotoDetailsNavigationEvent.NavigateToCollectPhoto(
+                            event.photoId
+                        )
+                    )
+                }
+            }
+
+            is PhotoDetailsEvent.OpenInBrowser -> {
+                viewModelScope.launch {
+                    navigationChannel.send(
+                        PhotoDetailsNavigationEvent.NavigateToChromeCustomTab(
+                            event.url
+                        )
+                    )
+                }
+            }
+
+            is PhotoDetailsEvent.ShowInfoDialog -> {
+                _state.update {
+                    it.copy(isInfoDialogOpened = true)
+                }
+            }
+
+            is PhotoDetailsEvent.DismissInfoDialog -> {
+                _state.update {
+                    it.copy(isInfoDialogOpened = false)
+                }
+            }
+
+            is PhotoDetailsEvent.RedirectToLogin -> {
+                viewModelScope.launch {
+                    navigationChannel.send(PhotoDetailsNavigationEvent.NavigateToLogin)
+                }
+            }
+
+            is PhotoDetailsEvent.SharePhoto -> {
+                viewModelScope.launch {
+                    navigationChannel.send(
+                        PhotoDetailsNavigationEvent.NavigateToShareDialog(
+                            link = event.link,
+                            description = event.description
+                        )
+                    )
+                }
+            }
         }
     }
 
@@ -97,17 +172,44 @@ class PhotoDetailsViewModel @Inject constructor(
         photoRepository.getPhoto(photoId.value).onEach { result ->
             when (result) {
                 is BackendResult.Loading -> {
-                    _loadResult.update { PhotoLoadResult.Loading }
+                    _state.update {
+                        it.copy(isLoading = true)
+                    }
                 }
+
                 is BackendResult.Success -> {
                     val photo = result.value
-                    _loadResult.update { PhotoLoadResult.Success(photo) }
-                    _isLiked.update { photo.likedByUser }
-                    _isCollected.update { photo.currentUserCollections?.map { it.id }?.isNotEmpty() ?: false }
+
+                    val isPhotoCollected = photo.currentUserCollections?.map { collection ->
+                        collection.id
+                    }?.isNotEmpty() ?: false
+
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            photo = photo,
+                            error = null,
+                            isLiked = photo.likedByUser,
+                            isCollected = isPhotoCollected
+                        )
+                    }
+
                 }
+
                 is BackendResult.Error -> {
-                    _loadResult.update { PhotoLoadResult.Error(photoId) }
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            error = UiError(
+                                reason = UiText.DynamicString(result.reason.orEmpty()),
+                                onRetry = {
+                                    onEvent(PhotoDetailsEvent.RequestPhoto(photoId))
+                                }
+                            )
+                        )
+                    }
                 }
+
                 is BackendResult.Empty -> Unit
             }
         }.launchIn(viewModelScope)
@@ -120,7 +222,7 @@ class PhotoDetailsViewModel @Inject constructor(
         likePhotoJob?.cancel()
         likePhotoJob = viewModelScope.launch {
             photoRepository.likePhoto(photoId.value)
-            _isLiked.update { true }
+            _state.update { it.copy(isLiked = true) }
         }
     }
 
@@ -128,7 +230,7 @@ class PhotoDetailsViewModel @Inject constructor(
         dislikePhotoJob?.cancel()
         dislikePhotoJob = viewModelScope.launch {
             photoRepository.dislikePhoto(photoId.value)
-            _isLiked.update { false }
+            _state.update { it.copy(isLiked = false) }
         }
     }
 

@@ -50,82 +50,55 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.CollectionListLayoutType
-import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.PhotosListLayoutType
-import com.andrii_a.walleria.domain.models.collection.Collection
-import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.user.User
-import com.andrii_a.walleria.ui.common.CollectionId
-import com.andrii_a.walleria.ui.common.PhotoId
-import com.andrii_a.walleria.ui.common.SearchQuery
 import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
 import com.andrii_a.walleria.ui.common.components.lists.CollectionsGrid
 import com.andrii_a.walleria.ui.common.components.lists.CollectionsList
 import com.andrii_a.walleria.ui.common.components.lists.PhotosGrid
 import com.andrii_a.walleria.ui.common.components.lists.PhotosList
+import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.user_details.components.NestedScrollLayout
 import com.andrii_a.walleria.ui.user_details.components.UserHeader
 import com.andrii_a.walleria.ui.user_details.components.rememberNestedScrollLayoutState
-import com.andrii_a.walleria.ui.util.openUserProfileInBrowser
 import kotlinx.coroutines.launch
 
 @Composable
 fun UserDetailsScreen(
-    loadResult: UserLoadResult,
-    photosListLayoutType: PhotosListLayoutType,
-    collectionsListLayoutType: CollectionListLayoutType,
-    photosLoadQuality: PhotoQuality,
-    onRetryLoading: (String) -> Unit,
-    navigateBack: () -> Unit,
-    navigateToPhotoDetails: (PhotoId) -> Unit,
-    navigateToCollectionDetails: (CollectionId) -> Unit,
-    navigateToEditUserProfile: () -> Unit,
-    navigateToSearch: (SearchQuery) -> Unit,
-    navigateToUserDetails: (UserNickname) -> Unit
+    state: UserDetailsUiState,
+    onEvent: (UserDetailsEvent) -> Unit
 ) {
-    when (loadResult) {
-        is UserLoadResult.Empty -> Unit
-        is UserLoadResult.Loading -> {
+    when {
+        state.isLoading -> {
             LoadingStateContent(
-                onNavigateBack = navigateBack
+                onNavigateBack = { onEvent(UserDetailsEvent.GoBack) }
             )
         }
 
-        is UserLoadResult.Error -> {
-            ErrorStateContent(
-                onRetry = { onRetryLoading(loadResult.userNickname) },
-                onNavigateBack = navigateBack
-            )
-        }
-
-        is UserLoadResult.Success -> {
+        !state.isLoading && state.error == null && state.user != null -> {
             SuccessStateContent(
-                user = loadResult.user,
-                loggedInUserNickname = loadResult.loggedInUserNickname,
-                userPhotosLazyItems = loadResult.userPhotos.collectAsLazyPagingItems(),
-                userLikedPhotosLazyItems = loadResult.userLikedPhotos.collectAsLazyPagingItems(),
-                userCollectionsLazyItems = loadResult.userCollections.collectAsLazyPagingItems(),
-                photosListLayoutType = photosListLayoutType,
-                collectionsListLayoutType = collectionsListLayoutType,
-                photosLoadQuality = photosLoadQuality,
-                navigateBack = navigateBack,
-                navigateToPhotoDetails = navigateToPhotoDetails,
-                navigateToCollectionDetails = navigateToCollectionDetails,
-                navigateToSearch = navigateToSearch,
-                navigateToEditUserProfile = navigateToEditUserProfile,
-                navigateToUserDetails = navigateToUserDetails
+                state = state,
+                onEvent = onEvent
+            )
+        }
+
+        else -> {
+            ErrorStateContent(
+                onRetry = {
+                    state.error?.onRetry?.invoke()
+                },
+                onNavigateBack = { onEvent(UserDetailsEvent.GoBack) }
             )
         }
     }
@@ -193,38 +166,33 @@ private fun ErrorStateContent(
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SuccessStateContent(
-    user: User,
-    loggedInUserNickname: String,
-    userPhotosLazyItems: LazyPagingItems<Photo>,
-    userLikedPhotosLazyItems: LazyPagingItems<Photo>,
-    userCollectionsLazyItems: LazyPagingItems<Collection>,
-    photosListLayoutType: PhotosListLayoutType,
-    collectionsListLayoutType: CollectionListLayoutType,
-    photosLoadQuality: PhotoQuality,
-    navigateBack: () -> Unit,
-    navigateToPhotoDetails: (PhotoId) -> Unit,
-    navigateToCollectionDetails: (CollectionId) -> Unit,
-    navigateToEditUserProfile: () -> Unit,
-    navigateToSearch: (SearchQuery) -> Unit,
-    navigateToUserDetails: (UserNickname) -> Unit
+    state: UserDetailsUiState,
+    onEvent: (UserDetailsEvent) -> Unit
 ) {
+    val user = state.user!!
+
     val bottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
-    var openBottomSheet by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopBar(
-                onNavigateBack = navigateBack,
+                onNavigateBack = { onEvent(UserDetailsEvent.GoBack) },
                 titleText = user.username,
-                isOwnProfile = user.username == loggedInUserNickname,
-                onEditProfile = navigateToEditUserProfile,
-                onOpenMoreAboutProfile = { openBottomSheet = !openBottomSheet }
+                isOwnProfile = user.username == state.loggedInUserNickname,
+                onEditProfile = { onEvent(UserDetailsEvent.SelectEditProfile) },
+                onOpenMoreAboutProfile = { onEvent(UserDetailsEvent.OpenDetailsDialog) },
+                onOpenProfileInBrowser = {
+                    onEvent(
+                        UserDetailsEvent.OpenUserProfileInBrowser(
+                            UserNickname(user.username)
+                        )
+                    )
+                }
             )
         }
     ) { innerPadding ->
-        val scope = rememberCoroutineScope()
         val pagerState = rememberPagerState(initialPage = 0) { UserDetailsScreenTabs.entries.size }
 
         val nestedScrollLayoutState = rememberNestedScrollLayoutState()
@@ -232,65 +200,36 @@ fun SuccessStateContent(
         NestedScrollLayout(
             state = nestedScrollLayoutState,
             collapsableHeader = {
-                UserHeader(user = user)
+                UserHeader(
+                    user = user,
+                    onOpenPortfolio = { onEvent(UserDetailsEvent.SelectPortfolioLink(it)) },
+                    onOpenInstagramProfile = { onEvent(UserDetailsEvent.SelectInstagramProfile(it)) },
+                    onOpenTwitterProfile = { onEvent(UserDetailsEvent.SelectTwitterProfile(it)) },
+                    modifier = Modifier.fillMaxWidth()
+                )
             },
             modifier = Modifier.padding(innerPadding)
         ) {
             Column {
-                TabRow(
-                    selectedTabIndex = pagerState.currentPage,
-                    indicator = { tabPositions ->
-                        Box(
-                            modifier = Modifier
-                                .tabIndicatorOffset(tabPositions[pagerState.currentPage])
-                                .height(4.dp)
-                                .padding(horizontal = 32.dp)
-                                .background(
-                                    color = MaterialTheme.colorScheme.primary,
-                                    shape = RoundedCornerShape(16.dp)
-                                )
-                        )
-                    }
-                ) {
-                    UserDetailsScreenTabs.entries.forEachIndexed { index, tabPage ->
-                        Tab(
-                            selected = index == pagerState.currentPage,
-                            onClick = {
-                                scope.launch {
-                                    pagerState.animateScrollToPage(index)
-                                }
-                            },
-                            text = {
-                                Text(
-                                    text = stringResource(id = tabPage.titleRes),
-                                    overflow = TextOverflow.Ellipsis,
-                                    maxLines = 1
-                                )
-                            }
-                        )
-                    }
-                }
+                Tabs(
+                    pagerState = pagerState,
+                    modifier = Modifier.fillMaxWidth()
+                )
 
                 Pages(
                     pagerState = pagerState,
-                    lazyPhotoItems = userPhotosLazyItems,
-                    lazyLikedPhotoItems = userLikedPhotosLazyItems,
-                    lazyCollectionItems = userCollectionsLazyItems,
-                    photosListLayoutType = photosListLayoutType,
-                    collectionsListLayoutType = collectionsListLayoutType,
-                    photosLoadQuality = photosLoadQuality,
-                    navigateToPhotoDetails = navigateToPhotoDetails,
-                    navigateToCollectionDetails = navigateToCollectionDetails,
-                    navigateToUserDetails = navigateToUserDetails
+                    uiState = state,
+                    onEvent = onEvent
                 )
             }
         }
 
-        if (openBottomSheet) {
-            val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+        if (state.isDetailsDialogOpened) {
+            val bottomPadding =
+                WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
             ModalBottomSheet(
-                onDismissRequest = { openBottomSheet = false },
+                onDismissRequest = { onEvent(UserDetailsEvent.DismissDetailsDialog) },
                 sheetState = bottomSheetState,
                 windowInsets = WindowInsets(0)
             ) {
@@ -299,7 +238,9 @@ fun SuccessStateContent(
                     contentPadding = PaddingValues(
                         bottom = bottomPadding
                     ),
-                    navigateToSearch = navigateToSearch
+                    navigateToSearch = { query ->
+                        onEvent(UserDetailsEvent.SearchByTag(query))
+                    }
                 )
             }
         }
@@ -308,17 +249,54 @@ fun SuccessStateContent(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
+private fun Tabs(
+    pagerState: PagerState,
+    modifier: Modifier = Modifier
+) {
+    val scope = rememberCoroutineScope()
+
+    TabRow(
+        selectedTabIndex = pagerState.currentPage,
+        indicator = { tabPositions ->
+            Box(
+                modifier = Modifier
+                    .tabIndicatorOffset(tabPositions[pagerState.currentPage])
+                    .height(4.dp)
+                    .padding(horizontal = 32.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = RoundedCornerShape(16.dp)
+                    )
+            )
+        },
+        modifier = modifier
+    ) {
+        UserDetailsScreenTabs.entries.forEachIndexed { index, tabPage ->
+            Tab(
+                selected = index == pagerState.currentPage,
+                onClick = {
+                    scope.launch {
+                        pagerState.animateScrollToPage(index)
+                    }
+                },
+                text = {
+                    Text(
+                        text = stringResource(id = tabPage.titleRes),
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
+                    )
+                }
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
 private fun Pages(
     pagerState: PagerState,
-    lazyPhotoItems: LazyPagingItems<Photo>,
-    lazyLikedPhotoItems: LazyPagingItems<Photo>,
-    lazyCollectionItems: LazyPagingItems<Collection>,
-    photosListLayoutType: PhotosListLayoutType,
-    collectionsListLayoutType: CollectionListLayoutType,
-    photosLoadQuality: PhotoQuality,
-    navigateToPhotoDetails: (PhotoId) -> Unit,
-    navigateToCollectionDetails: (CollectionId) -> Unit,
-    navigateToUserDetails: (UserNickname) -> Unit,
+    uiState: UserDetailsUiState,
+    onEvent: (UserDetailsEvent) -> Unit,
     contentPadding: PaddingValues = PaddingValues()
 ) {
     HorizontalPager(
@@ -327,20 +305,27 @@ private fun Pages(
     ) { index ->
         when (index) {
             UserDetailsScreenTabs.Photos.ordinal -> {
-                when (photosListLayoutType) {
+                val lazyPhotoItems = uiState.photos.collectAsLazyPagingItems()
+
+                when (uiState.photosListLayoutType) {
                     PhotosListLayoutType.DEFAULT -> {
                         val listState = rememberLazyListState()
 
                         PhotosList(
                             lazyPhotoItems = lazyPhotoItems,
-                            onPhotoClicked = navigateToPhotoDetails,
-                            onUserProfileClicked = navigateToUserDetails,
+                            onPhotoClicked = { id ->
+                                onEvent(UserDetailsEvent.SelectPhoto(id))
+                            },
+                            onUserProfileClicked = { nickname ->
+                                onEvent(UserDetailsEvent.SelectUser(nickname))
+                            },
                             isCompact = false,
-                            photosLoadQuality = photosLoadQuality,
+                            photosLoadQuality = uiState.photosLoadQuality,
                             listState = listState,
                             contentPadding = PaddingValues(
                                 top = dimensionResource(id = R.dimen.list_top_padding),
-                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+                                bottom = WindowInsets.navigationBars.asPaddingValues()
+                                    .calculateBottomPadding(),
                             ),
                             modifier = Modifier.fillMaxSize()
                         )
@@ -351,14 +336,19 @@ private fun Pages(
 
                         PhotosList(
                             lazyPhotoItems = lazyPhotoItems,
-                            onPhotoClicked = navigateToPhotoDetails,
-                            onUserProfileClicked = navigateToUserDetails,
+                            onPhotoClicked = { id ->
+                                onEvent(UserDetailsEvent.SelectPhoto(id))
+                            },
+                            onUserProfileClicked = { nickname ->
+                                onEvent(UserDetailsEvent.SelectUser(nickname))
+                            },
                             isCompact = true,
-                            photosLoadQuality = photosLoadQuality,
+                            photosLoadQuality = uiState.photosLoadQuality,
                             listState = listState,
                             contentPadding = PaddingValues(
                                 top = dimensionResource(id = R.dimen.list_top_padding),
-                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+                                bottom = WindowInsets.navigationBars.asPaddingValues()
+                                    .calculateBottomPadding(),
                             ),
                             modifier = Modifier.fillMaxSize()
                         )
@@ -369,12 +359,15 @@ private fun Pages(
 
                         PhotosGrid(
                             lazyPhotoItems = lazyPhotoItems,
-                            onPhotoClicked = navigateToPhotoDetails,
-                            photosLoadQuality = photosLoadQuality,
+                            onPhotoClicked = { id ->
+                                onEvent(UserDetailsEvent.SelectPhoto(id))
+                            },
+                            photosLoadQuality = uiState.photosLoadQuality,
                             gridState = gridState,
                             contentPadding = PaddingValues(
                                 top = dimensionResource(id = R.dimen.list_top_padding),
-                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+                                bottom = WindowInsets.navigationBars.asPaddingValues()
+                                    .calculateBottomPadding(),
                             ),
                             modifier = Modifier.fillMaxSize()
                         )
@@ -383,20 +376,27 @@ private fun Pages(
             }
 
             UserDetailsScreenTabs.LikedPhotos.ordinal -> {
-                when (photosListLayoutType) {
+                val lazyLikedPhotoItems = uiState.likedPhotos.collectAsLazyPagingItems()
+
+                when (uiState.photosListLayoutType) {
                     PhotosListLayoutType.DEFAULT -> {
                         val listState = rememberLazyListState()
 
                         PhotosList(
                             lazyPhotoItems = lazyLikedPhotoItems,
-                            onPhotoClicked = navigateToPhotoDetails,
-                            onUserProfileClicked = navigateToUserDetails,
+                            onPhotoClicked = { id ->
+                                onEvent(UserDetailsEvent.SelectPhoto(id))
+                            },
+                            onUserProfileClicked = { nickname ->
+                                onEvent(UserDetailsEvent.SelectUser(nickname))
+                            },
                             isCompact = false,
-                            photosLoadQuality = photosLoadQuality,
+                            photosLoadQuality = uiState.photosLoadQuality,
                             listState = listState,
                             contentPadding = PaddingValues(
                                 top = dimensionResource(id = R.dimen.list_top_padding),
-                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+                                bottom = WindowInsets.navigationBars.asPaddingValues()
+                                    .calculateBottomPadding(),
                             ),
                             modifier = Modifier.fillMaxSize()
                         )
@@ -407,14 +407,19 @@ private fun Pages(
 
                         PhotosList(
                             lazyPhotoItems = lazyLikedPhotoItems,
-                            onPhotoClicked = navigateToPhotoDetails,
-                            onUserProfileClicked = navigateToUserDetails,
+                            onPhotoClicked = { id ->
+                                onEvent(UserDetailsEvent.SelectPhoto(id))
+                            },
+                            onUserProfileClicked = { nickname ->
+                                onEvent(UserDetailsEvent.SelectUser(nickname))
+                            },
                             isCompact = true,
-                            photosLoadQuality = photosLoadQuality,
+                            photosLoadQuality = uiState.photosLoadQuality,
                             listState = listState,
                             contentPadding = PaddingValues(
                                 top = dimensionResource(id = R.dimen.list_top_padding),
-                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+                                bottom = WindowInsets.navigationBars.asPaddingValues()
+                                    .calculateBottomPadding(),
                             ),
                             modifier = Modifier.fillMaxSize()
                         )
@@ -425,12 +430,15 @@ private fun Pages(
 
                         PhotosGrid(
                             lazyPhotoItems = lazyLikedPhotoItems,
-                            onPhotoClicked = navigateToPhotoDetails,
-                            photosLoadQuality = photosLoadQuality,
+                            onPhotoClicked = { id ->
+                                onEvent(UserDetailsEvent.SelectPhoto(id))
+                            },
+                            photosLoadQuality = uiState.photosLoadQuality,
                             gridState = gridState,
                             contentPadding = PaddingValues(
                                 top = dimensionResource(id = R.dimen.list_top_padding),
-                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+                                bottom = WindowInsets.navigationBars.asPaddingValues()
+                                    .calculateBottomPadding(),
                             ),
                             modifier = Modifier.fillMaxSize()
                         )
@@ -439,19 +447,28 @@ private fun Pages(
             }
 
             UserDetailsScreenTabs.Collections.ordinal -> {
-                when (collectionsListLayoutType) {
+                val lazyCollectionItems = uiState.collections.collectAsLazyPagingItems()
+
+                when (uiState.collectionListLayoutType) {
                     CollectionListLayoutType.DEFAULT -> {
                         val listState = rememberLazyListState()
 
                         CollectionsList(
                             lazyCollectionItems = lazyCollectionItems,
-                            onCollectionClicked = navigateToCollectionDetails,
-                            onUserProfileClicked = navigateToUserDetails,
-                            onPhotoClicked = navigateToPhotoDetails,
-                            photosLoadQuality = photosLoadQuality,
+                            onCollectionClicked = { id ->
+                                onEvent(UserDetailsEvent.SelectCollection(id))
+                            },
+                            onPhotoClicked = { id ->
+                                onEvent(UserDetailsEvent.SelectPhoto(id))
+                            },
+                            onUserProfileClicked = { nickname ->
+                                onEvent(UserDetailsEvent.SelectUser(nickname))
+                            },
+                            photosLoadQuality = uiState.photosLoadQuality,
                             contentPadding = PaddingValues(
                                 top = dimensionResource(id = R.dimen.list_top_padding),
-                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+                                bottom = WindowInsets.navigationBars.asPaddingValues()
+                                    .calculateBottomPadding(),
                             ),
                             listState = listState,
                         )
@@ -462,15 +479,22 @@ private fun Pages(
 
                         CollectionsList(
                             lazyCollectionItems = lazyCollectionItems,
-                            onCollectionClicked = navigateToCollectionDetails,
-                            onUserProfileClicked = navigateToUserDetails,
-                            onPhotoClicked = navigateToPhotoDetails,
-                            photosLoadQuality = photosLoadQuality,
+                            onCollectionClicked = { id ->
+                                onEvent(UserDetailsEvent.SelectCollection(id))
+                            },
+                            onPhotoClicked = { id ->
+                                onEvent(UserDetailsEvent.SelectPhoto(id))
+                            },
+                            onUserProfileClicked = { nickname ->
+                                onEvent(UserDetailsEvent.SelectUser(nickname))
+                            },
+                            photosLoadQuality = uiState.photosLoadQuality,
                             isCompact = true,
                             listState = listState,
                             contentPadding = PaddingValues(
                                 top = dimensionResource(id = R.dimen.list_top_padding),
-                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+                                bottom = WindowInsets.navigationBars.asPaddingValues()
+                                    .calculateBottomPadding(),
                             )
                         )
                     }
@@ -480,12 +504,15 @@ private fun Pages(
 
                         CollectionsGrid(
                             lazyCollectionItems = lazyCollectionItems,
-                            onCollectionClicked = navigateToCollectionDetails,
+                            onCollectionClicked = { id ->
+                                onEvent(UserDetailsEvent.SelectCollection(id))
+                            },
                             gridState = gridState,
-                            photosLoadQuality = photosLoadQuality,
+                            photosLoadQuality = uiState.photosLoadQuality,
                             contentPadding = PaddingValues(
                                 top = dimensionResource(id = R.dimen.list_top_padding),
-                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+                                bottom = WindowInsets.navigationBars.asPaddingValues()
+                                    .calculateBottomPadding(),
                             )
                         )
                     }
@@ -504,10 +531,9 @@ fun TopBar(
     isOwnProfile: Boolean = false,
     onNavigateBack: () -> Unit,
     onEditProfile: () -> Unit,
-    onOpenMoreAboutProfile: () -> Unit
+    onOpenMoreAboutProfile: () -> Unit,
+    onOpenProfileInBrowser: () -> Unit
 ) {
-    val context = LocalContext.current
-
     Surface(
         modifier = modifier.height(
             dimensionResource(id = R.dimen.top_bar_height) +
@@ -610,11 +636,7 @@ fun TopBar(
                         text = {
                             Text(text = stringResource(id = R.string.open_in_browser))
                         },
-                        onClick = {
-                            titleText?.let {
-                                context.openUserProfileInBrowser(UserNickname(it))
-                            }
-                        }
+                        onClick = onOpenProfileInBrowser
                     )
 
                     DropdownMenuItem(
@@ -633,4 +655,39 @@ private enum class UserDetailsScreenTabs(@StringRes val titleRes: Int) {
     Photos(R.string.photos),
     LikedPhotos(R.string.liked_photos),
     Collections(R.string.collections)
+}
+
+@Preview
+@Composable
+fun UserDetailsScreenPreview() {
+    WalleriaTheme {
+        Surface {
+            val user = User(
+                id = "",
+                username = "john_smith",
+                firstName = "John",
+                lastName = "Smith",
+                bio = "",
+                location = "San Francisco, California, USA",
+                totalLikes = 100,
+                totalPhotos = 100,
+                totalCollections = 100,
+                followersCount = 100_000,
+                followingCount = 56,
+                downloads = 99_000,
+                profileImage = null,
+                social = null,
+                tags = null,
+                photos = null
+            )
+
+            val state = UserDetailsUiState(
+                isLoading = false,
+                error = null,
+                user = user
+            )
+
+            UserDetailsScreen(state = state, onEvent = {})
+        }
+    }
 }

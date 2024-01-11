@@ -6,13 +6,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.paging.LoadState
+import androidx.paging.LoadStates
+import androidx.paging.PagingData
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 
 @SuppressLint("ComposableNaming")
 @Composable
-fun <T> SharedFlow<T>.collectAsOneTimeEvents(onEvent: (T) -> Unit) {
+fun <T> Flow<T>.collectAsOneTimeEvents(onEvent: (T) -> Unit) {
     val lifecycleOwner = LocalLifecycleOwner.current
     LaunchedEffect(lifecycleOwner) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -21,4 +25,14 @@ fun <T> SharedFlow<T>.collectAsOneTimeEvents(onEvent: (T) -> Unit) {
             }
         }
     }
+}
+
+fun <T : Any> emptyPagingDataFlow(): Flow<PagingData<T>> = flow {
+    val loadStates = LoadStates(
+        refresh = LoadState.NotLoading(endOfPaginationReached = true),
+        prepend = LoadState.NotLoading(endOfPaginationReached = true),
+        append = LoadState.NotLoading(endOfPaginationReached = true)
+    )
+
+    emit(PagingData.empty(sourceLoadStates = loadStates))
 }

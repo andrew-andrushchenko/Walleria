@@ -1,6 +1,9 @@
 package com.andrii_a.walleria.ui.photos
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material.icons.Icons
@@ -18,34 +21,24 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.PhotoListDisplayOrder
-import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.PhotosListLayoutType
-import com.andrii_a.walleria.domain.models.photo.Photo
-import com.andrii_a.walleria.ui.common.*
 import com.andrii_a.walleria.ui.common.components.WTitleDropdown
 import com.andrii_a.walleria.ui.common.components.lists.PhotosGrid
 import com.andrii_a.walleria.ui.common.components.lists.PhotosList
 import com.andrii_a.walleria.ui.util.titleRes
-import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PhotosScreen(
-    photos: Flow<PagingData<Photo>>,
-    order: PhotoListDisplayOrder,
-    photosListLayoutType: PhotosListLayoutType,
-    photosLoadQuality: PhotoQuality,
-    orderBy: (Int) -> Unit,
-    navigateToProfileScreen: () -> Unit,
-    navigateToSearchScreen: (SearchQuery?) -> Unit,
-    navigateToPhotoDetailsScreen: (PhotoId) -> Unit,
-    navigateToUserDetails: (UserNickname) -> Unit
+    state: PhotosUiState,
+    //photosListLayoutType: PhotosListLayoutType,
+    //photosLoadQuality: PhotoQuality,
+    onEvent: (PhotosEvent) -> Unit
 ) {
-    val lazyPhotoItems = photos.collectAsLazyPagingItems()
+    val lazyPhotoItems = state.photos.collectAsLazyPagingItems()
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -56,14 +49,16 @@ fun PhotosScreen(
                     val optionStringResources = PhotoListDisplayOrder.entries.map { it.titleRes }
 
                     WTitleDropdown(
-                        selectedTitleRes = order.titleRes,
+                        selectedTitleRes = state.photosListDisplayOrder.titleRes,
                         titleTemplateRes = R.string.photos_title_template,
                         optionsStringRes = optionStringResources,
-                        onItemSelected = orderBy
+                        onItemSelected = { orderOptionOrdinalNum ->
+                            onEvent(PhotosEvent.ChangeListOrder(orderOptionOrdinalNum))
+                        }
                     )
                 },
                 actions = {
-                    IconButton(onClick = { navigateToSearchScreen(null) }) {
+                    IconButton(onClick = { onEvent(PhotosEvent.SelectSearch) }) {
                         Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = stringResource(
@@ -72,7 +67,7 @@ fun PhotosScreen(
                         )
                     }
 
-                    IconButton(onClick = navigateToProfileScreen) {
+                    IconButton(onClick = { onEvent(PhotosEvent.SelectPrivateUserProfile) }) {
                         Icon(
                             imageVector = Icons.Outlined.AccountCircle,
                             contentDescription = stringResource(
@@ -86,19 +81,21 @@ fun PhotosScreen(
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { innerPadding ->
-        when (photosListLayoutType) {
+        when (state.photosListLayoutType) {
             PhotosListLayoutType.DEFAULT -> {
                 val listState = rememberLazyListState()
 
                 PhotosList(
                     lazyPhotoItems = lazyPhotoItems,
                     onPhotoClicked = { photoId ->
-                        navigateToPhotoDetailsScreen(photoId)
+                        onEvent(PhotosEvent.SelectPhoto(photoId))
                     },
-                    onUserProfileClicked = navigateToUserDetails,
+                    onUserProfileClicked = { userNickname ->
+                        onEvent(PhotosEvent.SelectUser(userNickname))
+                    },
                     isCompact = false,
                     addNavigationBarPadding = true,
-                    photosLoadQuality = photosLoadQuality,
+                    photosLoadQuality = state.photosLoadQuality,
                     listState = listState,
                     contentPadding = PaddingValues(
                         start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
@@ -116,12 +113,14 @@ fun PhotosScreen(
                 PhotosList(
                     lazyPhotoItems = lazyPhotoItems,
                     onPhotoClicked = { photoId ->
-                        navigateToPhotoDetailsScreen(photoId)
+                        onEvent(PhotosEvent.SelectPhoto(photoId))
                     },
-                    onUserProfileClicked = navigateToUserDetails,
+                    onUserProfileClicked = { userNickname ->
+                        onEvent(PhotosEvent.SelectUser(userNickname))
+                    },
                     isCompact = true,
                     addNavigationBarPadding = true,
-                    photosLoadQuality = photosLoadQuality,
+                    photosLoadQuality = state.photosLoadQuality,
                     listState = listState,
                     contentPadding = PaddingValues(
                         start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
@@ -138,8 +137,10 @@ fun PhotosScreen(
 
                 PhotosGrid(
                     lazyPhotoItems = lazyPhotoItems,
-                    onPhotoClicked = navigateToPhotoDetailsScreen,
-                    photosLoadQuality = photosLoadQuality,
+                    onPhotoClicked = { photoId ->
+                        onEvent(PhotosEvent.SelectPhoto(photoId))
+                    },
+                    photosLoadQuality = state.photosLoadQuality,
                     gridState = gridState,
                     addNavigationBarPadding = true,
                     contentPadding = PaddingValues(

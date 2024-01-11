@@ -7,6 +7,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -20,6 +21,11 @@ import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.photo_details.navigateToPhotoDetails
 import com.andrii_a.walleria.ui.profile_edit.navigateToEditUserProfile
 import com.andrii_a.walleria.ui.search.navigateToSearch
+import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
+import com.andrii_a.walleria.ui.util.openInstagramProfile
+import com.andrii_a.walleria.ui.util.openLinkInBrowser
+import com.andrii_a.walleria.ui.util.openTwitterProfile
+import com.andrii_a.walleria.ui.util.openUserProfileInBrowser
 
 fun NavGraphBuilder.userDetailsRoute(navController: NavController) {
     composable(
@@ -49,23 +55,56 @@ fun NavGraphBuilder.userDetailsRoute(navController: NavController) {
     ) {
         val viewModel: UserDetailsViewModel = hiltViewModel()
 
-        val loadResult by viewModel.loadResult.collectAsStateWithLifecycle()
-        val photosLayoutType by viewModel.photosLayoutType.collectAsStateWithLifecycle()
-        val collectionsLayoutType by viewModel.collectionsLayoutType.collectAsStateWithLifecycle()
-        val photosLoadQuality by viewModel.photosLoadQuality.collectAsStateWithLifecycle()
+        val state by viewModel.state.collectAsStateWithLifecycle()
+
+        val context = LocalContext.current
+        viewModel.navigationEventsChannelFlow.collectAsOneTimeEvents { event ->
+            when (event) {
+                is UserDetailsNavigationEvent.NavigateBack -> {
+                    navController.navigateUp()
+                }
+
+                is UserDetailsNavigationEvent.NavigateToPhotoDetailsScreen -> {
+                    navController.navigateToPhotoDetails(event.photoId)
+                }
+
+                is UserDetailsNavigationEvent.NavigateToCollectionDetails -> {
+                    navController.navigateToCollectionDetails(event.collectionId)
+                }
+
+                is UserDetailsNavigationEvent.NavigateToUserDetails -> {
+                    navController.navigateToUserDetails(event.userNickname)
+                }
+
+                is UserDetailsNavigationEvent.NavigateToSearchScreen -> {
+                    navController.navigateToSearch(event.query)
+                }
+
+                is UserDetailsNavigationEvent.NavigateToEditProfile -> {
+                    navController.navigateToEditUserProfile()
+                }
+
+                is UserDetailsNavigationEvent.NavigateToUserProfileInChromeTab -> {
+                    context.openUserProfileInBrowser(event.userNickname)
+                }
+
+                is UserDetailsNavigationEvent.NavigateToChromeCustomTab -> {
+                    context.openLinkInBrowser(event.url)
+                }
+
+                is UserDetailsNavigationEvent.NavigateToInstagramApp -> {
+                    context.openInstagramProfile(event.instagramNickname)
+                }
+
+                is UserDetailsNavigationEvent.NavigateToTwitterApp -> {
+                    context.openTwitterProfile(event.twitterNickname)
+                }
+            }
+        }
 
         UserDetailsScreen(
-            loadResult = loadResult,
-            photosListLayoutType = photosLayoutType,
-            collectionsListLayoutType = collectionsLayoutType,
-            photosLoadQuality = photosLoadQuality,
-            onRetryLoading = viewModel::getUser,
-            navigateBack = navController::navigateUp,
-            navigateToPhotoDetails = navController::navigateToPhotoDetails,
-            navigateToCollectionDetails = navController::navigateToCollectionDetails,
-            navigateToEditUserProfile = navController::navigateToEditUserProfile,
-            navigateToSearch = navController::navigateToSearch,
-            navigateToUserDetails = navController::navigateToUserDetails
+            state = state,
+            onEvent = viewModel::onEvent
         )
     }
 }

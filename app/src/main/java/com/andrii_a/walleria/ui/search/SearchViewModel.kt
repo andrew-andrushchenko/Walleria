@@ -3,39 +3,23 @@ package com.andrii_a.walleria.ui.search
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.andrii_a.walleria.domain.CollectionListLayoutType
-import com.andrii_a.walleria.domain.PhotoQuality
-import com.andrii_a.walleria.domain.PhotosListLayoutType
-import com.andrii_a.walleria.domain.SearchResultsContentFilter
-import com.andrii_a.walleria.domain.SearchResultsDisplayOrder
-import com.andrii_a.walleria.domain.SearchResultsPhotoColor
-import com.andrii_a.walleria.domain.SearchResultsPhotoOrientation
-import com.andrii_a.walleria.domain.models.collection.Collection
-import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.search.RecentSearchItem
-import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.domain.repository.LocalPreferencesRepository
 import com.andrii_a.walleria.domain.repository.RecentSearchesRepository
 import com.andrii_a.walleria.domain.repository.SearchRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
-
-sealed interface SearchScreenEvent {
-    data class ChangeQuery(val query: String) : SearchScreenEvent
-
-    data class ChangePhotoFilters(val photoFilters: PhotoFilters) : SearchScreenEvent
-
-    data class SaveRecentSearch(val query: String) : SearchScreenEvent
-
-    data class DeleteRecentSearch(val item: RecentSearchItem) : SearchScreenEvent
-
-    data object DeleteAllRecentSearches : SearchScreenEvent
-}
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
@@ -45,137 +29,160 @@ class SearchViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _query: MutableStateFlow<String> = MutableStateFlow("")
-    val query: StateFlow<String> = _query.asStateFlow()
-
-    private val _photoFilters: MutableStateFlow<PhotoFilters> = MutableStateFlow(
-        PhotoFilters(
-            order = SearchResultsDisplayOrder.RELEVANT,
-            contentFilter = SearchResultsContentFilter.LOW,
-            color = SearchResultsPhotoColor.ANY,
-            orientation = SearchResultsPhotoOrientation.ANY
+    private val _state: MutableStateFlow<SearchUiState> = MutableStateFlow(SearchUiState())
+    val state = combine(
+        recentSearchesRepository.getAllRecentSearches(),
+        localPreferencesRepository.photosListLayoutType,
+        localPreferencesRepository.collectionsListLayoutType,
+        localPreferencesRepository.photosLoadQuality,
+        _state
+    ) { recentSearches, photosListLayoutType, collectionsListLayoutType, photosLoadQuality, state ->
+        state.copy(
+            recentSearches = recentSearches,
+            photosLayoutType = photosListLayoutType,
+            collectionsLayoutType = collectionsListLayoutType,
+            photosLoadQuality = photosLoadQuality
         )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000L),
+        initialValue = _state.value
     )
-    val photoFilters: StateFlow<PhotoFilters> = _photoFilters.asStateFlow()
 
-    val recentSearches: StateFlow<List<RecentSearchItem>> =
-        recentSearchesRepository.getAllRecentSearches()
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000L),
-                initialValue = emptyList()
-            )
-
-    val photosLayoutType: StateFlow<PhotosListLayoutType> =
-        localPreferencesRepository.photosListLayoutType
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000L),
-                initialValue = runBlocking { localPreferencesRepository.photosListLayoutType.first() }
-            )
-
-    val collectionsLayoutType: StateFlow<CollectionListLayoutType> =
-        localPreferencesRepository.collectionsListLayoutType
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000L),
-                initialValue = runBlocking { localPreferencesRepository.collectionsListLayoutType.first() }
-            )
-
-    val photosLoadQuality: StateFlow<PhotoQuality> = localPreferencesRepository.photosLoadQuality
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = runBlocking { localPreferencesRepository.photosLoadQuality.first() }
-        )
+    private val navigationChannel = Channel<SearchNavigationEvent>()
+    val navigationEventsChannelFlow = navigationChannel.receiveAsFlow()
 
     init {
         savedStateHandle.get<String>(SearchArgs.QUERY)?.let { query ->
-            onEvent(SearchScreenEvent.ChangeQuery(query = query))
+            if (query.isNotBlank()) {
+                onEvent(SearchEvent.PerformSearch(query = query))
+            }
         }
     }
 
-    val photos: Flow<PagingData<Photo>> = combine(
-        _query, _photoFilters
-    ) { searchQuery, filters ->
-        Pair(searchQuery, filters)
-    }.flatMapLatest { (searchQuery, filters) ->
-        searchRepository.searchPhotos(
-            query = searchQuery,
-            order = filters.order,
-            contentFilter = filters.contentFilter,
-            color = filters.color,
-            orientation = filters.orientation
-        )
-    }.cachedIn(viewModelScope)
-
-    val collections: Flow<PagingData<Collection>> = _query.flatMapLatest {
-        searchRepository.searchCollections(it)
-    }.cachedIn(viewModelScope)
-
-    val users: Flow<PagingData<User>> = _query.flatMapLatest {
-        searchRepository.searchUsers(it)
-    }.cachedIn(viewModelScope)
-
-    fun onEvent(event: SearchScreenEvent) {
+    fun onEvent(event: SearchEvent) {
         when (event) {
-            is SearchScreenEvent.ChangeQuery -> {
-                _query.update { event.query }
+            is SearchEvent.PerformSearch -> {
+                performSearch(event.query)
             }
 
-            is SearchScreenEvent.ChangePhotoFilters -> {
-                _photoFilters.update { event.photoFilters }
+            is SearchEvent.ChangePhotoFilters -> {
+                changePhotoFilters(event.photoFilters)
             }
 
-            is SearchScreenEvent.SaveRecentSearch -> {
-                saveRecentQuery(event.query)
-            }
-
-            is SearchScreenEvent.DeleteRecentSearch -> {
+            is SearchEvent.DeleteRecentSearchItem -> {
                 deleteRecentSearch(event.item)
             }
 
-            is SearchScreenEvent.DeleteAllRecentSearches -> {
+            is SearchEvent.DeleteAllRecentSearches -> {
                 deleteAllRecentSearches()
             }
+
+            is SearchEvent.OpenFilterDialog -> {
+                _state.update {
+                    it.copy(isFilterDialogOpened = true)
+                }
+            }
+
+            is SearchEvent.DismissFilterDialog -> {
+                _state.update {
+                    it.copy(isFilterDialogOpened = false)
+                }
+            }
+
+            is SearchEvent.SelectPhoto -> {
+                viewModelScope.launch {
+                    navigationChannel.send(SearchNavigationEvent.NavigateToPhotoDetails(event.photoId))
+                }
+            }
+
+            is SearchEvent.SelectCollection -> {
+                viewModelScope.launch {
+                    navigationChannel.send(SearchNavigationEvent.NavigateToCollectionDetails(event.collectionId))
+                }
+            }
+
+            is SearchEvent.SelectUser -> {
+                viewModelScope.launch {
+                    navigationChannel.send(SearchNavigationEvent.NavigateToUserDetails(event.userNickname))
+                }
+            }
+
+            is SearchEvent.GoBack -> {
+                viewModelScope.launch {
+                    navigationChannel.send(SearchNavigationEvent.NavigateBack)
+                }
+            }
+        }
+    }
+
+    private fun performSearch(query: String) {
+        saveRecentQuery(query)
+
+        _state.update {
+            it.copy(
+                query = query,
+                photos = searchRepository.searchPhotos(
+                    query = query,
+                    order = it.photoFilters.order,
+                    contentFilter = it.photoFilters.contentFilter,
+                    color = it.photoFilters.color,
+                    orientation = it.photoFilters.orientation
+                ).cachedIn(viewModelScope),
+                collections = searchRepository.searchCollections(query).cachedIn(viewModelScope),
+                users = searchRepository.searchUsers(query).cachedIn(viewModelScope)
+            )
         }
     }
 
     private fun saveRecentQuery(query: String) {
-        val searchQueries = recentSearches.value.map { it.title }
-
-        if (searchQueries.contains(query)) {
-            val itemToUpdate = recentSearches.value.findLast { it.title == query }
-            itemToUpdate?.let {
-                viewModelScope.launch {
+        viewModelScope.launch {
+            withContext(NonCancellable) {
+                val itemToModify = recentSearchesRepository.getRecentSearchByTitle(title = query)
+                itemToModify?.let {
                     recentSearchesRepository.updateItem(
                         it.copy(timeMillis = System.currentTimeMillis())
                     )
+                } ?: run {
+                    val newRecentSearchItem = RecentSearchItem(
+                        title = query,
+                        timeMillis = System.currentTimeMillis()
+                    )
+
+                    recentSearchesRepository.insertItem(newRecentSearchItem)
                 }
             }
-
-            return
-        }
-
-        val newRecentSearchItem = RecentSearchItem(
-            title = query,
-            timeMillis = System.currentTimeMillis()
-        )
-
-        viewModelScope.launch {
-            recentSearchesRepository.insertItem(newRecentSearchItem)
         }
     }
 
     private fun deleteRecentSearch(item: RecentSearchItem) {
         viewModelScope.launch {
-            recentSearchesRepository.deleteItem(item)
+            withContext(NonCancellable) {
+                recentSearchesRepository.deleteItem(item)
+            }
         }
     }
 
     private fun deleteAllRecentSearches() {
         viewModelScope.launch {
-            recentSearchesRepository.deleteAllItems()
+            withContext(NonCancellable) {
+                recentSearchesRepository.deleteAllItems()
+            }
+        }
+    }
+
+    private fun changePhotoFilters(filters: PhotoFilters) {
+        _state.update {
+            it.copy(
+                photoFilters = filters,
+                photos = searchRepository.searchPhotos(
+                    query = it.query,
+                    order = filters.order,
+                    contentFilter = filters.contentFilter,
+                    color = filters.color,
+                    orientation = filters.orientation
+                ).cachedIn(viewModelScope)
+            )
         }
     }
 }

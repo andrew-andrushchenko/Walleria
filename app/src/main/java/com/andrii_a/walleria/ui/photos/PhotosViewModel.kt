@@ -2,25 +2,19 @@ package com.andrii_a.walleria.ui.photos
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.andrii_a.walleria.domain.PhotoListDisplayOrder
-import com.andrii_a.walleria.domain.PhotoQuality
-import com.andrii_a.walleria.domain.PhotosListLayoutType
-import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.repository.LocalPreferencesRepository
 import com.andrii_a.walleria.domain.repository.PhotoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,28 +23,66 @@ class PhotosViewModel @Inject constructor(
     localPreferencesRepository: LocalPreferencesRepository
 ) : ViewModel() {
 
-    val photosLayoutType: StateFlow<PhotosListLayoutType> = localPreferencesRepository.photosListLayoutType
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = runBlocking { localPreferencesRepository.photosListLayoutType.first() }
+    private val _state: MutableStateFlow<PhotosUiState> = MutableStateFlow(PhotosUiState())
+    val state = combine(
+        localPreferencesRepository.photosListLayoutType,
+        localPreferencesRepository.photosLoadQuality,
+        _state
+    ) { photosListLayoutType, photosLoadQuality, state ->
+        state.copy(
+            photosListLayoutType = photosListLayoutType,
+            photosLoadQuality = photosLoadQuality
         )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000L),
+        initialValue = _state.value
+    )
 
-    val photosLoadQuality: StateFlow<PhotoQuality> = localPreferencesRepository.photosLoadQuality
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = runBlocking { localPreferencesRepository.photosLoadQuality.first() }
-        )
+    private val navigationChannel = Channel<PhotosNavigationEvent>()
+    val navigationEventsChannelFlow = navigationChannel.receiveAsFlow()
 
-    private val _order: MutableStateFlow<PhotoListDisplayOrder> = MutableStateFlow(PhotoListDisplayOrder.LATEST)
-    val order: StateFlow<PhotoListDisplayOrder> = _order.asStateFlow()
+    init {
+        onEvent(PhotosEvent.ChangeListOrder(orderOptionOrdinalNum = PhotoListDisplayOrder.LATEST.ordinal))
+    }
 
-    val photos: Flow<PagingData<Photo>> = _order.flatMapLatest { order ->
-        photoRepository.getPhotos(order)
-    }.cachedIn(viewModelScope)
+    fun onEvent(event: PhotosEvent) {
+        when (event) {
+            is PhotosEvent.ChangeListOrder -> {
+                val displayOrder = PhotoListDisplayOrder.entries[event.orderOptionOrdinalNum]
+                _state.update {
+                    it.copy(
+                        photosListDisplayOrder = displayOrder,
+                        photos = photoRepository.getPhotos(displayOrder).cachedIn(viewModelScope)
+                    )
+                }
+            }
 
-    fun orderBy(orderOptionOrdinalNum: Int) {
-        _order.update { PhotoListDisplayOrder.entries[orderOptionOrdinalNum] }
+            is PhotosEvent.SelectPhoto -> {
+                viewModelScope.launch {
+                    navigationChannel.send(
+                        PhotosNavigationEvent.NavigateToPhotoDetailsScreen(event.photoId)
+                    )
+                }
+            }
+
+            is PhotosEvent.SelectUser -> {
+                viewModelScope.launch {
+                    navigationChannel.send(PhotosNavigationEvent.NavigateToUserDetails(event.userNickname))
+                }
+            }
+
+            is PhotosEvent.SelectPrivateUserProfile -> {
+                viewModelScope.launch {
+                    navigationChannel.send(PhotosNavigationEvent.NavigateToProfileScreen)
+                }
+            }
+
+            is PhotosEvent.SelectSearch -> {
+                viewModelScope.launch {
+                    navigationChannel.send(PhotosNavigationEvent.NavigateToSearchScreen)
+                }
+            }
+        }
     }
 }

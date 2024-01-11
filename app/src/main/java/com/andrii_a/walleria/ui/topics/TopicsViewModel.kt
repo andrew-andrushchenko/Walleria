@@ -6,11 +6,13 @@ import androidx.paging.cachedIn
 import com.andrii_a.walleria.domain.TopicsDisplayOrder
 import com.andrii_a.walleria.domain.repository.TopicRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,15 +20,45 @@ class TopicsViewModel @Inject constructor(
     private val topicRepository: TopicRepository,
 ) : ViewModel() {
 
-    private val _order: MutableStateFlow<TopicsDisplayOrder> = MutableStateFlow(TopicsDisplayOrder.LATEST)
-    val order: StateFlow<TopicsDisplayOrder> = _order.asStateFlow()
+    private val _state: MutableStateFlow<TopicsUiState> = MutableStateFlow(TopicsUiState())
+    val state: StateFlow<TopicsUiState> = _state.asStateFlow()
 
-    val topics = _order.flatMapLatest { order ->
-        topicRepository.getTopics(order)
-    }.cachedIn(viewModelScope)
+    private val navigationChannel = Channel<TopicsNavigationEvent>()
+    val navigationEventsChannelFlow = navigationChannel.receiveAsFlow()
 
-    fun orderBy(orderOptionOrdinalNum: Int) {
-        _order.update { TopicsDisplayOrder.entries[orderOptionOrdinalNum] }
+    init {
+        onEvent(TopicsEvent.ChangeListOrder(orderOptionOrdinalNum = TopicsDisplayOrder.LATEST.ordinal))
     }
 
+    fun onEvent(event: TopicsEvent) {
+        when (event) {
+            is TopicsEvent.ChangeListOrder -> {
+                val displayOrder = TopicsDisplayOrder.entries[event.orderOptionOrdinalNum]
+                _state.update {
+                    it.copy(
+                        topicsDisplayOrder = displayOrder,
+                        topics = topicRepository.getTopics(displayOrder).cachedIn(viewModelScope)
+                    )
+                }
+            }
+
+            is TopicsEvent.SelectTopic -> {
+                viewModelScope.launch {
+                    navigationChannel.send(TopicsNavigationEvent.NavigateToTopicDetails(event.topicId))
+                }
+            }
+
+            is TopicsEvent.SelectPrivateUserProfile -> {
+                viewModelScope.launch {
+                    navigationChannel.send(TopicsNavigationEvent.NavigateToProfileScreen)
+                }
+            }
+
+            is TopicsEvent.SelectSearch -> {
+                viewModelScope.launch {
+                    navigationChannel.send(TopicsNavigationEvent.NavigateToSearchScreen)
+                }
+            }
+        }
+    }
 }

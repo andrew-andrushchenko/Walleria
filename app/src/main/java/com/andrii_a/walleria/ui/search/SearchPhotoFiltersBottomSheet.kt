@@ -42,7 +42,7 @@ import com.andrii_a.walleria.ui.util.titleRes
 @Composable
 fun SearchPhotoFiltersBottomSheet(
     photoFilters: PhotoFilters,
-    onApplyClick: (SearchScreenEvent) -> Unit,
+    onEvent: (SearchEvent) -> Unit,
     contentPadding: PaddingValues = PaddingValues(),
     onDismiss: () -> Unit
 ) {
@@ -185,7 +185,7 @@ fun SearchPhotoFiltersBottomSheet(
                     orientation = orientation
                 )
 
-                onApplyClick(SearchScreenEvent.ChangePhotoFilters(filters))
+                onEvent(SearchEvent.ChangePhotoFilters(filters))
                 onDismiss()
             },
             modifier = Modifier
@@ -213,7 +213,7 @@ fun SearchPhotoFiltersBottomSheetPreview() {
                     color = SearchResultsPhotoColor.ANY,
                     orientation = SearchResultsPhotoOrientation.ANY
                 ),
-                onApplyClick = {},
+                onEvent = {},
                 onDismiss = {}
             )
         }

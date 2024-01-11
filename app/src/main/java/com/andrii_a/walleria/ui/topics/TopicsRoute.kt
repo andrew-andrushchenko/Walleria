@@ -15,6 +15,7 @@ import androidx.navigation.compose.composable
 import com.andrii_a.walleria.ui.navigation.NavigationScreen
 import com.andrii_a.walleria.ui.search.navigateToSearch
 import com.andrii_a.walleria.ui.topic_details.navigateToTopicDetails
+import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 
 fun NavGraphBuilder.topicsBottomNavRoute(
     navController: NavController,
@@ -40,15 +41,27 @@ fun NavGraphBuilder.topicsBottomNavRoute(
         }
     ) {
         val viewModel: TopicsViewModel = hiltViewModel()
-        val order by viewModel.order.collectAsStateWithLifecycle()
+
+        val state by viewModel.state.collectAsStateWithLifecycle()
+        viewModel.navigationEventsChannelFlow.collectAsOneTimeEvents { event ->
+            when (event) {
+                is TopicsNavigationEvent.NavigateToTopicDetails -> {
+                    navController.navigateToTopicDetails(event.topicId)
+                }
+
+                is TopicsNavigationEvent.NavigateToProfileScreen -> {
+                    openProfileBottomSheet()
+                }
+
+                is TopicsNavigationEvent.NavigateToSearchScreen -> {
+                    navController.navigateToSearch()
+                }
+            }
+        }
 
         TopicsScreen(
-            topics = viewModel.topics,
-            order = order,
-            orderBy = viewModel::orderBy,
-            navigateToTopicDetails = navController::navigateToTopicDetails,
-            navigateToProfileScreen = openProfileBottomSheet,
-            navigateToSearchScreen = navController::navigateToSearch
+            state = state,
+            onEvent = viewModel::onEvent
         )
     }
 }

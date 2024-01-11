@@ -7,7 +7,17 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
@@ -25,13 +35,18 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SearchBar
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -40,58 +55,33 @@ import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.CollectionListLayoutType
-import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.PhotosListLayoutType
-import com.andrii_a.walleria.domain.models.collection.Collection
-import com.andrii_a.walleria.domain.models.photo.Photo
-import com.andrii_a.walleria.domain.models.search.RecentSearchItem
-import com.andrii_a.walleria.domain.models.user.User
-import com.andrii_a.walleria.ui.common.CollectionId
-import com.andrii_a.walleria.ui.common.PhotoId
-import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.common.components.lists.CollectionsGrid
 import com.andrii_a.walleria.ui.common.components.lists.CollectionsList
 import com.andrii_a.walleria.ui.common.components.lists.PhotosGrid
 import com.andrii_a.walleria.ui.common.components.lists.PhotosList
 import com.andrii_a.walleria.ui.common.components.lists.UsersList
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
+import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
-    query: String,
-    recentSearches: List<RecentSearchItem>,
-    photos: Flow<PagingData<Photo>>,
-    collections: Flow<PagingData<Collection>>,
-    users: Flow<PagingData<User>>,
-    photoFilters: StateFlow<PhotoFilters>,
-    photosListLayoutType: PhotosListLayoutType,
-    collectionListLayoutType: CollectionListLayoutType,
-    photosLoadQuality: PhotoQuality,
-    onEvent: (SearchScreenEvent) -> Unit,
-    navigateToPhotoDetails: (PhotoId) -> Unit,
-    navigateToCollectionDetails: (CollectionId) -> Unit,
-    navigateToUserDetails: (UserNickname) -> Unit,
-    navigateBack: () -> Unit
+    state: SearchUiState,
+    onEvent: (SearchEvent) -> Unit,
 ) {
     val pagerState = rememberPagerState(initialPage = 0) { SearchScreenTabs.entries.size }
 
     val bottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
-    var openBottomSheet by rememberSaveable { mutableStateOf(false) }
 
-    val filters by photoFilters.collectAsStateWithLifecycle()
-
-    var text by rememberSaveable { mutableStateOf(query) }
+    var text by rememberSaveable { mutableStateOf(state.query) }
     var active by rememberSaveable { mutableStateOf(false) }
 
     Box(
@@ -105,8 +95,7 @@ fun SearchScreen(
                 onQueryChange = { text = it },
                 onSearch = {
                     active = false
-                    onEvent(SearchScreenEvent.SaveRecentSearch(query = text))
-                    onEvent(SearchScreenEvent.ChangeQuery(query = text))
+                    onEvent(SearchEvent.PerformSearch(query = text))
                 },
                 active = active,
                 onActiveChange = { active = it },
@@ -119,7 +108,7 @@ fun SearchScreen(
                         if (state) {
                             Icon(Icons.Default.Search, contentDescription = null)
                         } else {
-                            IconButton(onClick = navigateBack) {
+                            IconButton(onClick = { onEvent(SearchEvent.GoBack) }) {
                                 Icon(
                                     Icons.Default.ArrowBack,
                                     contentDescription = stringResource(id = R.string.navigate_back)
@@ -134,7 +123,7 @@ fun SearchScreen(
                         enter = fadeIn(),
                         exit = fadeOut()
                     ) {
-                        IconButton(onClick = { openBottomSheet = !openBottomSheet }) {
+                        IconButton(onClick = { onEvent(SearchEvent.OpenFilterDialog) }) {
                             Icon(
                                 imageVector = Icons.Outlined.FilterList,
                                 contentDescription = stringResource(id = R.string.photo_filters)
@@ -158,18 +147,17 @@ fun SearchScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 RecentSearchesList(
-                    recentSearches = recentSearches,
+                    recentSearches = state.recentSearches,
                     onItemSelected = { item ->
                         active = false
                         text = item.title
-                        onEvent(SearchScreenEvent.SaveRecentSearch(query = text))
-                        onEvent(SearchScreenEvent.ChangeQuery(query = text))
+                        onEvent(SearchEvent.PerformSearch(query = text))
                     },
                     onDeleteItem = { item ->
-                        onEvent(SearchScreenEvent.DeleteRecentSearch(item))
+                        onEvent(SearchEvent.DeleteRecentSearchItem(item))
                     },
                     onDeleteAllItems = {
-                        onEvent(SearchScreenEvent.DeleteAllRecentSearches)
+                        onEvent(SearchEvent.DeleteAllRecentSearches)
                     }
                 )
             }
@@ -183,39 +171,32 @@ fun SearchScreen(
 
             Pages(
                 pagerState = pagerState,
-                photos = photos,
-                collections = collections,
-                users = users,
-                photosListLayoutType = photosListLayoutType,
-                collectionListLayoutType = collectionListLayoutType,
-                photosLoadQuality = photosLoadQuality,
-                navigateToPhotoDetails = navigateToPhotoDetails,
-                navigateToCollectionDetails = navigateToCollectionDetails,
-                navigateToUserDetails = navigateToUserDetails
+                uiState = state,
+                onEvent = onEvent
             )
         }
     }
 
     val scope = rememberCoroutineScope()
 
-    if (openBottomSheet) {
+    if (state.isFilterDialogOpened) {
         val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
         ModalBottomSheet(
-            onDismissRequest = { openBottomSheet = false },
+            onDismissRequest = { onEvent(SearchEvent.DismissFilterDialog) },
             sheetState = bottomSheetState,
             windowInsets = WindowInsets(0),
         ) {
             SearchPhotoFiltersBottomSheet(
-                photoFilters = filters,
+                photoFilters = state.photoFilters,
                 contentPadding = PaddingValues(
                     bottom = bottomPadding
                 ),
-                onApplyClick = onEvent,
+                onEvent = onEvent,
                 onDismiss = {
                     scope.launch { bottomSheetState.hide() }.invokeOnCompletion {
                         if (!bottomSheetState.isVisible) {
-                            openBottomSheet = false
+                            onEvent(SearchEvent.DismissFilterDialog)
                         }
                     }
                 }
@@ -272,16 +253,9 @@ private fun SearchTabs(
 @Composable
 private fun Pages(
     pagerState: PagerState,
-    photos: Flow<PagingData<Photo>>,
-    collections: Flow<PagingData<Collection>>,
-    users: Flow<PagingData<User>>,
-    photosListLayoutType: PhotosListLayoutType,
-    collectionListLayoutType: CollectionListLayoutType,
-    photosLoadQuality: PhotoQuality,
+    uiState: SearchUiState,
+    onEvent: (SearchEvent) -> Unit,
     contentPadding: PaddingValues = PaddingValues(),
-    navigateToPhotoDetails: (PhotoId) -> Unit,
-    navigateToCollectionDetails: (CollectionId) -> Unit,
-    navigateToUserDetails: (UserNickname) -> Unit
 ) {
     HorizontalPager(
         state = pagerState,
@@ -289,22 +263,27 @@ private fun Pages(
     ) { index ->
         when (index) {
             SearchScreenTabs.Photos.ordinal -> {
-                val lazyPhotoItems = photos.collectAsLazyPagingItems()
+                val lazyPhotoItems = uiState.photos.collectAsLazyPagingItems()
 
-                when (photosListLayoutType) {
+                when (uiState.photosLayoutType) {
                     PhotosListLayoutType.DEFAULT -> {
                         val listState = rememberLazyListState()
 
                         PhotosList(
                             lazyPhotoItems = lazyPhotoItems,
-                            onPhotoClicked = navigateToPhotoDetails,
-                            onUserProfileClicked = navigateToUserDetails,
+                            onPhotoClicked = { id ->
+                                onEvent(SearchEvent.SelectPhoto(id))
+                            },
+                            onUserProfileClicked = { nickname ->
+                                onEvent(SearchEvent.SelectUser(nickname))
+                            },
                             isCompact = false,
-                            photosLoadQuality = photosLoadQuality,
+                            photosLoadQuality = uiState.photosLoadQuality,
                             listState = listState,
                             contentPadding = PaddingValues(
                                 top = dimensionResource(id = R.dimen.list_top_padding),
-                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+                                bottom = WindowInsets.navigationBars.asPaddingValues()
+                                    .calculateBottomPadding(),
                             ),
                             modifier = Modifier.fillMaxSize()
                         )
@@ -315,14 +294,19 @@ private fun Pages(
 
                         PhotosList(
                             lazyPhotoItems = lazyPhotoItems,
-                            onPhotoClicked = navigateToPhotoDetails,
-                            onUserProfileClicked = navigateToUserDetails,
+                            onPhotoClicked = { id ->
+                                onEvent(SearchEvent.SelectPhoto(id))
+                            },
+                            onUserProfileClicked = { nickname ->
+                                onEvent(SearchEvent.SelectUser(nickname))
+                            },
                             isCompact = true,
-                            photosLoadQuality = photosLoadQuality,
+                            photosLoadQuality = uiState.photosLoadQuality,
                             listState = listState,
                             contentPadding = PaddingValues(
                                 top = dimensionResource(id = R.dimen.list_top_padding),
-                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+                                bottom = WindowInsets.navigationBars.asPaddingValues()
+                                    .calculateBottomPadding(),
                             ),
                             modifier = Modifier.fillMaxSize()
                         )
@@ -333,12 +317,15 @@ private fun Pages(
 
                         PhotosGrid(
                             lazyPhotoItems = lazyPhotoItems,
-                            onPhotoClicked = navigateToPhotoDetails,
-                            photosLoadQuality = photosLoadQuality,
+                            onPhotoClicked = { id ->
+                                onEvent(SearchEvent.SelectPhoto(id))
+                            },
+                            photosLoadQuality = uiState.photosLoadQuality,
                             gridState = gridState,
                             contentPadding = PaddingValues(
                                 top = dimensionResource(id = R.dimen.list_top_padding),
-                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+                                bottom = WindowInsets.navigationBars.asPaddingValues()
+                                    .calculateBottomPadding(),
                             ),
                             modifier = Modifier.fillMaxSize()
                         )
@@ -347,22 +334,29 @@ private fun Pages(
             }
 
             SearchScreenTabs.Collections.ordinal -> {
-                val lazyCollectionItems = collections.collectAsLazyPagingItems()
+                val lazyCollectionItems = uiState.collections.collectAsLazyPagingItems()
 
-                when (collectionListLayoutType) {
+                when (uiState.collectionsLayoutType) {
                     CollectionListLayoutType.DEFAULT -> {
                         val listState = rememberLazyListState()
 
                         CollectionsList(
                             lazyCollectionItems = lazyCollectionItems,
-                            onCollectionClicked = navigateToCollectionDetails,
-                            onUserProfileClicked = navigateToUserDetails,
-                            onPhotoClicked = navigateToPhotoDetails,
-                            photosLoadQuality = photosLoadQuality,
+                            onCollectionClicked = { id ->
+                                onEvent(SearchEvent.SelectCollection(id))
+                            },
+                            onUserProfileClicked = { nickname ->
+                                onEvent(SearchEvent.SelectUser(nickname))
+                            },
+                            onPhotoClicked = { id ->
+                                onEvent(SearchEvent.SelectPhoto(id))
+                            },
+                            photosLoadQuality = uiState.photosLoadQuality,
                             listState = listState,
                             contentPadding = PaddingValues(
                                 top = dimensionResource(id = R.dimen.list_top_padding),
-                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+                                bottom = WindowInsets.navigationBars.asPaddingValues()
+                                    .calculateBottomPadding(),
                             )
                         )
                     }
@@ -372,15 +366,22 @@ private fun Pages(
 
                         CollectionsList(
                             lazyCollectionItems = lazyCollectionItems,
-                            onCollectionClicked = navigateToCollectionDetails,
-                            onUserProfileClicked = navigateToUserDetails,
-                            onPhotoClicked = navigateToPhotoDetails,
-                            photosLoadQuality = photosLoadQuality,
+                            onCollectionClicked = { id ->
+                                onEvent(SearchEvent.SelectCollection(id))
+                            },
+                            onUserProfileClicked = { nickname ->
+                                onEvent(SearchEvent.SelectUser(nickname))
+                            },
+                            onPhotoClicked = { id ->
+                                onEvent(SearchEvent.SelectPhoto(id))
+                            },
+                            photosLoadQuality = uiState.photosLoadQuality,
                             isCompact = true,
                             listState = listState,
                             contentPadding = PaddingValues(
                                 top = dimensionResource(id = R.dimen.list_top_padding),
-                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+                                bottom = WindowInsets.navigationBars.asPaddingValues()
+                                    .calculateBottomPadding(),
                             )
                         )
                     }
@@ -390,12 +391,15 @@ private fun Pages(
 
                         CollectionsGrid(
                             lazyCollectionItems = lazyCollectionItems,
-                            onCollectionClicked = navigateToCollectionDetails,
+                            onCollectionClicked = { id ->
+                                onEvent(SearchEvent.SelectCollection(id))
+                            },
+                            photosLoadQuality = uiState.photosLoadQuality,
                             gridState = gridState,
-                            photosLoadQuality = photosLoadQuality,
                             contentPadding = PaddingValues(
                                 top = dimensionResource(id = R.dimen.list_top_padding),
-                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+                                bottom = WindowInsets.navigationBars.asPaddingValues()
+                                    .calculateBottomPadding(),
                             )
                         )
                     }
@@ -403,17 +407,20 @@ private fun Pages(
             }
 
             SearchScreenTabs.Users.ordinal -> {
-                val lazyUserItems = users.collectAsLazyPagingItems()
+                val lazyUserItems = uiState.users.collectAsLazyPagingItems()
 
                 val listState = rememberLazyListState()
 
                 UsersList(
                     lazyUserItems = lazyUserItems,
-                    onUserClick = navigateToUserDetails,
+                    onUserClick = { nickname ->
+                        onEvent(SearchEvent.SelectUser(nickname))
+                    },
                     listState = listState,
                     contentPadding = PaddingValues(
                         top = dimensionResource(id = R.dimen.list_top_padding),
-                        bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+                        bottom = WindowInsets.navigationBars.asPaddingValues()
+                            .calculateBottomPadding(),
                     )
                 )
             }
@@ -427,4 +434,16 @@ private enum class SearchScreenTabs(@StringRes val titleRes: Int) {
     Photos(R.string.photos),
     Collections(R.string.collections),
     Users(R.string.users)
+}
+
+@Preview
+@Composable
+fun SearchScreenPreview() {
+    WalleriaTheme {
+        Surface {
+            val state = SearchUiState()
+
+            SearchScreen(state = state, onEvent = {})
+        }
+    }
 }

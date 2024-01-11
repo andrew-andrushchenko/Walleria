@@ -15,6 +15,9 @@ interface RecentSearchesDao {
     @Query("SELECT * FROM recent_searches_table ORDER BY timeMillis DESC")
     fun getRecentSearches(): Flow<List<RecentSearchItemEntity>>
 
+    @Query("SELECT * FROM recent_searches_table WHERE title = :title LIMIT 1")
+    suspend fun getRecentSearchByTitle(title: String) : RecentSearchItemEntity?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(recentSearchItemEntity: RecentSearchItemEntity)
 

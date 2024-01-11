@@ -3,49 +3,26 @@ package com.andrii_a.walleria.ui.topic_details
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.andrii_a.walleria.domain.network.BackendResult
-import com.andrii_a.walleria.domain.PhotoListDisplayOrder
-import com.andrii_a.walleria.domain.PhotoQuality
-import com.andrii_a.walleria.domain.PhotosListLayoutType
-import com.andrii_a.walleria.domain.TopicPhotosOrientation
-import com.andrii_a.walleria.domain.models.photo.Photo
-import com.andrii_a.walleria.domain.models.topic.Topic
 import com.andrii_a.walleria.domain.repository.LocalPreferencesRepository
 import com.andrii_a.walleria.domain.repository.PhotoRepository
 import com.andrii_a.walleria.domain.repository.TopicRepository
 import com.andrii_a.walleria.ui.common.TopicId
+import com.andrii_a.walleria.ui.util.UiError
+import com.andrii_a.walleria.ui.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-sealed interface TopicDetailsEvent {
-    data class RequestTopic(val topicId: TopicId) : TopicDetailsEvent
-
-    data class ChangeFilters(val topicPhotosFilters: TopicPhotosFilters) : TopicDetailsEvent
-}
-
-sealed interface TopicLoadResult {
-    data object Empty : TopicLoadResult
-    data object Loading : TopicLoadResult
-    data class Error(val topicId: String) : TopicLoadResult
-    data class Success(
-        val topic: Topic,
-        val currentFilters: TopicPhotosFilters,
-        val topicPhotos: Flow<PagingData<Photo>>,
-    ) : TopicLoadResult
-}
 
 @HiltViewModel
 class TopicDetailsViewModel @Inject constructor(
@@ -55,22 +32,24 @@ class TopicDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val photosLayoutType: StateFlow<PhotosListLayoutType> = localPreferencesRepository.photosListLayoutType
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = runBlocking { localPreferencesRepository.photosListLayoutType.first() }
+    private val _state: MutableStateFlow<TopicDetailsUiState> = MutableStateFlow(TopicDetailsUiState())
+    val state = combine(
+        localPreferencesRepository.photosListLayoutType,
+        localPreferencesRepository.photosLoadQuality,
+        _state
+    ) { photosListLayoutType, photosLoadQuality, state ->
+        state.copy(
+            photosListLayoutType = photosListLayoutType,
+            photosLoadQuality = photosLoadQuality
         )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000L),
+        initialValue = _state.value
+    )
 
-    val photosLoadQuality: StateFlow<PhotoQuality> = localPreferencesRepository.photosLoadQuality
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = runBlocking { localPreferencesRepository.photosLoadQuality.first() }
-        )
-
-    private val _loadResult: MutableStateFlow<TopicLoadResult> = MutableStateFlow(TopicLoadResult.Empty)
-    val loadResult: StateFlow<TopicLoadResult> = _loadResult.asStateFlow()
+    private val navigationChannel = Channel<TopicDetailsNavigationEvent>()
+    val navigationEventsChannelFlow = navigationChannel.receiveAsFlow()
 
     init {
         savedStateHandle.get<String>(TopicDetailsArgs.ID)?.let { id ->
@@ -87,6 +66,42 @@ class TopicDetailsViewModel @Inject constructor(
             is TopicDetailsEvent.ChangeFilters -> {
                 filterTopicPhotos(event.topicPhotosFilters)
             }
+
+            is TopicDetailsEvent.GoBack -> {
+                viewModelScope.launch {
+                    navigationChannel.send(TopicDetailsNavigationEvent.NavigateBack)
+                }
+            }
+
+            is TopicDetailsEvent.OpenFilterDialog -> {
+                _state.update {
+                    it.copy(isFilterDialogOpened = true)
+                }
+            }
+
+            is TopicDetailsEvent.DismissFilterDialog -> {
+                _state.update {
+                    it.copy(isFilterDialogOpened = false)
+                }
+            }
+
+            is TopicDetailsEvent.OpenInBrowser -> {
+                viewModelScope.launch {
+                    navigationChannel.send(TopicDetailsNavigationEvent.NavigateToChromeCustomTab(event.url))
+                }
+            }
+
+            is TopicDetailsEvent.SelectPhoto -> {
+                viewModelScope.launch {
+                    navigationChannel.send(TopicDetailsNavigationEvent.NavigateToPhotoDetails(event.photoId))
+                }
+            }
+
+            is TopicDetailsEvent.SelectUser -> {
+                viewModelScope.launch {
+                    navigationChannel.send(TopicDetailsNavigationEvent.NavigateToUserDetails(event.userNickname))
+                }
+            }
         }
     }
 
@@ -95,24 +110,35 @@ class TopicDetailsViewModel @Inject constructor(
             when (result) {
                 is BackendResult.Empty -> Unit
                 is BackendResult.Loading -> {
-                    _loadResult.update { TopicLoadResult.Loading }
+                    _state.update {
+                        it.copy(isLoading = true)
+                    }
                 }
 
                 is BackendResult.Error -> {
-                    _loadResult.update { TopicLoadResult.Error(topicId = id) }
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            error = UiError(
+                                reason = UiText.DynamicString(result.reason.orEmpty()),
+                                //onRetry = {}
+                            )
+                        )
+                    }
                 }
 
                 is BackendResult.Success -> {
                     val topic = result.value
-
-                    _loadResult.update {
-                        TopicLoadResult.Success(
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            error = null,
                             topic = topic,
-                            currentFilters = TopicPhotosFilters(
-                                order = PhotoListDisplayOrder.LATEST,
-                                orientation = TopicPhotosOrientation.LANDSCAPE
-                            ),
-                            topicPhotos = photoRepository.getTopicPhotos(topic.id).cachedIn(viewModelScope)
+                            topicPhotos = photoRepository.getTopicPhotos(
+                                idOrSlug = topic.id,
+                                orientation = it.topicPhotosFilters.orientation,
+                                order = it.topicPhotosFilters.order
+                            ).cachedIn(viewModelScope)
                         )
                     }
                 }
@@ -122,19 +148,15 @@ class TopicDetailsViewModel @Inject constructor(
     }
 
     private fun filterTopicPhotos(topicPhotosFilters: TopicPhotosFilters) {
-        if (_loadResult.value is TopicLoadResult.Success) {
-            val currentSuccessfulResult = _loadResult.value as TopicLoadResult.Success
-
-            _loadResult.update {
-                currentSuccessfulResult.copy(
-                    currentFilters = topicPhotosFilters,
-                    topicPhotos = photoRepository.getTopicPhotos(
-                        idOrSlug = currentSuccessfulResult.topic.id,
-                        orientation = topicPhotosFilters.orientation,
-                        order = topicPhotosFilters.order
-                    ).cachedIn(viewModelScope)
+        _state.update {
+            it.copy(
+                topicPhotosFilters = topicPhotosFilters,
+                topicPhotos = photoRepository.getTopicPhotos(
+                    idOrSlug = it.topic!!.id,
+                    orientation = topicPhotosFilters.orientation,
+                    order = topicPhotosFilters.order
                 )
-            }
+            )
         }
     }
 
