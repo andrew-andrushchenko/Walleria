@@ -3,6 +3,7 @@ package com.andrii_a.walleria.ui.common.components.lists
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.drawable.ColorDrawable
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -299,9 +300,7 @@ fun StatusChip(
         colors = SuggestionChipDefaults.suggestionChipColors(
             labelColor = color
         ),
-        border = SuggestionChipDefaults.suggestionChipBorder(
-            borderColor = color
-        ),
+        border = BorderStroke(1.dp, color),
         modifier = modifier
     )
 }

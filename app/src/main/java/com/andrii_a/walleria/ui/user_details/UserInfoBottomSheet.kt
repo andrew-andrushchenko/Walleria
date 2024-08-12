@@ -138,7 +138,7 @@ private fun UserStatistics(
     modifier: Modifier = Modifier
 ) {
     // Triples of (icon, title, value)
-    val statsGridItems = listOf<Triple<ImageVector, @StringRes Int, Long>>(
+    val statsGridItems = listOf(
         Triple(Icons.Outlined.FileDownload, R.string.downloads, user.downloads),
         Triple(Icons.Outlined.Photo, R.string.photos, user.totalPhotos),
         Triple(Icons.Outlined.FavoriteBorder, R.string.total_likes, user.totalLikes),

@@ -97,9 +97,9 @@ class LoginActivity : ComponentActivity() {
         }
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        intent?.data?.let { uri ->
+        intent.data?.let { uri ->
             if (uri.authority.equals(UNSPLASH_AUTH_CALLBACK)) {
                 uri.getQueryParameter("code")?.let { code ->
                     lifecycleScope.launch {
