@@ -1,8 +1,5 @@
 package com.andrii_a.walleria.ui.collect_photo
 
-import android.content.res.Configuration.UI_MODE_NIGHT_NO
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import android.graphics.Bitmap
 import android.graphics.drawable.ColorDrawable
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
@@ -11,14 +8,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.Lock
@@ -26,18 +27,18 @@ import androidx.compose.material.icons.outlined.RemoveCircleOutline
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -57,7 +58,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.core.graphics.drawable.toDrawable
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
@@ -65,35 +65,26 @@ import coil.request.ImageRequest
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.collection.Collection
-import com.andrii_a.walleria.ui.common.PhotoId
+import com.andrii_a.walleria.ui.collect_photo.state.CollectActionState
+import com.andrii_a.walleria.ui.collect_photo.state.CollectionMetadata
 import com.andrii_a.walleria.ui.common.components.CheckBoxRow
+import com.andrii_a.walleria.ui.common.components.LoadingListItem
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
-import com.andrii_a.walleria.ui.util.BlurHashDecoder
 import com.andrii_a.walleria.ui.util.abbreviatedNumberString
 import com.andrii_a.walleria.ui.util.getUrlByQuality
 import com.andrii_a.walleria.ui.util.primaryColorInt
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.shareIn
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @Composable
 fun UserCollectionsList(
-    lazyCollectionItems: LazyPagingItems<Collection>,
+    userCollections: LazyPagingItems<Collection>,
     listState: LazyListState,
-    onCreateNewCollection: () -> Unit,
-    isCollectionInList: (collectionId: String) -> Boolean,
-    collectPhoto: (collectionId: String, photoId: String) -> SharedFlow<CollectState>,
-    dropPhoto: (collectionId: String, photoId: String) -> SharedFlow<CollectState>,
-    photoId: PhotoId,
+    onCreateNewClick: () -> Unit,
+    onCollectClick: (String) -> Unit,
+    obtainCollectState: (String?) -> CollectActionState,
     modifier: Modifier = Modifier,
+    modifiedCollectionMetadata: CollectionMetadata? = null,
     contentPadding: PaddingValues = PaddingValues()
 ) {
-    val scope = rememberCoroutineScope()
-
     LazyColumn(
         state = listState,
         contentPadding = contentPadding,
@@ -102,7 +93,7 @@ fun UserCollectionsList(
     ) {
         item {
             CreateNewCollectionButton(
-                onClick = onCreateNewCollection,
+                onClick = onCreateNewClick,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(80.dp)
@@ -111,52 +102,25 @@ fun UserCollectionsList(
         }
 
         items(
-            count = lazyCollectionItems.itemCount,
-            key = lazyCollectionItems.itemKey { it.id }
+            count = userCollections.itemCount,
+            key = userCollections.itemKey { it.id }
         ) { index ->
-            val collection = lazyCollectionItems[index]
-            collection?.let {
-                var collectState by remember {
-                    mutableStateOf(
-                        if (isCollectionInList(collection.id))
-                            CollectState.Collected(collection.coverPhoto)
-                        else
-                            CollectState.NotCollected(collection.coverPhoto)
-                    )
-                }
+            val collection = userCollections[index]
+            collection.let {
+                var collectState = obtainCollectState(collection?.id)
 
-                val onClick: () -> Unit = {
-                    scope.launch {
-                        when (collectState) {
-                            is CollectState.Collected -> {
-                                dropPhoto(
-                                    collection.id,
-                                    photoId.value
-                                ).collect {
-                                    collectState = it
-                                }
-                            }
-
-                            is CollectState.NotCollected -> {
-                                collectPhoto(
-                                    collection.id,
-                                    photoId.value
-                                ).collect {
-                                    collectState = it
-                                }
-                            }
-
-                            else -> Unit
+                LaunchedEffect(key1 = modifiedCollectionMetadata) {
+                    modifiedCollectionMetadata?.let { metadata ->
+                        if (collection?.id == metadata.id) {
+                            collectState = metadata.state
                         }
                     }
                 }
 
                 UserCollectionItem(
-                    title = collection.title,
-                    totalPhotos = collection.totalPhotos,
-                    isPrivate = collection.isPrivate,
+                    collection = collection!!,
                     collectState = collectState,
-                    onClick = onClick,
+                    onClick = { onCollectClick(collection.id) },
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }
@@ -166,10 +130,8 @@ fun UserCollectionsList(
 
 @Composable
 fun UserCollectionItem(
-    title: String,
-    totalPhotos: Long,
-    isPrivate: Boolean,
-    collectState: CollectState,
+    collection: Collection,
+    collectState: CollectActionState,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -185,7 +147,7 @@ fun UserCollectionItem(
         val (coverPhoto, dimmedOverlay, titleText,
             lockIcon, photosCountText, actionButton) = createRefs()
 
-        val placeholderBitmap by produceState<Bitmap?>(initialValue = null) {
+        /*val placeholderBitmap by produceState<Bitmap?>(initialValue = null) {
             value = withContext(Dispatchers.Default) {
                 BlurHashDecoder.decode(
                     blurHash = collectState.newCoverPhoto?.blurHash,
@@ -193,17 +155,23 @@ fun UserCollectionItem(
                     height = 3
                 )
             }
-        }
+        }*/
 
         AsyncImage(
             model = ImageRequest.Builder(context)
-                .data(collectState.newCoverPhoto?.getUrlByQuality(quality = PhotoQuality.MEDIUM))
+                //.data(collectState.newCoverPhoto?.getUrlByQuality(quality = PhotoQuality.MEDIUM))
+                .data(collection.coverPhoto?.getUrlByQuality(quality = PhotoQuality.MEDIUM))
                 .crossfade(durationMillis = 1000)
-                .placeholder(placeholderBitmap?.toDrawable(context.resources))
-                .fallback(placeholderBitmap?.toDrawable(context.resources))
-                .error(
+                //.placeholder(placeholderBitmap?.toDrawable(context.resources))
+                //.fallback(placeholderBitmap?.toDrawable(context.resources))
+                /*.error(
                     ColorDrawable(
                         collectState.newCoverPhoto?.primaryColorInt ?: Color.Gray.toArgb()
+                    )
+                )*/
+                .error(
+                    ColorDrawable(
+                        collection.coverPhoto?.primaryColorInt ?: Color.Gray.toArgb()
                     )
                 )
                 .build(),
@@ -232,7 +200,7 @@ fun UserCollectionItem(
                 .background(color = Color.Black.copy(alpha = 0.5f))
         )
 
-        if (isPrivate) {
+        if (collection.isPrivate) {
             Icon(
                 imageVector = Icons.Outlined.Lock,
                 tint = Color.White,
@@ -247,7 +215,7 @@ fun UserCollectionItem(
         }
 
         Text(
-            text = title,
+            text = collection.title,
             style = MaterialTheme.typography.titleMedium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -263,7 +231,7 @@ fun UserCollectionItem(
         Text(
             text = stringResource(
                 id = R.string.photos_title_template,
-                totalPhotos.abbreviatedNumberString
+                collection.totalPhotos.abbreviatedNumberString
             ),
             style = MaterialTheme.typography.bodySmall,
             maxLines = 1,
@@ -286,14 +254,14 @@ fun UserCollectionItem(
             }
         ) { state ->
             when (state) {
-                is CollectState.Loading -> {
+                CollectActionState.Loading -> {
                     CircularProgressIndicator(
                         color = Color.White,
                         modifier = Modifier.size(24.dp)
                     )
                 }
 
-                is CollectState.Collected -> {
+                CollectActionState.Collected -> {
                     IconButton(onClick = onClick) {
                         Icon(
                             imageVector = Icons.Outlined.RemoveCircleOutline,
@@ -304,7 +272,7 @@ fun UserCollectionItem(
                     }
                 }
 
-                is CollectState.NotCollected -> {
+                CollectActionState.NotCollected -> {
                     IconButton(onClick = onClick) {
                         Icon(
                             imageVector = Icons.Outlined.AddCircleOutline,
@@ -348,101 +316,79 @@ fun CreateNewCollectionButton(
 }
 
 @Composable
-fun CreateCollectionAndCollectDialog(
-    photoId: String,
-    createAndCollect: (
-        title: String,
-        description: String?,
-        isPrivate: Boolean,
-        photoId: String
-    ) -> SharedFlow<CollectionCreationResult>,
+fun CreateAndCollectBottomSheet(
+    contentPadding: PaddingValues = PaddingValues(),
+    onConfirm: (String, String, Boolean) -> Unit,
     onDismiss: () -> Unit
 ) {
-    val scope = rememberCoroutineScope()
-
     var title by rememberSaveable { mutableStateOf("") }
     var description by rememberSaveable { mutableStateOf("") }
     var isPrivate by rememberSaveable { mutableStateOf(false) }
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        icon = {
-            Icon(
-                Icons.Outlined.AddCircleOutline,
-                contentDescription = null,
-            )
-        },
-        title = { Text(text = stringResource(id = R.string.create_new_and_add)) },
-        text = {
-            Column {
-                OutlinedTextField(
-                    value = title,
-                    onValueChange = { title = it },
-                    label = { Text(text = stringResource(id = R.string.collection_name_hint)) },
-                    modifier = Modifier.fillMaxWidth()
-                )
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(contentPadding)
+            .verticalScroll(rememberScrollState())
+    ) {
+        OutlinedTextField(
+            value = title,
+            onValueChange = { title = it },
+            label = { Text(text = stringResource(id = R.string.collection_name_hint)) },
+            modifier = Modifier.fillMaxWidth()
+        )
 
-                Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-                OutlinedTextField(
-                    value = description,
-                    onValueChange = { description = it },
-                    label = { Text(text = stringResource(id = R.string.collection_description_hint)) },
-                    modifier = Modifier.fillMaxWidth()
-                )
+        OutlinedTextField(
+            value = description,
+            onValueChange = { description = it },
+            label = { Text(text = stringResource(id = R.string.collection_description_hint)) },
+            modifier = Modifier.fillMaxWidth()
+        )
 
-                Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-                CheckBoxRow(
-                    checked = isPrivate,
-                    onCheckedChange = { isPrivate = it },
-                    labelText = stringResource(id = R.string.collection_private),
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        },
-        confirmButton = {
-            Button(
-                onClick = {
-                    scope.launch {
-                        createAndCollect(
-                            title,
-                            description,
-                            isPrivate,
-                            photoId
-                        ).collect { result ->
-                            when (result) {
-                                is CollectionCreationResult.Success -> onDismiss()
-                                is CollectionCreationResult.Loading -> Unit
-                                is CollectionCreationResult.Error -> Unit
-                            }
-                        }
-                    }
-                }
-            ) {
+        CheckBoxRow(
+            checked = isPrivate,
+            onCheckedChange = { isPrivate = it },
+            labelText = stringResource(id = R.string.collection_private),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Button(onClick = { onConfirm(title, description, isPrivate) }) {
                 Text(text = stringResource(id = R.string.action_done))
             }
-        },
-        dismissButton = {
+
+            Spacer(modifier = Modifier.width(8.dp))
+
             OutlinedButton(onClick = onDismiss) {
                 Text(text = stringResource(id = R.string.action_cancel))
             }
         }
-    )
+    }
 }
 
-@Preview
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserCollectionItemPreview() {
-    WalleriaTheme {
-        UserCollectionItem(
-            title = "My collection has extremely huge title and it does not fit anymore",
-            totalPhotos = 100000,
-            isPrivate = true,
-            collectState = CollectState.NotCollected(null),
-            onClick = {},
-        )
-    }
+fun CreateCollectionProgressDialog() {
+    AlertDialog(
+        onDismissRequest = {},
+        content = {
+            LoadingListItem(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            )
+        }
+    )
 }
 
 @Preview
@@ -458,21 +404,16 @@ fun CreateNewCollectionButtonPrev() {
     }
 }
 
-@Preview(uiMode = UI_MODE_NIGHT_NO)
-@Preview(uiMode = UI_MODE_NIGHT_YES)
+@Preview
 @Composable
-fun CreateCollectionAndCollectDialogPreview() {
+private fun CreateAndCollectBottomSheetPreview() {
     WalleriaTheme {
-        val scope = rememberCoroutineScope()
-        CreateCollectionAndCollectDialog(
-            photoId = "",
-            createAndCollect = { _, _, _, _ ->
-                emptyFlow<CollectionCreationResult>().shareIn(
-                    scope = scope,
-                    started = SharingStarted.WhileSubscribed()
-                )
-            },
-            onDismiss = {}
-        )
+        Surface {
+            CreateAndCollectBottomSheet(
+                contentPadding = PaddingValues(8.dp),
+                onConfirm = { _, _, _ -> },
+                onDismiss = {}
+            )
+        }
     }
 }

@@ -3,189 +3,279 @@ package com.andrii_a.walleria.ui.collect_photo
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.network.BackendResult
-import com.andrii_a.walleria.domain.models.collection.Collection
-import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.repository.CollectionRepository
-import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
 import com.andrii_a.walleria.domain.repository.PhotoRepository
+import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
+import com.andrii_a.walleria.ui.collect_photo.event.CollectPhotoEvent
+import com.andrii_a.walleria.ui.collect_photo.event.CollectPhotoNavigationEvent
+import com.andrii_a.walleria.ui.collect_photo.state.CollectActionState
+import com.andrii_a.walleria.ui.collect_photo.state.CollectPhotoUiState
+import com.andrii_a.walleria.ui.collect_photo.state.CollectionMetadata
+import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.async
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.shareIn
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-sealed class CollectState(val newCoverPhoto: Photo?) {
-    data object Loading : CollectState(null)
-    data class Collected(val coverPhoto: Photo?) : CollectState(coverPhoto)
-    data class NotCollected(val coverPhoto: Photo?) : CollectState(coverPhoto)
-}
-
-sealed interface CollectionCreationResult {
-    data object Loading : CollectionCreationResult
-    data object Error : CollectionCreationResult
-    data class Success(val coverPhoto: Photo?) : CollectionCreationResult
-}
 
 @HiltViewModel
 class CollectPhotoViewModel @Inject constructor(
     private val photoRepository: PhotoRepository,
     private val collectionRepository: CollectionRepository,
-    userAccountPreferencesRepository: UserAccountPreferencesRepository,
+    private val userAccountPreferencesRepository: UserAccountPreferencesRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val userNickname: StateFlow<String> =
-        userAccountPreferencesRepository
-            .userPrivateProfileData
-            .map { it.nickname }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000L),
-                initialValue = "",
-            )
+    private val _state: MutableStateFlow<CollectPhotoUiState> = MutableStateFlow(CollectPhotoUiState())
+    val state: StateFlow<CollectPhotoUiState> = _state.asStateFlow()
 
-    private val _userCollectionsContainingPhoto: MutableStateFlow<MutableList<String>> =
-        MutableStateFlow(mutableListOf())
-
-    private val _errorFlow: MutableSharedFlow<UiText> = MutableSharedFlow()
-    val errorFlow: SharedFlow<UiText> = _errorFlow.asSharedFlow()
+    private val navigationChannel = Channel<CollectPhotoNavigationEvent>()
+    val navigationEventsChannelFlow = navigationChannel.receiveAsFlow()
 
     init {
-        savedStateHandle.get<String>(CollectPhotoArgs.PHOTO_ID)?.let { photoId ->
-            viewModelScope.launch {
-                _userCollectionsContainingPhoto.update {
-                    photoRepository.getUserCollectionIdsForPhoto(photoId).toMutableList()
+        viewModelScope.launch {
+            _state.update {
+                val photoId = savedStateHandle.get<String>(CollectPhotoArgs.PHOTO_ID).orEmpty()
+                val userCollectionsContainingPhoto = photoRepository.getUserCollectionIdsForPhoto(photoId)
+
+                it.copy(
+                    photoId = PhotoId(photoId),
+                    userCollectionsContainingPhoto = userCollectionsContainingPhoto,
+                    isLoading = true
+                )
+            }
+
+            refreshCollectionsList()
+        }
+    }
+
+    private suspend fun refreshCollectionsList() {
+        val userPrivateProfileData = userAccountPreferencesRepository.userPrivateProfileData.firstOrNull() ?: return
+
+        collectionRepository.getUserCollections(userPrivateProfileData.nickname)
+            .cachedIn(viewModelScope)
+            .catch { e ->
+                _state.update {
+                    it.copy(
+                        error = ListLoadingError(
+                            reason = UiText.DynamicString(e.message.toString())
+                        ),
+                        isLoading = false
+                    )
+                }
+            }
+            .collect { pagingData ->
+                _state.update {
+                    it.copy(
+                        userCollectionsPagingData = pagingData,
+                        isLoading = false,
+                        error = null
+                    )
+                }
+            }
+    }
+
+    fun onEvent(event: CollectPhotoEvent) {
+        when (event) {
+            is CollectPhotoEvent.CollectPhoto -> {
+                collectPhoto(
+                    collectionId = event.collectionId,
+                    photoId = event.photoId
+                )
+            }
+
+            is CollectPhotoEvent.DropPhotoFromCollection -> {
+                dropPhotoFromCollection(
+                    collectionId = event.collectionId,
+                    photoId = event.photoId
+                )
+            }
+
+            is CollectPhotoEvent.CreateCollectionAndCollect -> {
+                createCollectionAndCollect(
+                    title = event.title,
+                    description = event.description,
+                    isPrivate = event.isPrivate,
+                    photoId = event.photoId
+                )
+            }
+
+            is CollectPhotoEvent.GoBack -> {
+                viewModelScope.launch {
+                    navigationChannel.send(CollectPhotoNavigationEvent.NavigateBack)
+                }
+            }
+
+            is CollectPhotoEvent.OpenCreateAndCollectDialog -> {
+                _state.update {
+                    it.copy(isCreateDialogOpened = true)
+                }
+            }
+
+            is CollectPhotoEvent.DismissCreateAndCollectDialog -> {
+                _state.update {
+                    it.copy(isCreateDialogOpened = false)
+                }
+            }
+
+        }
+    }
+
+    private fun collectPhoto(
+        collectionId: String,
+        photoId: String
+    ) {
+        val initialCollectionMetadata = CollectionMetadata(
+            id = collectionId,
+            state = CollectActionState.NotCollected
+        )
+
+        viewModelScope.launch {
+            val deferredResult = async {
+                collectionRepository.addPhotoToCollection(collectionId, photoId)
+            }
+
+            when (val result = deferredResult.await()) {
+                is BackendResult.Empty -> Unit
+                is BackendResult.Loading -> {
+                    _state.update {
+                        it.copy(
+                            error = null,
+                            modifiedCollectionMetadata = CollectionMetadata(
+                                id = collectionId,
+                                state = CollectActionState.Loading
+                            )
+                        )
+                    }
+                }
+
+                is BackendResult.Error -> {
+                    _state.update {
+                        it.copy(
+                            error = CollectOperationError(
+                                reason = UiText.DynamicString(result.reason.orEmpty())
+                            ),
+                            modifiedCollectionMetadata = initialCollectionMetadata,
+                            isCreateCollectionInProgress = false
+                        )
+                    }
+                }
+
+                is BackendResult.Success -> {
+                    _state.update {
+                        val newCollectionsList = it.userCollectionsContainingPhoto.toMutableList()
+                        newCollectionsList += collectionId
+
+                        it.copy(
+                            error = null,
+                            userCollectionsContainingPhoto = newCollectionsList,
+                            isCreateCollectionInProgress = false
+                        )
+                    }
                 }
             }
         }
     }
 
-    fun isCollectionInList(collectionId: String): Boolean =
-        _userCollectionsContainingPhoto.value.contains(collectionId)
+    private fun dropPhotoFromCollection(
+        collectionId: String,
+        photoId: String
+    ) {
+        val initialCollectionMetadata = CollectionMetadata(
+            id = collectionId,
+            state = CollectActionState.Collected
+        )
 
-    val isPhotoCollected: Boolean
-        get() = _userCollectionsContainingPhoto.value.isNotEmpty()
+        viewModelScope.launch {
+            val deferredResult = async {
+                collectionRepository.deletePhotoFromCollection(collectionId, photoId)
+            }
 
-    val userCollections: Flow<PagingData<Collection>> = userNickname.flatMapLatest { nickname ->
-        collectionRepository.getUserCollections(nickname).cachedIn(viewModelScope)
+            when (val result = deferredResult.await()) {
+                is BackendResult.Empty -> Unit
+                is BackendResult.Loading -> {
+                    _state.update {
+                        it.copy(
+                            error = null,
+                            modifiedCollectionMetadata = CollectionMetadata(
+                                id = collectionId,
+                                state = CollectActionState.Loading
+                            )
+                        )
+                    }
+                }
+
+                is BackendResult.Error -> {
+                    _state.update {
+                        it.copy(
+                            error = CollectOperationError(
+                                reason = UiText.DynamicString(result.reason.orEmpty())
+                            ),
+                            modifiedCollectionMetadata = initialCollectionMetadata,
+                            isCreateCollectionInProgress = false
+                        )
+                    }
+                }
+
+                is BackendResult.Success -> {
+                    _state.update {
+                        val newCollectionsList = it.userCollectionsContainingPhoto.toMutableList()
+                        newCollectionsList -= collectionId
+
+                        it.copy(
+                            error = null,
+                            userCollectionsContainingPhoto = newCollectionsList,
+                            isCreateCollectionInProgress = false
+                        )
+                    }
+                }
+            }
+        }
     }
 
-    // TODO(Andrii): Maybe split this by two independent calls (create, collect)
-    fun createCollectionNewAndCollect(
+    private fun createCollectionAndCollect(
         title: String,
-        description: String?,
-        isPrivate: Boolean,
-        photoId: String
-    ): SharedFlow<CollectionCreationResult> = flow {
-        emit(CollectionCreationResult.Loading)
+        description: String? = null,
+        isPrivate: Boolean = false,
+        photoId: PhotoId
+    ) {
+        viewModelScope.launch {
+            val creationResult = collectionRepository.createCollection(title, description, isPrivate)
 
-        val creationResult = collectionRepository.createCollection(title, description, isPrivate)
+            when (creationResult) {
+                is BackendResult.Empty -> Unit
+                is BackendResult.Loading -> {
+                    _state.update {
+                        it.copy(isCreateCollectionInProgress = true)
+                    }
+                }
 
-        when (creationResult) {
-            is BackendResult.Error -> {
-                emit(CollectionCreationResult.Error)
-                _errorFlow.emit(UiText.StringResource(id = R.string.unable_to_create_collection))
-            }
+                is BackendResult.Error -> {
+                    _state.update {
+                        it.copy(
+                            error = CollectOperationError(
+                                reason = UiText.DynamicString(creationResult.reason.orEmpty())
+                            )
+                        )
+                    }
+                }
 
-            is BackendResult.Success -> {
-                val newCollection = creationResult.value
-
-                val additionResult =
-                    collectionRepository.addPhotoToCollection(newCollection.id, photoId)
-                if (additionResult is BackendResult.Success) {
-                    val newIdList = _userCollectionsContainingPhoto.value
-                    newIdList.add(newCollection.id)
-                    _userCollectionsContainingPhoto.update { newIdList }
-
-                    emit(CollectionCreationResult.Success(additionResult.value.photo))
+                is BackendResult.Success -> {
+                    val collectionId = creationResult.value.id
+                    collectPhoto(collectionId, photoId.value)
+                    refreshCollectionsList()
                 }
             }
-
-            else -> Unit
         }
-    }.shareIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000L)
-    )
-
-    fun collectPhoto(
-        collectionId: String,
-        photoId: String
-    ): SharedFlow<CollectState> = flow {
-        emit(CollectState.Loading)
-
-        val result = collectionRepository.addPhotoToCollection(collectionId, photoId)
-
-        when (result) {
-            is BackendResult.Empty -> Unit
-            is BackendResult.Error -> {
-                emit(CollectState.NotCollected(null))
-                _errorFlow.emit(UiText.StringResource(id = R.string.unable_to_collect_photo))
-            }
-
-            is BackendResult.Loading -> {
-                emit(CollectState.Loading)
-            }
-
-            is BackendResult.Success -> {
-                val newIdList = _userCollectionsContainingPhoto.value
-                newIdList += collectionId
-                _userCollectionsContainingPhoto.update { newIdList }
-
-                emit(CollectState.Collected(result.value.collection?.coverPhoto)) // TODO: Maybe replace by result.value.photo?
-            }
-        }
-    }.shareIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000L)
-    )
-
-    fun dropPhotoFromCollection(
-        collectionId: String,
-        photoId: String
-    ): SharedFlow<CollectState> = flow {
-        emit(CollectState.Loading)
-
-        val result = collectionRepository.deletePhotoFromCollection(collectionId, photoId)
-
-        when (result) {
-            is BackendResult.Empty -> Unit
-            is BackendResult.Error -> {
-                emit(CollectState.Collected(null))
-                _errorFlow.emit(UiText.StringResource(id = R.string.unable_to_drop_photo))
-            }
-
-            is BackendResult.Loading -> {
-                emit(CollectState.Loading)
-            }
-
-            is BackendResult.Success -> {
-                val newList = _userCollectionsContainingPhoto.value
-                newList -= collectionId
-                _userCollectionsContainingPhoto.update { newList }
-
-                emit(CollectState.NotCollected(result.value.collection?.coverPhoto))
-            }
-        }
-    }.shareIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000L)
-    )
-
+    }
 }

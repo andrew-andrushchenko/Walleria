@@ -1,52 +1,98 @@
 package com.andrii_a.walleria.ui.collect_photo
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.paging.PagingData
+import androidx.compose.ui.unit.dp
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.models.collection.Collection
-import com.andrii_a.walleria.ui.common.PhotoId
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharedFlow
+import com.andrii_a.walleria.ui.collect_photo.event.CollectPhotoEvent
+import com.andrii_a.walleria.ui.collect_photo.state.CollectActionState
+import com.andrii_a.walleria.ui.collect_photo.state.CollectPhotoUiState
+import com.andrii_a.walleria.ui.common.components.ErrorBanner
+import com.andrii_a.walleria.ui.util.toast
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+
+@Composable
+fun CollectPhotoScreen(
+    state: CollectPhotoUiState,
+    onEvent: (CollectPhotoEvent) -> Unit
+) {
+    val userCollections = remember(state.userCollectionsPagingData) {
+        flow {
+            emit(state.userCollectionsPagingData)
+        }
+    }.collectAsLazyPagingItems()
+
+    when {
+        state.isLoading -> {
+            LoadingStateContent(onNavigateBack = { onEvent(CollectPhotoEvent.GoBack) })
+        }
+
+        !state.isLoading && state.error == null -> {
+            SuccessStateContent(
+                state = state,
+                userCollections = userCollections,
+                onEvent = onEvent
+            )
+        }
+
+        else -> {
+            when (val error = state.error) {
+                is ListLoadingError -> {
+                    ErrorBanner(
+                        onRetry = userCollections::retry,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+
+                is CollectOperationError -> {
+                    val context = LocalContext.current
+                    context.toast(error.reason.asString())
+                }
+
+                else -> Unit
+            }
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CollectPhotoScreen(
-    photoId: PhotoId,
-    userCollections: Flow<PagingData<Collection>>,
-    isCollectionInList: (collectionId: String) -> Boolean,
-    collectPhoto: (collectionId: String, photoId: String) -> SharedFlow<CollectState>,
-    dropPhoto: (collectionId: String, photoId: String) -> SharedFlow<CollectState>,
-    createAndCollect: (
-        title: String,
-        description: String?,
-        isPrivate: Boolean,
-        photoId: String
-    ) -> SharedFlow<CollectionCreationResult>,
-    onNavigateBack: () -> Unit
+private fun SuccessStateContent(
+    state: CollectPhotoUiState,
+    userCollections: LazyPagingItems<Collection>,
+    onEvent: (CollectPhotoEvent) -> Unit
 ) {
-    val coroutineScope = rememberCoroutineScope()
-
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     Scaffold(
@@ -54,7 +100,7 @@ fun CollectPhotoScreen(
             TopAppBar(
                 title = { Text(text = stringResource(id = R.string.select_collections)) },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
+                    IconButton(onClick = { onEvent(CollectPhotoEvent.GoBack) }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = stringResource(id = R.string.navigate_back),
@@ -66,40 +112,118 @@ fun CollectPhotoScreen(
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { innerPadding ->
-        val lazyPagingItems = userCollections.collectAsLazyPagingItems()
-
-        var showCreateCollectionDialog by rememberSaveable {
-            mutableStateOf(false)
-        }
-
         val lazyListState = rememberLazyListState()
 
         UserCollectionsList(
-            lazyCollectionItems = lazyPagingItems,
+            userCollections = userCollections,
+            onCreateNewClick = { onEvent(CollectPhotoEvent.OpenCreateAndCollectDialog) },
+            onCollectClick = { collectionId ->
+                val collectState = if (state.userCollectionsContainingPhoto.contains(collectionId)) {
+                    CollectActionState.Collected
+                } else {
+                    CollectActionState.NotCollected
+                }
+
+                val event =
+                    if (collectState == CollectActionState.Collected) {
+                        CollectPhotoEvent.DropPhotoFromCollection(
+                            collectionId = collectionId,
+                            photoId = state.photoId.value
+                        )
+                    } else {
+                        CollectPhotoEvent.CollectPhoto(
+                            collectionId = collectionId,
+                            photoId = state.photoId.value
+                        )
+                    }
+
+                onEvent(event)
+            },
+            obtainCollectState = { collectionId ->
+                if (state.userCollectionsContainingPhoto.contains(collectionId)) {
+                    CollectActionState.Collected
+                } else {
+                    CollectActionState.NotCollected
+                }
+            },
+            modifiedCollectionMetadata = state.modifiedCollectionMetadata,
             listState = lazyListState,
-            onCreateNewCollection = { showCreateCollectionDialog = true },
-            isCollectionInList = isCollectionInList,
-            collectPhoto = collectPhoto,
-            dropPhoto = dropPhoto,
-            photoId = photoId,
             contentPadding = innerPadding,
             modifier = Modifier.navigationBarsPadding()
         )
 
-        if (showCreateCollectionDialog) {
-            CreateCollectionAndCollectDialog(
-                photoId = photoId.value,
-                createAndCollect = createAndCollect,
-                onDismiss = {
-                    lazyPagingItems.refresh()
-                    coroutineScope.launch {
-                        lazyListState.animateScrollToItem(0)
+        val scope = rememberCoroutineScope()
+
+        val bottomSheetState = rememberModalBottomSheetState(
+            skipPartiallyExpanded = true
+        )
+
+        if (state.isCreateDialogOpened) {
+            val bottomPadding =
+                WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+
+            ModalBottomSheet(
+                onDismissRequest = { onEvent(CollectPhotoEvent.DismissCreateAndCollectDialog) },
+                sheetState = bottomSheetState,
+                windowInsets = WindowInsets(0)
+            ) {
+                CreateAndCollectBottomSheet(
+                    contentPadding = PaddingValues(
+                        start = 16.dp,
+                        end = 16.dp,
+                        bottom = bottomPadding
+                    ),
+                    onConfirm = { title, description, isPrivate ->
+                        onEvent(
+                            CollectPhotoEvent.CreateCollectionAndCollect(
+                                title, description, isPrivate, state.photoId
+                            )
+                        )
+                        onEvent(CollectPhotoEvent.DismissCreateAndCollectDialog)
+                    },
+                    onDismiss = {
+                        scope.launch { bottomSheetState.hide() }.invokeOnCompletion {
+                            if (!bottomSheetState.isVisible) {
+                                onEvent(CollectPhotoEvent.DismissCreateAndCollectDialog)
+                            }
+                        }
                     }
-                    showCreateCollectionDialog = false
+                )
+            }
+        }
+
+        if (state.isCreateCollectionInProgress) {
+            CreateCollectionProgressDialog()
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun LoadingStateContent(onNavigateBack: () -> Unit) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {},
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = stringResource(id = R.string.navigate_back),
+                        )
+                    }
                 }
             )
         }
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        }
     }
-
 }
+
 

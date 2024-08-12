@@ -8,18 +8,19 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.andrii_a.walleria.ui.collect_photo.event.CollectPhotoNavigationEvent
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.util.InterScreenCommunicationKeys
 import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
-import com.andrii_a.walleria.ui.util.toast
 
 fun NavGraphBuilder.collectPhotoRoute(navController: NavController) {
     composable(
@@ -46,10 +47,9 @@ fun NavGraphBuilder.collectPhotoRoute(navController: NavController) {
                 animationSpec = spring(stiffness = Spring.StiffnessMedium)
             )
         }
-    ) { navBackStackEntry ->
-        val id = navBackStackEntry.arguments?.getString(CollectPhotoArgs.PHOTO_ID).orEmpty()
-
+    ) {
         val viewModel: CollectPhotoViewModel = hiltViewModel()
+        val state by viewModel.state.collectAsStateWithLifecycle()
 
         BackHandler(
             enabled = true,
@@ -58,35 +58,31 @@ fun NavGraphBuilder.collectPhotoRoute(navController: NavController) {
                     ?.savedStateHandle
                     ?.set(
                         InterScreenCommunicationKeys.COLLECT_SCREEN_RESULT_KEY,
-                        viewModel.isPhotoCollected
+                        state.isCollected
                     )
 
                 navController.popBackStack()
             }
         )
 
-        val context = LocalContext.current
-        viewModel.errorFlow.collectAsOneTimeEvents { errorText ->
-            context.toast(errorText.asString(context))
+        viewModel.navigationEventsChannelFlow.collectAsOneTimeEvents { event ->
+            when (event) {
+                CollectPhotoNavigationEvent.NavigateBack -> {
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set(
+                            InterScreenCommunicationKeys.COLLECT_SCREEN_RESULT_KEY,
+                            state.isCollected
+                        )
+
+                    navController.popBackStack()
+                }
+            }
         }
 
         CollectPhotoScreen(
-            photoId = PhotoId(id),
-            userCollections = viewModel.userCollections,
-            isCollectionInList = viewModel::isCollectionInList,
-            collectPhoto = viewModel::collectPhoto,
-            dropPhoto = viewModel::dropPhotoFromCollection,
-            createAndCollect = viewModel::createCollectionNewAndCollect,
-            onNavigateBack = {
-                navController.previousBackStackEntry
-                    ?.savedStateHandle
-                    ?.set(
-                        InterScreenCommunicationKeys.COLLECT_SCREEN_RESULT_KEY,
-                        viewModel.isPhotoCollected
-                    )
-
-                navController.popBackStack()
-            }
+            state = state,
+            onEvent = viewModel::onEvent
         )
     }
 }
