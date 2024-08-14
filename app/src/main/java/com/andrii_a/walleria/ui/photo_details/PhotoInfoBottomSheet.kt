@@ -4,10 +4,15 @@ import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -35,9 +40,13 @@ import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.ui.common.CollectionId
 import com.andrii_a.walleria.ui.common.SearchQuery
 import com.andrii_a.walleria.ui.common.components.TagsRow
-import com.andrii_a.walleria.ui.photo_details.components.*
+import com.andrii_a.walleria.ui.photo_details.components.ExifGrid
+import com.andrii_a.walleria.ui.photo_details.components.LocationRow
+import com.andrii_a.walleria.ui.photo_details.components.RelatedCollectionsRow
+import com.andrii_a.walleria.ui.photo_details.components.StatsRow
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
-import com.andrii_a.walleria.ui.util.*
+import com.andrii_a.walleria.ui.util.locationString
+import com.andrii_a.walleria.ui.util.openLocationInMaps
 
 @Composable
 fun PhotoInfoBottomSheet(
@@ -122,7 +131,7 @@ fun PhotoInfoBottomSheet(
             )
         }
 
-        Divider(
+        HorizontalDivider(
             modifier = Modifier.padding(16.dp)
         )
 

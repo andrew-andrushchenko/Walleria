@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowRight
+import androidx.compose.material.icons.automirrored.filled.ArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -123,7 +123,7 @@ fun SettingsItem(
         )
 
         Icon(
-            imageVector = Icons.Default.ArrowRight,
+            imageVector = Icons.AutoMirrored.Default.ArrowRight,
             contentDescription = "",
             modifier = Modifier
                 .constrainAs(trailingIcon) {
@@ -243,7 +243,7 @@ fun SettingsGroupPreview() {
 
 @Preview
 @Composable
-fun SingleChoiceSelectionDialog() {
+fun SingleChoiceSelectionDialogPreview() {
     WalleriaTheme {
         SingleChoiceSelectionDialog(
             title = "Select option",

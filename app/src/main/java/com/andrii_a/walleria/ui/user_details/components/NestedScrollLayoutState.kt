@@ -3,7 +3,11 @@ package com.andrii_a.walleria.ui.user_details.components
 import androidx.annotation.FloatRange
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.exponentialDecay
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -68,7 +72,7 @@ class NestedScrollLayoutState(
 
     val nestedScrollConnectionHolder = object : NestedScrollConnection {
         override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset = takeIf {
-            available.y < 0 && source == NestedScrollSource.Drag
+            available.y < 0 && source == NestedScrollSource.UserInput
         }?.let {
             Offset(0f, drag(available.y))
         } ?: Offset.Zero
@@ -78,7 +82,7 @@ class NestedScrollLayoutState(
             available: Offset,
             source: NestedScrollSource
         ): Offset = takeIf {
-            available.y > 0 && source == NestedScrollSource.Drag
+            available.y > 0 && source == NestedScrollSource.UserInput
         }?.let {
             Offset(0f, drag(available.y))
         } ?: Offset.Zero

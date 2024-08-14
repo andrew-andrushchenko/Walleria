@@ -24,7 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.RemoveCircleOutline
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -379,8 +379,7 @@ fun CreateAndCollectBottomSheet(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateCollectionProgressDialog() {
-    AlertDialog(
-        onDismissRequest = {},
+    BasicAlertDialog(onDismissRequest = {},
         content = {
             LoadingListItem(
                 modifier = Modifier

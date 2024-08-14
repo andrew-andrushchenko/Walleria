@@ -25,7 +25,7 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -109,7 +109,7 @@ fun SearchScreen(
                         } else {
                             IconButton(onClick = { onEvent(SearchEvent.GoBack) }) {
                                 Icon(
-                                    Icons.Default.ArrowBack,
+                                    Icons.AutoMirrored.Default.ArrowBack,
                                     contentDescription = stringResource(id = R.string.navigate_back)
                                 )
                             }
