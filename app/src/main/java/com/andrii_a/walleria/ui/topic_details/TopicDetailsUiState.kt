@@ -5,7 +5,7 @@ import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.PhotosListLayoutType
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.topic.Topic
-import com.andrii_a.walleria.ui.util.UiError
+import com.andrii_a.walleria.ui.common.UiError
 import com.andrii_a.walleria.ui.util.emptyPagingDataFlow
 import kotlinx.coroutines.flow.Flow
 

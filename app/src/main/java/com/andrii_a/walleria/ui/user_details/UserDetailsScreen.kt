@@ -61,6 +61,7 @@ import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.CollectionListLayoutType
 import com.andrii_a.walleria.domain.PhotosListLayoutType
 import com.andrii_a.walleria.domain.models.user.User
+import com.andrii_a.walleria.ui.common.UiErrorWithRetry
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
 import com.andrii_a.walleria.ui.common.components.lists.CollectionsGrid
 import com.andrii_a.walleria.ui.common.components.lists.CollectionsList
@@ -94,7 +95,8 @@ fun UserDetailsScreen(
         else -> {
             ErrorStateContent(
                 onRetry = {
-                    state.error?.onRetry?.invoke()
+                    val error = state.error as? UiErrorWithRetry
+                    error?.onRetry?.invoke()
                 },
                 onNavigateBack = { onEvent(UserDetailsEvent.GoBack) }
             )

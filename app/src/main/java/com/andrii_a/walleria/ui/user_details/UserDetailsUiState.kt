@@ -8,7 +8,7 @@ import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.ui.common.UserNickname
-import com.andrii_a.walleria.ui.util.UiError
+import com.andrii_a.walleria.ui.common.UiError
 import com.andrii_a.walleria.ui.util.emptyPagingDataFlow
 import kotlinx.coroutines.flow.Flow
 

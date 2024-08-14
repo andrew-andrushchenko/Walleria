@@ -10,8 +10,8 @@ import com.andrii_a.walleria.domain.repository.LocalPreferencesRepository
 import com.andrii_a.walleria.domain.repository.PhotoRepository
 import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
 import com.andrii_a.walleria.ui.common.CollectionId
-import com.andrii_a.walleria.ui.util.UiError
-import com.andrii_a.walleria.ui.util.UiText
+import com.andrii_a.walleria.ui.common.UiErrorWithRetry
+import com.andrii_a.walleria.ui.common.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -126,7 +126,7 @@ class CollectionDetailsViewModel @Inject constructor(
                     _state.update {
                         it.copy(
                             isLoading = false,
-                            error = UiError(
+                            error = UiErrorWithRetry(
                                 reason = UiText.DynamicString(result.reason.orEmpty()),
                                 onRetry = { onEvent(CollectionDetailsEvent.RequestCollection(collectionId)) }
                             )

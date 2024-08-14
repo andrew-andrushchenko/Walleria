@@ -85,8 +85,8 @@ import com.andrii_a.walleria.ui.photo_details.components.rememberZoomableState
 import com.andrii_a.walleria.ui.theme.PhotoDetailsActionButtonContainerColor
 import com.andrii_a.walleria.ui.theme.PhotoDetailsActionButtonContentColor
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
-import com.andrii_a.walleria.ui.util.UiError
-import com.andrii_a.walleria.ui.util.UiText
+import com.andrii_a.walleria.ui.common.UiErrorWithRetry
+import com.andrii_a.walleria.ui.common.UiText
 import com.andrii_a.walleria.ui.util.abbreviatedNumberString
 import com.andrii_a.walleria.ui.util.getProfileImageUrlOrEmpty
 import com.andrii_a.walleria.ui.util.getUrlByQuality
@@ -119,7 +119,8 @@ fun PhotoDetailsScreen(
         else -> {
             ErrorStateContent(
                 onRetry = {
-                    state.error?.onRetry?.invoke()
+                    val error = state.error as? UiErrorWithRetry
+                    error?.onRetry?.invoke()
                 },
                 onNavigateBack = { onEvent(PhotoDetailsEvent.GoBack) }
             )
@@ -640,7 +641,7 @@ private class PhotoDetailsUiStateProvider : PreviewParameterProvider<PhotoDetail
 
     override val values = sequenceOf(
         PhotoDetailsUiState(isLoading = true),
-        PhotoDetailsUiState(error = UiError(reason = UiText.DynamicString("ABC"))),
+        PhotoDetailsUiState(error = UiErrorWithRetry(reason = UiText.DynamicString("ABC"))),
         PhotoDetailsUiState(
             photo = photo,
             isLiked = true,

@@ -15,7 +15,7 @@ import com.andrii_a.walleria.ui.collect_photo.state.CollectPhotoUiState
 import com.andrii_a.walleria.ui.collect_photo.state.CollectionMetadata
 import com.andrii_a.walleria.ui.common.CollectionId
 import com.andrii_a.walleria.ui.common.PhotoId
-import com.andrii_a.walleria.ui.util.UiText
+import com.andrii_a.walleria.ui.common.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel

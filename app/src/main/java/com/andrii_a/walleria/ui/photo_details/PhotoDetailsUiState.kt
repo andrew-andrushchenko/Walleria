@@ -2,7 +2,7 @@ package com.andrii_a.walleria.ui.photo_details
 
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
-import com.andrii_a.walleria.ui.util.UiError
+import com.andrii_a.walleria.ui.common.UiError
 
 data class PhotoDetailsUiState(
     val isUserLoggedIn: Boolean = false,

@@ -1,4 +1,4 @@
-package com.andrii_a.walleria.ui.util
+package com.andrii_a.walleria.ui.common
 
 import android.content.Context
 import androidx.annotation.StringRes

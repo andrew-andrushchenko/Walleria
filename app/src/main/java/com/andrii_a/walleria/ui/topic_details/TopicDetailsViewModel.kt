@@ -8,8 +8,8 @@ import com.andrii_a.walleria.domain.network.BackendResult
 import com.andrii_a.walleria.domain.repository.LocalPreferencesRepository
 import com.andrii_a.walleria.domain.repository.PhotoRepository
 import com.andrii_a.walleria.domain.repository.TopicRepository
-import com.andrii_a.walleria.ui.util.UiError
-import com.andrii_a.walleria.ui.util.UiText
+import com.andrii_a.walleria.ui.common.UiErrorWithRetry
+import com.andrii_a.walleria.ui.common.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -118,9 +118,11 @@ class TopicDetailsViewModel @Inject constructor(
                     _state.update {
                         it.copy(
                             isLoading = false,
-                            error = UiError(
+                            error = UiErrorWithRetry(
                                 reason = UiText.DynamicString(result.reason.orEmpty()),
-                                //onRetry = {}
+                                onRetry = {
+                                    onEvent(TopicDetailsEvent.RequestTopic(id))
+                                }
                             )
                         )
                     }

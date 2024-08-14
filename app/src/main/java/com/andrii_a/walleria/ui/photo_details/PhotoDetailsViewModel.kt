@@ -11,8 +11,8 @@ import com.andrii_a.walleria.domain.repository.PhotoRepository
 import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
 import com.andrii_a.walleria.domain.services.PhotoDownloader
 import com.andrii_a.walleria.ui.common.PhotoId
-import com.andrii_a.walleria.ui.util.UiError
-import com.andrii_a.walleria.ui.util.UiText
+import com.andrii_a.walleria.ui.common.UiErrorWithRetry
+import com.andrii_a.walleria.ui.common.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -200,7 +200,7 @@ class PhotoDetailsViewModel @Inject constructor(
                     _state.update {
                         it.copy(
                             isLoading = false,
-                            error = UiError(
+                            error = UiErrorWithRetry(
                                 reason = UiText.DynamicString(result.reason.orEmpty()),
                                 onRetry = {
                                     onEvent(PhotoDetailsEvent.RequestPhoto(photoId))

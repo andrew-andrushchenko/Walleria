@@ -41,6 +41,7 @@ import com.andrii_a.walleria.domain.PhotosListLayoutType
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
 import com.andrii_a.walleria.ui.common.components.lists.PhotosGrid
 import com.andrii_a.walleria.ui.common.components.lists.PhotosList
+import com.andrii_a.walleria.ui.common.UiErrorWithRetry
 import com.andrii_a.walleria.ui.util.username
 import kotlinx.coroutines.launch
 
@@ -66,7 +67,8 @@ fun CollectionDetailsScreen(
         else -> {
             ErrorStateContent(
                 onRetry = {
-                    state.error?.onRetry?.invoke()
+                    val error = state.error as? UiErrorWithRetry
+                    error?.onRetry?.invoke()
                 },
                 onNavigateBack = { onEvent(CollectionDetailsEvent.GoBack) }
             )
