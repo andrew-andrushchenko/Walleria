@@ -192,7 +192,7 @@ private fun LazyListScope.loadedStateContent(
                         collection = collection,
                         photoQuality = photosLoadQuality,
                         onOpenCollectionClick = {
-                            onCollectionClicked(CollectionId(collection.id))
+                            onCollectionClicked(collection.id)
                         },
                         modifier = Modifier.padding(
                             start = 16.dp,
@@ -211,10 +211,10 @@ private fun LazyListScope.loadedStateContent(
                         photoQuality = photosLoadQuality,
                         onPhotoClicked = onPhotoClicked,
                         onOpenCollectionClick = {
-                            onCollectionClicked(CollectionId(collection.id))
+                            onCollectionClicked(collection.id)
                         },
                         onUserProfileClick = {
-                            val userNickname = UserNickname(collection.username)
+                            val userNickname = collection.username
                             onUserProfileClicked(userNickname)
                         },
                         modifier = Modifier
@@ -331,9 +331,7 @@ private fun LazyGridScope.loadedStateContent(
                 SimpleCollectionItem(
                     collection = collection,
                     photoQuality = photosLoadQuality,
-                    onOpenCollectionClick = {
-                        onCollectionClicked(CollectionId(collection.id))
-                    }
+                    onOpenCollectionClick = { onCollectionClicked(collection.id) }
                 )
             }
         }
@@ -360,7 +358,7 @@ private fun DefaultCollectionItem(
     val onPhotoClickListeners = remember {
         previewPhotos.map { photo ->
             val listener: () -> Unit = {
-                onPhotoClicked(PhotoId(photo.id))
+                onPhotoClicked(photo.id)
             }
             listener
         }

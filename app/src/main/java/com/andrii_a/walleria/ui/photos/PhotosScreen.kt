@@ -34,8 +34,6 @@ import com.andrii_a.walleria.ui.util.titleRes
 @Composable
 fun PhotosScreen(
     state: PhotosUiState,
-    //photosListLayoutType: PhotosListLayoutType,
-    //photosLoadQuality: PhotoQuality,
     onEvent: (PhotosEvent) -> Unit
 ) {
     val lazyPhotoItems = state.photos.collectAsLazyPagingItems()

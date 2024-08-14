@@ -7,12 +7,13 @@ import com.andrii_a.walleria.domain.PhotosListLayoutType
 import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.user.User
+import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.util.UiError
 import com.andrii_a.walleria.ui.util.emptyPagingDataFlow
 import kotlinx.coroutines.flow.Flow
 
 data class UserDetailsUiState(
-    val loggedInUserNickname: String = "",
+    val loggedInUserNickname: UserNickname = "",
     val user: User? = null,
     val isLoading: Boolean = false,
     val error: UiError? = null,

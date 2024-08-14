@@ -61,8 +61,8 @@ class UserDetailsViewModel @Inject constructor(
     val navigationEventsChannelFlow = navigationChannel.receiveAsFlow()
 
     init {
-        savedStateHandle.get<String>(UserDetailsArgs.NICKNAME)?.let {
-            getUser(UserNickname(it))
+        savedStateHandle.get<String>(UserDetailsArgs.NICKNAME)?.let { userNickname ->
+            getUser(userNickname)
         }
     }
 
@@ -155,7 +155,7 @@ class UserDetailsViewModel @Inject constructor(
     }
 
     private fun getUser(userNickname: UserNickname) {
-        userRepository.getUserPublicProfile(userNickname.value).onEach { result ->
+        userRepository.getUserPublicProfile(userNickname).onEach { result ->
             when (result) {
                 is BackendResult.Empty -> Unit
                 is BackendResult.Loading -> {

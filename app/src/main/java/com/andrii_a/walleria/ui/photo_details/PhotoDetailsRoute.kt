@@ -155,7 +155,7 @@ fun NavGraphBuilder.photoDetailsRoute(navController: NavController) {
 }
 
 fun NavController.navigateToPhotoDetails(photoId: PhotoId) =
-    this.navigate("${Screen.PhotoDetails.route}/${photoId.value}")
+    this.navigate("${Screen.PhotoDetails.route}/$photoId")
 
 object PhotoDetailsArgs {
     const val ID = "photoId"

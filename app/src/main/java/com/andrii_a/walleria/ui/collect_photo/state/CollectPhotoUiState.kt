@@ -6,7 +6,7 @@ import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.util.UiErr
 
 data class CollectPhotoUiState(
-    val photoId: PhotoId = PhotoId(""),
+    val photoId: PhotoId = "",
     val userCollectionsContainingPhoto: List<String> = emptyList(),
     val error: UiErr? = null,
     val isLoading: Boolean = false,

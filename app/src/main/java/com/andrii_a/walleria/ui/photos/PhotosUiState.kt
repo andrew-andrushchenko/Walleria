@@ -12,6 +12,5 @@ data class PhotosUiState(
     val photos: Flow<PagingData<Photo>> = emptyPagingDataFlow(),
     val photosListDisplayOrder: PhotoListDisplayOrder = PhotoListDisplayOrder.LATEST,
     val photosListLayoutType: PhotosListLayoutType = PhotosListLayoutType.DEFAULT,
-    val photosLoadQuality: PhotoQuality = PhotoQuality.MEDIUM,
-
-    )
+    val photosLoadQuality: PhotoQuality = PhotoQuality.MEDIUM
+)

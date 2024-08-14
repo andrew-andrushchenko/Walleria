@@ -128,12 +128,12 @@ private fun SuccessStateContent(
                     if (collectState == CollectActionState.Collected) {
                         CollectPhotoEvent.DropPhotoFromCollection(
                             collectionId = collectionId,
-                            photoId = state.photoId.value
+                            photoId = state.photoId
                         )
                     } else {
                         CollectPhotoEvent.CollectPhoto(
                             collectionId = collectionId,
-                            photoId = state.photoId.value
+                            photoId = state.photoId
                         )
                     }
 

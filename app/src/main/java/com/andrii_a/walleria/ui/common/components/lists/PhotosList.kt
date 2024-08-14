@@ -194,7 +194,7 @@ private fun LazyListScope.loadedStateContent(
                     SimplePhotoItem(
                         photo = photo,
                         photosLoadQuality = photosLoadQuality,
-                        onPhotoClicked = { onPhotoClicked(PhotoId(it.id)) },
+                        onPhotoClicked = { onPhotoClicked(it.id) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(
@@ -207,8 +207,8 @@ private fun LazyListScope.loadedStateContent(
                     DefaultPhotoItem(
                         photo = photo,
                         photosLoadQuality = photosLoadQuality,
-                        onPhotoClicked = { onPhotoClicked(PhotoId(it.id)) },
-                        onUserClick = { onUserProfileClicked(UserNickname(photo.userNickname)) },
+                        onPhotoClicked = { onPhotoClicked(it.id) },
+                        onUserClick = { onUserProfileClicked(photo.userNickname) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(
@@ -336,7 +336,7 @@ private fun LazyStaggeredGridScope.loadedStateContent(
                 SimplePhotoItem(
                     photo = photo,
                     photosLoadQuality = photosLoadQuality,
-                    onPhotoClicked = { onPhotoClicked(PhotoId(photo.id)) },
+                    onPhotoClicked = { onPhotoClicked(photo.id) },
                     shape = RoundedCornerShape(16.dp)
                 )
             }

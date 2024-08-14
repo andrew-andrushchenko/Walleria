@@ -110,7 +110,7 @@ fun NavGraphBuilder.userDetailsRoute(navController: NavController) {
 }
 
 fun NavController.navigateToUserDetails(userNickname: UserNickname) {
-    this.navigate("${Screen.UserDetails.route}/${userNickname.value}")
+    this.navigate("${Screen.UserDetails.route}/$userNickname")
 }
 
 object UserDetailsArgs {

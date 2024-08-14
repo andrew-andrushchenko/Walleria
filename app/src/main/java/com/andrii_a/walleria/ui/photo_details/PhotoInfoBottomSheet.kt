@@ -88,7 +88,7 @@ fun PhotoInfoBottomSheet(
             TagsRow(
                 tags = it,
                 onTagClicked = { query ->
-                    navigateToSearch(SearchQuery(query))
+                    navigateToSearch(query)
                 },
                 contentPadding = PaddingValues(start = 16.dp, end = 16.dp),
                 modifier = Modifier.fillMaxWidth()

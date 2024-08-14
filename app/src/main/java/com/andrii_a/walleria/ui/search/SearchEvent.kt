@@ -3,10 +3,11 @@ package com.andrii_a.walleria.ui.search
 import com.andrii_a.walleria.domain.models.search.RecentSearchItem
 import com.andrii_a.walleria.ui.common.CollectionId
 import com.andrii_a.walleria.ui.common.PhotoId
+import com.andrii_a.walleria.ui.common.SearchQuery
 import com.andrii_a.walleria.ui.common.UserNickname
 
 sealed interface SearchEvent {
-    data class PerformSearch(val query: String) : SearchEvent
+    data class PerformSearch(val query: SearchQuery) : SearchEvent
     data class ChangePhotoFilters(val photoFilters: PhotoFilters) : SearchEvent
     data class DeleteRecentSearchItem(val item: RecentSearchItem) : SearchEvent
     data object DeleteAllRecentSearches : SearchEvent

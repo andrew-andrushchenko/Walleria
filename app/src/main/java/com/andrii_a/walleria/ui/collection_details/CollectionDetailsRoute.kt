@@ -74,7 +74,7 @@ fun NavGraphBuilder.collectionDetailsRoute(navController: NavController) {
 }
 
 fun NavController.navigateToCollectionDetails(collectionId: CollectionId) =
-    this.navigate("${Screen.CollectionDetails.route}/${collectionId.value}")
+    this.navigate("${Screen.CollectionDetails.route}/$collectionId")
 
 object CollectionDetailsArgs {
     const val ID = "collectionId"

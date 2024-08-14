@@ -1,7 +1,6 @@
 package com.andrii_a.walleria.ui.user_details
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -62,7 +61,6 @@ import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.CollectionListLayoutType
 import com.andrii_a.walleria.domain.PhotosListLayoutType
 import com.andrii_a.walleria.domain.models.user.User
-import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
 import com.andrii_a.walleria.ui.common.components.lists.CollectionsGrid
 import com.andrii_a.walleria.ui.common.components.lists.CollectionsList
@@ -163,7 +161,7 @@ private fun ErrorStateContent(
 }
 
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SuccessStateContent(
     state: UserDetailsUiState,
@@ -183,13 +181,7 @@ fun SuccessStateContent(
                 isOwnProfile = user.username == state.loggedInUserNickname,
                 onEditProfile = { onEvent(UserDetailsEvent.SelectEditProfile) },
                 onOpenMoreAboutProfile = { onEvent(UserDetailsEvent.OpenDetailsDialog) },
-                onOpenProfileInBrowser = {
-                    onEvent(
-                        UserDetailsEvent.OpenUserProfileInBrowser(
-                            UserNickname(user.username)
-                        )
-                    )
-                }
+                onOpenProfileInBrowser = { onEvent(UserDetailsEvent.OpenUserProfileInBrowser(user.username)) }
             )
         }
     ) { innerPadding ->
@@ -247,7 +239,6 @@ fun SuccessStateContent(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun Tabs(
     pagerState: PagerState,
@@ -291,7 +282,6 @@ private fun Tabs(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun Pages(
     pagerState: PagerState,

@@ -80,7 +80,7 @@ fun NavGraphBuilder.searchRoute(navController: NavController) {
 }
 
 fun NavController.navigateToSearch(query: SearchQuery? = null) {
-    val route = query?.let { "${Screen.Search.route}?${SearchArgs.QUERY}=${it.value}" }
+    val route = query?.let { "${Screen.Search.route}?${SearchArgs.QUERY}=$it" }
         ?: Screen.Search.route
     this.navigate(route)
 }

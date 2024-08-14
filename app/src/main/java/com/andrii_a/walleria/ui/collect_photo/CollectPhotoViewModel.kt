@@ -13,6 +13,7 @@ import com.andrii_a.walleria.ui.collect_photo.event.CollectPhotoNavigationEvent
 import com.andrii_a.walleria.ui.collect_photo.state.CollectActionState
 import com.andrii_a.walleria.ui.collect_photo.state.CollectPhotoUiState
 import com.andrii_a.walleria.ui.collect_photo.state.CollectionMetadata
+import com.andrii_a.walleria.ui.common.CollectionId
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -49,7 +50,7 @@ class CollectPhotoViewModel @Inject constructor(
                 val userCollectionsContainingPhoto = photoRepository.getUserCollectionIdsForPhoto(photoId)
 
                 it.copy(
-                    photoId = PhotoId(photoId),
+                    photoId = photoId,
                     userCollectionsContainingPhoto = userCollectionsContainingPhoto,
                     isLoading = true
                 )
@@ -132,8 +133,8 @@ class CollectPhotoViewModel @Inject constructor(
     }
 
     private fun collectPhoto(
-        collectionId: String,
-        photoId: String
+        collectionId: CollectionId,
+        photoId: PhotoId
     ) {
         val initialCollectionMetadata = CollectionMetadata(
             id = collectionId,
@@ -188,8 +189,8 @@ class CollectPhotoViewModel @Inject constructor(
     }
 
     private fun dropPhotoFromCollection(
-        collectionId: String,
-        photoId: String
+        collectionId: CollectionId,
+        photoId: PhotoId
     ) {
         val initialCollectionMetadata = CollectionMetadata(
             id = collectionId,
@@ -272,7 +273,7 @@ class CollectPhotoViewModel @Inject constructor(
 
                 is BackendResult.Success -> {
                     val collectionId = creationResult.value.id
-                    collectPhoto(collectionId, photoId.value)
+                    collectPhoto(collectionId, photoId)
                     refreshCollectionsList()
                 }
             }

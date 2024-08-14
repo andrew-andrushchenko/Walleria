@@ -8,7 +8,6 @@ import com.andrii_a.walleria.domain.network.BackendResult
 import com.andrii_a.walleria.domain.repository.LocalPreferencesRepository
 import com.andrii_a.walleria.domain.repository.PhotoRepository
 import com.andrii_a.walleria.domain.repository.TopicRepository
-import com.andrii_a.walleria.ui.common.TopicId
 import com.andrii_a.walleria.ui.util.UiError
 import com.andrii_a.walleria.ui.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -52,15 +51,15 @@ class TopicDetailsViewModel @Inject constructor(
     val navigationEventsChannelFlow = navigationChannel.receiveAsFlow()
 
     init {
-        savedStateHandle.get<String>(TopicDetailsArgs.ID)?.let { id ->
-            onEvent(TopicDetailsEvent.RequestTopic(TopicId(id)))
+        savedStateHandle.get<String>(TopicDetailsArgs.ID)?.let { topicId ->
+            onEvent(TopicDetailsEvent.RequestTopic(topicId))
         }
     }
 
     fun onEvent(event: TopicDetailsEvent) {
         when (event) {
             is TopicDetailsEvent.RequestTopic -> {
-                getTopic(event.topicId.value)
+                getTopic(event.topicId)
             }
 
             is TopicDetailsEvent.ChangeFilters -> {

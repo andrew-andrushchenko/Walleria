@@ -88,11 +88,7 @@ fun ProfileScreen(
                 ),
                 userNickname = userPrivateProfileData.nickname,
                 userEmail = userPrivateProfileData.email,
-                navigateToViewProfileScreen = {
-                    navigateToViewProfileScreen(
-                        UserNickname(userPrivateProfileData.nickname)
-                    )
-                },
+                navigateToViewProfileScreen = { navigateToViewProfileScreen(userPrivateProfileData.nickname) },
                 navigateToEditProfileScreen = navigateToEditProfileScreen,
                 onLogout = onLogout
             )

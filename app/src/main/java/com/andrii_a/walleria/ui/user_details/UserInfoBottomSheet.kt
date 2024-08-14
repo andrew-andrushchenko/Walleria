@@ -79,7 +79,7 @@ fun UserInfoBottomSheet(
             TagsRow(
                 tags = it,
                 onTagClicked = { query ->
-                    navigateToSearch(SearchQuery(query))
+                    navigateToSearch(query)
                 },
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 modifier = Modifier.fillMaxWidth()

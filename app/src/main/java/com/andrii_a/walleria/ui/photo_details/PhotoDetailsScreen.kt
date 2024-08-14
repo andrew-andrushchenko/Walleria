@@ -77,8 +77,6 @@ import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.photo.PhotoUrls
 import com.andrii_a.walleria.domain.models.user.User
-import com.andrii_a.walleria.ui.common.PhotoId
-import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
 import com.andrii_a.walleria.ui.photo_details.components.OverZoomConfig
 import com.andrii_a.walleria.ui.photo_details.components.UserRow
@@ -240,11 +238,11 @@ private fun SuccessStateContent(
                 isPhotoCollected = state.isCollected,
                 zoomIcon = if (zoomableState.scale == 1f) Icons.Outlined.ZoomOutMap else Icons.Outlined.ZoomInMap,
                 onNavigateToUserDetails = {
-                    onEvent(PhotoDetailsEvent.SelectUser(UserNickname(photo.userNickname)))
+                    onEvent(PhotoDetailsEvent.SelectUser(photo.userNickname))
                 },
                 onNavigateToCollectPhoto = {
                     if (state.isUserLoggedIn) {
-                        onEvent(PhotoDetailsEvent.SelectCollectOption(PhotoId(photo.id)))
+                        onEvent(PhotoDetailsEvent.SelectCollectOption(photo.id))
                     } else {
                         context.toast(stringRes = R.string.login_to_collect_photo)
                         onEvent(PhotoDetailsEvent.RedirectToLogin)
@@ -253,10 +251,10 @@ private fun SuccessStateContent(
                 onLikeButtonClick = {
                     if (state.isUserLoggedIn) {
                         if (state.isLiked) {
-                            onEvent(PhotoDetailsEvent.DislikePhoto(PhotoId(photo.id)))
+                            onEvent(PhotoDetailsEvent.DislikePhoto(photo.id))
                             LikeCount(value = photo.likes)
                         } else {
-                            onEvent(PhotoDetailsEvent.LikePhoto(PhotoId(photo.id)))
+                            onEvent(PhotoDetailsEvent.LikePhoto(photo.id))
                             LikeCount(value = photo.likes + 1)
                         }
                     } else {

@@ -33,7 +33,6 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.models.collection.Collection
-import com.andrii_a.walleria.ui.common.CollectionId
 import com.andrii_a.walleria.ui.common.components.CheckBoxRow
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 
@@ -97,9 +96,7 @@ fun EditCollectionInfoBottomSheet(
                 DeleteConfirmationRow(
                     onConfirm = {
                         onEvent(
-                            CollectionDetailsEvent.DeleteCollection(
-                                CollectionId(collection.id)
-                            )
+                            CollectionDetailsEvent.DeleteCollection(collection.id)
                         )
                     },
                     onDismiss = { showConfirmationRow = false },
@@ -111,7 +108,7 @@ fun EditCollectionInfoBottomSheet(
                         onUpdate = {
                             onEvent(
                                 CollectionDetailsEvent.UpdateCollection(
-                                    collectionId = CollectionId(collection.id),
+                                    collectionId = collection.id,
                                     title = title,
                                     description = description,
                                     isPrivate = isPrivate

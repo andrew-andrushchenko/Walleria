@@ -81,7 +81,7 @@ fun NavGraphBuilder.topicDetailsRoute(navController: NavController) {
 }
 
 fun NavController.navigateToTopicDetails(topicId: TopicId) {
-    this.navigate("${Screen.TopicDetails.route}/${topicId.value}")
+    this.navigate("${Screen.TopicDetails.route}/$topicId")
 }
 
 object TopicDetailsArgs {

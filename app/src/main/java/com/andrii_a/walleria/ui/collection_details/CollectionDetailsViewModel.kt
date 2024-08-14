@@ -59,7 +59,7 @@ class CollectionDetailsViewModel @Inject constructor(
 
     init {
         savedStateHandle.get<String>(CollectionDetailsArgs.ID)?.let { id ->
-            getCollection(CollectionId(id))
+            getCollection(id)
         }
     }
 
@@ -110,8 +110,8 @@ class CollectionDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun getCollection(id: CollectionId) {
-        collectionRepository.getCollection(id.value).onEach { result ->
+    private fun getCollection(collectionId: CollectionId) {
+        collectionRepository.getCollection(collectionId).onEach { result ->
             when (result) {
                 is BackendResult.Empty -> Unit
                 is BackendResult.Loading -> {
@@ -128,7 +128,7 @@ class CollectionDetailsViewModel @Inject constructor(
                             isLoading = false,
                             error = UiError(
                                 reason = UiText.DynamicString(result.reason.orEmpty()),
-                                onRetry = { onEvent(CollectionDetailsEvent.RequestCollection(id)) }
+                                onRetry = { onEvent(CollectionDetailsEvent.RequestCollection(collectionId)) }
                             )
                         )
                     }
@@ -153,19 +153,19 @@ class CollectionDetailsViewModel @Inject constructor(
     }
 
     private fun updateCollection(
-        id: CollectionId,
+        collectionId: CollectionId,
         title: String,
         description: String?,
         isPrivate: Boolean
     ) {
         viewModelScope.launch {
-            collectionRepository.updateCollection(id.value, title, description, isPrivate)
+            collectionRepository.updateCollection(collectionId, title, description, isPrivate)
         }
     }
 
-    private fun deleteCollection(id: CollectionId) {
+    private fun deleteCollection(collectionId: CollectionId) {
         viewModelScope.launch {
-            collectionRepository.deleteCollection(id.value)
+            collectionRepository.deleteCollection(collectionId)
         }
     }
 

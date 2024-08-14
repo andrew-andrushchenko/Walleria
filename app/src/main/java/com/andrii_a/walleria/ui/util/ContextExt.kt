@@ -53,7 +53,7 @@ fun Context.openLocationInMaps(position: PhotoLocation.Position?) {
 }
 
 fun Context.openUserProfileInBrowser(userNickname: UserNickname) {
-    val link = "https://unsplash.com/@${userNickname.value}"
+    val link = "https://unsplash.com/@$userNickname"
     this.openLinkInBrowser(link)
 }
 

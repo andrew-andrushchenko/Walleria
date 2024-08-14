@@ -110,7 +110,7 @@ fun TopicsList(
                                     topic = topic,
                                     coverPhotoQuality = coverPhotoQuality,
                                     onClick = {
-                                        onClick(TopicId(topic.id))
+                                        onClick(topic.id)
                                     },
                                     modifier = Modifier.padding(
                                         start = 16.dp,

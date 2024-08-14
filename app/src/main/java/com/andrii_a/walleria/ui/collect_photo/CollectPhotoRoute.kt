@@ -88,7 +88,7 @@ fun NavGraphBuilder.collectPhotoRoute(navController: NavController) {
 }
 
 fun NavController.navigateToCollectPhoto(photoId: PhotoId) {
-    this.navigate("${Screen.CollectPhoto.route}/${photoId.value}")
+    this.navigate("${Screen.CollectPhoto.route}/$photoId")
 }
 
 object CollectPhotoArgs {

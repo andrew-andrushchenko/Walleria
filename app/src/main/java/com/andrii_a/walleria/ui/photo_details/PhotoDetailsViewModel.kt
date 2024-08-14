@@ -59,7 +59,7 @@ class PhotoDetailsViewModel @Inject constructor(
 
     init {
         savedStateHandle.get<String>(PhotoDetailsArgs.ID)?.let { photoId ->
-            onEvent(PhotoDetailsEvent.RequestPhoto(PhotoId(photoId)))
+            onEvent(PhotoDetailsEvent.RequestPhoto(photoId))
         }
     }
 
@@ -169,7 +169,7 @@ class PhotoDetailsViewModel @Inject constructor(
     }
 
     private fun getPhoto(photoId: PhotoId) {
-        photoRepository.getPhoto(photoId.value).onEach { result ->
+        photoRepository.getPhoto(photoId).onEach { result ->
             when (result) {
                 is BackendResult.Loading -> {
                     _state.update {
@@ -221,7 +221,7 @@ class PhotoDetailsViewModel @Inject constructor(
     private fun likePhoto(photoId: PhotoId) {
         likePhotoJob?.cancel()
         likePhotoJob = viewModelScope.launch {
-            photoRepository.likePhoto(photoId.value)
+            photoRepository.likePhoto(photoId)
             _state.update { it.copy(isLiked = true) }
         }
     }
@@ -229,7 +229,7 @@ class PhotoDetailsViewModel @Inject constructor(
     private fun dislikePhoto(photoId: PhotoId) {
         dislikePhotoJob?.cancel()
         dislikePhotoJob = viewModelScope.launch {
-            photoRepository.dislikePhoto(photoId.value)
+            photoRepository.dislikePhoto(photoId)
             _state.update { it.copy(isLiked = false) }
         }
     }
