@@ -14,6 +14,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -119,20 +120,31 @@ class SearchViewModel @Inject constructor(
     private fun performSearch(query: String) {
         saveRecentQuery(query)
 
-        _state.update {
-            it.copy(
-                query = query,
-                photos = searchRepository.searchPhotos(
+        val searchPhotoResultFlow = searchRepository.searchPhotos(
+            query = query,
+            order = _state.value.photoFilters.order,
+            contentFilter = _state.value.photoFilters.contentFilter,
+            color = _state.value.photoFilters.color,
+            orientation = _state.value.photoFilters.orientation
+        ).cachedIn(viewModelScope)
+
+        val searchCollectionResultFlow = searchRepository.searchCollections(query).cachedIn(viewModelScope)
+        val searchUserResultFlow = searchRepository.searchUsers(query).cachedIn(viewModelScope)
+
+        combine(
+            searchPhotoResultFlow,
+            searchCollectionResultFlow,
+            searchUserResultFlow
+        ) { photosPagingData, collectionsPagingData, usersPagingData ->
+            _state.update {
+                it.copy(
                     query = query,
-                    order = it.photoFilters.order,
-                    contentFilter = it.photoFilters.contentFilter,
-                    color = it.photoFilters.color,
-                    orientation = it.photoFilters.orientation
-                ).cachedIn(viewModelScope),
-                collections = searchRepository.searchCollections(query).cachedIn(viewModelScope),
-                users = searchRepository.searchUsers(query).cachedIn(viewModelScope)
-            )
-        }
+                    photosPagingData = photosPagingData,
+                    collectionsPagingData = collectionsPagingData,
+                    usersPagingData = usersPagingData
+                )
+            }
+        }.launchIn(viewModelScope)
     }
 
     private fun saveRecentQuery(query: String) {
@@ -172,17 +184,21 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun changePhotoFilters(filters: PhotoFilters) {
-        _state.update {
-            it.copy(
-                photoFilters = filters,
-                photos = searchRepository.searchPhotos(
-                    query = it.query,
-                    order = filters.order,
-                    contentFilter = filters.contentFilter,
-                    color = filters.color,
-                    orientation = filters.orientation
-                ).cachedIn(viewModelScope)
-            )
+        viewModelScope.launch {
+            searchRepository.searchPhotos(
+                query = _state.value.query,
+                order = filters.order,
+                contentFilter = filters.contentFilter,
+                color = filters.color,
+                orientation = filters.orientation
+            ).cachedIn(viewModelScope).collect { photoPagingData ->
+                _state.update {
+                    it.copy(
+                        photoFilters = filters,
+                        photosPagingData = photoPagingData,
+                    )
+                }
+            }
         }
     }
 }

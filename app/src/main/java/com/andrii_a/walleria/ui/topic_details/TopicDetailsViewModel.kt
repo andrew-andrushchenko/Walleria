@@ -130,17 +130,21 @@ class TopicDetailsViewModel @Inject constructor(
 
                 is BackendResult.Success -> {
                     val topic = result.value
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            error = null,
-                            topic = topic,
-                            topicPhotos = photoRepository.getTopicPhotos(
-                                idOrSlug = topic.id,
-                                orientation = it.topicPhotosFilters.orientation,
-                                order = it.topicPhotosFilters.order
-                            ).cachedIn(viewModelScope)
-                        )
+                    viewModelScope.launch {
+                        photoRepository.getTopicPhotos(
+                            idOrSlug = topic.id,
+                            orientation = _state.value.topicPhotosFilters.orientation,
+                            order = _state.value.topicPhotosFilters.order
+                        ).cachedIn(viewModelScope).collect { pagingData ->
+                            _state.update {
+                                it.copy(
+                                    isLoading = false,
+                                    error = null,
+                                    topic = topic,
+                                    topicPhotosPagingData = pagingData,
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -149,15 +153,19 @@ class TopicDetailsViewModel @Inject constructor(
     }
 
     private fun filterTopicPhotos(topicPhotosFilters: TopicPhotosFilters) {
-        _state.update {
-            it.copy(
-                topicPhotosFilters = topicPhotosFilters,
-                topicPhotos = photoRepository.getTopicPhotos(
-                    idOrSlug = it.topic!!.id,
-                    orientation = topicPhotosFilters.orientation,
-                    order = topicPhotosFilters.order
-                )
-            )
+        viewModelScope.launch {
+            photoRepository.getTopicPhotos(
+                idOrSlug = _state.value.topic!!.id,
+                orientation = topicPhotosFilters.orientation,
+                order = topicPhotosFilters.order
+            ).cachedIn(viewModelScope).collect { pagingData ->
+                _state.update {
+                    it.copy(
+                        topicPhotosFilters = topicPhotosFilters,
+                        topicPhotosPagingData = pagingData
+                    )
+                }
+            }
         }
     }
 

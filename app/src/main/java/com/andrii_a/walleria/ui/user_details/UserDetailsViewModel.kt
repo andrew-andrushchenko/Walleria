@@ -36,8 +36,7 @@ class UserDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _state: MutableStateFlow<UserDetailsUiState> =
-        MutableStateFlow(UserDetailsUiState())
+    private val _state: MutableStateFlow<UserDetailsUiState> = MutableStateFlow(UserDetailsUiState())
     val state = combine(
         userAccountPreferencesRepository.userPrivateProfileData,
         localPreferencesRepository.photosListLayoutType,
@@ -178,19 +177,23 @@ class UserDetailsViewModel @Inject constructor(
 
                 is BackendResult.Success -> {
                     val user = result.value
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            error = null,
-                            user = user,
-                            photos = photoRepository.getUserPhotos(user.username)
-                                .cachedIn(viewModelScope),
-                            likedPhotos = photoRepository.getUserLikedPhotos(user.username)
-                                .cachedIn(viewModelScope),
-                            collections = collectionRepository.getUserCollections(user.username)
-                                .cachedIn(viewModelScope)
-                        )
-                    }
+
+                    combine(
+                        photoRepository.getUserPhotos(user.username).cachedIn(viewModelScope),
+                        photoRepository.getUserLikedPhotos(user.username).cachedIn(viewModelScope),
+                        collectionRepository.getUserCollections(user.username).cachedIn(viewModelScope)
+                    ) { photosPagingData, likedPhotosPagingData, collectionsPagingData ->
+                        _state.update {
+                            it.copy(
+                                isLoading = false,
+                                error = null,
+                                user = user,
+                                photosPagingData = photosPagingData,
+                                likedPhotosPagingData = likedPhotosPagingData,
+                                collectionsPagingData = collectionsPagingData
+                            )
+                        }
+                    }.launchIn(viewModelScope)
                 }
             }
         }.launchIn(viewModelScope)

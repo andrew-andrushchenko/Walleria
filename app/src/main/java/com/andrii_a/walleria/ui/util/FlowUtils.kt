@@ -11,7 +11,6 @@ import androidx.paging.LoadStates
 import androidx.paging.PagingData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 
 @SuppressLint("ComposableNaming")
@@ -27,12 +26,12 @@ fun <T> Flow<T>.collectAsOneTimeEvents(onEvent: (T) -> Unit) {
     }
 }
 
-fun <T : Any> emptyPagingDataFlow(): Flow<PagingData<T>> = flow {
+fun <T : Any> emptyPagingData(): PagingData<T> {
     val loadStates = LoadStates(
         refresh = LoadState.NotLoading(endOfPaginationReached = true),
         prepend = LoadState.NotLoading(endOfPaginationReached = true),
         append = LoadState.NotLoading(endOfPaginationReached = true)
     )
 
-    emit(PagingData.empty(sourceLoadStates = loadStates))
+    return PagingData.empty(sourceLoadStates = loadStates)
 }

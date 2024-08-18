@@ -34,11 +34,15 @@ class TopicsViewModel @Inject constructor(
         when (event) {
             is TopicsEvent.ChangeListOrder -> {
                 val displayOrder = TopicsDisplayOrder.entries[event.orderOptionOrdinalNum]
-                _state.update {
-                    it.copy(
-                        topicsDisplayOrder = displayOrder,
-                        topics = topicRepository.getTopics(displayOrder).cachedIn(viewModelScope)
-                    )
+                viewModelScope.launch {
+                    topicRepository.getTopics(displayOrder).cachedIn(viewModelScope).collect { pagingData ->
+                        _state.update {
+                            it.copy(
+                                topicsDisplayOrder = displayOrder,
+                                topicsPagingData = pagingData
+                            )
+                        }
+                    }
                 }
             }
 

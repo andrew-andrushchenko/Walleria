@@ -26,6 +26,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -43,6 +44,7 @@ import com.andrii_a.walleria.ui.common.components.lists.PhotosGrid
 import com.andrii_a.walleria.ui.common.components.lists.PhotosList
 import com.andrii_a.walleria.ui.common.UiErrorWithRetry
 import com.andrii_a.walleria.ui.util.username
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 @Composable
@@ -185,7 +187,11 @@ private fun SuccessStateContent(
         val listState = rememberLazyListState()
         val gridState = rememberLazyStaggeredGridState()
 
-        val collectionPhotosLazyItems = state.collectionPhotos.collectAsLazyPagingItems()
+        val collectionPhotosLazyItems = remember(state.collectionPhotosPagingData) {
+            flow {
+                emit(state.collectionPhotosPagingData)
+            }
+        }.collectAsLazyPagingItems()
 
         when (state.photosListLayoutType) {
             PhotosListLayoutType.DEFAULT -> {

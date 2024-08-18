@@ -9,16 +9,15 @@ import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.search.RecentSearchItem
 import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.ui.common.SearchQuery
-import com.andrii_a.walleria.ui.util.emptyPagingDataFlow
-import kotlinx.coroutines.flow.Flow
+import com.andrii_a.walleria.ui.util.emptyPagingData
 
 data class SearchUiState(
     val query: SearchQuery = "",
     val photoFilters: PhotoFilters = PhotoFilters(),
     val recentSearches: List<RecentSearchItem> = emptyList(),
-    val photos: Flow<PagingData<Photo>> = emptyPagingDataFlow(),
-    val collections: Flow<PagingData<Collection>> = emptyPagingDataFlow(),
-    val users: Flow<PagingData<User>> = emptyPagingDataFlow(),
+    val photosPagingData: PagingData<Photo> = emptyPagingData(),
+    val collectionsPagingData: PagingData<Collection> = emptyPagingData(),
+    val usersPagingData: PagingData<User> = emptyPagingData(),
     val isFilterDialogOpened: Boolean = false,
     val photosLayoutType: PhotosListLayoutType = PhotosListLayoutType.DEFAULT,
     val collectionsLayoutType: CollectionListLayoutType = CollectionListLayoutType.DEFAULT,

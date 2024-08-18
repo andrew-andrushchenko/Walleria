@@ -25,6 +25,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,6 +40,7 @@ import com.andrii_a.walleria.ui.common.components.ErrorBanner
 import com.andrii_a.walleria.ui.common.components.lists.PhotosGrid
 import com.andrii_a.walleria.ui.common.components.lists.PhotosList
 import com.andrii_a.walleria.ui.common.UiErrorWithRetry
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 @Composable
@@ -189,7 +191,11 @@ private fun SuccessStateContent(
         val listState = rememberLazyListState()
         val gridState = rememberLazyStaggeredGridState()
 
-        val topicPhotosLazyItems = state.topicPhotos.collectAsLazyPagingItems()
+        val topicPhotosLazyItems = remember(state.topicPhotosPagingData) {
+            flow {
+                emit(state.topicPhotosPagingData)
+            }
+        }.collectAsLazyPagingItems()
 
         when (state.photosListLayoutType) {
             PhotosListLayoutType.DEFAULT -> {

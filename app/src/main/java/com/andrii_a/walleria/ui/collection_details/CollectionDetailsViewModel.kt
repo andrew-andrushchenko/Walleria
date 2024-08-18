@@ -128,7 +128,13 @@ class CollectionDetailsViewModel @Inject constructor(
                             isLoading = false,
                             error = UiErrorWithRetry(
                                 reason = UiText.DynamicString(result.reason.orEmpty()),
-                                onRetry = { onEvent(CollectionDetailsEvent.RequestCollection(collectionId)) }
+                                onRetry = {
+                                    onEvent(
+                                        CollectionDetailsEvent.RequestCollection(
+                                            collectionId
+                                        )
+                                    )
+                                }
                             )
                         )
                     }
@@ -138,15 +144,20 @@ class CollectionDetailsViewModel @Inject constructor(
                 is BackendResult.Success -> {
                     val collection = result.value
 
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            error = null,
-                            collection = collection,
-                            collectionPhotos = photoRepository.getCollectionPhotos(collection.id)
-                                .cachedIn(viewModelScope)
-                        )
+                    viewModelScope.launch {
+                        photoRepository.getCollectionPhotos(collection.id).cachedIn(viewModelScope)
+                            .collect { pagingData ->
+                                _state.update {
+                                    it.copy(
+                                        isLoading = false,
+                                        error = null,
+                                        collection = collection,
+                                        collectionPhotosPagingData = pagingData
+                                    )
+                                }
+                            }
                     }
+
                 }
             }
         }.launchIn(viewModelScope)

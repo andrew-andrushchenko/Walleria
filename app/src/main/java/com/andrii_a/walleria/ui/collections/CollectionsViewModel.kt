@@ -49,10 +49,12 @@ class CollectionsViewModel @Inject constructor(
     fun onEvent(event: CollectionsEvent) {
         when (event) {
             is CollectionsEvent.GetCollections -> {
-                _state.update {
-                    it.copy(
-                        collections = collectionRepository.getCollections().cachedIn(viewModelScope)
-                    )
+                viewModelScope.launch {
+                    collectionRepository.getCollections().cachedIn(viewModelScope).collect { pagingData ->
+                        _state.update {
+                            it.copy(collectionsPagingData = pagingData)
+                        }
+                    }
                 }
             }
 

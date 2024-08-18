@@ -7,10 +7,9 @@ import com.andrii_a.walleria.domain.PhotosListLayoutType
 import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.user.User
-import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.common.UiError
-import com.andrii_a.walleria.ui.util.emptyPagingDataFlow
-import kotlinx.coroutines.flow.Flow
+import com.andrii_a.walleria.ui.common.UserNickname
+import com.andrii_a.walleria.ui.util.emptyPagingData
 
 data class UserDetailsUiState(
     val loggedInUserNickname: UserNickname = "",
@@ -18,9 +17,9 @@ data class UserDetailsUiState(
     val isLoading: Boolean = false,
     val error: UiError? = null,
     val isDetailsDialogOpened: Boolean = false,
-    val photos: Flow<PagingData<Photo>> = emptyPagingDataFlow(),
-    val likedPhotos: Flow<PagingData<Photo>> = emptyPagingDataFlow(),
-    val collections: Flow<PagingData<Collection>> = emptyPagingDataFlow(),
+    val photosPagingData: PagingData<Photo> = emptyPagingData(),
+    val likedPhotosPagingData: PagingData<Photo> = emptyPagingData(),
+    val collectionsPagingData: PagingData<Collection> = emptyPagingData(),
     val photosListLayoutType: PhotosListLayoutType = PhotosListLayoutType.DEFAULT,
     val collectionListLayoutType: CollectionListLayoutType = CollectionListLayoutType.DEFAULT,
     val photosLoadQuality: PhotoQuality = PhotoQuality.MEDIUM,

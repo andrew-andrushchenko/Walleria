@@ -50,11 +50,15 @@ class PhotosViewModel @Inject constructor(
         when (event) {
             is PhotosEvent.ChangeListOrder -> {
                 val displayOrder = PhotoListDisplayOrder.entries[event.orderOptionOrdinalNum]
-                _state.update {
-                    it.copy(
-                        photosListDisplayOrder = displayOrder,
-                        photos = photoRepository.getPhotos(displayOrder).cachedIn(viewModelScope)
-                    )
+                viewModelScope.launch {
+                    photoRepository.getPhotos(displayOrder).cachedIn(viewModelScope).collect { pagingData ->
+                        _state.update {
+                            it.copy(
+                                photosListDisplayOrder = displayOrder,
+                                photosPagingData = pagingData,
+                            )
+                        }
+                    }
                 }
             }
 

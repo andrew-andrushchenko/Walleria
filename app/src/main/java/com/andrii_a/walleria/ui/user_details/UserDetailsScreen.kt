@@ -44,6 +44,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -71,6 +72,7 @@ import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.user_details.components.NestedScrollLayout
 import com.andrii_a.walleria.ui.user_details.components.UserHeader
 import com.andrii_a.walleria.ui.user_details.components.rememberNestedScrollLayoutState
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 @Composable
@@ -296,7 +298,11 @@ private fun Pages(
     ) { index ->
         when (index) {
             UserDetailsScreenTabs.Photos.ordinal -> {
-                val lazyPhotoItems = uiState.photos.collectAsLazyPagingItems()
+                val lazyPhotoItems = remember(uiState.photosPagingData) {
+                    flow {
+                        emit(uiState.photosPagingData)
+                    }
+                }.collectAsLazyPagingItems()
 
                 when (uiState.photosListLayoutType) {
                     PhotosListLayoutType.DEFAULT -> {
@@ -367,7 +373,11 @@ private fun Pages(
             }
 
             UserDetailsScreenTabs.LikedPhotos.ordinal -> {
-                val lazyLikedPhotoItems = uiState.likedPhotos.collectAsLazyPagingItems()
+                val lazyLikedPhotoItems = remember(uiState.likedPhotosPagingData) {
+                    flow {
+                        emit(uiState.likedPhotosPagingData)
+                    }
+                }.collectAsLazyPagingItems()
 
                 when (uiState.photosListLayoutType) {
                     PhotosListLayoutType.DEFAULT -> {
@@ -438,7 +448,11 @@ private fun Pages(
             }
 
             UserDetailsScreenTabs.Collections.ordinal -> {
-                val lazyCollectionItems = uiState.collections.collectAsLazyPagingItems()
+                val lazyCollectionItems = remember(uiState.collectionsPagingData) {
+                    flow {
+                        emit(uiState.collectionsPagingData)
+                    }
+                }.collectAsLazyPagingItems()
 
                 when (uiState.collectionListLayoutType) {
                     CollectionListLayoutType.DEFAULT -> {
