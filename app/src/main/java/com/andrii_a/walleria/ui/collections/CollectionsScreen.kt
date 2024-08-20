@@ -16,7 +16,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.dimensionResource
@@ -28,7 +29,6 @@ import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.CollectionListLayoutType
 import com.andrii_a.walleria.ui.common.components.lists.CollectionsGrid
 import com.andrii_a.walleria.ui.common.components.lists.CollectionsList
-import kotlinx.coroutines.flow.flow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,11 +36,7 @@ fun CollectionsScreen(
     state: CollectionsUiState,
     onEvent: (CollectionsEvent) -> Unit
 ) {
-    val lazyCollectionItems = remember(state.collectionsPagingData) {
-        flow {
-            emit(state.collectionsPagingData)
-        }
-    }.collectAsLazyPagingItems()
+    val lazyCollectionItems by rememberUpdatedState(newValue = state.collections.collectAsLazyPagingItems())
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 

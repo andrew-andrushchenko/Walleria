@@ -44,8 +44,8 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -72,7 +72,6 @@ import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.user_details.components.NestedScrollLayout
 import com.andrii_a.walleria.ui.user_details.components.UserHeader
 import com.andrii_a.walleria.ui.user_details.components.rememberNestedScrollLayoutState
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 @Composable
@@ -298,11 +297,7 @@ private fun Pages(
     ) { index ->
         when (index) {
             UserDetailsScreenTabs.Photos.ordinal -> {
-                val lazyPhotoItems = remember(uiState.photosPagingData) {
-                    flow {
-                        emit(uiState.photosPagingData)
-                    }
-                }.collectAsLazyPagingItems()
+                val lazyPhotoItems by rememberUpdatedState(newValue = uiState.photos.collectAsLazyPagingItems())
 
                 when (uiState.photosListLayoutType) {
                     PhotosListLayoutType.DEFAULT -> {
@@ -373,11 +368,7 @@ private fun Pages(
             }
 
             UserDetailsScreenTabs.LikedPhotos.ordinal -> {
-                val lazyLikedPhotoItems = remember(uiState.likedPhotosPagingData) {
-                    flow {
-                        emit(uiState.likedPhotosPagingData)
-                    }
-                }.collectAsLazyPagingItems()
+                val lazyLikedPhotoItems by rememberUpdatedState(newValue = uiState.likedPhotos.collectAsLazyPagingItems())
 
                 when (uiState.photosListLayoutType) {
                     PhotosListLayoutType.DEFAULT -> {
@@ -448,11 +439,7 @@ private fun Pages(
             }
 
             UserDetailsScreenTabs.Collections.ordinal -> {
-                val lazyCollectionItems = remember(uiState.collectionsPagingData) {
-                    flow {
-                        emit(uiState.collectionsPagingData)
-                    }
-                }.collectAsLazyPagingItems()
+                val lazyCollectionItems by rememberUpdatedState(newValue = uiState.collections.collectAsLazyPagingItems())
 
                 when (uiState.collectionListLayoutType) {
                     CollectionListLayoutType.DEFAULT -> {

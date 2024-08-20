@@ -1,9 +1,11 @@
 package com.andrii_a.walleria.ui.photo_details
 
+import androidx.compose.runtime.Stable
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.ui.common.UiError
 
+@Stable
 data class PhotoDetailsUiState(
     val isUserLoggedIn: Boolean = false,
     val isLoading: Boolean = false,

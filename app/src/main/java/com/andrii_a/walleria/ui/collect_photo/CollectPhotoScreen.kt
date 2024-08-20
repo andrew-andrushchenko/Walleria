@@ -22,8 +22,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -39,7 +40,6 @@ import com.andrii_a.walleria.ui.collect_photo.state.CollectActionState
 import com.andrii_a.walleria.ui.collect_photo.state.CollectPhotoUiState
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
 import com.andrii_a.walleria.ui.util.toast
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 @Composable
@@ -47,11 +47,7 @@ fun CollectPhotoScreen(
     state: CollectPhotoUiState,
     onEvent: (CollectPhotoEvent) -> Unit
 ) {
-    val userCollections = remember(state.userCollectionsPagingData) {
-        flow {
-            emit(state.userCollectionsPagingData)
-        }
-    }.collectAsLazyPagingItems()
+    val userCollections by rememberUpdatedState(newValue = state.userCollections.collectAsLazyPagingItems())
 
     when {
         state.isLoading -> {

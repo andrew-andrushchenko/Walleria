@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -51,14 +52,16 @@ class PhotosViewModel @Inject constructor(
             is PhotosEvent.ChangeListOrder -> {
                 val displayOrder = PhotoListDisplayOrder.entries[event.orderOptionOrdinalNum]
                 viewModelScope.launch {
-                    photoRepository.getPhotos(displayOrder).cachedIn(viewModelScope).collect { pagingData ->
-                        _state.update {
-                            it.copy(
-                                photosListDisplayOrder = displayOrder,
-                                photosPagingData = pagingData,
-                            )
+                    photoRepository.getPhotos(displayOrder)
+                        .cachedIn(viewModelScope)
+                        .collectLatest { pagingData ->
+                            _state.update {
+                                it.copy(
+                                    photosListDisplayOrder = displayOrder,
+                                    photosPagingData = pagingData,
+                                )
+                            }
                         }
-                    }
                 }
             }
 

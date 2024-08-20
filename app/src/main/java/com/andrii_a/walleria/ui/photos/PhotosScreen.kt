@@ -16,7 +16,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.dimensionResource
@@ -30,7 +31,6 @@ import com.andrii_a.walleria.ui.common.components.WTitleDropdown
 import com.andrii_a.walleria.ui.common.components.lists.PhotosGrid
 import com.andrii_a.walleria.ui.common.components.lists.PhotosList
 import com.andrii_a.walleria.ui.util.titleRes
-import kotlinx.coroutines.flow.flow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,12 +38,7 @@ fun PhotosScreen(
     state: PhotosUiState,
     onEvent: (PhotosEvent) -> Unit
 ) {
-    //val lazyPhotoItems = state.photos.collectAsLazyPagingItems()
-    val lazyPhotoItems = remember(state.photosPagingData) {
-        flow {
-            emit(state.photosPagingData)
-        }
-    }.collectAsLazyPagingItems()
+    val lazyPhotoItems by rememberUpdatedState(newValue = state.photos.collectAsLazyPagingItems())
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
