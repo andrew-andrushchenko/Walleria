@@ -2,6 +2,7 @@ package com.andrii_a.walleria.data.util.network
 
 import com.andrii_a.walleria.domain.network.Resource
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
@@ -12,6 +13,8 @@ suspend fun <T> backendRequest(request: suspend () -> T): Resource<T> =
         try {
             Resource.Success(request.invoke())
         } catch (throwable: Throwable) {
+            coroutineContext.ensureActive()
+
             when (throwable) {
                 is HttpException -> {
                     val code = throwable.code()
