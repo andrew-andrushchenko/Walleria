@@ -3,7 +3,7 @@ package com.andrii_a.walleria.data.remote.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.andrii_a.walleria.domain.network.BackendResult
+import com.andrii_a.walleria.domain.network.Resource
 import com.andrii_a.walleria.data.remote.source.collection.CollectionsPagingSource
 import com.andrii_a.walleria.data.remote.services.CollectionsService
 import com.andrii_a.walleria.data.remote.source.collection.UserCollectionsPagingSource
@@ -27,7 +27,7 @@ class CollectionRepositoryImpl(private val collectionsService: CollectionsServic
             pagingSourceFactory = { CollectionsPagingSource(collectionsService) }
         ).flow
 
-    override fun getCollection(id: String): Flow<BackendResult<Collection>> =
+    override fun getCollection(id: String): Flow<Resource<Collection>> =
         backendRequestFlow {
             collectionsService.getCollection(id).toCollection()
         }
@@ -45,7 +45,7 @@ class CollectionRepositoryImpl(private val collectionsService: CollectionsServic
         title: String,
         description: String?,
         isPrivate: Boolean?
-    ): BackendResult<Collection> = backendRequest {
+    ): Resource<Collection> = backendRequest {
         collectionsService.createCollection(
             title,
             description,
@@ -58,7 +58,7 @@ class CollectionRepositoryImpl(private val collectionsService: CollectionsServic
         title: String?,
         description: String?,
         isPrivate: Boolean
-    ): BackendResult<Collection> = backendRequest {
+    ): Resource<Collection> = backendRequest {
         collectionsService.updateCollection(
             id,
             title,
@@ -67,14 +67,14 @@ class CollectionRepositoryImpl(private val collectionsService: CollectionsServic
         ).toCollection()
     }
 
-    override suspend fun deleteCollection(id: String): BackendResult<Unit> = backendRequest {
+    override suspend fun deleteCollection(id: String): Resource<Unit> = backendRequest {
         collectionsService.deleteCollection(id)
     }
 
     override suspend fun addPhotoToCollection(
         collectionId: String,
         photoId: String
-    ): BackendResult<CollectionPhotoResult> = backendRequest {
+    ): Resource<CollectionPhotoResult> = backendRequest {
         collectionsService.addPhotoToCollection(
             collectionId,
             photoId
@@ -84,14 +84,14 @@ class CollectionRepositoryImpl(private val collectionsService: CollectionsServic
     override suspend fun deletePhotoFromCollection(
         collectionId: String,
         photoId: String
-    ): BackendResult<CollectionPhotoResult> = backendRequest {
+    ): Resource<CollectionPhotoResult> = backendRequest {
         collectionsService.deletePhotoFromCollection(
             collectionId,
             photoId
         ).toCollectionPhotoResult()
     }
 
-    override suspend fun getRelatedCollection(id: String): BackendResult<List<Collection>> =
+    override suspend fun getRelatedCollection(id: String): Resource<List<Collection>> =
         backendRequest {
             collectionsService.getRelatedCollections(id).map { it.toCollection() }
         }

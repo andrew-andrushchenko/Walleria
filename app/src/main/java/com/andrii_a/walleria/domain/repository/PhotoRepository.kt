@@ -5,7 +5,7 @@ import com.andrii_a.walleria.domain.PhotoListDisplayOrder
 import com.andrii_a.walleria.domain.SearchResultsContentFilter
 import com.andrii_a.walleria.domain.SearchResultsPhotoOrientation
 import com.andrii_a.walleria.domain.TopicPhotosOrientation
-import com.andrii_a.walleria.domain.network.BackendResult
+import com.andrii_a.walleria.domain.network.Resource
 import com.andrii_a.walleria.domain.models.photo.Photo
 import kotlinx.coroutines.flow.Flow
 
@@ -25,7 +25,7 @@ interface PhotoRepository {
         order: PhotoListDisplayOrder = PhotoListDisplayOrder.LATEST
     ): Flow<PagingData<Photo>>
 
-    fun getPhoto(photoId: String): Flow<BackendResult<Photo>>
+    fun getPhoto(photoId: String): Flow<Resource<Photo>>
 
     fun getRandomPhoto(
         collectionId: String? = null,
@@ -34,11 +34,11 @@ interface PhotoRepository {
         query: String? = null,
         orientation: SearchResultsPhotoOrientation = SearchResultsPhotoOrientation.ANY,
         contentFilter: SearchResultsContentFilter = SearchResultsContentFilter.LOW
-    ): Flow<BackendResult<Photo>>
+    ): Flow<Resource<Photo>>
 
-    suspend fun likePhoto(id: String): BackendResult<Unit>
+    suspend fun likePhoto(id: String): Resource<Unit>
 
-    suspend fun dislikePhoto(id: String): BackendResult<Unit>
+    suspend fun dislikePhoto(id: String): Resource<Unit>
 
     suspend fun getUserCollectionIdsForPhoto(photoId: String): List<String>
 

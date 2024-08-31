@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.models.preferences.UserPrivateProfileData
-import com.andrii_a.walleria.domain.network.BackendResult
+import com.andrii_a.walleria.domain.network.Resource
 import com.andrii_a.walleria.domain.repository.LoginRepository
 import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
 import com.andrii_a.walleria.ui.common.UiText
@@ -146,12 +146,12 @@ class EditUserProfileViewModel @Inject constructor(
             val updateResult = loginRepository.updatePrivateUserProfile(userPrivateProfileData)
 
             when (updateResult) {
-                is BackendResult.Empty, is BackendResult.Loading -> Unit
-                is BackendResult.Error -> {
+                is Resource.Empty, is Resource.Loading -> Unit
+                is Resource.Error -> {
                     _profileUpdateMessageFlow.emit(UiText.StringResource(R.string.profile_data_not_updated))
                 }
 
-                is BackendResult.Success -> {
+                is Resource.Success -> {
                     loginRepository.savePrivateUserProfile(updateResult.value)
                     _profileUpdateMessageFlow.emit(UiText.StringResource(R.string.profile_data_updated_successfully))
                 }

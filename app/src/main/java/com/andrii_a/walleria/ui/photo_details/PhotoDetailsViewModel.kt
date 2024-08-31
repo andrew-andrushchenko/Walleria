@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
-import com.andrii_a.walleria.domain.network.BackendResult
+import com.andrii_a.walleria.domain.network.Resource
 import com.andrii_a.walleria.domain.repository.LocalPreferencesRepository
 import com.andrii_a.walleria.domain.repository.PhotoRepository
 import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
@@ -171,13 +171,13 @@ class PhotoDetailsViewModel @Inject constructor(
     private fun getPhoto(photoId: PhotoId) {
         photoRepository.getPhoto(photoId).onEach { result ->
             when (result) {
-                is BackendResult.Loading -> {
+                is Resource.Loading -> {
                     _state.update {
                         it.copy(isLoading = true)
                     }
                 }
 
-                is BackendResult.Success -> {
+                is Resource.Success -> {
                     val photo = result.value
 
                     val isPhotoCollected = photo.currentUserCollections?.map { collection ->
@@ -196,7 +196,7 @@ class PhotoDetailsViewModel @Inject constructor(
 
                 }
 
-                is BackendResult.Error -> {
+                is Resource.Error -> {
                     _state.update {
                         it.copy(
                             isLoading = false,
@@ -210,7 +210,7 @@ class PhotoDetailsViewModel @Inject constructor(
                     }
                 }
 
-                is BackendResult.Empty -> Unit
+                is Resource.Empty -> Unit
             }
         }.launchIn(viewModelScope)
     }

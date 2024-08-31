@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
-import com.andrii_a.walleria.domain.network.BackendResult
+import com.andrii_a.walleria.domain.network.Resource
 import com.andrii_a.walleria.domain.repository.CollectionRepository
 import com.andrii_a.walleria.domain.repository.PhotoRepository
 import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
@@ -147,8 +147,8 @@ class CollectPhotoViewModel @Inject constructor(
             }
 
             when (val result = deferredResult.await()) {
-                is BackendResult.Empty -> Unit
-                is BackendResult.Loading -> {
+                is Resource.Empty -> Unit
+                is Resource.Loading -> {
                     _state.update {
                         it.copy(
                             error = null,
@@ -160,7 +160,7 @@ class CollectPhotoViewModel @Inject constructor(
                     }
                 }
 
-                is BackendResult.Error -> {
+                is Resource.Error -> {
                     _state.update {
                         it.copy(
                             error = CollectOperationError(
@@ -172,7 +172,7 @@ class CollectPhotoViewModel @Inject constructor(
                     }
                 }
 
-                is BackendResult.Success -> {
+                is Resource.Success -> {
                     _state.update {
                         val newCollectionsList = it.userCollectionsContainingPhoto.toMutableList()
                         newCollectionsList += collectionId
@@ -203,8 +203,8 @@ class CollectPhotoViewModel @Inject constructor(
             }
 
             when (val result = deferredResult.await()) {
-                is BackendResult.Empty -> Unit
-                is BackendResult.Loading -> {
+                is Resource.Empty -> Unit
+                is Resource.Loading -> {
                     _state.update {
                         it.copy(
                             error = null,
@@ -216,7 +216,7 @@ class CollectPhotoViewModel @Inject constructor(
                     }
                 }
 
-                is BackendResult.Error -> {
+                is Resource.Error -> {
                     _state.update {
                         it.copy(
                             error = CollectOperationError(
@@ -228,7 +228,7 @@ class CollectPhotoViewModel @Inject constructor(
                     }
                 }
 
-                is BackendResult.Success -> {
+                is Resource.Success -> {
                     _state.update {
                         val newCollectionsList = it.userCollectionsContainingPhoto.toMutableList()
                         newCollectionsList -= collectionId
@@ -254,14 +254,14 @@ class CollectPhotoViewModel @Inject constructor(
             val creationResult = collectionRepository.createCollection(title, description, isPrivate)
 
             when (creationResult) {
-                is BackendResult.Empty -> Unit
-                is BackendResult.Loading -> {
+                is Resource.Empty -> Unit
+                is Resource.Loading -> {
                     _state.update {
                         it.copy(isCreateCollectionInProgress = true)
                     }
                 }
 
-                is BackendResult.Error -> {
+                is Resource.Error -> {
                     _state.update {
                         it.copy(
                             error = CollectOperationError(
@@ -271,7 +271,7 @@ class CollectPhotoViewModel @Inject constructor(
                     }
                 }
 
-                is BackendResult.Success -> {
+                is Resource.Success -> {
                     val collectionId = creationResult.value.id
                     collectPhoto(collectionId, photoId)
                     refreshCollectionsList()

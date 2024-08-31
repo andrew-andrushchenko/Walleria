@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
-import com.andrii_a.walleria.domain.network.BackendResult
+import com.andrii_a.walleria.domain.network.Resource
 import com.andrii_a.walleria.domain.repository.LocalPreferencesRepository
 import com.andrii_a.walleria.domain.repository.PhotoRepository
 import com.andrii_a.walleria.domain.repository.TopicRepository
@@ -107,14 +107,14 @@ class TopicDetailsViewModel @Inject constructor(
     private fun getTopic(id: String) {
         topicRepository.getTopic(id).onEach { result ->
             when (result) {
-                is BackendResult.Empty -> Unit
-                is BackendResult.Loading -> {
+                is Resource.Empty -> Unit
+                is Resource.Loading -> {
                     _state.update {
                         it.copy(isLoading = true)
                     }
                 }
 
-                is BackendResult.Error -> {
+                is Resource.Error -> {
                     _state.update {
                         it.copy(
                             isLoading = false,
@@ -128,7 +128,7 @@ class TopicDetailsViewModel @Inject constructor(
                     }
                 }
 
-                is BackendResult.Success -> {
+                is Resource.Success -> {
                     val topic = result.value
                     viewModelScope.launch {
                         photoRepository.getTopicPhotos(

@@ -3,7 +3,7 @@ package com.andrii_a.walleria.data.remote.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.andrii_a.walleria.domain.network.BackendResult
+import com.andrii_a.walleria.domain.network.Resource
 import com.andrii_a.walleria.data.remote.services.TopicService
 import com.andrii_a.walleria.data.remote.source.topic.TopicsPagingSource
 import com.andrii_a.walleria.data.util.PAGE_SIZE
@@ -24,7 +24,7 @@ class TopicRepositoryImpl(private val topicService: TopicService) : TopicReposit
             pagingSourceFactory = { TopicsPagingSource(topicService, order) }
         ).flow
 
-    override fun getTopic(idOrSlug: String): Flow<BackendResult<Topic>> = backendRequestFlow {
+    override fun getTopic(idOrSlug: String): Flow<Resource<Topic>> = backendRequestFlow {
         topicService.getTopic(idOrSlug).toTopic()
     }
 }

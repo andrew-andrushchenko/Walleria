@@ -11,7 +11,7 @@ import com.andrii_a.walleria.data.util.network.backendRequestFlow
 import com.andrii_a.walleria.domain.models.login.AccessToken
 import com.andrii_a.walleria.domain.models.login.UserPrivateProfile
 import com.andrii_a.walleria.domain.models.preferences.UserPrivateProfileData
-import com.andrii_a.walleria.domain.network.BackendResult
+import com.andrii_a.walleria.domain.network.Resource
 import com.andrii_a.walleria.domain.repository.LoginRepository
 import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
 import kotlinx.coroutines.flow.Flow
@@ -36,7 +36,7 @@ class LoginRepositoryImpl(
         get() = "https://unsplash.com/join"
 
 
-    override fun login(code: String): Flow<BackendResult<AccessToken>> = backendRequestFlow {
+    override fun login(code: String): Flow<Resource<AccessToken>> = backendRequestFlow {
         loginService.getAccessToken(
             clientId = CLIENT_ID,
             clientSecret = CLIENT_SECRET,
@@ -52,7 +52,7 @@ class LoginRepositoryImpl(
         userAccountPreferencesRepository.saveAccessToken(accessToken)
     }
 
-    override suspend fun getPrivateUserProfile(): BackendResult<UserPrivateProfile> =
+    override suspend fun getPrivateUserProfile(): Resource<UserPrivateProfile> =
         backendRequest {
             userService.getUserPrivateProfile().toUserPrivateProfile()
         }
@@ -63,7 +63,7 @@ class LoginRepositoryImpl(
 
     override suspend fun updatePrivateUserProfile(
         userPrivateProfileData: UserPrivateProfileData
-    ): BackendResult<UserPrivateProfile> =
+    ): Resource<UserPrivateProfile> =
         backendRequest {
             userService.updateUserPrivateProfile(
                 username = userPrivateProfileData.nickname,

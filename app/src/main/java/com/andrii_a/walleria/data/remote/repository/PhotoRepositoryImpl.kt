@@ -3,7 +3,7 @@ package com.andrii_a.walleria.data.remote.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.andrii_a.walleria.domain.network.BackendResult
+import com.andrii_a.walleria.domain.network.Resource
 import com.andrii_a.walleria.domain.PhotoListDisplayOrder
 import com.andrii_a.walleria.domain.TopicPhotosOrientation
 import com.andrii_a.walleria.data.remote.services.PhotoService
@@ -79,7 +79,7 @@ class PhotoRepositoryImpl(private val photoService: PhotoService) : PhotoReposit
             }
         ).flow
 
-    override fun getPhoto(photoId: String): Flow<BackendResult<Photo>> =
+    override fun getPhoto(photoId: String): Flow<Resource<Photo>> =
         backendRequestFlow {
             photoService.getPhoto(photoId).toPhoto()
         }
@@ -91,7 +91,7 @@ class PhotoRepositoryImpl(private val photoService: PhotoService) : PhotoReposit
         query: String?,
         orientation: SearchResultsPhotoOrientation,
         contentFilter: SearchResultsContentFilter
-    ): Flow<BackendResult<Photo>> = backendRequestFlow {
+    ): Flow<Resource<Photo>> = backendRequestFlow {
         photoService.getRandomPhotos(
             collectionId = collectionId,
             featured = featured,
@@ -103,11 +103,11 @@ class PhotoRepositoryImpl(private val photoService: PhotoService) : PhotoReposit
         ).first().toPhoto()
     }
 
-    override suspend fun likePhoto(id: String): BackendResult<Unit> = backendRequest {
+    override suspend fun likePhoto(id: String): Resource<Unit> = backendRequest {
         photoService.likePhoto(id)
     }
 
-    override suspend fun dislikePhoto(id: String): BackendResult<Unit> = backendRequest {
+    override suspend fun dislikePhoto(id: String): Resource<Unit> = backendRequest {
         photoService.dislikePhoto(id)
     }
 
@@ -118,8 +118,8 @@ class PhotoRepositoryImpl(private val photoService: PhotoService) : PhotoReposit
         }
 
         return when (result) {
-            is BackendResult.Empty, is BackendResult.Loading, is BackendResult.Error -> emptyList()
-            is BackendResult.Success -> result.value ?: emptyList()
+            is Resource.Empty, is Resource.Loading, is Resource.Error -> emptyList()
+            is Resource.Success -> result.value ?: emptyList()
         }
     }
 

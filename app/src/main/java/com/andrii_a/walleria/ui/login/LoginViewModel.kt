@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.andrii_a.walleria.domain.ApplicationScope
 import com.andrii_a.walleria.domain.models.login.AccessToken
 import com.andrii_a.walleria.domain.models.photo.Photo
-import com.andrii_a.walleria.domain.network.BackendResult
+import com.andrii_a.walleria.domain.network.Resource
 import com.andrii_a.walleria.domain.repository.LoginRepository
 import com.andrii_a.walleria.domain.repository.PhotoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -41,10 +41,10 @@ class LoginViewModel @Inject constructor(
     init {
         photoRepository.getRandomPhoto().onEach { result ->
             when (result) {
-                is BackendResult.Empty,
-                is BackendResult.Error,
-                is BackendResult.Loading -> Unit
-                is BackendResult.Success -> {
+                is Resource.Empty,
+                is Resource.Error,
+                is Resource.Loading -> Unit
+                is Resource.Success -> {
                     _bannerPhoto.update { result.value }
                 }
             }
@@ -55,16 +55,16 @@ class LoginViewModel @Inject constructor(
         loginRepository.login(code).onEach { backendResult ->
             _loginState.update {
                 when (backendResult) {
-                    is BackendResult.Empty -> LoginState.Empty
-                    is BackendResult.Loading -> LoginState.Loading
-                    is BackendResult.Error -> LoginState.Error
-                    is BackendResult.Success -> LoginState.Success(backendResult.value)
+                    is Resource.Empty -> LoginState.Empty
+                    is Resource.Loading -> LoginState.Loading
+                    is Resource.Error -> LoginState.Error
+                    is Resource.Success -> LoginState.Success(backendResult.value)
                 }
             }
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),
-            initialValue = BackendResult.Empty
+            initialValue = Resource.Empty
         ).launchIn(viewModelScope)
     }
 
@@ -81,7 +81,7 @@ class LoginViewModel @Inject constructor(
 
     private suspend fun getAndSaveUserProfile() {
         loginRepository.getPrivateUserProfile().let { backendResult ->
-            if (backendResult is BackendResult.Success) {
+            if (backendResult is Resource.Success) {
                 loginRepository.savePrivateUserProfile(userPrivateProfile = backendResult.value)
             }
         }
