@@ -13,9 +13,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.andrii_a.walleria.ui.navigation.NavigationScreen
-import com.andrii_a.walleria.ui.photo_details.navigateToPhotoDetails
-import com.andrii_a.walleria.ui.search.navigateToSearch
-import com.andrii_a.walleria.ui.user_details.navigateToUserDetails
+import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 
 fun NavGraphBuilder.photosBottomNavRoute(
@@ -48,15 +46,15 @@ fun NavGraphBuilder.photosBottomNavRoute(
         viewModel.navigationEventsChannelFlow.collectAsOneTimeEvents { event ->
             when (event) {
                 is PhotosNavigationEvent.NavigateToPhotoDetailsScreen -> {
-                    navController.navigateToPhotoDetails(event.photoId)
+                    navController.navigate(Screen.PhotoDetails(event.photoId))
                 }
 
                 is PhotosNavigationEvent.NavigateToUserDetails -> {
-                    navController.navigateToUserDetails(event.userNickname)
+                    navController.navigate(Screen.UserDetails(event.userNickname))
                 }
 
                 is PhotosNavigationEvent.NavigateToSearchScreen -> {
-                    navController.navigateToSearch()
+                    navController.navigate(Screen.Search())
                 }
 
                 is PhotosNavigationEvent.NavigateToProfileScreen -> {

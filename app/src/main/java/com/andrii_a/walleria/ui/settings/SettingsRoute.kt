@@ -16,8 +16,7 @@ import androidx.navigation.compose.composable
 import com.andrii_a.walleria.ui.navigation.Screen
 
 fun NavGraphBuilder.settingsRoute(navController: NavController) {
-    composable(
-        route = Screen.Settings.route,
+    composable<Screen.Settings>(
         enterTransition = {
             fadeIn(
                 animationSpec = tween(300, easing = LinearEasing)
@@ -51,8 +50,4 @@ fun NavGraphBuilder.settingsRoute(navController: NavController) {
             navigateBack = navController::navigateUp
         )
     }
-}
-
-fun NavController.navigateToSettings() {
-    this.navigate(Screen.Settings.route)
 }

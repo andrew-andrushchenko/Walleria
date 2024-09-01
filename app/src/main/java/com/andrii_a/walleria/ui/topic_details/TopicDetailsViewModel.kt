@@ -3,6 +3,7 @@ package com.andrii_a.walleria.ui.topic_details
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import androidx.paging.cachedIn
 import com.andrii_a.walleria.domain.network.Resource
 import com.andrii_a.walleria.domain.repository.LocalPreferencesRepository
@@ -10,6 +11,7 @@ import com.andrii_a.walleria.domain.repository.PhotoRepository
 import com.andrii_a.walleria.domain.repository.TopicRepository
 import com.andrii_a.walleria.ui.common.UiErrorWithRetry
 import com.andrii_a.walleria.ui.common.UiText
+import com.andrii_a.walleria.ui.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -51,9 +53,8 @@ class TopicDetailsViewModel @Inject constructor(
     val navigationEventsChannelFlow = navigationChannel.receiveAsFlow()
 
     init {
-        savedStateHandle.get<String>(TopicDetailsArgs.ID)?.let { topicId ->
-            onEvent(TopicDetailsEvent.RequestTopic(topicId))
-        }
+        val topicId = savedStateHandle.toRoute<Screen.TopicDetails>().topicId
+        onEvent(TopicDetailsEvent.RequestTopic(topicId))
     }
 
     fun onEvent(event: TopicDetailsEvent) {

@@ -12,15 +12,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import com.andrii_a.walleria.ui.collection_details.navigateToCollectionDetails
-import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.navigation.Screen
-import com.andrii_a.walleria.ui.photo_details.navigateToPhotoDetails
-import com.andrii_a.walleria.ui.profile_edit.navigateToEditUserProfile
-import com.andrii_a.walleria.ui.search.navigateToSearch
 import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 import com.andrii_a.walleria.ui.util.openInstagramProfile
 import com.andrii_a.walleria.ui.util.openLinkInBrowser
@@ -28,14 +21,7 @@ import com.andrii_a.walleria.ui.util.openTwitterProfile
 import com.andrii_a.walleria.ui.util.openUserProfileInBrowser
 
 fun NavGraphBuilder.userDetailsRoute(navController: NavController) {
-    composable(
-        route = "${Screen.UserDetails.route}/{${UserDetailsArgs.NICKNAME}}",
-        arguments = listOf(
-            navArgument(UserDetailsArgs.NICKNAME) {
-                type = NavType.StringType
-                nullable = false
-            }
-        ),
+    composable<Screen.UserDetails>(
         enterTransition = {
             fadeIn(
                 animationSpec = tween(300, easing = LinearEasing)
@@ -65,23 +51,23 @@ fun NavGraphBuilder.userDetailsRoute(navController: NavController) {
                 }
 
                 is UserDetailsNavigationEvent.NavigateToPhotoDetailsScreen -> {
-                    navController.navigateToPhotoDetails(event.photoId)
+                    navController.navigate(Screen.PhotoDetails(event.photoId))
                 }
 
                 is UserDetailsNavigationEvent.NavigateToCollectionDetails -> {
-                    navController.navigateToCollectionDetails(event.collectionId)
+                    navController.navigate(Screen.CollectionDetails(event.collectionId))
                 }
 
                 is UserDetailsNavigationEvent.NavigateToUserDetails -> {
-                    navController.navigateToUserDetails(event.userNickname)
+                    navController.navigate(Screen.UserDetails(event.userNickname))
                 }
 
                 is UserDetailsNavigationEvent.NavigateToSearchScreen -> {
-                    navController.navigateToSearch(event.query)
+                    navController.navigate(Screen.Search(event.query))
                 }
 
                 is UserDetailsNavigationEvent.NavigateToEditProfile -> {
-                    navController.navigateToEditUserProfile()
+                    navController.navigate(Screen.EditUserProfile)
                 }
 
                 is UserDetailsNavigationEvent.NavigateToUserProfileInChromeTab -> {
@@ -107,12 +93,4 @@ fun NavGraphBuilder.userDetailsRoute(navController: NavController) {
             onEvent = viewModel::onEvent
         )
     }
-}
-
-fun NavController.navigateToUserDetails(userNickname: UserNickname) {
-    this.navigate("${Screen.UserDetails.route}/$userNickname")
-}
-
-object UserDetailsArgs {
-    const val NICKNAME = "userNickname"
 }

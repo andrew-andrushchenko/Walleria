@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.kotlinKapt)
     alias(libs.plugins.daggerHiltAndroid)
     alias(libs.plugins.kotlinKsp)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 lateinit var accessKey: String
@@ -152,6 +153,8 @@ dependencies {
 
     // Custom tabs
     implementation(libs.androidx.browser)
+
+    implementation(libs.kotlinx.serialization.json)
 
     // Tests
     testImplementation(libs.junit)

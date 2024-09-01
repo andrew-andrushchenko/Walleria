@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlinKapt) apply false
     alias(libs.plugins.daggerHiltAndroid) apply false
     alias(libs.plugins.kotlinKsp) apply false
+    alias(libs.plugins.kotlin.serialization) apply false
 }
 
 tasks.register("clean", Delete::class) {

@@ -3,6 +3,7 @@ package com.andrii_a.walleria.ui.photo_details
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.network.Resource
@@ -13,6 +14,7 @@ import com.andrii_a.walleria.domain.services.PhotoDownloader
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.common.UiErrorWithRetry
 import com.andrii_a.walleria.ui.common.UiText
+import com.andrii_a.walleria.ui.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -58,9 +60,8 @@ class PhotoDetailsViewModel @Inject constructor(
     val navigationEventsChannelFlow = navigationChannel.receiveAsFlow()
 
     init {
-        savedStateHandle.get<String>(PhotoDetailsArgs.ID)?.let { photoId ->
-            onEvent(PhotoDetailsEvent.RequestPhoto(photoId))
-        }
+        val photoId = savedStateHandle.toRoute<Screen.PhotoDetails>().photoId
+        onEvent(PhotoDetailsEvent.RequestPhoto(photoId))
     }
 
     fun onEvent(event: PhotoDetailsEvent) {

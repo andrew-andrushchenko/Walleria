@@ -12,25 +12,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import com.andrii_a.walleria.ui.common.TopicId
 import com.andrii_a.walleria.ui.navigation.Screen
-import com.andrii_a.walleria.ui.photo_details.navigateToPhotoDetails
-import com.andrii_a.walleria.ui.user_details.navigateToUserDetails
 import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 import com.andrii_a.walleria.ui.util.openLinkInBrowser
 
 fun NavGraphBuilder.topicDetailsRoute(navController: NavController) {
-    composable(
-        route = "${Screen.TopicDetails.route}/{${TopicDetailsArgs.ID}}",
-        arguments = listOf(
-            navArgument(TopicDetailsArgs.ID) {
-                type = NavType.StringType
-                nullable = false
-            }
-        ),
+    composable<Screen.TopicDetails>(
         enterTransition = {
             fadeIn(
                 animationSpec = tween(300, easing = LinearEasing)
@@ -64,11 +52,11 @@ fun NavGraphBuilder.topicDetailsRoute(navController: NavController) {
                 }
 
                 is TopicDetailsNavigationEvent.NavigateToPhotoDetails -> {
-                    navController.navigateToPhotoDetails(event.photoId)
+                    navController.navigate(Screen.PhotoDetails(event.photoId))
                 }
 
                 is TopicDetailsNavigationEvent.NavigateToUserDetails -> {
-                    navController.navigateToUserDetails(event.userNickname)
+                    navController.navigate(Screen.UserDetails(event.userNickname))
                 }
             }
         }
@@ -78,12 +66,4 @@ fun NavGraphBuilder.topicDetailsRoute(navController: NavController) {
             onEvent = viewModel::onEvent,
         )
     }
-}
-
-fun NavController.navigateToTopicDetails(topicId: TopicId) {
-    this.navigate("${Screen.TopicDetails.route}/$topicId")
-}
-
-object TopicDetailsArgs {
-    const val ID = "topicId"
 }

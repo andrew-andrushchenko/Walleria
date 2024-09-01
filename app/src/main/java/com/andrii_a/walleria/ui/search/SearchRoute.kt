@@ -11,26 +11,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import com.andrii_a.walleria.ui.collection_details.navigateToCollectionDetails
-import com.andrii_a.walleria.ui.common.SearchQuery
 import com.andrii_a.walleria.ui.navigation.Screen
-import com.andrii_a.walleria.ui.photo_details.navigateToPhotoDetails
-import com.andrii_a.walleria.ui.user_details.navigateToUserDetails
 import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 
 fun NavGraphBuilder.searchRoute(navController: NavController) {
-    composable(
-        route = "${Screen.Search.route}?${SearchArgs.QUERY}={${SearchArgs.QUERY}}",
-        arguments = listOf(
-            navArgument(SearchArgs.QUERY) {
-                type = NavType.StringType
-                nullable = false
-                defaultValue = ""
-            }
-        ),
+    composable<Screen.Search>(
         enterTransition = {
             fadeIn(
                 animationSpec = tween(300, easing = LinearEasing)
@@ -59,15 +45,15 @@ fun NavGraphBuilder.searchRoute(navController: NavController) {
                 }
 
                 is SearchNavigationEvent.NavigateToPhotoDetails -> {
-                    navController.navigateToPhotoDetails(event.photoId)
+                    navController.navigate(Screen.PhotoDetails(event.photoId))
                 }
 
                 is SearchNavigationEvent.NavigateToCollectionDetails -> {
-                    navController.navigateToCollectionDetails(event.collectionId)
+                    navController.navigate(Screen.CollectionDetails(event.collectionId))
                 }
 
                 is SearchNavigationEvent.NavigateToUserDetails -> {
-                    navController.navigateToUserDetails(event.userNickname)
+                    navController.navigate(Screen.UserDetails(event.userNickname))
                 }
             }
         }
@@ -77,14 +63,4 @@ fun NavGraphBuilder.searchRoute(navController: NavController) {
             onEvent = viewModel::onEvent
         )
     }
-}
-
-fun NavController.navigateToSearch(query: SearchQuery? = null) {
-    val route = query?.let { "${Screen.Search.route}?${SearchArgs.QUERY}=$it" }
-        ?: Screen.Search.route
-    this.navigate(route)
-}
-
-object SearchArgs {
-    const val QUERY = "query"
 }

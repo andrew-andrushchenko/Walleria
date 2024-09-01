@@ -13,8 +13,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.andrii_a.walleria.ui.navigation.NavigationScreen
-import com.andrii_a.walleria.ui.search.navigateToSearch
-import com.andrii_a.walleria.ui.topic_details.navigateToTopicDetails
+import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 
 fun NavGraphBuilder.topicsBottomNavRoute(
@@ -46,7 +45,7 @@ fun NavGraphBuilder.topicsBottomNavRoute(
         viewModel.navigationEventsChannelFlow.collectAsOneTimeEvents { event ->
             when (event) {
                 is TopicsNavigationEvent.NavigateToTopicDetails -> {
-                    navController.navigateToTopicDetails(event.topicId)
+                    navController.navigate(Screen.TopicDetails(event.topicId))
                 }
 
                 is TopicsNavigationEvent.NavigateToProfileScreen -> {
@@ -54,7 +53,7 @@ fun NavGraphBuilder.topicsBottomNavRoute(
                 }
 
                 is TopicsNavigationEvent.NavigateToSearchScreen -> {
-                    navController.navigateToSearch()
+                    navController.navigate(Screen.Search())
                 }
             }
         }

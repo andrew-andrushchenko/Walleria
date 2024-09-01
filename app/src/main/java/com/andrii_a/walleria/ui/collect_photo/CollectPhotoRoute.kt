@@ -13,24 +13,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import com.andrii_a.walleria.ui.collect_photo.event.CollectPhotoNavigationEvent
-import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.util.InterScreenCommunicationKeys
 import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 
 fun NavGraphBuilder.collectPhotoRoute(navController: NavController) {
-    composable(
-        route = "${Screen.CollectPhoto.route}/{${CollectPhotoArgs.PHOTO_ID}}",
-        arguments = listOf(
-            navArgument(CollectPhotoArgs.PHOTO_ID) {
-                type = NavType.StringType
-                nullable = false
-            }
-        ),
+    composable<Screen.CollectPhoto>(
         enterTransition = {
             fadeIn(
                 animationSpec = tween(300, easing = LinearEasing)
@@ -87,10 +77,3 @@ fun NavGraphBuilder.collectPhotoRoute(navController: NavController) {
     }
 }
 
-fun NavController.navigateToCollectPhoto(photoId: PhotoId) {
-    this.navigate("${Screen.CollectPhoto.route}/$photoId")
-}
-
-object CollectPhotoArgs {
-    const val PHOTO_ID = "photo_id"
-}

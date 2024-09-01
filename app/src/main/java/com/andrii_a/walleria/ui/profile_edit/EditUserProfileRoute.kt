@@ -19,8 +19,7 @@ import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 import com.andrii_a.walleria.ui.util.toast
 
 fun NavGraphBuilder.editUserProfileRoute(navController: NavController) {
-    composable(
-        route = Screen.EditUserProfile.route,
+    composable<Screen.EditUserProfile>(
         enterTransition = {
             fadeIn(
                 animationSpec = tween(300, easing = LinearEasing)
@@ -60,8 +59,4 @@ fun NavGraphBuilder.editUserProfileRoute(navController: NavController) {
             onEvent = viewModel::onEvent
         )
     }
-}
-
-fun NavController.navigateToEditUserProfile() {
-    this.navigate(Screen.EditUserProfile.route)
 }

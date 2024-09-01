@@ -12,11 +12,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.andrii_a.walleria.ui.collection_details.navigateToCollectionDetails
 import com.andrii_a.walleria.ui.navigation.NavigationScreen
-import com.andrii_a.walleria.ui.photo_details.navigateToPhotoDetails
-import com.andrii_a.walleria.ui.search.navigateToSearch
-import com.andrii_a.walleria.ui.user_details.navigateToUserDetails
+import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 
 fun NavGraphBuilder.collectionsBottomNavRoute(
@@ -49,11 +46,11 @@ fun NavGraphBuilder.collectionsBottomNavRoute(
         viewModel.navigationEventsChannelFlow.collectAsOneTimeEvents { event ->
             when (event) {
                 is CollectionsNavigationEvent.NavigateToCollectionDetails -> {
-                    navController.navigateToCollectionDetails(event.collectionId)
+                    navController.navigate(Screen.CollectionDetails(event.collectionId))
                 }
 
                 is CollectionsNavigationEvent.NavigateToPhotoDetailsScreen -> {
-                    navController.navigateToPhotoDetails(event.photoId)
+                    navController.navigate(Screen.PhotoDetails(event.photoId))
                 }
 
                 is CollectionsNavigationEvent.NavigateToProfileScreen -> {
@@ -61,11 +58,11 @@ fun NavGraphBuilder.collectionsBottomNavRoute(
                 }
 
                 is CollectionsNavigationEvent.NavigateToSearchScreen -> {
-                    navController.navigateToSearch()
+                    navController.navigate(Screen.Search())
                 }
 
                 is CollectionsNavigationEvent.NavigateToUserDetails -> {
-                    navController.navigateToUserDetails(event.userNickname)
+                    navController.navigate(Screen.UserDetails(event.userNickname))
                 }
             }
         }

@@ -27,17 +27,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
-import com.andrii_a.walleria.ui.about.navigateToAbout
 import com.andrii_a.walleria.ui.login.LoginActivity
 import com.andrii_a.walleria.ui.navigation.MainNavigationHost
 import com.andrii_a.walleria.ui.navigation.NavigationScreen
 import com.andrii_a.walleria.ui.navigation.NavigationScreenRoutes
+import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.profile.ProfileScreen
 import com.andrii_a.walleria.ui.profile.ProfileViewModel
-import com.andrii_a.walleria.ui.profile_edit.navigateToEditUserProfile
-import com.andrii_a.walleria.ui.settings.navigateToSettings
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
-import com.andrii_a.walleria.ui.user_details.navigateToUserDetails
 import com.andrii_a.walleria.ui.util.currentRoute
 import com.andrii_a.walleria.ui.util.startActivity
 import kotlinx.coroutines.launch
@@ -81,19 +78,19 @@ fun WalleriaApp() {
                         onLogout = viewModel::logout,
                         navigateToViewProfileScreen = {
                             scope.launch { scaffoldState.bottomSheetState.hide() }
-                            navController.navigateToUserDetails(it)
+                            navController.navigate(Screen.UserDetails(it))
                         },
                         navigateToEditProfileScreen = {
                             scope.launch { scaffoldState.bottomSheetState.hide() }
-                            navController.navigateToEditUserProfile()
+                            navController.navigate(Screen.EditUserProfile)
                         },
                         navigateToSettingsScreen = {
                             scope.launch { scaffoldState.bottomSheetState.hide() }
-                            navController.navigateToSettings()
+                            navController.navigate(Screen.Settings)
                         },
                         navigateToAboutScreen = {
                             scope.launch { scaffoldState.bottomSheetState.hide() }
-                            navController.navigateToAbout()
+                            navController.navigate(Screen.About)
                         }
                     )
                 },

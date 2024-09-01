@@ -11,24 +11,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import com.andrii_a.walleria.ui.common.CollectionId
 import com.andrii_a.walleria.ui.navigation.Screen
-import com.andrii_a.walleria.ui.photo_details.navigateToPhotoDetails
-import com.andrii_a.walleria.ui.user_details.navigateToUserDetails
 import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 
 fun NavGraphBuilder.collectionDetailsRoute(navController: NavController) {
-    composable(
-        route = "${Screen.CollectionDetails.route}/{${CollectionDetailsArgs.ID}}",
-        arguments = listOf(
-            navArgument(CollectionDetailsArgs.ID) {
-                type = NavType.StringType
-                nullable = false
-            }
-        ),
+    composable<Screen.CollectionDetails>(
         enterTransition = {
             fadeIn(
                 animationSpec = tween(300, easing = LinearEasing)
@@ -57,11 +45,11 @@ fun NavGraphBuilder.collectionDetailsRoute(navController: NavController) {
                 }
 
                 is CollectionDetailsNavigationEvent.NavigateToPhotoDetails -> {
-                    navController.navigateToPhotoDetails(event.photoId)
+                    navController.navigate(Screen.PhotoDetails(event.photoId))
                 }
 
                 is CollectionDetailsNavigationEvent.NavigateToUserDetails -> {
-                    navController.navigateToUserDetails(event.userNickname)
+                    navController.navigate(Screen.UserDetails(event.userNickname))
                 }
             }
         }
@@ -71,11 +59,4 @@ fun NavGraphBuilder.collectionDetailsRoute(navController: NavController) {
             onEvent = viewModel::onEvent,
         )
     }
-}
-
-fun NavController.navigateToCollectionDetails(collectionId: CollectionId) =
-    this.navigate("${Screen.CollectionDetails.route}/$collectionId")
-
-object CollectionDetailsArgs {
-    const val ID = "collectionId"
 }

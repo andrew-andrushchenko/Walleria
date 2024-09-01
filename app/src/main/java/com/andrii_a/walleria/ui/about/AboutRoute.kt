@@ -13,8 +13,7 @@ import androidx.navigation.compose.composable
 import com.andrii_a.walleria.ui.navigation.Screen
 
 fun NavGraphBuilder.aboutRoute(navController: NavController) {
-    composable(
-        route = Screen.About.route,
+    composable<Screen.About>(
         enterTransition = {
             fadeIn(
                 animationSpec = tween(300, easing = LinearEasing)
@@ -34,11 +33,7 @@ fun NavGraphBuilder.aboutRoute(navController: NavController) {
     ) {
         AboutScreen(
             navigateBack = navController::navigateUp,
-            //openPhoto = navController::navigateToPhotoDetails
         )
     }
 }
 
-fun NavController.navigateToAbout() {
-    this.navigate(route = Screen.About.route)
-}

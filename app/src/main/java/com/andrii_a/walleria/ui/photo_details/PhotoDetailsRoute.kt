@@ -18,16 +18,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import com.andrii_a.walleria.ui.collect_photo.navigateToCollectPhoto
-import com.andrii_a.walleria.ui.collection_details.navigateToCollectionDetails
-import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.login.LoginActivity
 import com.andrii_a.walleria.ui.navigation.Screen
-import com.andrii_a.walleria.ui.search.navigateToSearch
-import com.andrii_a.walleria.ui.user_details.navigateToUserDetails
 import com.andrii_a.walleria.ui.util.InterScreenCommunicationKeys
 import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 import com.andrii_a.walleria.ui.util.openLinkInBrowser
@@ -35,14 +28,7 @@ import com.andrii_a.walleria.ui.util.sharePhoto
 import com.andrii_a.walleria.ui.util.startActivity
 
 fun NavGraphBuilder.photoDetailsRoute(navController: NavController) {
-    composable(
-        route = "${Screen.PhotoDetails.route}/{${PhotoDetailsArgs.ID}}",
-        arguments = listOf(
-            navArgument(PhotoDetailsArgs.ID) {
-                type = NavType.StringType
-                nullable = false
-            }
-        ),
+    composable<Screen.PhotoDetails>(
         enterTransition = {
             fadeIn(
                 animationSpec = tween(300, easing = LinearEasing)
@@ -115,19 +101,19 @@ fun NavGraphBuilder.photoDetailsRoute(navController: NavController) {
                 }
 
                 is PhotoDetailsNavigationEvent.NavigateToCollectPhoto -> {
-                    navController.navigateToCollectPhoto(event.photoId)
+                    navController.navigate(Screen.CollectPhoto(event.photoId))
                 }
 
                 is PhotoDetailsNavigationEvent.NavigateToCollectionDetails -> {
-                    navController.navigateToCollectionDetails(event.collectionId)
+                    navController.navigate(Screen.CollectionDetails(event.collectionId))
                 }
 
                 is PhotoDetailsNavigationEvent.NavigateToSearch -> {
-                    navController.navigateToSearch(event.query)
+                    navController.navigate(Screen.Search(event.query))
                 }
 
                 is PhotoDetailsNavigationEvent.NavigateToUserDetails -> {
-                    navController.navigateToUserDetails(event.userNickname)
+                    navController.navigate(Screen.UserDetails(event.userNickname))
                 }
 
                 is PhotoDetailsNavigationEvent.NavigateToChromeCustomTab -> {
@@ -154,9 +140,3 @@ fun NavGraphBuilder.photoDetailsRoute(navController: NavController) {
     }
 }
 
-fun NavController.navigateToPhotoDetails(photoId: PhotoId) =
-    this.navigate("${Screen.PhotoDetails.route}/$photoId")
-
-object PhotoDetailsArgs {
-    const val ID = "photoId"
-}

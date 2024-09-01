@@ -3,11 +3,13 @@ package com.andrii_a.walleria.ui.search
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import androidx.paging.cachedIn
 import com.andrii_a.walleria.domain.models.search.RecentSearchItem
 import com.andrii_a.walleria.domain.repository.LocalPreferencesRepository
 import com.andrii_a.walleria.domain.repository.RecentSearchesRepository
 import com.andrii_a.walleria.domain.repository.SearchRepository
+import com.andrii_a.walleria.ui.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.channels.Channel
@@ -54,10 +56,9 @@ class SearchViewModel @Inject constructor(
     val navigationEventsChannelFlow = navigationChannel.receiveAsFlow()
 
     init {
-        savedStateHandle.get<String>(SearchArgs.QUERY)?.let { query ->
-            if (query.isNotBlank()) {
-                onEvent(SearchEvent.PerformSearch(query = query))
-            }
+        val searchQuery = savedStateHandle.toRoute<Screen.Search>().searchQuery
+        if (searchQuery.isNotBlank()) {
+            onEvent(SearchEvent.PerformSearch(query = searchQuery))
         }
     }
 
