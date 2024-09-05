@@ -15,7 +15,7 @@ import androidx.navigation.compose.composable
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 
-fun NavGraphBuilder.topicsBottomNavRoute(
+fun NavGraphBuilder.topicsNavigationBarRoute(
     navController: NavController,
     openProfileBottomSheet: () -> Unit
 ) {

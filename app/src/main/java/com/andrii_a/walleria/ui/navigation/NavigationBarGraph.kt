@@ -3,9 +3,9 @@ package com.andrii_a.walleria.ui.navigation
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.navigation
-import com.andrii_a.walleria.ui.collections.collectionsBottomNavRoute
-import com.andrii_a.walleria.ui.photos.photosBottomNavRoute
-import com.andrii_a.walleria.ui.topics.topicsBottomNavRoute
+import com.andrii_a.walleria.ui.collections.collectionsNavigationBarRoute
+import com.andrii_a.walleria.ui.photos.photosNavigationBarRoute
+import com.andrii_a.walleria.ui.topics.topicsNavigationBarRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -16,8 +16,8 @@ fun NavGraphBuilder.navigationBarGraph(
     openProfileBottomSheet: () -> Unit
 ) {
     navigation<NavigationBarGraph>(startDestination = Screen.Photos) {
-        photosBottomNavRoute(navHostController, openProfileBottomSheet)
-        collectionsBottomNavRoute(navHostController, openProfileBottomSheet)
-        topicsBottomNavRoute(navHostController, openProfileBottomSheet)
+        photosNavigationBarRoute(navHostController, openProfileBottomSheet)
+        collectionsNavigationBarRoute(navHostController, openProfileBottomSheet)
+        topicsNavigationBarRoute(navHostController, openProfileBottomSheet)
     }
 }
