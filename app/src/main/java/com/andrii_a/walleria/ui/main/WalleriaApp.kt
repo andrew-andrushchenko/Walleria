@@ -28,14 +28,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
 import com.andrii_a.walleria.ui.login.LoginActivity
-import com.andrii_a.walleria.ui.navigation.MainNavigationHost
+import com.andrii_a.walleria.ui.navigation.AppNavigationHost
 import com.andrii_a.walleria.ui.navigation.NavigationScreen
-import com.andrii_a.walleria.ui.navigation.NavigationScreenRoutes
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.profile.ProfileScreen
 import com.andrii_a.walleria.ui.profile.ProfileViewModel
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
-import com.andrii_a.walleria.ui.util.currentRoute
+import com.andrii_a.walleria.ui.util.NavigationScreenRouteClassNames
+import com.andrii_a.walleria.ui.util.currentRouteClassName
+import com.andrii_a.walleria.ui.util.routeClassName
 import com.andrii_a.walleria.ui.util.startActivity
 import kotlinx.coroutines.launch
 
@@ -103,28 +104,28 @@ fun WalleriaApp() {
                         .imePadding()
                         .padding(innerPadding)
                 ) {
-                    MainNavigationHost(
+                    AppNavigationHost(
                         navHostController = navController,
                         openProfileBottomSheet = { scope.launch { scaffoldState.bottomSheetState.expand() } }
                     )
 
-                    if (navController.currentRoute in NavigationScreenRoutes) {
+                    if (navController.currentRouteClassName in NavigationScreenRouteClassNames) {
                         NavigationBar(modifier = Modifier.align(Alignment.BottomCenter)) {
-                            NavigationScreen.entries.forEach { item ->
+                            NavigationScreen.entries.forEach { screen ->
                                 NavigationBarItem(
                                     icon = {
                                         Icon(
-                                            imageVector = if (navController.currentRoute == item.route)
-                                                item.iconSelected
+                                            imageVector = if (navController.currentRouteClassName == screen.routeClassName)
+                                                screen.iconSelected
                                             else
-                                                item.iconUnselected,
-                                            contentDescription = stringResource(id = item.titleRes)
+                                                screen.iconUnselected,
+                                            contentDescription = stringResource(id = screen.titleRes)
                                         )
                                     },
-                                    label = { Text(text = stringResource(id = item.titleRes)) },
-                                    selected = navController.currentRoute == item.route,
+                                    label = { Text(text = stringResource(id = screen.titleRes)) },
+                                    selected = navController.currentRouteClassName == screen.routeClassName,
                                     onClick = {
-                                        navController.navigate(item.route) {
+                                        navController.navigate(screen.route) {
                                             launchSingleTop = true
                                             restoreState = true
                                             popUpTo(navController.graph.findStartDestination().id) {

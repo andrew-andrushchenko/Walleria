@@ -7,33 +7,42 @@ import com.andrii_a.walleria.ui.common.TopicId
 import com.andrii_a.walleria.ui.common.UserNickname
 import kotlinx.serialization.Serializable
 
-object Screen {
+sealed interface Screen {
     @Serializable
-    data class PhotoDetails(val photoId: PhotoId)
+    data object Photos : Screen
 
     @Serializable
-    data class CollectionDetails(val collectionId: CollectionId)
+    data object Collections : Screen
 
     @Serializable
-    data class TopicDetails(val topicId: TopicId)
+    data object Topics : Screen
 
     @Serializable
-    data class Search(val searchQuery: SearchQuery = "")
+    data class PhotoDetails(val photoId: PhotoId) : Screen
 
     @Serializable
-    data class UserDetails(val userNickname: UserNickname)
+    data class CollectionDetails(val collectionId: CollectionId) : Screen
 
     @Serializable
-    data class CollectPhoto(val photoId: PhotoId)
+    data class TopicDetails(val topicId: TopicId) : Screen
 
     @Serializable
-    object EditUserProfile
+    data class Search(val searchQuery: SearchQuery = "") : Screen
+
+    @Serializable
+    data class UserDetails(val userNickname: UserNickname) : Screen
+
+    @Serializable
+    data class CollectPhoto(val photoId: PhotoId) : Screen
+
+    @Serializable
+    data object EditUserProfile : Screen
 
     //object Profile
 
     @Serializable
-    object Settings
+    data object Settings : Screen
 
     @Serializable
-    object About
+    data object About : Screen
 }

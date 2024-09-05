@@ -12,31 +12,27 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.andrii_a.walleria.R
 
 enum class NavigationScreen(
-    val route: String,
+    val route: Screen,
     @StringRes val titleRes: Int,
     val iconUnselected: ImageVector,
     val iconSelected: ImageVector
 ) {
     Photos(
-        route = "photos",
+        route = Screen.Photos,
         titleRes = R.string.photos,
         iconUnselected = Icons.Outlined.Photo,
         iconSelected = Icons.Filled.Photo
     ),
     Collections(
-        route = "collections",
+        route = Screen.Collections,
         titleRes = R.string.collections,
         iconUnselected = Icons.Outlined.PhotoAlbum,
         iconSelected = Icons.Filled.PhotoAlbum
     ),
     Topics(
-        route = "topics",
+        route = Screen.Topics,
         titleRes = R.string.topics,
         iconUnselected = Icons.Outlined.FolderSpecial,
         iconSelected = Icons.Filled.FolderSpecial
     )
-}
-
-val NavigationScreenRoutes: List<String> by lazy {
-    NavigationScreen.entries.map { it.route }
 }

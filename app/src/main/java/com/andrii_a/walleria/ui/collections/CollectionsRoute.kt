@@ -12,7 +12,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.andrii_a.walleria.ui.navigation.NavigationScreen
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 
@@ -20,8 +19,7 @@ fun NavGraphBuilder.collectionsBottomNavRoute(
     navController: NavController,
     openProfileBottomSheet: () -> Unit
 ) {
-    composable(
-        route = NavigationScreen.Collections.route,
+    composable<Screen.Collections>(
         enterTransition = {
             fadeIn(
                 animationSpec = tween(300, easing = LinearEasing)
