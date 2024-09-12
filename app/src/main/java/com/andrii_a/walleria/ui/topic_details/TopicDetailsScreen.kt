@@ -2,11 +2,8 @@ package com.andrii_a.walleria.ui.topic_details
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
@@ -269,20 +266,15 @@ private fun SuccessStateContent(
         val scope = rememberCoroutineScope()
 
         if (state.isFilterDialogOpened) {
-            val bottomPadding =
-                WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-
             ModalBottomSheet(
                 onDismissRequest = { onEvent(TopicDetailsEvent.DismissFilterDialog) },
-                sheetState = bottomSheetState,
-                windowInsets = WindowInsets(0)
+                sheetState = bottomSheetState
             ) {
                 TopicPhotosFilterBottomSheet(
                     topicPhotosFilters = state.topicPhotosFilters,
                     contentPadding = PaddingValues(
                         start = 16.dp,
-                        end = 16.dp,
-                        bottom = bottomPadding
+                        end = 16.dp
                     ),
                     onApplyClick = onEvent,
                     onDismiss = {

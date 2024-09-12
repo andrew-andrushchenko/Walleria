@@ -219,19 +219,12 @@ fun SuccessStateContent(
         }
 
         if (state.isDetailsDialogOpened) {
-            val bottomPadding =
-                WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-
             ModalBottomSheet(
                 onDismissRequest = { onEvent(UserDetailsEvent.DismissDetailsDialog) },
-                sheetState = bottomSheetState,
-                windowInsets = WindowInsets(0)
+                sheetState = bottomSheetState
             ) {
                 UserInfoBottomSheet(
                     user = user,
-                    contentPadding = PaddingValues(
-                        bottom = bottomPadding
-                    ),
                     navigateToSearch = { query ->
                         onEvent(UserDetailsEvent.SearchByTag(query))
                     }

@@ -34,6 +34,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -91,46 +92,52 @@ fun SearchScreen(
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             SearchBar(
-                query = text,
-                onQueryChange = { text = it },
-                onSearch = {
-                    active = false
-                    onEvent(SearchEvent.PerformSearch(query = text))
-                },
-                active = active,
-                onActiveChange = { active = it },
-                placeholder = { Text(stringResource(id = R.string.type_something)) },
-                leadingIcon = {
-                    AnimatedContent(
-                        targetState = active,
-                        label = ""
-                    ) { state ->
-                        if (state) {
-                            Icon(Icons.Default.Search, contentDescription = null)
-                        } else {
-                            IconButton(onClick = { onEvent(SearchEvent.GoBack) }) {
-                                Icon(
-                                    Icons.AutoMirrored.Default.ArrowBack,
-                                    contentDescription = stringResource(id = R.string.navigate_back)
-                                )
+                inputField = {
+                    SearchBarDefaults.InputField(
+                        query = text,
+                        onQueryChange = { text = it },
+                        onSearch = {
+                            active = false
+                            onEvent(SearchEvent.PerformSearch(query = text))
+                        },
+                        expanded = active,
+                        onExpandedChange = { active = it },
+                        placeholder = { Text(stringResource(id = R.string.type_something)) },
+                        leadingIcon = {
+                            AnimatedContent(
+                                targetState = active,
+                                label = ""
+                            ) { state ->
+                                if (state) {
+                                    Icon(Icons.Default.Search, contentDescription = null)
+                                } else {
+                                    IconButton(onClick = { onEvent(SearchEvent.GoBack) }) {
+                                        Icon(
+                                            Icons.AutoMirrored.Default.ArrowBack,
+                                            contentDescription = stringResource(id = R.string.navigate_back)
+                                        )
+                                    }
+                                }
                             }
-                        }
-                    }
+                        },
+                        trailingIcon = {
+                            AnimatedVisibility(
+                                visible = (pagerState.currentPage == SearchScreenTabs.Photos.ordinal) && !active,
+                                enter = fadeIn(),
+                                exit = fadeOut()
+                            ) {
+                                IconButton(onClick = { onEvent(SearchEvent.OpenFilterDialog) }) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.FilterList,
+                                        contentDescription = stringResource(id = R.string.photo_filters)
+                                    )
+                                }
+                            }
+                        },
+                    )
                 },
-                trailingIcon = {
-                    AnimatedVisibility(
-                        visible = (pagerState.currentPage == SearchScreenTabs.Photos.ordinal) && !active,
-                        enter = fadeIn(),
-                        exit = fadeOut()
-                    ) {
-                        IconButton(onClick = { onEvent(SearchEvent.OpenFilterDialog) }) {
-                            Icon(
-                                imageVector = Icons.Outlined.FilterList,
-                                contentDescription = stringResource(id = R.string.photo_filters)
-                            )
-                        }
-                    }
-                },
+                expanded = active,
+                onExpandedChange = { active = it },
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .semantics { traversalIndex = -1f },
@@ -180,18 +187,12 @@ fun SearchScreen(
     val scope = rememberCoroutineScope()
 
     if (state.isFilterDialogOpened) {
-        val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-
         ModalBottomSheet(
             onDismissRequest = { onEvent(SearchEvent.DismissFilterDialog) },
-            sheetState = bottomSheetState,
-            windowInsets = WindowInsets(0),
+            sheetState = bottomSheetState
         ) {
             SearchPhotoFiltersBottomSheet(
                 photoFilters = state.photoFilters,
-                contentPadding = PaddingValues(
-                    bottom = bottomPadding
-                ),
                 onEvent = onEvent,
                 onDismiss = {
                     scope.launch { bottomSheetState.hide() }.invokeOnCompletion {

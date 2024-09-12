@@ -2,10 +2,7 @@ package com.andrii_a.walleria.ui.collect_photo
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -155,19 +152,14 @@ private fun SuccessStateContent(
         )
 
         if (state.isCreateDialogOpened) {
-            val bottomPadding =
-                WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-
             ModalBottomSheet(
                 onDismissRequest = { onEvent(CollectPhotoEvent.DismissCreateAndCollectDialog) },
-                sheetState = bottomSheetState,
-                windowInsets = WindowInsets(0)
+                sheetState = bottomSheetState
             ) {
                 CreateAndCollectBottomSheet(
                     contentPadding = PaddingValues(
                         start = 16.dp,
-                        end = 16.dp,
-                        bottom = bottomPadding
+                        end = 16.dp
                     ),
                     onConfirm = { title, description, isPrivate ->
                         onEvent(

@@ -12,13 +12,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -77,6 +73,8 @@ import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.photo.PhotoUrls
 import com.andrii_a.walleria.domain.models.user.User
+import com.andrii_a.walleria.ui.common.UiErrorWithRetry
+import com.andrii_a.walleria.ui.common.UiText
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
 import com.andrii_a.walleria.ui.photo_details.components.OverZoomConfig
 import com.andrii_a.walleria.ui.photo_details.components.UserRow
@@ -85,8 +83,6 @@ import com.andrii_a.walleria.ui.photo_details.components.rememberZoomableState
 import com.andrii_a.walleria.ui.theme.PhotoDetailsActionButtonContainerColor
 import com.andrii_a.walleria.ui.theme.PhotoDetailsActionButtonContentColor
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
-import com.andrii_a.walleria.ui.common.UiErrorWithRetry
-import com.andrii_a.walleria.ui.common.UiText
 import com.andrii_a.walleria.ui.util.abbreviatedNumberString
 import com.andrii_a.walleria.ui.util.getProfileImageUrlOrEmpty
 import com.andrii_a.walleria.ui.util.getUrlByQuality
@@ -314,16 +310,12 @@ private fun SuccessStateContent(
 
 
     if (state.isInfoDialogOpened) {
-        val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-
         ModalBottomSheet(
             onDismissRequest = { onEvent(PhotoDetailsEvent.DismissInfoDialog) },
-            sheetState = bottomSheetState,
-            windowInsets = WindowInsets(0)
+            sheetState = bottomSheetState
         ) {
             PhotoInfoBottomSheet(
                 photo = photo,
-                contentPadding = PaddingValues(bottom = bottomPadding),
                 navigateToSearch = { query ->
                     onEvent(PhotoDetailsEvent.SearchByTag(query))
                 },

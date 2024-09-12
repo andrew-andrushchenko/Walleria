@@ -1,10 +1,10 @@
 plugins {
-    alias(libs.plugins.androidApplication) apply false
-    alias(libs.plugins.kotlinAndroid) apply false
-    alias(libs.plugins.kotlinCompose) apply false
-    alias(libs.plugins.kotlinKapt) apply false
-    alias(libs.plugins.daggerHiltAndroid) apply false
-    alias(libs.plugins.kotlinKsp) apply false
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.kotlin.compose) apply false
+    alias(libs.plugins.kotlin.kapt) apply false
+    alias(libs.plugins.dagger.hilt.android) apply false
+    alias(libs.plugins.kotlin.ksp) apply false
     alias(libs.plugins.kotlin.serialization) apply false
 }
 
