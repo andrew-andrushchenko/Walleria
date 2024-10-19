@@ -124,8 +124,7 @@ fun PhotoDetailsScreen(
     }
 }
 
-@JvmInline
-value class LikeCount(val value: Long)
+typealias LikeCount = Long
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -249,10 +248,10 @@ private fun SuccessStateContent(
                     if (state.isUserLoggedIn) {
                         if (state.isLiked) {
                             onEvent(PhotoDetailsEvent.DislikePhoto(photo.id))
-                            LikeCount(value = photo.likes)
+                            photo.likes
                         } else {
                             onEvent(PhotoDetailsEvent.LikePhoto(photo.id))
-                            LikeCount(value = photo.likes + 1)
+                            photo.likes + 1
                         }
                     } else {
                         context.toast(stringRes = R.string.login_to_like_photo)
@@ -456,7 +455,7 @@ private fun BottomControls(
             },
             onClick = {
                 val likeCount = onLikeButtonClick()
-                likeCount?.let { photoLikes = it.value }
+                likeCount?.let { photoLikes = it }
             },
             elevation = FloatingActionButtonDefaults.elevation(0.dp),
             containerColor = PhotoDetailsActionButtonContainerColor,
