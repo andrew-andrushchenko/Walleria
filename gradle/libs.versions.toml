@@ -1,34 +1,33 @@
 [versions]
-activityCompose = "1.9.2"
+activityCompose = "1.9.3"
 browser = "1.8.0"
 coil = "2.7.0"
 coilCompose = "2.7.0"
-composeBom = "2024.09.02"
-constraintlayoutCompose = "1.1.0-beta01"
+composeBom = "2024.12.01"
+constraintlayoutCompose = "1.1.0"
 converterGson = "2.11.0"
-coreKtx = "1.13.1"
+coreKtx = "1.15.0"
 coreSplashscreen = "1.0.1"
 datastorePreferences = "1.1.1"
 espressoCore = "3.6.1"
-hiltAndroid = "2.52"
-hiltAndroidGradlePlugin = "2.52"
-hiltCompiler = "2.52"
+hiltAndroid = "2.54"
+hiltAndroidGradlePlugin = "2.54"
+hiltCompiler = "2.54"
 hiltNavigation = "1.2.0"
 junit = "4.13.2"
-junitVersion = "1.2.1"
-kaptVersion = "2.0.20"
-kspVersion = "2.0.20-1.0.25"
-kotlinComposePlugin = "2.0.20"
-kotlinVersion = "2.0.20"
-kotlinxCoroutinesTest = "1.9.0"
-lifecycleRuntimeKtx = "2.8.6"
-lifecycleViewmodelCompose = "2.8.6"
+androidTestJunitVersion = "1.2.1"
+kaptVersion = "2.1.0"
+kspVersion = "2.1.0-1.0.29"
+kotlinVersion = "2.1.0"
+kotlinxCoroutinesTest = "1.10.1"
+lifecycleRuntimeKtx = "2.8.7"
+lifecycleViewmodelCompose = "2.8.7"
 lottieCompose = "6.5.2"
-navigationCompose = "2.8.1"
-androidGradlePlugin = "8.6.1"
+navigationCompose = "2.8.5"
+androidGradlePlugin = "8.7.3"
 okhttp = "5.0.0-alpha.14"
-pagingCompose = "3.3.2"
-pagingRuntimeKtx = "3.3.2"
+pagingCompose = "3.3.5"
+pagingRuntimeKtx = "3.3.5"
 retrofit = "2.11.0"
 roomCompiler = "2.6.1"
 roomKtx = "2.6.1"
@@ -48,7 +47,7 @@ androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", vers
 androidx-foundation = { module = "androidx.compose.foundation:foundation" }
 androidx-hilt-navigation = { module = "androidx.hilt:hilt-navigation", version.ref = "hiltNavigation" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigation" }
-androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
+androidx-junit = { module = "androidx.test.ext:junit", version.ref = "androidTestJunitVersion" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
@@ -82,7 +81,7 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlinVersion" }
-kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlinComposePlugin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlinVersion" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kaptVersion" }
 kotlin-ksp = { id = "com.google.devtools.ksp", version.ref = "kspVersion" }
 dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroidGradlePlugin" }
