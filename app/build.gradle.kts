@@ -156,13 +156,20 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.json)
 
-    // Tests
-    testImplementation(libs.junit)
-    testImplementation(libs.kotlinx.coroutines.test)
     debugImplementation(libs.androidx.ui.test.manifest)
     debugImplementation(libs.androidx.ui.tooling)
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.espresso.core)
+
+    // Tests
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.params)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+
     androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
