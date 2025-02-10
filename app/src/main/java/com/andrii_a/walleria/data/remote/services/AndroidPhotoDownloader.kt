@@ -7,6 +7,7 @@ import androidx.core.net.toUri
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
+import com.andrii_a.walleria.domain.services.DownloadId
 import com.andrii_a.walleria.domain.services.PhotoDownloader
 import com.andrii_a.walleria.ui.util.downloadFilename
 import com.andrii_a.walleria.ui.util.getUrlByQuality
@@ -17,7 +18,7 @@ class AndroidPhotoDownloader(private val context: Context) : PhotoDownloader {
         context.getSystemService(DownloadManager::class.java)
     }
 
-    override fun downloadPhoto(photo: Photo, quality: PhotoQuality): Long {
+    override fun downloadPhoto(photo: Photo, quality: PhotoQuality): DownloadId {
         val photoUri = photo.getUrlByQuality(quality).toUri()
 
         val request = DownloadManager.Request(photoUri).apply {
