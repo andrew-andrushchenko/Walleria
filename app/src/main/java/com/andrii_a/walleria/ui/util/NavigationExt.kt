@@ -4,13 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.andrii_a.walleria.ui.navigation.NavigationScreen
 
 typealias RouteClassName = String
-
-val NavigationScreenRouteClassNames: List<RouteClassName?> by lazy {
-    NavigationScreen.entries.map { it.route::class.simpleName }
-}
 
 val NavController.currentRouteClassName: RouteClassName?
     @Composable
@@ -21,6 +16,3 @@ val NavController.currentRouteClassName: RouteClassName?
             ?.substringBefore("/")
             ?.substringAfterLast(".")
     }
-
-val NavigationScreen.routeClassName: RouteClassName?
-    get() = this.route::class.simpleName

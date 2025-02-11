@@ -4,6 +4,7 @@
     <!--Common-->
     <string name="to_top">To top</string>
     <string name="navigate_back">Navigate back</string>
+    <string name="navigation_bar_icon">Navigation bar icon</string>
 
     <string name="photo_quality_raw">Raw</string>
     <string name="photo_quality_high">High</string>
