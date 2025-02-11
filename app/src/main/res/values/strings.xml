@@ -101,10 +101,12 @@
     <string name="days_ago_formatted">%d days ago</string>
 
     <!--Profile screen-->
+    <string name="account_settings_screen">Account and settings</string>
     <string name="creation_starts_here">Creation starts here</string>
     <string name="user_profile_view">View</string>
     <string name="user_profile_edit">Edit</string>
     <string name="user_full_name_formatted" translatable="false">%s %s</string>
+    <string name="user_full_name_with_nickname_formatted" translatable="false">%s %s (\@%s)</string>
     <string name="user_nickname_formatted" translatable="false">\@%s</string>
     <string name="settings">Settings</string>
     <string name="about">About</string>

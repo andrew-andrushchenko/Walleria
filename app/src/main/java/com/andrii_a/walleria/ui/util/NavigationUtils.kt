@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.andrii_a.walleria.ui.navigation.Screen
 
 typealias RouteClassName = String
 
@@ -16,3 +17,11 @@ val NavController.currentRouteClassName: RouteClassName?
             ?.substringBefore("/")
             ?.substringAfterLast(".")
     }
+
+val noNavBarsRoutes = listOf(
+    Screen.PhotoDetails::class.simpleName,
+    Screen.Profile::class.simpleName,
+    Screen.Settings::class.simpleName,
+    Screen.About::class.simpleName,
+    Screen.EditUserProfile::class.simpleName
+)

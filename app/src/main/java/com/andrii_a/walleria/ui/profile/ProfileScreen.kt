@@ -4,46 +4,47 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Logout
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.RemoveRedEye
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -57,94 +58,114 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.models.preferences.UserPrivateProfileData
-import com.andrii_a.walleria.ui.common.UserNickname
+import com.andrii_a.walleria.ui.theme.CloverShape
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
-    isUserLoggedIn: Boolean,
-    userPrivateProfileData: UserPrivateProfileData,
-    navigateToLoginScreen: () -> Unit,
-    onLogout: () -> Unit,
-    navigateToViewProfileScreen: (UserNickname) -> Unit,
-    navigateToEditProfileScreen: () -> Unit,
-    navigateToSettingsScreen: () -> Unit,
-    navigateToAboutScreen: () -> Unit
+    state: ProfileScreenUiState,
+    onEvent: (ProfileScreenEvent) -> Unit
 ) {
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .navigationBarsPadding()
-            .animateContentSize()
-    ) {
-        if (isUserLoggedIn) {
-            LoggedInHeader(
-                userProfilePhotoUrl = userPrivateProfileData.profilePhotoUrl,
-                userFullName = stringResource(
-                    id = R.string.user_full_name_formatted,
-                    userPrivateProfileData.firstName,
-                    userPrivateProfileData.lastName
-                ),
-                userNickname = userPrivateProfileData.nickname,
-                userEmail = userPrivateProfileData.email,
-                navigateToViewProfileScreen = { navigateToViewProfileScreen(userPrivateProfileData.nickname) },
-                navigateToEditProfileScreen = navigateToEditProfileScreen,
-                onLogout = onLogout
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = stringResource(id = R.string.account_settings_screen))
+                },
+                navigationIcon = {
+                    IconButton(onClick = { onEvent(ProfileScreenEvent.GoBack) }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                            contentDescription = stringResource(
+                                id = R.string.navigate_back
+                            )
+                        )
+                    }
+                },
+                scrollBehavior = scrollBehavior
             )
-
-        } else {
-            LoggedOutHeader(
-                navigateToLoginScreen = navigateToLoginScreen,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-        }
-
-        HorizontalDivider(
+        },
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+    ) { innerPadding ->
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp, vertical = 8.dp)
-        )
-
-        TextButton(
-            onClick = navigateToSettingsScreen,
-            shape = RoundedCornerShape(16.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(64.dp)
-                .padding(horizontal = 16.dp)
+                .padding(innerPadding)
+                .animateContentSize()
         ) {
-            Icon(
-                imageVector = Icons.Outlined.Settings,
-                contentDescription = stringResource(id = R.string.settings)
-            )
+            if (state.isUserLoggedIn) {
+                LoggedInHeader(
+                    userPrivateProfileData = state.userPrivateProfileData!!,
+                    showConfirmation = state.shouldShowLogoutConfirmation,
+                    onShowLogoutConfirmation = {
+                        onEvent(ProfileScreenEvent.ToggleLogoutConfirmation(true))
+                    },
+                    onDismissLogout = {
+                        onEvent(ProfileScreenEvent.ToggleLogoutConfirmation(false))
+                    },
+                    navigateToViewProfileScreen = {
+                        onEvent(ProfileScreenEvent.OpenViewProfileScreen(state.userPrivateProfileData.nickname))
+                    },
+                    navigateToEditProfileScreen = {
+                        onEvent(ProfileScreenEvent.OpenEditProfileScreen)
+                    },
+                    onLogout = { onEvent(ProfileScreenEvent.Logout) },
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
 
-            Spacer(modifier = Modifier.width(8.dp))
+            } else {
+                LoggedOutHeader(
+                    navigateToLoginScreen = { onEvent(ProfileScreenEvent.OpenLoginScreen) },
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
 
-            Text(text = stringResource(id = R.string.settings))
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedButton(
+                onClick = { onEvent(ProfileScreenEvent.OpenSettingsScreen) },
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(64.dp)
+                    .padding(horizontal = 16.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Settings,
+                    contentDescription = stringResource(id = R.string.settings)
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Text(text = stringResource(id = R.string.settings))
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedButton(
+                onClick = { onEvent(ProfileScreenEvent.OpenAboutScreen) },
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(64.dp)
+                    .padding(horizontal = 16.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Info,
+                    contentDescription = stringResource(id = R.string.about)
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Text(text = stringResource(id = R.string.about))
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
         }
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        TextButton(
-            onClick = navigateToAboutScreen,
-            shape = RoundedCornerShape(16.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(64.dp)
-                .padding(horizontal = 16.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.Info,
-                contentDescription = stringResource(id = R.string.about)
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Text(text = stringResource(id = R.string.about))
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
@@ -158,51 +179,50 @@ private fun LoggedOutHeader(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
-        var showAddAccountSection by remember {
-            mutableStateOf(false)
-        }
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
+        Surface(
+            color = MaterialTheme.colorScheme.surfaceContainer,
+            shape = RoundedCornerShape(16.dp),
+            tonalElevation = 1.dp,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .clickable(onClick = { showAddAccountSection = !showAddAccountSection })
-                .padding(8.dp)
+                .height(128.dp)
         ) {
-            Surface(
-                shape = CircleShape,
-                tonalElevation = 8.dp
+            Box(
+                modifier = Modifier
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                    contentDescription = stringResource(id = R.string.app_name),
-                    tint = MaterialTheme.colorScheme.surfaceTint,
-                    modifier = Modifier
-                        .size(64.dp)
-                        .scale(1.5f)
-                )
-            }
-
-            Spacer(modifier = Modifier.width(12.dp))
-
-            Column {
-                Text(
-                    text = stringResource(id = R.string.app_name),
-                    style = MaterialTheme.typography.titleLarge,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    textAlign = TextAlign.Center
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                Surface(
+                    shape = CircleShape,
+                    tonalElevation = 8.dp,
+                    modifier = Modifier.graphicsLayer {
+                        translationX = -100f
+                        alpha = 0.4f
+                    }
                 ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                        contentDescription = stringResource(id = R.string.app_name),
+                        tint = MaterialTheme.colorScheme.surfaceTint,
+                        modifier = Modifier
+                            .size(128.dp)
+                            .scale(1.3f)
+                    )
+                }
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.align(Alignment.Center),
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.app_name),
+                        style = MaterialTheme.typography.headlineSmall,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.Center
+                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
                     Text(
                         text = stringResource(id = R.string.creation_starts_here),
                         style = MaterialTheme.typography.titleSmall,
@@ -211,117 +231,117 @@ private fun LoggedOutHeader(
                         textAlign = TextAlign.Center,
                     )
 
-                    Icon(
-                        imageVector = if (showAddAccountSection) {
-                            Icons.Default.ArrowDropUp
-                        } else {
-                            Icons.Default.ArrowDropDown
-                        },
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp)
-                    )
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
         }
 
-        AnimatedVisibility(visible = showAddAccountSection) {
-            TextButton(
-                onClick = navigateToLoginScreen,
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(64.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.AddCircleOutline,
-                    contentDescription = stringResource(id = R.string.add_account)
-                )
+        Spacer(modifier = Modifier.height(16.dp))
 
-                Spacer(modifier = Modifier.width(8.dp))
+        Button(
+            onClick = navigateToLoginScreen,
+            shape = RoundedCornerShape(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.AddCircleOutline,
+                contentDescription = stringResource(id = R.string.add_account)
+            )
 
-                Text(text = stringResource(id = R.string.add_account))
-            }
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Text(text = stringResource(id = R.string.add_account))
         }
     }
 }
 
 @Composable
 private fun LoggedInHeader(
-    userProfilePhotoUrl: String,
-    userFullName: String,
-    userNickname: String,
-    userEmail: String,
+    showConfirmation: Boolean,
+    onShowLogoutConfirmation: () -> Unit,
+    onDismissLogout: () -> Unit,
+    userPrivateProfileData: UserPrivateProfileData,
     navigateToViewProfileScreen: () -> Unit,
     navigateToEditProfileScreen: () -> Unit,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        tonalElevation = 1.dp,
+        modifier = modifier
     ) {
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(userProfilePhotoUrl)
-                .crossfade(true)
-                .placeholder(ColorDrawable(Color.GRAY))
-                .build(),
-            contentDescription = stringResource(id = R.string.user_profile_image),
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .size(64.dp)
-                .clip(CircleShape)
-        )
-
-        Text(
-            text = userFullName,
-            style = MaterialTheme.typography.titleLarge,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-
-        Text(
-            text = stringResource(id = R.string.user_nickname_formatted, userNickname),
-            style = MaterialTheme.typography.titleSmall,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-
-        Text(
-            text = userEmail,
-            style = MaterialTheme.typography.titleSmall,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-    }
-
-    var showConfirmationRow by remember {
-        mutableStateOf(false)
-    }
-
-    AnimatedContent(
-        targetState = showConfirmationRow,
-        label = "",
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        if (it) {
-            LogoutConfirmationRow(
-                onConfirm = onLogout,
-                onDismiss = { showConfirmationRow = false },
-                modifier = Modifier.padding(horizontal = 16.dp)
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(userPrivateProfileData.profilePhotoUrl)
+                    .crossfade(true)
+                    .placeholder(ColorDrawable(Color.LTGRAY))
+                    .build(),
+                contentDescription = stringResource(id = R.string.user_profile_image),
+                modifier = Modifier
+                    .size(64.dp)
+                    .clip(CloverShape)
             )
-        } else {
-            ProfileActionRow(
-                navigateToViewProfileScreen = navigateToViewProfileScreen,
-                navigateToEditProfileScreen = navigateToEditProfileScreen,
-                onLogoutClick = { showConfirmationRow = true },
-                modifier = Modifier.padding(horizontal = 16.dp)
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = stringResource(
+                    id = R.string.user_full_name_with_nickname_formatted,
+                    userPrivateProfileData.firstName,
+                    userPrivateProfileData.lastName,
+                    userPrivateProfileData.nickname
+                ),
+                style = MaterialTheme.typography.titleLarge,
+                maxLines = 2,
+                textAlign = TextAlign.Center,
+                overflow = TextOverflow.Ellipsis
             )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = userPrivateProfileData.email,
+                style = MaterialTheme.typography.titleSmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            AnimatedContent(
+                targetState = showConfirmation,
+                label = "",
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                if (it) {
+                    LogoutConfirmationRow(
+                        onConfirm = onLogout,
+                        onDismiss = onDismissLogout,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                } else {
+                    ProfileActionRow(
+                        navigateToViewProfileScreen = navigateToViewProfileScreen,
+                        navigateToEditProfileScreen = navigateToEditProfileScreen,
+                        onLogoutClick = onShowLogoutConfirmation,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
+            }
         }
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ProfileActionRow(
     navigateToViewProfileScreen: () -> Unit,
@@ -329,15 +349,14 @@ private fun ProfileActionRow(
     onLogoutClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
+    FlowRow(
         horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
+        maxLines = 3,
         modifier = modifier
     ) {
-        TextButton(
+        OutlinedButton(
             onClick = navigateToViewProfileScreen,
-            shape = RoundedCornerShape(16.dp),
-            modifier = Modifier.weight(0.33f)
+            shape = RoundedCornerShape(16.dp)
         ) {
             Icon(
                 imageVector = Icons.Outlined.RemoveRedEye,
@@ -355,10 +374,9 @@ private fun ProfileActionRow(
 
         Spacer(modifier = Modifier.width(4.dp))
 
-        TextButton(
+        OutlinedButton(
             onClick = navigateToEditProfileScreen,
-            shape = RoundedCornerShape(16.dp),
-            modifier = Modifier.weight(0.33f)
+            shape = RoundedCornerShape(16.dp)
         ) {
             Icon(
                 imageVector = Icons.Outlined.Edit,
@@ -376,17 +394,16 @@ private fun ProfileActionRow(
 
         Spacer(modifier = Modifier.width(4.dp))
 
-        TextButton(
+        OutlinedButton(
             onClick = onLogoutClick,
-            shape = RoundedCornerShape(16.dp),
-            modifier = Modifier.weight(0.33f)
+            shape = RoundedCornerShape(16.dp)
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Outlined.Logout,
                 contentDescription = stringResource(id = R.string.logout)
             )
 
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(4.dp))
 
             Text(
                 text = stringResource(id = R.string.logout),
@@ -456,25 +473,20 @@ private fun LogoutConfirmationRow(
 @Composable
 fun ProfileScreenPreview() {
     WalleriaTheme {
-        var isUserLoggedIn by remember {
-            mutableStateOf(false)
-        }
+        val state = ProfileScreenUiState(
+            isUserLoggedIn = true,
+            userPrivateProfileData = UserPrivateProfileData(
+                nickname = "john",
+                firstName = "John",
+                lastName = "Smith",
+                email = "john.smith@example.com"
+            )
+        )
 
         Surface {
             ProfileScreen(
-                isUserLoggedIn = isUserLoggedIn,
-                userPrivateProfileData = UserPrivateProfileData(
-                    nickname = "john",
-                    firstName = "John",
-                    lastName = "Smith",
-                    email = "john.smith@example.com"
-                ),
-                navigateToLoginScreen = { isUserLoggedIn = true },
-                onLogout = { isUserLoggedIn = false },
-                navigateToViewProfileScreen = {},
-                navigateToEditProfileScreen = {},
-                navigateToSettingsScreen = {},
-                navigateToAboutScreen = {}
+                state = state,
+                onEvent = {}
             )
         }
     }

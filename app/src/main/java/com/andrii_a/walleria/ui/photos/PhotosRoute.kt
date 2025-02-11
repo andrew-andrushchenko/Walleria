@@ -16,8 +16,7 @@ import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 
 fun NavGraphBuilder.photosNavigationBarRoute(
-    navController: NavController,
-    openProfileBottomSheet: () -> Unit
+    navController: NavController
 ) {
     composable<Screen.Photos>(
         enterTransition = {
@@ -56,7 +55,7 @@ fun NavGraphBuilder.photosNavigationBarRoute(
                 }
 
                 is PhotosNavigationEvent.NavigateToProfileScreen -> {
-                    openProfileBottomSheet()
+                    navController.navigate(Screen.Profile)
                 }
             }
         }

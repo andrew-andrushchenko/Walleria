@@ -15,10 +15,7 @@ import androidx.navigation.compose.composable
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 
-fun NavGraphBuilder.topicsNavigationBarRoute(
-    navController: NavController,
-    openProfileBottomSheet: () -> Unit
-) {
+fun NavGraphBuilder.topicsNavigationBarRoute(navController: NavController) {
     composable<Screen.Topics>(
         enterTransition = {
             fadeIn(
@@ -47,7 +44,7 @@ fun NavGraphBuilder.topicsNavigationBarRoute(
                 }
 
                 is TopicsNavigationEvent.NavigateToProfileScreen -> {
-                    openProfileBottomSheet()
+                    navController.navigate(Screen.Profile)
                 }
 
                 is TopicsNavigationEvent.NavigateToSearchScreen -> {

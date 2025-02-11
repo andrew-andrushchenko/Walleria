@@ -12,12 +12,11 @@ import kotlinx.serialization.Serializable
 object NavigationBarGraph
 
 fun NavGraphBuilder.navigationBarGraph(
-    navHostController: NavHostController,
-    openProfileBottomSheet: () -> Unit
+    navHostController: NavHostController
 ) {
     navigation<NavigationBarGraph>(startDestination = Screen.Photos) {
-        photosNavigationBarRoute(navHostController, openProfileBottomSheet)
-        collectionsNavigationBarRoute(navHostController, openProfileBottomSheet)
-        topicsNavigationBarRoute(navHostController, openProfileBottomSheet)
+        photosNavigationBarRoute(navHostController)
+        collectionsNavigationBarRoute(navHostController)
+        topicsNavigationBarRoute(navHostController)
     }
 }
