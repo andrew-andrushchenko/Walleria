@@ -27,7 +27,6 @@
     <string name="photo">Photo</string>
 
     <!--Collections tab-->
-    <string name="all_collections">All collections</string>
     <string name="description_first_photo">The first preview photo in collection</string>
     <string name="description_open_collection">Open collection</string>
     <string name="bullet_template">%s \u2022 %s photos</string>
