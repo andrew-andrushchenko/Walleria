@@ -23,6 +23,7 @@ data class SearchUiState(
     private val collectionsPagingData: PagingData<Collection> = emptyPagingData(),
     private val usersPagingData: PagingData<User> = emptyPagingData(),
     val isFilterDialogOpened: Boolean = false,
+    val isSearchBoxExpanded: Boolean = false,
     val photosLoadQuality: PhotoQuality = PhotoQuality.MEDIUM,
 ) {
     private val _photos: MutableStateFlow<PagingData<Photo>> = MutableStateFlow(emptyPagingData())

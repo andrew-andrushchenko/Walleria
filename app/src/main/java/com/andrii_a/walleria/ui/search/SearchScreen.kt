@@ -5,7 +5,6 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,14 +17,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -34,10 +34,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -78,7 +78,6 @@ fun SearchScreen(
     )
 
     var text by rememberSaveable { mutableStateOf(state.query) }
-    var active by rememberSaveable { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -92,19 +91,24 @@ fun SearchScreen(
                         query = text,
                         onQueryChange = { text = it },
                         onSearch = {
-                            active = false
+                            onEvent(SearchEvent.ToggleSearchBox(isExpanded = false))
                             onEvent(SearchEvent.PerformSearch(query = text))
                         },
-                        expanded = active,
-                        onExpandedChange = { active = it },
+                        expanded = state.isSearchBoxExpanded,
+                        onExpandedChange = { onEvent(SearchEvent.ToggleSearchBox(isExpanded = it)) },
                         placeholder = { Text(stringResource(id = R.string.type_something)) },
                         leadingIcon = {
                             AnimatedContent(
-                                targetState = active,
+                                targetState = state.isSearchBoxExpanded,
                                 label = ""
-                            ) { state ->
-                                if (state) {
-                                    Icon(Icons.Default.Search, contentDescription = null)
+                            ) { isExpanded ->
+                                if (isExpanded) {
+                                    IconButton(onClick = { onEvent(SearchEvent.ToggleSearchBox(isExpanded = false)) }) {
+                                        Icon(
+                                            Icons.Default.Close,
+                                            contentDescription = stringResource(id = R.string.navigate_back)
+                                        )
+                                    }
                                 } else {
                                     IconButton(onClick = { onEvent(SearchEvent.GoBack) }) {
                                         Icon(
@@ -117,7 +121,7 @@ fun SearchScreen(
                         },
                         trailingIcon = {
                             AnimatedVisibility(
-                                visible = (pagerState.currentPage == SearchScreenTabs.Photos.ordinal) && !active,
+                                visible = (pagerState.currentPage == SearchScreenTabs.Photos.ordinal) && !state.isSearchBoxExpanded,
                                 enter = fadeIn(),
                                 exit = fadeOut()
                             ) {
@@ -131,8 +135,8 @@ fun SearchScreen(
                         },
                     )
                 },
-                expanded = active,
-                onExpandedChange = { active = it },
+                expanded = state.isSearchBoxExpanded,
+                onExpandedChange = { onEvent(SearchEvent.ToggleSearchBox(isExpanded = it)) },
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .semantics { traversalIndex = -1f },
@@ -151,7 +155,7 @@ fun SearchScreen(
                 RecentSearchesList(
                     recentSearches = state.recentSearches,
                     onItemSelected = { item ->
-                        active = false
+                        onEvent(SearchEvent.ToggleSearchBox(isExpanded = false))
                         text = item.title
                         onEvent(SearchEvent.PerformSearch(query = text))
                     },
@@ -168,7 +172,11 @@ fun SearchScreen(
 
             SearchTabs(
                 pagerState = pagerState,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .width(450.dp)
+                    .widthIn(min = 200.dp, max = 600.dp)
+                    .padding(horizontal = 16.dp)
             )
 
             Pages(
@@ -206,33 +214,21 @@ private fun SearchTabs(
     pagerState: PagerState,
     modifier: Modifier = Modifier
 ) {
-    val scope = rememberCoroutineScope()
+    val coroutineScope = rememberCoroutineScope()
 
-    TabRow(
-        selectedTabIndex = pagerState.currentPage,
-        indicator = { tabPositions ->
-            Box(
-                modifier = Modifier
-                    .tabIndicatorOffset(tabPositions[pagerState.currentPage])
-                    .height(4.dp)
-                    .padding(horizontal = 32.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.primary,
-                        shape = RoundedCornerShape(16.dp)
-                    )
-            )
-        },
-        modifier = modifier
-    ) {
-        SearchScreenTabs.entries.forEachIndexed { index, tabPage ->
-            Tab(
+    SingleChoiceSegmentedButtonRow(modifier = modifier) {
+        val options = SearchScreenTabs.entries
+
+        options.forEachIndexed { index, tabPage ->
+            SegmentedButton(
                 selected = index == pagerState.currentPage,
                 onClick = {
-                    scope.launch {
+                    coroutineScope.launch {
                         pagerState.animateScrollToPage(index)
                     }
                 },
-                text = {
+                shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
+                label = {
                     Text(
                         text = stringResource(id = tabPage.titleRes),
                         overflow = TextOverflow.Ellipsis,
@@ -266,12 +262,10 @@ private fun Pages(
                         top = 16.dp,
                         start = 16.dp,
                         end = 16.dp,
-                        bottom = WindowInsets.systemBars.asPaddingValues()
-                            .calculateBottomPadding() + 150.dp,
+                        bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding(),
                     ),
                     scrollToTopButtonPadding = PaddingValues(
-                        bottom = WindowInsets.navigationBars.asPaddingValues()
-                            .calculateBottomPadding() + 90.dp
+                        bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
                     )
                 )
             }
@@ -286,12 +280,10 @@ private fun Pages(
                         top = 16.dp,
                         start = 16.dp,
                         end = 16.dp,
-                        bottom = WindowInsets.systemBars.asPaddingValues()
-                            .calculateBottomPadding() + 150.dp,
+                        bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding(),
                     ),
                     scrollToTopButtonPadding = PaddingValues(
-                        bottom = WindowInsets.navigationBars.asPaddingValues()
-                            .calculateBottomPadding() + 90.dp
+                        bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
                     )
                 )
             }

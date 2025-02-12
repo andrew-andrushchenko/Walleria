@@ -17,4 +17,5 @@ sealed interface SearchEvent {
     data object GoBack : SearchEvent
     data object OpenFilterDialog : SearchEvent
     data object DismissFilterDialog : SearchEvent
+    data class ToggleSearchBox(val isExpanded: Boolean) : SearchEvent
 }

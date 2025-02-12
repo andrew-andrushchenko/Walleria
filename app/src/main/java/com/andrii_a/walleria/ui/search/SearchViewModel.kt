@@ -111,6 +111,12 @@ class SearchViewModel @Inject constructor(
                     navigationChannel.send(SearchNavigationEvent.NavigateBack)
                 }
             }
+
+            is SearchEvent.ToggleSearchBox -> {
+                _state.update {
+                    it.copy(isSearchBoxExpanded = event.isExpanded)
+                }
+            }
         }
     }
 
