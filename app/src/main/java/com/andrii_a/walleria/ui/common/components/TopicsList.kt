@@ -1,4 +1,4 @@
-package com.andrii_a.walleria.ui.common.components.lists
+package com.andrii_a.walleria.ui.common.components
 
 import android.content.res.Configuration
 import android.graphics.Bitmap
@@ -52,11 +52,6 @@ import com.andrii_a.walleria.domain.models.topic.Topic
 import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.domain.models.user.UserSocialMediaLinks
 import com.andrii_a.walleria.ui.common.TopicId
-import com.andrii_a.walleria.ui.common.components.EmptyContentBanner
-import com.andrii_a.walleria.ui.common.components.ErrorBanner
-import com.andrii_a.walleria.ui.common.components.ErrorItem
-import com.andrii_a.walleria.ui.common.components.LoadingListItem
-import com.andrii_a.walleria.ui.common.components.ScrollToTopLayout
 import com.andrii_a.walleria.ui.theme.PhotoDetailsActionButtonContainerColor
 import com.andrii_a.walleria.ui.theme.PhotoDetailsActionButtonContentColor
 import com.andrii_a.walleria.ui.theme.WalleriaTheme

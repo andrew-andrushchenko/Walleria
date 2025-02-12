@@ -1,9 +1,7 @@
 package com.andrii_a.walleria.ui.settings
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -24,17 +22,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.andrii_a.walleria.R
-import com.andrii_a.walleria.domain.CollectionListLayoutType
 import com.andrii_a.walleria.domain.PhotoQuality
-import com.andrii_a.walleria.domain.PhotosListLayoutType
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.titleRes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    currentPhotosListLayoutType: PhotosListLayoutType,
-    currentCollectionListLayoutType: CollectionListLayoutType,
     currentPhotosLoadQuality: PhotoQuality,
     currentPhotosDownloadQuality: PhotoQuality,
     onEvent: (SettingsEvent) -> Unit,
@@ -70,40 +64,6 @@ fun SettingsScreen(
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
         ) {
-            SettingsGroup(name = stringResource(id = R.string.layout_settings)) {
-                SettingsItem(
-                    title = stringResource(id = R.string.photos_layout),
-                    selectedValue = stringResource(id = currentPhotosListLayoutType.titleRes),
-                    selectionOptions = PhotosListLayoutType.entries
-                        .map { stringResource(id = it.titleRes) },
-                    selectedItemPositionOrdinal = currentPhotosListLayoutType.ordinal,
-                    onChangeParameter = { selectedLayoutTypeOrdinal ->
-                        onEvent(
-                            SettingsEvent.UpdatePhotosListLayoutType(
-                                PhotosListLayoutType.entries[selectedLayoutTypeOrdinal]
-                            )
-                        )
-                    }
-                )
-
-                SettingsItem(
-                    title = stringResource(id = R.string.collections_layout),
-                    selectedValue = stringResource(id = currentCollectionListLayoutType.titleRes),
-                    selectionOptions = CollectionListLayoutType.entries
-                        .map { stringResource(id = it.titleRes) },
-                    selectedItemPositionOrdinal = currentCollectionListLayoutType.ordinal,
-                    onChangeParameter = { selectedLayoutTypeOrdinal ->
-                        onEvent(
-                            SettingsEvent.UpdateCollectionsListLayoutType(
-                                CollectionListLayoutType.entries[selectedLayoutTypeOrdinal]
-                            )
-                        )
-                    },
-                )
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
             SettingsGroup(name = stringResource(id = R.string.load_settings)) {
                 SettingsItem(
                     title = stringResource(id = R.string.photo_load_quality),
@@ -145,8 +105,6 @@ fun SettingsScreenPreview() {
     WalleriaTheme {
         Surface {
             SettingsScreen(
-                currentPhotosListLayoutType = PhotosListLayoutType.DEFAULT,
-                currentCollectionListLayoutType = CollectionListLayoutType.DEFAULT,
                 currentPhotosLoadQuality = PhotoQuality.HIGH,
                 currentPhotosDownloadQuality = PhotoQuality.HIGH,
                 onEvent = {},

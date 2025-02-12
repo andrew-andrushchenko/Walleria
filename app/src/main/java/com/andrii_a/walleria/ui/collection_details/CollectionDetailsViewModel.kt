@@ -41,13 +41,11 @@ class CollectionDetailsViewModel @Inject constructor(
     )
     val state = combine(
         userAccountPreferencesRepository.userPrivateProfileData,
-        localPreferencesRepository.photosListLayoutType,
         localPreferencesRepository.photosLoadQuality,
         _state
-    ) { userPrivateProfileData, photosLayoutType, photosLoadQuality, state ->
+    ) { userPrivateProfileData, photosLoadQuality, state ->
         state.copy(
             loggedInUserNickname = userPrivateProfileData.nickname,
-            photosListLayoutType = photosLayoutType,
             photosLoadQuality = photosLoadQuality
         )
     }.stateIn(

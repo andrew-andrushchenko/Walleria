@@ -14,9 +14,6 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -59,15 +56,11 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
-import com.andrii_a.walleria.domain.CollectionListLayoutType
-import com.andrii_a.walleria.domain.PhotosListLayoutType
 import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.ui.common.UiErrorWithRetry
+import com.andrii_a.walleria.ui.common.components.CollectionsGridContent
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
-import com.andrii_a.walleria.ui.common.components.lists.CollectionsGrid
-import com.andrii_a.walleria.ui.common.components.lists.CollectionsList
-import com.andrii_a.walleria.ui.common.components.lists.PhotosGrid
-import com.andrii_a.walleria.ui.common.components.lists.PhotosList
+import com.andrii_a.walleria.ui.common.components.PhotosGridContent
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.user_details.components.NestedScrollLayout
 import com.andrii_a.walleria.ui.user_details.components.UserHeader
@@ -292,216 +285,61 @@ private fun Pages(
             UserDetailsScreenTabs.Photos.ordinal -> {
                 val lazyPhotoItems by rememberUpdatedState(newValue = uiState.photos.collectAsLazyPagingItems())
 
-                when (uiState.photosListLayoutType) {
-                    PhotosListLayoutType.DEFAULT -> {
-                        val listState = rememberLazyListState()
-
-                        PhotosList(
-                            lazyPhotoItems = lazyPhotoItems,
-                            onPhotoClicked = { id ->
-                                onEvent(UserDetailsEvent.SelectPhoto(id))
-                            },
-                            onUserProfileClicked = { nickname ->
-                                onEvent(UserDetailsEvent.SelectUser(nickname))
-                            },
-                            isCompact = false,
-                            photosLoadQuality = uiState.photosLoadQuality,
-                            listState = listState,
-                            contentPadding = PaddingValues(
-                                top = dimensionResource(id = R.dimen.list_top_padding),
-                                bottom = WindowInsets.navigationBars.asPaddingValues()
-                                    .calculateBottomPadding(),
-                            ),
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-
-                    PhotosListLayoutType.MINIMAL_LIST -> {
-                        val listState = rememberLazyListState()
-
-                        PhotosList(
-                            lazyPhotoItems = lazyPhotoItems,
-                            onPhotoClicked = { id ->
-                                onEvent(UserDetailsEvent.SelectPhoto(id))
-                            },
-                            onUserProfileClicked = { nickname ->
-                                onEvent(UserDetailsEvent.SelectUser(nickname))
-                            },
-                            isCompact = true,
-                            photosLoadQuality = uiState.photosLoadQuality,
-                            listState = listState,
-                            contentPadding = PaddingValues(
-                                top = dimensionResource(id = R.dimen.list_top_padding),
-                                bottom = WindowInsets.navigationBars.asPaddingValues()
-                                    .calculateBottomPadding(),
-                            ),
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-
-                    PhotosListLayoutType.STAGGERED_GRID -> {
-                        val gridState = rememberLazyStaggeredGridState()
-
-                        PhotosGrid(
-                            lazyPhotoItems = lazyPhotoItems,
-                            onPhotoClicked = { id ->
-                                onEvent(UserDetailsEvent.SelectPhoto(id))
-                            },
-                            photosLoadQuality = uiState.photosLoadQuality,
-                            gridState = gridState,
-                            contentPadding = PaddingValues(
-                                top = dimensionResource(id = R.dimen.list_top_padding),
-                                bottom = WindowInsets.navigationBars.asPaddingValues()
-                                    .calculateBottomPadding(),
-                            ),
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-                }
+                PhotosGridContent(
+                    photoItems = lazyPhotoItems,
+                    onPhotoClicked = { onEvent(UserDetailsEvent.SelectPhoto(it)) },
+                    contentPadding = PaddingValues(
+                        top = 16.dp,
+                        start = 16.dp,
+                        end = 16.dp,
+                        bottom = WindowInsets.systemBars.asPaddingValues()
+                            .calculateBottomPadding() + 150.dp,
+                    ),
+                    scrollToTopButtonPadding = PaddingValues(
+                        bottom = WindowInsets.navigationBars.asPaddingValues()
+                            .calculateBottomPadding() + 90.dp
+                    )
+                )
             }
 
             UserDetailsScreenTabs.LikedPhotos.ordinal -> {
                 val lazyLikedPhotoItems by rememberUpdatedState(newValue = uiState.likedPhotos.collectAsLazyPagingItems())
 
-                when (uiState.photosListLayoutType) {
-                    PhotosListLayoutType.DEFAULT -> {
-                        val listState = rememberLazyListState()
-
-                        PhotosList(
-                            lazyPhotoItems = lazyLikedPhotoItems,
-                            onPhotoClicked = { id ->
-                                onEvent(UserDetailsEvent.SelectPhoto(id))
-                            },
-                            onUserProfileClicked = { nickname ->
-                                onEvent(UserDetailsEvent.SelectUser(nickname))
-                            },
-                            isCompact = false,
-                            photosLoadQuality = uiState.photosLoadQuality,
-                            listState = listState,
-                            contentPadding = PaddingValues(
-                                top = dimensionResource(id = R.dimen.list_top_padding),
-                                bottom = WindowInsets.navigationBars.asPaddingValues()
-                                    .calculateBottomPadding(),
-                            ),
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-
-                    PhotosListLayoutType.MINIMAL_LIST -> {
-                        val listState = rememberLazyListState()
-
-                        PhotosList(
-                            lazyPhotoItems = lazyLikedPhotoItems,
-                            onPhotoClicked = { id ->
-                                onEvent(UserDetailsEvent.SelectPhoto(id))
-                            },
-                            onUserProfileClicked = { nickname ->
-                                onEvent(UserDetailsEvent.SelectUser(nickname))
-                            },
-                            isCompact = true,
-                            photosLoadQuality = uiState.photosLoadQuality,
-                            listState = listState,
-                            contentPadding = PaddingValues(
-                                top = dimensionResource(id = R.dimen.list_top_padding),
-                                bottom = WindowInsets.navigationBars.asPaddingValues()
-                                    .calculateBottomPadding(),
-                            ),
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-
-                    PhotosListLayoutType.STAGGERED_GRID -> {
-                        val gridState = rememberLazyStaggeredGridState()
-
-                        PhotosGrid(
-                            lazyPhotoItems = lazyLikedPhotoItems,
-                            onPhotoClicked = { id ->
-                                onEvent(UserDetailsEvent.SelectPhoto(id))
-                            },
-                            photosLoadQuality = uiState.photosLoadQuality,
-                            gridState = gridState,
-                            contentPadding = PaddingValues(
-                                top = dimensionResource(id = R.dimen.list_top_padding),
-                                bottom = WindowInsets.navigationBars.asPaddingValues()
-                                    .calculateBottomPadding(),
-                            ),
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-                }
+                PhotosGridContent(
+                    photoItems = lazyLikedPhotoItems,
+                    onPhotoClicked = { onEvent(UserDetailsEvent.SelectPhoto(it)) },
+                    contentPadding = PaddingValues(
+                        top = 16.dp,
+                        start = 16.dp,
+                        end = 16.dp,
+                        bottom = WindowInsets.systemBars.asPaddingValues()
+                            .calculateBottomPadding() + 150.dp,
+                    ),
+                    scrollToTopButtonPadding = PaddingValues(
+                        bottom = WindowInsets.navigationBars.asPaddingValues()
+                            .calculateBottomPadding() + 90.dp
+                    )
+                )
             }
 
             UserDetailsScreenTabs.Collections.ordinal -> {
                 val lazyCollectionItems by rememberUpdatedState(newValue = uiState.collections.collectAsLazyPagingItems())
 
-                when (uiState.collectionListLayoutType) {
-                    CollectionListLayoutType.DEFAULT -> {
-                        val listState = rememberLazyListState()
-
-                        CollectionsList(
-                            lazyCollectionItems = lazyCollectionItems,
-                            onCollectionClicked = { id ->
-                                onEvent(UserDetailsEvent.SelectCollection(id))
-                            },
-                            onPhotoClicked = { id ->
-                                onEvent(UserDetailsEvent.SelectPhoto(id))
-                            },
-                            onUserProfileClicked = { nickname ->
-                                onEvent(UserDetailsEvent.SelectUser(nickname))
-                            },
-                            photosLoadQuality = uiState.photosLoadQuality,
-                            contentPadding = PaddingValues(
-                                top = dimensionResource(id = R.dimen.list_top_padding),
-                                bottom = WindowInsets.navigationBars.asPaddingValues()
-                                    .calculateBottomPadding(),
-                            ),
-                            listState = listState,
-                        )
-                    }
-
-                    CollectionListLayoutType.MINIMAL_LIST -> {
-                        val listState = rememberLazyListState()
-
-                        CollectionsList(
-                            lazyCollectionItems = lazyCollectionItems,
-                            onCollectionClicked = { id ->
-                                onEvent(UserDetailsEvent.SelectCollection(id))
-                            },
-                            onPhotoClicked = { id ->
-                                onEvent(UserDetailsEvent.SelectPhoto(id))
-                            },
-                            onUserProfileClicked = { nickname ->
-                                onEvent(UserDetailsEvent.SelectUser(nickname))
-                            },
-                            photosLoadQuality = uiState.photosLoadQuality,
-                            isCompact = true,
-                            listState = listState,
-                            contentPadding = PaddingValues(
-                                top = dimensionResource(id = R.dimen.list_top_padding),
-                                bottom = WindowInsets.navigationBars.asPaddingValues()
-                                    .calculateBottomPadding(),
-                            )
-                        )
-                    }
-
-                    CollectionListLayoutType.GRID -> {
-                        val gridState = rememberLazyGridState()
-
-                        CollectionsGrid(
-                            lazyCollectionItems = lazyCollectionItems,
-                            onCollectionClicked = { id ->
-                                onEvent(UserDetailsEvent.SelectCollection(id))
-                            },
-                            gridState = gridState,
-                            photosLoadQuality = uiState.photosLoadQuality,
-                            contentPadding = PaddingValues(
-                                top = dimensionResource(id = R.dimen.list_top_padding),
-                                bottom = WindowInsets.navigationBars.asPaddingValues()
-                                    .calculateBottomPadding(),
-                            )
-                        )
-                    }
-                }
+                CollectionsGridContent(
+                    collectionItems = lazyCollectionItems,
+                    onCollectionClick = { onEvent(UserDetailsEvent.SelectCollection(it)) },
+                    contentPadding = PaddingValues(
+                        top = 16.dp,
+                        start = 16.dp,
+                        end = 16.dp,
+                        bottom = WindowInsets.systemBars.asPaddingValues()
+                            .calculateBottomPadding() + 150.dp,
+                    ),
+                    scrollToTopButtonPadding = PaddingValues(
+                        bottom = WindowInsets.navigationBars.asPaddingValues()
+                            .calculateBottomPadding() + 90.dp
+                    )
+                )
             }
 
             else -> throw IllegalStateException("Tab screen was not declared!")

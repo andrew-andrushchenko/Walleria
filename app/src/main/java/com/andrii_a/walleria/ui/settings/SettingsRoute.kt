@@ -36,14 +36,10 @@ fun NavGraphBuilder.settingsRoute(navController: NavController) {
     ) {
         val viewModel: SettingsViewModel = hiltViewModel()
 
-        val photosListLayoutType by viewModel.photosListLayoutType.collectAsStateWithLifecycle()
-        val collectionsListLayoutType by viewModel.collectionsListLayoutType.collectAsStateWithLifecycle()
         val photosLoadQuality by viewModel.photosLoadQuality.collectAsStateWithLifecycle()
         val photosDownloadQuality by viewModel.photosDownloadQuality.collectAsStateWithLifecycle()
 
         SettingsScreen(
-            currentPhotosListLayoutType = photosListLayoutType,
-            currentCollectionListLayoutType = collectionsListLayoutType,
             currentPhotosLoadQuality = photosLoadQuality,
             currentPhotosDownloadQuality = photosDownloadQuality,
             onEvent = viewModel::onEvent,

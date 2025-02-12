@@ -4,7 +4,6 @@ import androidx.compose.runtime.Stable
 import androidx.paging.PagingData
 import com.andrii_a.walleria.domain.PhotoListDisplayOrder
 import com.andrii_a.walleria.domain.PhotoQuality
-import com.andrii_a.walleria.domain.PhotosListLayoutType
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.ui.util.emptyPagingData
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +15,6 @@ import kotlinx.coroutines.flow.update
 data class PhotosUiState(
     private val photosPagingData: PagingData<Photo> = emptyPagingData(),
     val photosListDisplayOrder: PhotoListDisplayOrder = PhotoListDisplayOrder.LATEST,
-    val photosListLayoutType: PhotosListLayoutType = PhotosListLayoutType.DEFAULT,
     val photosLoadQuality: PhotoQuality = PhotoQuality.MEDIUM
 ) {
     private val _photos: MutableStateFlow<PagingData<Photo>> = MutableStateFlow(emptyPagingData())

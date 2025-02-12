@@ -25,7 +25,7 @@ import com.andrii_a.walleria.domain.TopicStatus
 import com.andrii_a.walleria.domain.models.topic.Topic
 import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.ui.common.components.UserRowWithPhotoCount
-import com.andrii_a.walleria.ui.common.components.lists.StatusChip
+import com.andrii_a.walleria.ui.common.components.StatusChip
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 
 @Composable

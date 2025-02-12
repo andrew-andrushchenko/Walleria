@@ -2,9 +2,7 @@ package com.andrii_a.walleria.ui.search
 
 import androidx.compose.runtime.Stable
 import androidx.paging.PagingData
-import com.andrii_a.walleria.domain.CollectionListLayoutType
 import com.andrii_a.walleria.domain.PhotoQuality
-import com.andrii_a.walleria.domain.PhotosListLayoutType
 import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.search.RecentSearchItem
@@ -25,8 +23,6 @@ data class SearchUiState(
     private val collectionsPagingData: PagingData<Collection> = emptyPagingData(),
     private val usersPagingData: PagingData<User> = emptyPagingData(),
     val isFilterDialogOpened: Boolean = false,
-    val photosLayoutType: PhotosListLayoutType = PhotosListLayoutType.DEFAULT,
-    val collectionsLayoutType: CollectionListLayoutType = CollectionListLayoutType.DEFAULT,
     val photosLoadQuality: PhotoQuality = PhotoQuality.MEDIUM,
 ) {
     private val _photos: MutableStateFlow<PagingData<Photo>> = MutableStateFlow(emptyPagingData())

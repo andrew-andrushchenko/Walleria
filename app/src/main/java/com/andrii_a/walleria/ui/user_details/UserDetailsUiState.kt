@@ -2,9 +2,7 @@ package com.andrii_a.walleria.ui.user_details
 
 import androidx.compose.runtime.Stable
 import androidx.paging.PagingData
-import com.andrii_a.walleria.domain.CollectionListLayoutType
 import com.andrii_a.walleria.domain.PhotoQuality
-import com.andrii_a.walleria.domain.PhotosListLayoutType
 import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.user.User
@@ -26,8 +24,6 @@ data class UserDetailsUiState(
     private val photosPagingData: PagingData<Photo> = emptyPagingData(),
     private val likedPhotosPagingData: PagingData<Photo> = emptyPagingData(),
     private val collectionsPagingData: PagingData<Collection> = emptyPagingData(),
-    val photosListLayoutType: PhotosListLayoutType = PhotosListLayoutType.DEFAULT,
-    val collectionListLayoutType: CollectionListLayoutType = CollectionListLayoutType.DEFAULT,
     val photosLoadQuality: PhotoQuality = PhotoQuality.MEDIUM,
 ) {
     private val _photos: MutableStateFlow<PagingData<Photo>> = MutableStateFlow(emptyPagingData())

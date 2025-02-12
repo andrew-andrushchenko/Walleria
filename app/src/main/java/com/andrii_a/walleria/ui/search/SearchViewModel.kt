@@ -35,15 +35,11 @@ class SearchViewModel @Inject constructor(
     private val _state: MutableStateFlow<SearchUiState> = MutableStateFlow(SearchUiState())
     val state = combine(
         recentSearchesRepository.getAllRecentSearches(),
-        localPreferencesRepository.photosListLayoutType,
-        localPreferencesRepository.collectionsListLayoutType,
         localPreferencesRepository.photosLoadQuality,
         _state
-    ) { recentSearches, photosListLayoutType, collectionsListLayoutType, photosLoadQuality, state ->
+    ) { recentSearches, photosLoadQuality, state ->
         state.copy(
             recentSearches = recentSearches,
-            photosLayoutType = photosListLayoutType,
-            collectionsLayoutType = collectionsListLayoutType,
             photosLoadQuality = photosLoadQuality
         )
     }.stateIn(

@@ -2,11 +2,13 @@ package com.andrii_a.walleria.ui.topic_details
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.FilterList
@@ -33,11 +35,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
-import com.andrii_a.walleria.domain.PhotosListLayoutType
 import com.andrii_a.walleria.ui.common.UiErrorWithRetry
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
-import com.andrii_a.walleria.ui.common.components.lists.PhotosGrid
-import com.andrii_a.walleria.ui.common.components.lists.PhotosList
+import com.andrii_a.walleria.ui.common.components.PhotosGridContent
 import kotlinx.coroutines.launch
 
 @Composable
@@ -185,83 +185,32 @@ private fun SuccessStateContent(
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { innerPadding ->
-        val listState = rememberLazyListState()
-        val gridState = rememberLazyStaggeredGridState()
-
         val topicPhotosLazyItems by rememberUpdatedState(newValue = state.topicPhotos.collectAsLazyPagingItems())
 
-        when (state.photosListLayoutType) {
-            PhotosListLayoutType.DEFAULT -> {
-                PhotosList(
-                    lazyPhotoItems = topicPhotosLazyItems,
-                    headerContent = {
-                        TopicDetailsDescriptionHeader(
-                            topic = topic,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 24.dp, vertical = 16.dp)
-                        )
-                    },
-                    onPhotoClicked = { id ->
-                        onEvent(TopicDetailsEvent.SelectPhoto(id))
-                    },
-                    onUserProfileClicked = { nickname ->
-                        onEvent(TopicDetailsEvent.SelectUser(nickname))
-                    },
-                    isCompact = false,
-                    photosLoadQuality = state.photosLoadQuality,
-                    listState = listState,
-                    contentPadding = innerPadding,
-                    modifier = Modifier.fillMaxSize(),
+        PhotosGridContent(
+            photoItems = topicPhotosLazyItems,
+            onPhotoClicked = { onEvent(TopicDetailsEvent.SelectPhoto(it)) },
+            headerContent = {
+                TopicDetailsDescriptionHeader(
+                    topic = topic,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp, vertical = 16.dp)
                 )
-            }
-
-            PhotosListLayoutType.MINIMAL_LIST -> {
-                PhotosList(
-                    lazyPhotoItems = topicPhotosLazyItems,
-                    headerContent = {
-                        TopicDetailsDescriptionHeader(
-                            topic = topic,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 24.dp, vertical = 16.dp)
-                        )
-                    },
-                    onPhotoClicked = { id ->
-                        onEvent(TopicDetailsEvent.SelectPhoto(id))
-                    },
-                    onUserProfileClicked = { nickname ->
-                        onEvent(TopicDetailsEvent.SelectUser(nickname))
-                    },
-                    isCompact = true,
-                    photosLoadQuality = state.photosLoadQuality,
-                    listState = listState,
-                    contentPadding = innerPadding,
-                    modifier = Modifier.fillMaxSize(),
-                )
-            }
-
-            PhotosListLayoutType.STAGGERED_GRID -> {
-                PhotosGrid(
-                    lazyPhotoItems = topicPhotosLazyItems,
-                    headerContent = {
-                        TopicDetailsDescriptionHeader(
-                            topic = topic,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 24.dp, vertical = 16.dp)
-                        )
-                    },
-                    onPhotoClicked = { id ->
-                        onEvent(TopicDetailsEvent.SelectPhoto(id))
-                    },
-                    photosLoadQuality = state.photosLoadQuality,
-                    gridState = gridState,
-                    contentPadding = innerPadding,
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
-        }
+            },
+            contentPadding = PaddingValues(
+                top = 16.dp,
+                start = 16.dp,
+                end = 16.dp,
+                bottom = WindowInsets.systemBars.asPaddingValues()
+                    .calculateBottomPadding() + 150.dp,
+            ),
+            scrollToTopButtonPadding = PaddingValues(
+                bottom = WindowInsets.navigationBars.asPaddingValues()
+                    .calculateBottomPadding() + 90.dp
+            ),
+            modifier = Modifier.padding(innerPadding)
+        )
 
         val scope = rememberCoroutineScope()
 

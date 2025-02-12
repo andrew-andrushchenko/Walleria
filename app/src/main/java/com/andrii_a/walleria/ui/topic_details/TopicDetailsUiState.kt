@@ -3,7 +3,6 @@ package com.andrii_a.walleria.ui.topic_details
 import androidx.compose.runtime.Stable
 import androidx.paging.PagingData
 import com.andrii_a.walleria.domain.PhotoQuality
-import com.andrii_a.walleria.domain.PhotosListLayoutType
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.topic.Topic
 import com.andrii_a.walleria.ui.common.UiError
@@ -21,7 +20,6 @@ data class TopicDetailsUiState(
     private val topicPhotosPagingData: PagingData<Photo> = emptyPagingData(),
     val topicPhotosFilters: TopicPhotosFilters = TopicPhotosFilters(),
     val isFilterDialogOpened: Boolean = false,
-    val photosListLayoutType: PhotosListLayoutType = PhotosListLayoutType.DEFAULT,
     val photosLoadQuality: PhotoQuality = PhotoQuality.MEDIUM,
 ) {
     private val _topicPhotos: MutableStateFlow<PagingData<Photo>> = MutableStateFlow(emptyPagingData())

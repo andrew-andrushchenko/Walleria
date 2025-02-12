@@ -3,10 +3,8 @@ package com.andrii_a.walleria.ui.util
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.andrii_a.walleria.R
-import com.andrii_a.walleria.domain.CollectionListLayoutType
 import com.andrii_a.walleria.domain.PhotoListDisplayOrder
 import com.andrii_a.walleria.domain.PhotoQuality
-import com.andrii_a.walleria.domain.PhotosListLayoutType
 import com.andrii_a.walleria.domain.SearchResultsContentFilter
 import com.andrii_a.walleria.domain.SearchResultsDisplayOrder
 import com.andrii_a.walleria.domain.SearchResultsPhotoColor
@@ -115,18 +113,3 @@ val PhotoQuality.titleRes: Int
         PhotoQuality.THUMBNAIL -> R.string.photo_quality_thumbnail
     }
 
-val PhotosListLayoutType.titleRes: Int
-    @StringRes
-    get() = when (this) {
-        PhotosListLayoutType.DEFAULT -> R.string.type_default
-        PhotosListLayoutType.MINIMAL_LIST -> R.string.type_minimal_list
-        PhotosListLayoutType.STAGGERED_GRID -> R.string.type_staggered_grid
-    }
-
-val CollectionListLayoutType.titleRes: Int
-    @StringRes
-    get() = when (this) {
-        CollectionListLayoutType.DEFAULT -> R.string.type_default
-        CollectionListLayoutType.MINIMAL_LIST -> R.string.type_minimal_list
-        CollectionListLayoutType.GRID -> R.string.type_grid
-    }

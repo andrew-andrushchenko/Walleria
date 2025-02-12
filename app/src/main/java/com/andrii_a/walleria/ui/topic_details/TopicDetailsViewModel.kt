@@ -35,12 +35,10 @@ class TopicDetailsViewModel @Inject constructor(
 
     private val _state: MutableStateFlow<TopicDetailsUiState> = MutableStateFlow(TopicDetailsUiState())
     val state = combine(
-        localPreferencesRepository.photosListLayoutType,
         localPreferencesRepository.photosLoadQuality,
         _state
-    ) { photosListLayoutType, photosLoadQuality, state ->
+    ) { photosLoadQuality, state ->
         state.copy(
-            photosListLayoutType = photosListLayoutType,
             photosLoadQuality = photosLoadQuality
         )
     }.stateIn(

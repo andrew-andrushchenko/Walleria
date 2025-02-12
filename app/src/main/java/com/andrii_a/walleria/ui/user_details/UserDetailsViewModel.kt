@@ -41,15 +41,11 @@ class UserDetailsViewModel @Inject constructor(
     private val _state: MutableStateFlow<UserDetailsUiState> = MutableStateFlow(UserDetailsUiState())
     val state = combine(
         userAccountPreferencesRepository.userPrivateProfileData,
-        localPreferencesRepository.photosListLayoutType,
-        localPreferencesRepository.collectionsListLayoutType,
         localPreferencesRepository.photosLoadQuality,
         _state
-    ) { userPrivateProfileData, photosListLayoutType, collectionsListLayoutType, photosLoadQuality, state ->
+    ) { userPrivateProfileData, photosLoadQuality, state ->
         state.copy(
             loggedInUserNickname = userPrivateProfileData.nickname,
-            photosListLayoutType = photosListLayoutType,
-            collectionListLayoutType = collectionsListLayoutType,
             photosLoadQuality = photosLoadQuality
         )
     }.stateIn(

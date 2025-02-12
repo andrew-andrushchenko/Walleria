@@ -22,15 +22,12 @@ class CollectionsViewModel @Inject constructor(
     localPreferencesRepository: LocalPreferencesRepository
 ) : ViewModel() {
 
-    private val _state: MutableStateFlow<CollectionsUiState> =
-        MutableStateFlow(CollectionsUiState())
+    private val _state: MutableStateFlow<CollectionsUiState> = MutableStateFlow(CollectionsUiState())
     val state = combine(
-        localPreferencesRepository.collectionsListLayoutType,
         localPreferencesRepository.photosLoadQuality,
         _state
-    ) { collectionsLayoutType, photosLoadQuality, state ->
+    ) { photosLoadQuality, state ->
         state.copy(
-            collectionsLayoutType = collectionsLayoutType,
             photosLoadQuality = photosLoadQuality
         )
     }.stateIn(

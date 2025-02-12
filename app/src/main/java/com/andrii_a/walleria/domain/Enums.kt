@@ -57,18 +57,6 @@ enum class TopicStatus {
     OTHER
 }
 
-enum class PhotosListLayoutType {
-    DEFAULT,
-    MINIMAL_LIST,
-    STAGGERED_GRID
-}
-
-enum class CollectionListLayoutType {
-    DEFAULT,
-    MINIMAL_LIST,
-    GRID
-}
-
 enum class PhotoQuality {
     RAW,
     HIGH,

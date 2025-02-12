@@ -25,7 +25,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.TopicsDisplayOrder
 import com.andrii_a.walleria.ui.common.components.WTitleDropdown
-import com.andrii_a.walleria.ui.common.components.lists.TopicsList
+import com.andrii_a.walleria.ui.common.components.TopicsList
 import com.andrii_a.walleria.ui.util.titleRes
 
 @OptIn(ExperimentalMaterial3Api::class)

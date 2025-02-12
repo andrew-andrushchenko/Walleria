@@ -1,10 +1,6 @@
 package com.andrii_a.walleria.ui.collections
 
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.AccountCircle
@@ -20,15 +16,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
-import com.andrii_a.walleria.domain.CollectionListLayoutType
-import com.andrii_a.walleria.ui.common.components.lists.CollectionsGrid
-import com.andrii_a.walleria.ui.common.components.lists.CollectionsList
+import com.andrii_a.walleria.ui.common.components.CollectionsStaggeredGrid
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,79 +67,11 @@ fun CollectionsScreen(
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { innerPadding ->
-        when (state.collectionsLayoutType) {
-            CollectionListLayoutType.DEFAULT -> {
-                val listState = rememberLazyListState()
-
-                CollectionsList(
-                    lazyCollectionItems = lazyCollectionItems,
-                    onCollectionClicked = { id ->
-                        onEvent(CollectionsEvent.SelectCollection(id))
-                    },
-                    onUserProfileClicked = { nickname ->
-                        onEvent(CollectionsEvent.SelectUser(nickname))
-                    },
-                    onPhotoClicked = { id ->
-                        onEvent(CollectionsEvent.SelectPhoto(id))
-                    },
-                    isCompact = false,
-                    addNavigationBarPadding = true,
-                    listState = listState,
-                    contentPadding = PaddingValues(
-                        start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                        end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
-                        top = innerPadding.calculateTopPadding() + dimensionResource(id = R.dimen.list_top_padding),
-                        bottom = innerPadding.calculateBottomPadding() + dimensionResource(id = R.dimen.navigation_bar_height) * 2
-                    )
-                )
-            }
-
-            CollectionListLayoutType.MINIMAL_LIST -> {
-                val listState = rememberLazyListState()
-
-                CollectionsList(
-                    lazyCollectionItems = lazyCollectionItems,
-                    onCollectionClicked = { id ->
-                        onEvent(CollectionsEvent.SelectCollection(id))
-                    },
-                    onUserProfileClicked = { nickname ->
-                        onEvent(CollectionsEvent.SelectUser(nickname))
-                    },
-                    onPhotoClicked = { id ->
-                        onEvent(CollectionsEvent.SelectPhoto(id))
-                    },
-                    isCompact = true,
-                    addNavigationBarPadding = true,
-                    photosLoadQuality = state.photosLoadQuality,
-                    listState = listState,
-                    contentPadding = PaddingValues(
-                        start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                        end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
-                        top = innerPadding.calculateTopPadding() + dimensionResource(id = R.dimen.list_top_padding),
-                        bottom = innerPadding.calculateBottomPadding() + dimensionResource(id = R.dimen.navigation_bar_height) * 2
-                    )
-                )
-            }
-
-            CollectionListLayoutType.GRID -> {
-                val gridState = rememberLazyGridState()
-
-                CollectionsGrid(
-                    lazyCollectionItems = lazyCollectionItems,
-                    onCollectionClicked = { id ->
-                        onEvent(CollectionsEvent.SelectCollection(id))
-                    },
-                    addNavigationBarPadding = true,
-                    gridState = gridState,
-                    photosLoadQuality = state.photosLoadQuality,
-                    contentPadding = PaddingValues(
-                        start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                        end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
-                        top = innerPadding.calculateTopPadding() + dimensionResource(id = R.dimen.list_top_padding),
-                        bottom = innerPadding.calculateBottomPadding() + dimensionResource(id = R.dimen.navigation_bar_height) * 2
-                    )
-                )
-            }
-        }
+        CollectionsStaggeredGrid(
+            lazyCollectionItems = lazyCollectionItems,
+            contentPadding = innerPadding,
+            onCollectionClick = { onEvent(CollectionsEvent.SelectCollection(it)) },
+            modifier = Modifier.padding(16.dp)
+        )
     }
 }
