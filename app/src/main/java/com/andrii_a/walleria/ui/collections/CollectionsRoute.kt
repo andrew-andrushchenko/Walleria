@@ -48,10 +48,6 @@ fun NavGraphBuilder.collectionsNavigationBarRoute(navController: NavController) 
                     navController.navigate(Screen.PhotoDetails(event.photoId))
                 }
 
-                is CollectionsNavigationEvent.NavigateToProfileScreen -> {
-                    navController.navigate(Screen.Profile)
-                }
-
                 is CollectionsNavigationEvent.NavigateToSearchScreen -> {
                     navController.navigate(Screen.Search())
                 }

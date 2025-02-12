@@ -16,6 +16,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
@@ -50,7 +51,13 @@ fun WalleriaApp() {
                                 contentDescription = stringResource(id = R.string.navigation_bar_icon)
                             )
                         },
-                        label = { Text(text = stringResource(id = entry.titleRes)) },
+                        label = {
+                            Text(
+                                text = stringResource(id = entry.titleRes),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        },
                         selected = index == selectedTabIndex,
                         onClick = {
                             selectedTabIndex = index

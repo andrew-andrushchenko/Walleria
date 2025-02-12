@@ -1,4 +1,4 @@
-package com.andrii_a.walleria.ui.profile
+package com.andrii_a.walleria.ui.account
 
 import android.content.res.Configuration
 import android.graphics.Color
@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.Edit
@@ -29,7 +28,6 @@ import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -64,8 +62,8 @@ import com.andrii_a.walleria.ui.theme.WalleriaTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
-    state: ProfileScreenUiState,
-    onEvent: (ProfileScreenEvent) -> Unit
+    state: AccountScreenUiState,
+    onEvent: (AccountScreenEvent) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -74,16 +72,6 @@ fun ProfileScreen(
             TopAppBar(
                 title = {
                     Text(text = stringResource(id = R.string.account_settings_screen))
-                },
-                navigationIcon = {
-                    IconButton(onClick = { onEvent(ProfileScreenEvent.GoBack) }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                            contentDescription = stringResource(
-                                id = R.string.navigate_back
-                            )
-                        )
-                    }
                 },
                 scrollBehavior = scrollBehavior
             )
@@ -102,24 +90,24 @@ fun ProfileScreen(
                     userPrivateProfileData = state.userPrivateProfileData!!,
                     showConfirmation = state.shouldShowLogoutConfirmation,
                     onShowLogoutConfirmation = {
-                        onEvent(ProfileScreenEvent.ToggleLogoutConfirmation(true))
+                        onEvent(AccountScreenEvent.ToggleLogoutConfirmation(true))
                     },
                     onDismissLogout = {
-                        onEvent(ProfileScreenEvent.ToggleLogoutConfirmation(false))
+                        onEvent(AccountScreenEvent.ToggleLogoutConfirmation(false))
                     },
                     navigateToViewProfileScreen = {
-                        onEvent(ProfileScreenEvent.OpenViewProfileScreen(state.userPrivateProfileData.nickname))
+                        onEvent(AccountScreenEvent.OpenViewProfileScreen(state.userPrivateProfileData.nickname))
                     },
                     navigateToEditProfileScreen = {
-                        onEvent(ProfileScreenEvent.OpenEditProfileScreen)
+                        onEvent(AccountScreenEvent.OpenEditProfileScreen)
                     },
-                    onLogout = { onEvent(ProfileScreenEvent.Logout) },
+                    onLogout = { onEvent(AccountScreenEvent.Logout) },
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
 
             } else {
                 LoggedOutHeader(
-                    navigateToLoginScreen = { onEvent(ProfileScreenEvent.OpenLoginScreen) },
+                    navigateToLoginScreen = { onEvent(AccountScreenEvent.OpenLoginScreen) },
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }
@@ -127,7 +115,7 @@ fun ProfileScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedButton(
-                onClick = { onEvent(ProfileScreenEvent.OpenSettingsScreen) },
+                onClick = { onEvent(AccountScreenEvent.OpenSettingsScreen) },
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -147,7 +135,7 @@ fun ProfileScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             OutlinedButton(
-                onClick = { onEvent(ProfileScreenEvent.OpenAboutScreen) },
+                onClick = { onEvent(AccountScreenEvent.OpenAboutScreen) },
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -473,7 +461,7 @@ private fun LogoutConfirmationRow(
 @Composable
 fun ProfileScreenPreview() {
     WalleriaTheme {
-        val state = ProfileScreenUiState(
+        val state = AccountScreenUiState(
             isUserLoggedIn = true,
             userPrivateProfileData = UserPrivateProfileData(
                 nickname = "john",

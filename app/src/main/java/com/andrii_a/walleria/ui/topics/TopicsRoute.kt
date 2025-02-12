@@ -43,10 +43,6 @@ fun NavGraphBuilder.topicsNavigationBarRoute(navController: NavController) {
                     navController.navigate(Screen.TopicDetails(event.topicId))
                 }
 
-                is TopicsNavigationEvent.NavigateToProfileScreen -> {
-                    navController.navigate(Screen.Profile)
-                }
-
                 is TopicsNavigationEvent.NavigateToSearchScreen -> {
                     navController.navigate(Screen.Search())
                 }

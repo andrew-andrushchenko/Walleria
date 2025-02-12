@@ -1,4 +1,4 @@
-package com.andrii_a.walleria.ui.profile
+package com.andrii_a.walleria.ui.account
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,12 +17,12 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileViewModel @Inject constructor(
+class AccountViewModel @Inject constructor(
     private val userAccountPreferencesRepository: UserAccountPreferencesRepository
 ) : ViewModel() {
 
-    private val _state: MutableStateFlow<ProfileScreenUiState> = MutableStateFlow(
-        ProfileScreenUiState()
+    private val _state: MutableStateFlow<AccountScreenUiState> = MutableStateFlow(
+        AccountScreenUiState()
     )
     val state = combine(
         userAccountPreferencesRepository.isUserLoggedIn,
@@ -39,60 +39,54 @@ class ProfileViewModel @Inject constructor(
         initialValue = _state.value
     )
 
-    private val navigationChannel = Channel<ProfileScreenNavigationEvent>()
+    private val navigationChannel = Channel<AccountScreenNavigationEvent>()
     val navigationEventsChannelFlow = navigationChannel.receiveAsFlow()
 
-    fun onEvent(event: ProfileScreenEvent) {
+    fun onEvent(event: AccountScreenEvent) {
         when (event) {
-            is ProfileScreenEvent.Logout -> {
+            is AccountScreenEvent.Logout -> {
                 logout()
             }
 
-            is ProfileScreenEvent.ToggleLogoutConfirmation -> {
+            is AccountScreenEvent.ToggleLogoutConfirmation -> {
                 _state.update {
                     it.copy(shouldShowLogoutConfirmation = event.isShown)
                 }
             }
 
-            is ProfileScreenEvent.OpenLoginScreen -> {
+            is AccountScreenEvent.OpenLoginScreen -> {
                 viewModelScope.launch {
-                    navigationChannel.send(ProfileScreenNavigationEvent.NavigateToLoginScreen)
+                    navigationChannel.send(AccountScreenNavigationEvent.NavigateToLoginScreen)
                 }
             }
 
-            is ProfileScreenEvent.OpenViewProfileScreen -> {
+            is AccountScreenEvent.OpenViewProfileScreen -> {
                 viewModelScope.launch {
                     navigationChannel.send(
-                        ProfileScreenNavigationEvent.NavigateToViewProfileScreen(
+                        AccountScreenNavigationEvent.NavigateToViewAccountScreen(
                             event.nickname
                         )
                     )
                 }
             }
 
-            is ProfileScreenEvent.OpenEditProfileScreen -> {
+            is AccountScreenEvent.OpenEditProfileScreen -> {
                 viewModelScope.launch {
                     navigationChannel.send(
-                        ProfileScreenNavigationEvent.NavigateToEditProfileScreen
+                        AccountScreenNavigationEvent.NavigateToEditAccountScreen
                     )
                 }
             }
 
-            is ProfileScreenEvent.OpenAboutScreen -> {
+            is AccountScreenEvent.OpenAboutScreen -> {
                 viewModelScope.launch {
-                    navigationChannel.send(ProfileScreenNavigationEvent.NavigateToAboutScreen)
+                    navigationChannel.send(AccountScreenNavigationEvent.NavigateToAboutScreen)
                 }
             }
 
-            is ProfileScreenEvent.OpenSettingsScreen -> {
+            is AccountScreenEvent.OpenSettingsScreen -> {
                 viewModelScope.launch {
-                    navigationChannel.send(ProfileScreenNavigationEvent.NavigateToSettingsScreen)
-                }
-            }
-
-            is ProfileScreenEvent.GoBack -> {
-                viewModelScope.launch {
-                    navigationChannel.send(ProfileScreenNavigationEvent.NavigateBack)
+                    navigationChannel.send(AccountScreenNavigationEvent.NavigateToSettingsScreen)
                 }
             }
         }

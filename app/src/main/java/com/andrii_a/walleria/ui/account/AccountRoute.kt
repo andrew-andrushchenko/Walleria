@@ -1,4 +1,4 @@
-package com.andrii_a.walleria.ui.profile
+package com.andrii_a.walleria.ui.account
 
 import android.content.Intent
 import androidx.compose.animation.AnimatedContentTransitionScope
@@ -18,13 +18,13 @@ import com.andrii_a.walleria.ui.login.LoginActivity
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 
-fun NavGraphBuilder.profileRoute(navController: NavController) {
-    composable<Screen.Profile>(
+fun NavGraphBuilder.accountNavigationRoute(navController: NavController) {
+    composable<Screen.AccountAndSettings>(
         enterTransition = {
             fadeIn(
                 animationSpec = tween(300, easing = LinearEasing)
             ) + slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Start,
+                towards = AnimatedContentTransitionScope.SlideDirection.Up,
                 animationSpec = spring(stiffness = Spring.StiffnessMedium)
             )
         },
@@ -32,43 +32,39 @@ fun NavGraphBuilder.profileRoute(navController: NavController) {
             fadeIn(
                 animationSpec = tween(300, easing = LinearEasing)
             ) + slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.End,
+                towards = AnimatedContentTransitionScope.SlideDirection.Up,
                 animationSpec = spring(stiffness = Spring.StiffnessMedium)
             )
-        },
+        }
     ) {
 
-        val viewModel: ProfileViewModel = hiltViewModel()
+        val viewModel: AccountViewModel = hiltViewModel()
         val state by viewModel.state.collectAsStateWithLifecycle()
 
         val context = LocalContext.current
 
         viewModel.navigationEventsChannelFlow.collectAsOneTimeEvents { event ->
             when (event) {
-                is ProfileScreenNavigationEvent.NavigateToAboutScreen -> {
+                is AccountScreenNavigationEvent.NavigateToAboutScreen -> {
                     navController.navigate(Screen.About)
                 }
 
-                is ProfileScreenNavigationEvent.NavigateToEditProfileScreen -> {
+                is AccountScreenNavigationEvent.NavigateToEditAccountScreen -> {
                     navController.navigate(Screen.EditUserProfile)
                 }
 
-                is ProfileScreenNavigationEvent.NavigateToLoginScreen -> {
+                is AccountScreenNavigationEvent.NavigateToLoginScreen -> {
                     Intent(context, LoginActivity::class.java).also {
                         context.startActivity(it)
                     }
                 }
 
-                is ProfileScreenNavigationEvent.NavigateToSettingsScreen -> {
+                is AccountScreenNavigationEvent.NavigateToSettingsScreen -> {
                     navController.navigate(Screen.Settings)
                 }
 
-                is ProfileScreenNavigationEvent.NavigateToViewProfileScreen -> {
+                is AccountScreenNavigationEvent.NavigateToViewAccountScreen -> {
                     navController.navigate(Screen.UserDetails(event.nickname))
-                }
-
-                is ProfileScreenNavigationEvent.NavigateBack -> {
-                    navController.navigateUp()
                 }
             }
         }

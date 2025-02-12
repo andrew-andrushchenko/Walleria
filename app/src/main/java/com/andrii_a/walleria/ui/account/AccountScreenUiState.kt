@@ -1,8 +1,8 @@
-package com.andrii_a.walleria.ui.profile
+package com.andrii_a.walleria.ui.account
 
 import com.andrii_a.walleria.domain.models.preferences.UserPrivateProfileData
 
-data class ProfileScreenUiState(
+data class AccountScreenUiState(
     val isUserLoggedIn: Boolean = false,
     val shouldShowLogoutConfirmation: Boolean = false,
     val userPrivateProfileData: UserPrivateProfileData? = null,

@@ -20,7 +20,6 @@ val NavController.currentRouteClassName: RouteClassName?
 
 val noNavBarsRoutes = listOf(
     Screen.PhotoDetails::class.simpleName,
-    Screen.Profile::class.simpleName,
     Screen.Settings::class.simpleName,
     Screen.About::class.simpleName,
     Screen.EditUserProfile::class.simpleName,

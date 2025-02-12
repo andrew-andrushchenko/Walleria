@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,8 +23,8 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.TopicsDisplayOrder
-import com.andrii_a.walleria.ui.common.components.WTitleDropdown
 import com.andrii_a.walleria.ui.common.components.TopicsList
+import com.andrii_a.walleria.ui.common.components.WTitleDropdown
 import com.andrii_a.walleria.ui.util.titleRes
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,15 +59,6 @@ fun TopicsScreen(
                             imageVector = Icons.Default.Search,
                             contentDescription = stringResource(
                                 id = R.string.search
-                            )
-                        )
-                    }
-
-                    IconButton(onClick = { onEvent(TopicsEvent.SelectPrivateUserProfile) }) {
-                        Icon(
-                            imageVector = Icons.Outlined.AccountCircle,
-                            contentDescription = stringResource(
-                                id = R.string.user_profile_image
                             )
                         )
                     }

@@ -8,5 +8,4 @@ sealed interface PhotosEvent {
     data class SelectPhoto(val photoId: PhotoId) : PhotosEvent
     data class SelectUser(val userNickname: UserNickname) : PhotosEvent
     data object SelectSearch : PhotosEvent
-    data object SelectPrivateUserProfile : PhotosEvent
 }

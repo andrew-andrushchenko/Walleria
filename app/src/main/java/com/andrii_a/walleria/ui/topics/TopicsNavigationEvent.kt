@@ -4,6 +4,5 @@ import com.andrii_a.walleria.ui.common.TopicId
 
 sealed interface TopicsNavigationEvent {
     data class NavigateToTopicDetails(val topicId: TopicId) : TopicsNavigationEvent
-    data object NavigateToProfileScreen : TopicsNavigationEvent
     data object NavigateToSearchScreen : TopicsNavigationEvent
 }

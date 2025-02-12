@@ -77,12 +77,6 @@ class PhotosViewModel @Inject constructor(
                 }
             }
 
-            is PhotosEvent.SelectPrivateUserProfile -> {
-                viewModelScope.launch {
-                    navigationChannel.send(PhotosNavigationEvent.NavigateToProfileScreen)
-                }
-            }
-
             is PhotosEvent.SelectSearch -> {
                 viewModelScope.launch {
                     navigationChannel.send(PhotosNavigationEvent.NavigateToSearchScreen)

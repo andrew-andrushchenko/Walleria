@@ -75,12 +75,6 @@ class CollectionsViewModel @Inject constructor(
                 }
             }
 
-            is CollectionsEvent.SelectPrivateUserProfile -> {
-                viewModelScope.launch {
-                    navigationChannel.send(CollectionsNavigationEvent.NavigateToProfileScreen)
-                }
-            }
-
             is CollectionsEvent.SelectSearch -> {
                 viewModelScope.launch {
                     navigationChannel.send(CollectionsNavigationEvent.NavigateToSearchScreen)

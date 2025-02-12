@@ -3,7 +3,6 @@ package com.andrii_a.walleria.ui.collections
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -49,15 +48,6 @@ fun CollectionsScreen(
                             imageVector = Icons.Default.Search,
                             contentDescription = stringResource(
                                 id = R.string.search
-                            )
-                        )
-                    }
-
-                    IconButton(onClick = { onEvent(CollectionsEvent.SelectPrivateUserProfile) }) {
-                        Icon(
-                            imageVector = Icons.Outlined.AccountCircle,
-                            contentDescription = stringResource(
-                                id = R.string.user_profile_image
                             )
                         )
                     }

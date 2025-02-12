@@ -7,7 +7,6 @@ import com.andrii_a.walleria.ui.about.aboutRoute
 import com.andrii_a.walleria.ui.collect_photo.collectPhotoRoute
 import com.andrii_a.walleria.ui.collection_details.collectionDetailsRoute
 import com.andrii_a.walleria.ui.photo_details.photoDetailsRoute
-import com.andrii_a.walleria.ui.profile.profileRoute
 import com.andrii_a.walleria.ui.profile_edit.editUserProfileRoute
 import com.andrii_a.walleria.ui.search.searchRoute
 import com.andrii_a.walleria.ui.settings.settingsRoute
@@ -35,8 +34,6 @@ fun AppNavigationHost(navHostController: NavHostController) {
         userDetailsRoute(navHostController)
 
         topicDetailsRoute(navHostController)
-
-        profileRoute(navHostController)
 
         settingsRoute(navHostController)
 

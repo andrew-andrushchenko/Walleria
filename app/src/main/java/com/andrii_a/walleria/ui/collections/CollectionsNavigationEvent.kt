@@ -6,7 +6,6 @@ import com.andrii_a.walleria.ui.common.UserNickname
 
 
 sealed interface CollectionsNavigationEvent {
-    data object NavigateToProfileScreen : CollectionsNavigationEvent
     data object NavigateToSearchScreen : CollectionsNavigationEvent
     data class NavigateToCollectionDetails(val collectionId: CollectionId) : CollectionsNavigationEvent
     data class NavigateToPhotoDetailsScreen(val photoId: PhotoId) : CollectionsNavigationEvent

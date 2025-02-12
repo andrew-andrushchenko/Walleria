@@ -2,9 +2,11 @@ package com.andrii_a.walleria.ui.navigation
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.FolderSpecial
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material.icons.filled.PhotoAlbum
+import androidx.compose.material.icons.outlined.AccountBox
 import androidx.compose.material.icons.outlined.FolderSpecial
 import androidx.compose.material.icons.outlined.Photo
 import androidx.compose.material.icons.outlined.PhotoAlbum
@@ -34,5 +36,11 @@ enum class NavigationScreen(
         titleRes = R.string.topics,
         iconUnselected = Icons.Outlined.FolderSpecial,
         iconSelected = Icons.Filled.FolderSpecial
+    ),
+    AccountAndSettings(
+        route = Screen.AccountAndSettings,
+        titleRes = R.string.account,
+        iconUnselected = Icons.Outlined.AccountBox,
+        iconSelected = Icons.Filled.AccountBox
     )
 }

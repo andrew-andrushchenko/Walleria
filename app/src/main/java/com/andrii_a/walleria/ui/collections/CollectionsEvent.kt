@@ -10,5 +10,4 @@ sealed interface CollectionsEvent {
     data class SelectPhoto(val photoId: PhotoId) : CollectionsEvent
     data class SelectUser(val userNickname: UserNickname) : CollectionsEvent
     data object SelectSearch : CollectionsEvent
-    data object SelectPrivateUserProfile : CollectionsEvent
 }

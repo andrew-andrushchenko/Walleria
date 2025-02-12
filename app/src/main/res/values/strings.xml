@@ -100,7 +100,8 @@
     <string name="yesterday">yesterday</string>
     <string name="days_ago_formatted">%d days ago</string>
 
-    <!--Profile screen-->
+    <!--Account screen-->
+    <string name="account">Account</string>
     <string name="account_settings_screen">Account and settings</string>
     <string name="creation_starts_here">Creation starts here</string>
     <string name="user_profile_view">View</string>

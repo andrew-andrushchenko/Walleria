@@ -52,12 +52,6 @@ class TopicsViewModel @Inject constructor(
                 }
             }
 
-            is TopicsEvent.SelectPrivateUserProfile -> {
-                viewModelScope.launch {
-                    navigationChannel.send(TopicsNavigationEvent.NavigateToProfileScreen)
-                }
-            }
-
             is TopicsEvent.SelectSearch -> {
                 viewModelScope.launch {
                     navigationChannel.send(TopicsNavigationEvent.NavigateToSearchScreen)
