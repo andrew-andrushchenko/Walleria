@@ -1,9 +1,5 @@
 package com.andrii_a.walleria.ui.topics
 
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -17,13 +13,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.TopicsDisplayOrder
-import com.andrii_a.walleria.ui.common.components.TopicsList
+import com.andrii_a.walleria.ui.common.components.TopicsGridContent
 import com.andrii_a.walleria.ui.common.components.WTitleDropdown
 import com.andrii_a.walleria.ui.util.titleRes
 
@@ -68,21 +62,10 @@ fun TopicsScreen(
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { innerPadding ->
-        val listState = rememberLazyListState()
-
-        TopicsList(
-            lazyTopicItems = lazyTopicItems,
-            onClick = { id ->
-                onEvent(TopicsEvent.SelectTopic(id))
-            },
-            addNavigationBarPadding = true,
-            listState = listState,
-            contentPadding = PaddingValues(
-                start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
-                top = innerPadding.calculateTopPadding() + dimensionResource(id = R.dimen.list_top_padding),
-                bottom = innerPadding.calculateBottomPadding() + dimensionResource(id = R.dimen.navigation_bar_height) * 2
-            )
+        TopicsGridContent(
+            topicItems = lazyTopicItems,
+            onTopicClick = { onEvent(TopicsEvent.SelectTopic(it)) },
+            contentPadding = innerPadding
         )
     }
 }
