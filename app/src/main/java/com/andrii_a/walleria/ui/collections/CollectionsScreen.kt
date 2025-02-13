@@ -1,5 +1,7 @@
 package com.andrii_a.walleria.ui.collections
 
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -53,6 +55,7 @@ fun CollectionsScreen(
                 scrollBehavior = scrollBehavior
             )
         },
+        contentWindowInsets = WindowInsets.safeDrawing,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { innerPadding ->
         CollectionsGridContent(
