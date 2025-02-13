@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bookmark
@@ -97,29 +98,31 @@ fun PhotoDetailsScreen(
     state: PhotoDetailsUiState,
     onEvent: (PhotoDetailsEvent) -> Unit,
 ) {
-    when {
-        state.isLoading -> {
-            LoadingStateContent(
-                onNavigateBack = { onEvent(PhotoDetailsEvent.GoBack) }
-            )
-        }
+    Surface(shape = RoundedCornerShape(16.dp)) {
+        when {
+            state.isLoading -> {
+                LoadingStateContent(
+                    onNavigateBack = { onEvent(PhotoDetailsEvent.GoBack) }
+                )
+            }
 
-        !state.isLoading && state.error == null && state.photo != null -> {
-            SuccessStateContent(
-                state = state,
-                onEvent = onEvent,
-                modifier = Modifier.fillMaxSize()
-            )
-        }
+            !state.isLoading && state.error == null && state.photo != null -> {
+                SuccessStateContent(
+                    state = state,
+                    onEvent = onEvent,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
 
-        else -> {
-            ErrorStateContent(
-                onRetry = {
-                    val error = state.error as? UiErrorWithRetry
-                    error?.onRetry?.invoke()
-                },
-                onNavigateBack = { onEvent(PhotoDetailsEvent.GoBack) }
-            )
+            else -> {
+                ErrorStateContent(
+                    onRetry = {
+                        val error = state.error as? UiErrorWithRetry
+                        error?.onRetry?.invoke()
+                    },
+                    onNavigateBack = { onEvent(PhotoDetailsEvent.GoBack) }
+                )
+            }
         }
     }
 }

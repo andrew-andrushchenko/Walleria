@@ -1,6 +1,9 @@
 package com.andrii_a.walleria.ui.navigation
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.scaleOut
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.andrii_a.walleria.ui.about.aboutRoute
@@ -17,7 +20,16 @@ import com.andrii_a.walleria.ui.user_details.userDetailsRoute
 fun AppNavigationHost(navHostController: NavHostController) {
     NavHost(
         navController = navHostController,
-        startDestination = NavigationBarGraph
+        startDestination = NavigationBarGraph,
+        popExitTransition = {
+            scaleOut(
+                targetScale = 0.85f,
+                transformOrigin = TransformOrigin(pivotFractionX = 0.5f, pivotFractionY = 0.5f)
+            )
+        },
+        popEnterTransition = {
+            EnterTransition.None
+        },
     ) {
         navigationBarGraph(navHostController)
 

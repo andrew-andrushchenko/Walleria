@@ -1,11 +1,5 @@
 package com.andrii_a.walleria.ui.photos
 
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -18,24 +12,7 @@ import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 fun NavGraphBuilder.photosNavigationBarRoute(
     navController: NavController
 ) {
-    composable<Screen.Photos>(
-        enterTransition = {
-            fadeIn(
-                animationSpec = tween(300, easing = LinearEasing)
-            ) + slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Up,
-                animationSpec = spring(stiffness = Spring.StiffnessMedium)
-            )
-        },
-        popEnterTransition = {
-            fadeIn(
-                animationSpec = tween(300, easing = LinearEasing)
-            ) + slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Up,
-                animationSpec = spring(stiffness = Spring.StiffnessMedium)
-            )
-        }
-    ) {
+    composable<Screen.Photos> {
         val viewModel: PhotosViewModel = hiltViewModel()
 
         val state by viewModel.state.collectAsStateWithLifecycle()

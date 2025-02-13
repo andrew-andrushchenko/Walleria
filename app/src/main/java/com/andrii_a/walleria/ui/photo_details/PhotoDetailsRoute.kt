@@ -1,12 +1,6 @@
 package com.andrii_a.walleria.ui.photo_details
 
 import android.app.Activity
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -28,24 +22,7 @@ import com.andrii_a.walleria.ui.util.sharePhoto
 import com.andrii_a.walleria.ui.util.startActivity
 
 fun NavGraphBuilder.photoDetailsRoute(navController: NavController) {
-    composable<Screen.PhotoDetails>(
-        enterTransition = {
-            fadeIn(
-                animationSpec = tween(300, easing = LinearEasing)
-            ) + slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Start,
-                animationSpec = spring(stiffness = Spring.StiffnessMedium)
-            )
-        },
-        popEnterTransition = {
-            fadeIn(
-                animationSpec = tween(300, easing = LinearEasing)
-            ) + slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.End,
-                animationSpec = spring(stiffness = Spring.StiffnessMedium)
-            )
-        },
-    ) {
+    composable<Screen.PhotoDetails> {
         val viewModel: PhotoDetailsViewModel = hiltViewModel()
 
         val state by viewModel.state.collectAsStateWithLifecycle()

@@ -23,6 +23,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
@@ -79,111 +80,115 @@ fun SearchScreen(
 
     var text by rememberSaveable { mutableStateOf(state.query) }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .semantics { isTraversalGroup = true }
+    Surface(
+        shape = RoundedCornerShape(16.dp)
     ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            SearchBar(
-                inputField = {
-                    SearchBarDefaults.InputField(
-                        query = text,
-                        onQueryChange = { text = it },
-                        onSearch = {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .semantics { isTraversalGroup = true }
+        ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                SearchBar(
+                    inputField = {
+                        SearchBarDefaults.InputField(
+                            query = text,
+                            onQueryChange = { text = it },
+                            onSearch = {
+                                onEvent(SearchEvent.ToggleSearchBox(isExpanded = false))
+                                onEvent(SearchEvent.PerformSearch(query = text))
+                            },
+                            expanded = state.isSearchBoxExpanded,
+                            onExpandedChange = { onEvent(SearchEvent.ToggleSearchBox(isExpanded = it)) },
+                            placeholder = { Text(stringResource(id = R.string.type_something)) },
+                            leadingIcon = {
+                                AnimatedContent(
+                                    targetState = state.isSearchBoxExpanded,
+                                    label = ""
+                                ) { isExpanded ->
+                                    if (isExpanded) {
+                                        IconButton(onClick = { onEvent(SearchEvent.ToggleSearchBox(isExpanded = false)) }) {
+                                            Icon(
+                                                Icons.Default.Close,
+                                                contentDescription = stringResource(id = R.string.navigate_back)
+                                            )
+                                        }
+                                    } else {
+                                        IconButton(onClick = { onEvent(SearchEvent.GoBack) }) {
+                                            Icon(
+                                                Icons.AutoMirrored.Default.ArrowBack,
+                                                contentDescription = stringResource(id = R.string.navigate_back)
+                                            )
+                                        }
+                                    }
+                                }
+                            },
+                            trailingIcon = {
+                                AnimatedVisibility(
+                                    visible = (pagerState.currentPage == SearchScreenTabs.Photos.ordinal) && !state.isSearchBoxExpanded,
+                                    enter = fadeIn(),
+                                    exit = fadeOut()
+                                ) {
+                                    IconButton(onClick = { onEvent(SearchEvent.OpenFilterDialog) }) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.FilterList,
+                                            contentDescription = stringResource(id = R.string.photo_filters)
+                                        )
+                                    }
+                                }
+                            },
+                        )
+                    },
+                    expanded = state.isSearchBoxExpanded,
+                    onExpandedChange = { onEvent(SearchEvent.ToggleSearchBox(isExpanded = it)) },
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .semantics { traversalIndex = -1f },
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.recent_searches),
+                        style = MaterialTheme.typography.titleSmall,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(start = 16.dp, top = 16.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    RecentSearchesList(
+                        recentSearches = state.recentSearches,
+                        onItemSelected = { item ->
                             onEvent(SearchEvent.ToggleSearchBox(isExpanded = false))
+                            text = item.title
                             onEvent(SearchEvent.PerformSearch(query = text))
                         },
-                        expanded = state.isSearchBoxExpanded,
-                        onExpandedChange = { onEvent(SearchEvent.ToggleSearchBox(isExpanded = it)) },
-                        placeholder = { Text(stringResource(id = R.string.type_something)) },
-                        leadingIcon = {
-                            AnimatedContent(
-                                targetState = state.isSearchBoxExpanded,
-                                label = ""
-                            ) { isExpanded ->
-                                if (isExpanded) {
-                                    IconButton(onClick = { onEvent(SearchEvent.ToggleSearchBox(isExpanded = false)) }) {
-                                        Icon(
-                                            Icons.Default.Close,
-                                            contentDescription = stringResource(id = R.string.navigate_back)
-                                        )
-                                    }
-                                } else {
-                                    IconButton(onClick = { onEvent(SearchEvent.GoBack) }) {
-                                        Icon(
-                                            Icons.AutoMirrored.Default.ArrowBack,
-                                            contentDescription = stringResource(id = R.string.navigate_back)
-                                        )
-                                    }
-                                }
-                            }
+                        onDeleteItem = { item ->
+                            onEvent(SearchEvent.DeleteRecentSearchItem(item))
                         },
-                        trailingIcon = {
-                            AnimatedVisibility(
-                                visible = (pagerState.currentPage == SearchScreenTabs.Photos.ordinal) && !state.isSearchBoxExpanded,
-                                enter = fadeIn(),
-                                exit = fadeOut()
-                            ) {
-                                IconButton(onClick = { onEvent(SearchEvent.OpenFilterDialog) }) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.FilterList,
-                                        contentDescription = stringResource(id = R.string.photo_filters)
-                                    )
-                                }
-                            }
-                        },
+                        onDeleteAllItems = {
+                            onEvent(SearchEvent.DeleteAllRecentSearches)
+                        }
                     )
-                },
-                expanded = state.isSearchBoxExpanded,
-                onExpandedChange = { onEvent(SearchEvent.ToggleSearchBox(isExpanded = it)) },
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .semantics { traversalIndex = -1f },
-            ) {
-                Text(
-                    text = stringResource(id = R.string.recent_searches),
-                    style = MaterialTheme.typography.titleSmall,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(start = 16.dp, top = 16.dp)
-                )
+                }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                RecentSearchesList(
-                    recentSearches = state.recentSearches,
-                    onItemSelected = { item ->
-                        onEvent(SearchEvent.ToggleSearchBox(isExpanded = false))
-                        text = item.title
-                        onEvent(SearchEvent.PerformSearch(query = text))
-                    },
-                    onDeleteItem = { item ->
-                        onEvent(SearchEvent.DeleteRecentSearchItem(item))
-                    },
-                    onDeleteAllItems = {
-                        onEvent(SearchEvent.DeleteAllRecentSearches)
-                    }
+                SearchTabs(
+                    pagerState = pagerState,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .width(450.dp)
+                        .widthIn(min = 200.dp, max = 600.dp)
+                        .padding(horizontal = 16.dp)
+                )
+
+                Pages(
+                    pagerState = pagerState,
+                    uiState = state,
+                    onEvent = onEvent
                 )
             }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            SearchTabs(
-                pagerState = pagerState,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .width(450.dp)
-                    .widthIn(min = 200.dp, max = 600.dp)
-                    .padding(horizontal = 16.dp)
-            )
-
-            Pages(
-                pagerState = pagerState,
-                uiState = state,
-                onEvent = onEvent
-            )
         }
     }
 
