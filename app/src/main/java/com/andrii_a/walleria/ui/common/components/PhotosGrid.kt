@@ -193,9 +193,10 @@ fun DefaultPhotoItem(
                     .clip(shape)
             )
 
-            UserRow(
+            PhotoItemDetails(
                 userProfileImageUrl = photo.getUserProfileImageUrlOrEmpty(),
                 username = photo.userFullName,
+                isSponsored = photo.sponsorship?.sponsor != null,
                 modifier = Modifier.fillMaxWidth().padding()
             )
         }
@@ -203,7 +204,8 @@ fun DefaultPhotoItem(
 }
 
 @Composable
-fun UserRow(
+private fun PhotoItemDetails(
+    isSponsored: Boolean,
     userProfileImageUrl: String,
     username: String,
     modifier: Modifier = Modifier
@@ -227,12 +229,25 @@ fun UserRow(
                 .clip(CloverShape)
         )
 
-        Text(
-            text = username,
-            style = MaterialTheme.typography.titleSmall,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(
+                text = username,
+                style = MaterialTheme.typography.titleSmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            if (isSponsored) {
+                Text(
+                    text = "Sponsored",
+                    style = MaterialTheme.typography.labelSmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+
+        }
+
     }
 }
 
