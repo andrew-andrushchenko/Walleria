@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.update
 @Stable
 data class TopicsUiState(
     private val topicsPagingData: PagingData<Topic> = PagingData.empty(),
+    val isOrderMenuExpanded: Boolean = false,
     val topicsDisplayOrder: TopicsDisplayOrder = TopicsDisplayOrder.LATEST
 ) {
     private val _topics: MutableStateFlow<PagingData<Topic>> = MutableStateFlow(emptyPagingData())

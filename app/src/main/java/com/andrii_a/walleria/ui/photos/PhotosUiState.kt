@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.update
 @Stable
 data class PhotosUiState(
     private val photosPagingData: PagingData<Photo> = emptyPagingData(),
+    val isOrderMenuExpanded: Boolean = false,
     val photosListDisplayOrder: PhotoListDisplayOrder = PhotoListDisplayOrder.LATEST,
     val photosLoadQuality: PhotoQuality = PhotoQuality.MEDIUM
 ) {

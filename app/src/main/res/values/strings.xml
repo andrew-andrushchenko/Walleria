@@ -12,6 +12,7 @@
     <string name="photo_quality_low">Low</string>
     <string name="photo_quality_thumbnail">Thumbnail</string>
     <string name="collection_cover_photo">Collection cover photo</string>
+    <string name="list_order_menu">List order menu</string>
 
     <!--Navigation screen titles-->
     <string name="photos">Photos</string>

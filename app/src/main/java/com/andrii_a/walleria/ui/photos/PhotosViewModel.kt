@@ -82,6 +82,14 @@ class PhotosViewModel @Inject constructor(
                     navigationChannel.send(PhotosNavigationEvent.NavigateToSearchScreen)
                 }
             }
+
+            is PhotosEvent.ToggleListOrderMenu -> {
+                _state.update {
+                    it.copy(
+                        isOrderMenuExpanded = event.isExpanded
+                    )
+                }
+            }
         }
     }
 }

@@ -6,4 +6,5 @@ sealed interface TopicsEvent {
     data class ChangeListOrder(val orderOptionOrdinalNum: Int) : TopicsEvent
     data class SelectTopic(val topicId: TopicId) : TopicsEvent
     data object SelectSearch : TopicsEvent
+    data class ToggleListOrderMenu(val isExpanded: Boolean) : TopicsEvent
 }

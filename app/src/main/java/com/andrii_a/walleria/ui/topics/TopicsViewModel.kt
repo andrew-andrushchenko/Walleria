@@ -57,6 +57,10 @@ class TopicsViewModel @Inject constructor(
                     navigationChannel.send(TopicsNavigationEvent.NavigateToSearchScreen)
                 }
             }
+
+            is TopicsEvent.ToggleListOrderMenu -> {
+                _state.update { it.copy(isOrderMenuExpanded = event.isExpanded) }
+            }
         }
     }
 }

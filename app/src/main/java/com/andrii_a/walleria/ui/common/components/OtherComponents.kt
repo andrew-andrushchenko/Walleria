@@ -15,33 +15,26 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuAnchorType
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -177,76 +170,32 @@ fun TagsRow(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WTitleDropdown(
-    @StringRes selectedTitleRes: Int,
-    @StringRes titleTemplateRes: Int,
+fun DisplayOptions(
+    modifier: Modifier = Modifier,
     @StringRes optionsStringRes: List<Int>,
-    onItemSelected: (Int) -> Unit
+    selectedOption: Int,
+    onOptionSelected: (Int) -> Unit
 ) {
-    var dropdownExpanded by remember {
-        mutableStateOf(false)
-    }
-
-    ExposedDropdownMenuBox(
-        expanded = dropdownExpanded,
-        onExpandedChange = {
-            dropdownExpanded = !dropdownExpanded
-        },
-        modifier = Modifier.wrapContentWidth()
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable, enabled = true)
-        ) {
-            Text(
-                text = stringResource(
-                    id = titleTemplateRes,
-                    stringResource(id = selectedTitleRes)
-                ),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-
-            Icon(
-                imageVector = if (dropdownExpanded) {
-                    Icons.Default.ArrowDropUp
-                } else {
-                    Icons.Default.ArrowDropDown
+    SingleChoiceSegmentedButtonRow(modifier = modifier) {
+        optionsStringRes.forEachIndexed { index, optionStringRes ->
+            SegmentedButton(
+                selected = index == selectedOption,
+                onClick = {
+                    onOptionSelected(index)
                 },
-                contentDescription = null
+                shape = SegmentedButtonDefaults.itemShape(index = index, count = optionsStringRes.size),
+                label = {
+                    Text(
+                        text = stringResource(id = optionStringRes),
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
+                    )
+                }
             )
-        }
-
-        ExposedDropdownMenu(
-            expanded = dropdownExpanded,
-            onDismissRequest = {
-                dropdownExpanded = false
-            },
-            modifier = Modifier.wrapContentWidth()
-        ) {
-            optionsStringRes.forEachIndexed { indexOrdinal, optionStringRes ->
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = stringResource(
-                                id = titleTemplateRes,
-                                stringResource(id = optionStringRes)
-                            )
-                        )
-                    },
-                    onClick = {
-                        onItemSelected(indexOrdinal)
-                        dropdownExpanded = false
-                    }
-                )
-            }
         }
     }
 }
-
 
 @Composable
 fun CheckBoxRow(
