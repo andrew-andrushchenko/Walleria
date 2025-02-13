@@ -11,13 +11,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.AddCircleOutline
@@ -49,6 +53,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -78,81 +83,89 @@ fun ProfileScreen(
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { innerPadding ->
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
+        Box(
             modifier = Modifier
+                .fillMaxSize()
                 .padding(innerPadding)
-                .animateContentSize()
         ) {
-            if (state.isUserLoggedIn) {
-                LoggedInHeader(
-                    userPrivateProfileData = state.userPrivateProfileData!!,
-                    showConfirmation = state.shouldShowLogoutConfirmation,
-                    onShowLogoutConfirmation = {
-                        onEvent(AccountScreenEvent.ToggleLogoutConfirmation(true))
-                    },
-                    onDismissLogout = {
-                        onEvent(AccountScreenEvent.ToggleLogoutConfirmation(false))
-                    },
-                    navigateToViewProfileScreen = {
-                        onEvent(AccountScreenEvent.OpenViewProfileScreen(state.userPrivateProfileData.nickname))
-                    },
-                    navigateToEditProfileScreen = {
-                        onEvent(AccountScreenEvent.OpenEditProfileScreen)
-                    },
-                    onLogout = { onEvent(AccountScreenEvent.Logout) },
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-
-            } else {
-                LoggedOutHeader(
-                    navigateToLoginScreen = { onEvent(AccountScreenEvent.OpenLoginScreen) },
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            OutlinedButton(
-                onClick = { onEvent(AccountScreenEvent.OpenSettingsScreen) },
-                shape = RoundedCornerShape(16.dp),
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(64.dp)
-                    .padding(horizontal = 16.dp)
+                    .widthIn(min = 250.dp, max = 400.dp)
+                    .animateContentSize()
+                    .align(Alignment.TopCenter)
+                    .verticalScroll(rememberScrollState())
             ) {
-                Icon(
-                    imageVector = Icons.Outlined.Settings,
-                    contentDescription = stringResource(id = R.string.settings)
-                )
+                if (state.isUserLoggedIn) {
+                    LoggedInHeader(
+                        userPrivateProfileData = state.userPrivateProfileData!!,
+                        showConfirmation = state.shouldShowLogoutConfirmation,
+                        onShowLogoutConfirmation = {
+                            onEvent(AccountScreenEvent.ToggleLogoutConfirmation(true))
+                        },
+                        onDismissLogout = {
+                            onEvent(AccountScreenEvent.ToggleLogoutConfirmation(false))
+                        },
+                        navigateToViewProfileScreen = {
+                            onEvent(AccountScreenEvent.OpenViewProfileScreen(state.userPrivateProfileData.nickname))
+                        },
+                        navigateToEditProfileScreen = {
+                            onEvent(AccountScreenEvent.OpenEditProfileScreen)
+                        },
+                        onLogout = { onEvent(AccountScreenEvent.Logout) },
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
 
-                Spacer(modifier = Modifier.width(8.dp))
+                } else {
+                    LoggedOutHeader(
+                        navigateToLoginScreen = { onEvent(AccountScreenEvent.OpenLoginScreen) },
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
 
-                Text(text = stringResource(id = R.string.settings))
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedButton(
+                    onClick = { onEvent(AccountScreenEvent.OpenSettingsScreen) },
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp)
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Settings,
+                        contentDescription = stringResource(id = R.string.settings)
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Text(text = stringResource(id = R.string.settings))
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                OutlinedButton(
+                    onClick = { onEvent(AccountScreenEvent.OpenAboutScreen) },
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp)
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Info,
+                        contentDescription = stringResource(id = R.string.about)
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Text(text = stringResource(id = R.string.about))
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
             }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            OutlinedButton(
-                onClick = { onEvent(AccountScreenEvent.OpenAboutScreen) },
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(64.dp)
-                    .padding(horizontal = 16.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Info,
-                    contentDescription = stringResource(id = R.string.about)
-                )
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                Text(text = stringResource(id = R.string.about))
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }
@@ -275,7 +288,7 @@ private fun LoggedInHeader(
                     .build(),
                 contentDescription = stringResource(id = R.string.user_profile_image),
                 modifier = Modifier
-                    .size(64.dp)
+                    .size(72.dp)
                     .clip(CloverShape)
             )
 
@@ -288,7 +301,7 @@ private fun LoggedInHeader(
                     userPrivateProfileData.lastName,
                     userPrivateProfileData.nickname
                 ),
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleMedium,
                 maxLines = 2,
                 textAlign = TextAlign.Center,
                 overflow = TextOverflow.Ellipsis
@@ -342,7 +355,7 @@ private fun ProfileActionRow(
         maxLines = 3,
         modifier = modifier
     ) {
-        OutlinedButton(
+        TextButton(
             onClick = navigateToViewProfileScreen,
             shape = RoundedCornerShape(16.dp)
         ) {
@@ -362,7 +375,7 @@ private fun ProfileActionRow(
 
         Spacer(modifier = Modifier.width(4.dp))
 
-        OutlinedButton(
+        TextButton(
             onClick = navigateToEditProfileScreen,
             shape = RoundedCornerShape(16.dp)
         ) {
@@ -382,7 +395,7 @@ private fun ProfileActionRow(
 
         Spacer(modifier = Modifier.width(4.dp))
 
-        OutlinedButton(
+        TextButton(
             onClick = onLogoutClick,
             shape = RoundedCornerShape(16.dp)
         ) {
@@ -458,6 +471,7 @@ private fun LogoutConfirmationRow(
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@PreviewScreenSizes
 @Composable
 fun ProfileScreenPreview() {
     WalleriaTheme {
