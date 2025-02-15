@@ -297,19 +297,24 @@ private fun Pages(
                 val lazyUserItems by rememberUpdatedState(newValue = uiState.users.collectAsLazyPagingItems())
 
                 val listState = rememberLazyListState()
-
-                UsersList(
-                    lazyUserItems = lazyUserItems,
-                    onUserClick = { nickname ->
-                        onEvent(SearchEvent.SelectUser(nickname))
-                    },
-                    listState = listState,
-                    contentPadding = PaddingValues(
-                        top = dimensionResource(id = R.dimen.list_top_padding),
-                        bottom = WindowInsets.navigationBars.asPaddingValues()
-                            .calculateBottomPadding(),
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    UsersList(
+                        lazyUserItems = lazyUserItems,
+                        onUserClick = { nickname ->
+                            onEvent(SearchEvent.SelectUser(nickname))
+                        },
+                        listState = listState,
+                        contentPadding = PaddingValues(
+                            top = dimensionResource(id = R.dimen.list_top_padding),
+                            bottom = WindowInsets.navigationBars.asPaddingValues()
+                                .calculateBottomPadding(),
+                        ),
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .widthIn(min = 300.dp, max = 400.dp)
                     )
-                )
+                }
+
             }
 
             else -> throw IllegalStateException("Tab screen was not declared!")
