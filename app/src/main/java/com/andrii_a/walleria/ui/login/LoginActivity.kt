@@ -8,14 +8,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.browser.customtabs.CustomTabsCallback
 import androidx.browser.customtabs.CustomTabsClient
 import androidx.browser.customtabs.CustomTabsService
 import androidx.browser.customtabs.CustomTabsServiceConnection
 import androidx.browser.customtabs.CustomTabsSession
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
@@ -26,14 +27,15 @@ import com.andrii_a.walleria.R
 import com.andrii_a.walleria.data.util.Config
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.CustomTabsHelper
+import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 import com.andrii_a.walleria.ui.util.toast
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
+import org.koin.androidx.compose.KoinAndroidContext
 
-@AndroidEntryPoint
 class LoginActivity : ComponentActivity() {
 
-    private val viewModel: LoginViewModel by viewModels()
+    private val viewModel: LoginViewModel by inject()
 
     private var customTabsClient: CustomTabsClient? = null
     private var customTabsSession: CustomTabsSession? = null
@@ -58,41 +60,56 @@ class LoginActivity : ComponentActivity() {
         setupCustomTabs()
 
         setContent {
-            val view = LocalView.current
+            KoinAndroidContext {
+                val view = LocalView.current
 
-            LaunchedEffect(key1 = Unit) {
-                val window = (view.context as Activity).window
-                WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
-            }
+                LaunchedEffect(key1 = Unit) {
+                    val window = (view.context as Activity).window
+                    WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
+                }
 
-            val state by viewModel.loginState.collectAsStateWithLifecycle()
+                val state by viewModel.state.collectAsStateWithLifecycle()
 
-            LaunchedEffect(key1 = state) {
-                when (state) {
-                    is LoginState.Empty -> Unit
-                    is LoginState.Loading -> Unit
-                    is LoginState.Error -> {
-                        applicationContext.toast(R.string.login_failed)
-                    }
+                LaunchedEffect(key1 = state) {
+                    when {
+                        state.error != null -> {
+                            applicationContext.toast(R.string.login_failed)
+                            viewModel.onEvent(LoginEvent.DismissError)
+                        }
 
-                    is LoginState.Success -> {
-                        viewModel.retrieveAndSaveUserData((state as LoginState.Success).accessToken)
-                        applicationContext.toast(R.string.login_successful)
-                        finish()
+                        state.isTokenObtained && !state.isUserDataSaved -> {
+                            viewModel.onEvent(LoginEvent.PerformSaveUserProfile)
+                        }
+
+                        state.isLoggedIn -> {
+                            finish()
+                        }
                     }
                 }
-            }
 
-            val bannerPhoto by viewModel.bannerPhoto.collectAsStateWithLifecycle()
+                viewModel.navigationEventFlow.collectAsOneTimeEvents { event ->
+                    when (event) {
+                        LoginNavigationEvent.NavigateToLoginCustomTab -> {
+                            openChromeCustomTab(Config.LOGIN_URL)
+                        }
 
-            WalleriaTheme {
-                LoginScreen(
-                    bannerPhoto = bannerPhoto,
-                    isLoading = state is LoginState.Loading,
-                    onLoginClicked = { openChromeCustomTab(viewModel.loginUrl) },
-                    onJoinClicked = { openChromeCustomTab(viewModel.joinUrl) },
-                    onNavigateBack = ::finish
-                )
+                        LoginNavigationEvent.NavigateToJoinCustomTab -> {
+                            openChromeCustomTab(Config.JOIN_URL)
+                        }
+
+                        LoginNavigationEvent.NavigateBack -> {
+                            finish()
+                        }
+                    }
+                }
+
+                WalleriaTheme {
+                    LoginScreenContent(
+                        state = state,
+                        onEvent = viewModel::onEvent,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
             }
         }
     }
@@ -104,7 +121,7 @@ class LoginActivity : ComponentActivity() {
                 uri.getQueryParameter("code")?.let { code ->
                     lifecycleScope.launch {
                         repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                            viewModel.getAccessToken(code = code)
+                            viewModel.onEvent(LoginEvent.GetAccessToken(code))
                         }
                     }
                 }
@@ -124,13 +141,13 @@ class LoginActivity : ComponentActivity() {
                 customTabsClient?.warmup(0)
                 customTabsSession = customTabsClient?.newSession(CustomTabsCallback())?.apply {
                     mayLaunchUrl(
-                        Uri.parse(viewModel.loginUrl),
+                        Uri.parse(Config.LOGIN_URL),
                         null,
                         mutableListOf(
                             Bundle().apply {
                                 putParcelable(
                                     CustomTabsService.KEY_URL,
-                                    Uri.parse(viewModel.joinUrl)
+                                    Uri.parse(Config.JOIN_URL)
                                 )
                             }
                         )

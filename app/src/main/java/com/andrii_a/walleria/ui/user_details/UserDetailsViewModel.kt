@@ -9,13 +9,12 @@ import com.andrii_a.walleria.domain.network.Resource
 import com.andrii_a.walleria.domain.repository.CollectionRepository
 import com.andrii_a.walleria.domain.repository.LocalPreferencesRepository
 import com.andrii_a.walleria.domain.repository.PhotoRepository
-import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
+import com.andrii_a.walleria.domain.repository.LocalAccountRepository
 import com.andrii_a.walleria.domain.repository.UserRepository
 import com.andrii_a.walleria.ui.common.UiErrorWithRetry
 import com.andrii_a.walleria.ui.common.UiText
 import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.navigation.Screen
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -26,21 +25,19 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class UserDetailsViewModel @Inject constructor(
+class UserDetailsViewModel(
     private val userRepository: UserRepository,
     private val photoRepository: PhotoRepository,
     private val collectionRepository: CollectionRepository,
-    userAccountPreferencesRepository: UserAccountPreferencesRepository,
+    localAccountRepository: LocalAccountRepository,
     localPreferencesRepository: LocalPreferencesRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val _state: MutableStateFlow<UserDetailsUiState> = MutableStateFlow(UserDetailsUiState())
     val state = combine(
-        userAccountPreferencesRepository.userPrivateProfileData,
+        localAccountRepository.userPrivateProfileData,
         localPreferencesRepository.photosLoadQuality,
         _state
     ) { userPrivateProfileData, photosLoadQuality, state ->
@@ -108,7 +105,11 @@ class UserDetailsViewModel @Inject constructor(
 
             is UserDetailsEvent.OpenUserProfileInBrowser -> {
                 viewModelScope.launch {
-                    navigationChannel.send(UserDetailsNavigationEvent.NavigateToUserProfileInChromeTab(event.userNickname))
+                    navigationChannel.send(
+                        UserDetailsNavigationEvent.NavigateToUserProfileInChromeTab(
+                            event.userNickname
+                        )
+                    )
                 }
             }
 
@@ -144,7 +145,11 @@ class UserDetailsViewModel @Inject constructor(
 
             is UserDetailsEvent.SelectPortfolioLink -> {
                 viewModelScope.launch {
-                    navigationChannel.send(UserDetailsNavigationEvent.NavigateToChromeCustomTab(event.url))
+                    navigationChannel.send(
+                        UserDetailsNavigationEvent.NavigateToChromeCustomTab(
+                            event.url
+                        )
+                    )
                 }
             }
         }
@@ -178,7 +183,8 @@ class UserDetailsViewModel @Inject constructor(
                     combine(
                         photoRepository.getUserPhotos(user.username).cachedIn(viewModelScope),
                         photoRepository.getUserLikedPhotos(user.username).cachedIn(viewModelScope),
-                        collectionRepository.getUserCollections(user.username).cachedIn(viewModelScope)
+                        collectionRepository.getUserCollections(user.username)
+                            .cachedIn(viewModelScope)
                     ) { photosPagingData, likedPhotosPagingData, collectionsPagingData ->
                         _state.update {
                             it.copy(

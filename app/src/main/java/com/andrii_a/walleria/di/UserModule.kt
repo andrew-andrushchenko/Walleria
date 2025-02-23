@@ -4,28 +4,15 @@ import com.andrii_a.walleria.data.remote.repository.UserRepositoryImpl
 import com.andrii_a.walleria.data.remote.services.UserService
 import com.andrii_a.walleria.data.remote.services.UserServiceImpl
 import com.andrii_a.walleria.domain.repository.UserRepository
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import io.ktor.client.HttpClient
-import javax.inject.Singleton
+import com.andrii_a.walleria.ui.user_details.UserDetailsViewModel
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModelOf
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-object UserModule {
+val userModule = module {
+    singleOf(::UserServiceImpl) { bind<UserService>() }
+    singleOf(::UserRepositoryImpl) { bind<UserRepository>() }
 
-    /*@Provides
-    @Singleton
-    fun provideUserService(retrofitBuilder: Retrofit.Builder): UserService =
-        retrofitBuilder.baseUrl(BASE_API_URL).build().create(UserService::class.java)*/
-
-    @Provides
-    @Singleton
-    fun provideUserService(httpClient: HttpClient): UserService = UserServiceImpl(httpClient)
-
-    @Provides
-    @Singleton
-    fun provideUserRepository(userService: UserService): UserRepository = UserRepositoryImpl(userService)
-
+    viewModelOf(::UserDetailsViewModel)
 }

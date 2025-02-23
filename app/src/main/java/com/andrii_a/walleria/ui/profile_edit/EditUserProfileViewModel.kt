@@ -6,10 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.models.preferences.UserPrivateProfileData
 import com.andrii_a.walleria.domain.network.Resource
-import com.andrii_a.walleria.domain.repository.LoginRepository
-import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
+import com.andrii_a.walleria.domain.repository.LocalAccountRepository
+import com.andrii_a.walleria.domain.repository.UserRepository
 import com.andrii_a.walleria.ui.common.UiText
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,18 +23,16 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.regex.Pattern
-import javax.inject.Inject
 
-@HiltViewModel
-class EditUserProfileViewModel @Inject constructor(
-    private val loginRepository: LoginRepository,
-    userAccountPreferencesRepository: UserAccountPreferencesRepository
+class EditUserProfileViewModel(
+    private val userRepository: UserRepository,
+    private val localAccountRepository: LocalAccountRepository
 ) : ViewModel() {
 
     private val _state: MutableStateFlow<EditUserProfileUiState> =
         MutableStateFlow(EditUserProfileUiState())
     val state = combine(
-        userAccountPreferencesRepository.userPrivateProfileData,
+        localAccountRepository.userPrivateProfileData,
         _state
     ) { userPrivateProfileData, state ->
         state.copy(
@@ -144,7 +141,7 @@ class EditUserProfileViewModel @Inject constructor(
         Patterns.EMAIL_ADDRESS.matcher(emailAddress).matches()
 
     private fun saveUserProfileData(userPrivateProfileData: UserPrivateProfileData) {
-        loginRepository.updatePrivateUserProfile(userPrivateProfileData)
+        userRepository.updatePrivateUserProfile(userPrivateProfileData)
             .onEach { result ->
                 when (result) {
                     is Resource.Empty, is Resource.Loading -> Unit
@@ -153,7 +150,7 @@ class EditUserProfileViewModel @Inject constructor(
                     }
 
                     is Resource.Success -> {
-                        loginRepository.savePrivateUserProfile(result.value)
+                        localAccountRepository.saveAccountInfo(result.value)
                         _profileUpdateMessageFlow.emit(UiText.StringResource(R.string.profile_data_updated_successfully))
                     }
                 }

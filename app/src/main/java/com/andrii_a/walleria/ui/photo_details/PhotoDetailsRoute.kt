@@ -8,7 +8,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -20,10 +19,11 @@ import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 import com.andrii_a.walleria.ui.util.openLinkInBrowser
 import com.andrii_a.walleria.ui.util.sharePhoto
 import com.andrii_a.walleria.ui.util.startActivity
+import org.koin.androidx.compose.koinViewModel
 
 fun NavGraphBuilder.photoDetailsRoute(navController: NavController) {
     composable<Screen.PhotoDetails> {
-        val viewModel: PhotoDetailsViewModel = hiltViewModel()
+        val viewModel: PhotoDetailsViewModel = koinViewModel()
 
         val state by viewModel.state.collectAsStateWithLifecycle()
 

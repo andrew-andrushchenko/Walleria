@@ -9,13 +9,12 @@ import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.network.Resource
 import com.andrii_a.walleria.domain.repository.LocalPreferencesRepository
 import com.andrii_a.walleria.domain.repository.PhotoRepository
-import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
+import com.andrii_a.walleria.domain.repository.LocalAccountRepository
 import com.andrii_a.walleria.domain.services.PhotoDownloader
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.common.UiErrorWithRetry
 import com.andrii_a.walleria.ui.common.UiText
 import com.andrii_a.walleria.ui.navigation.Screen
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,12 +26,10 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class PhotoDetailsViewModel @Inject constructor(
+class PhotoDetailsViewModel(
     private val photoRepository: PhotoRepository,
-    userAccountPreferencesRepository: UserAccountPreferencesRepository,
+    localAccountRepository: LocalAccountRepository,
     localPreferencesRepository: LocalPreferencesRepository,
     private val photoDownloader: PhotoDownloader,
     savedStateHandle: SavedStateHandle
@@ -42,7 +39,7 @@ class PhotoDetailsViewModel @Inject constructor(
         PhotoDetailsUiState()
     )
     val state = combine(
-        userAccountPreferencesRepository.isUserLoggedIn,
+        localAccountRepository.isUserLoggedIn,
         localPreferencesRepository.photosDownloadQuality,
         _state
     ) { isUserLoggedIn, photosDownloadQuality, state ->

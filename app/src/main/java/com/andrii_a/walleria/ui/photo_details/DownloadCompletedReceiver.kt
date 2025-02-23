@@ -7,24 +7,20 @@ import android.content.Context
 import android.content.Intent
 import android.database.Cursor
 import com.andrii_a.walleria.R
-import com.andrii_a.walleria.domain.ApplicationScope
 import com.andrii_a.walleria.domain.repository.PhotoRepository
 import com.andrii_a.walleria.ui.util.toast
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import org.koin.java.KoinJavaComponent.inject
 import java.io.File
-import javax.inject.Inject
 
-@AndroidEntryPoint
 class DownloadCompletedReceiver : BroadcastReceiver() {
 
-    @Inject
-    lateinit var photoRepository: PhotoRepository
+    private val photoRepository: PhotoRepository by inject(PhotoRepository::class.java)
 
-    @Inject
-    @ApplicationScope
-    lateinit var applicationScope: CoroutineScope
+    private val applicationScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private lateinit var downloadManager: DownloadManager
 
@@ -63,7 +59,8 @@ class DownloadCompletedReceiver : BroadcastReceiver() {
 
     private fun trackDownload(cursor: Cursor) {
         @SuppressLint("Range")
-        val downloadedPhotoUri = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI))
+        val downloadedPhotoUri =
+            cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI))
         val downloadedPhoto = File(downloadedPhotoUri)
 
         val photoId = downloadedPhoto.name.substringBefore('_')

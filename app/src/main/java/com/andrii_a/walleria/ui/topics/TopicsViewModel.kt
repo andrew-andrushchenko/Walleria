@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.andrii_a.walleria.domain.TopicsDisplayOrder
 import com.andrii_a.walleria.domain.repository.TopicRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,12 +12,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class TopicsViewModel @Inject constructor(
-    private val topicRepository: TopicRepository,
-) : ViewModel() {
+class TopicsViewModel(private val topicRepository: TopicRepository) : ViewModel() {
 
     private val _state: MutableStateFlow<TopicsUiState> = MutableStateFlow(TopicsUiState())
     val state: StateFlow<TopicsUiState> = _state.asStateFlow()
@@ -35,14 +30,15 @@ class TopicsViewModel @Inject constructor(
             is TopicsEvent.ChangeListOrder -> {
                 val displayOrder = TopicsDisplayOrder.entries[event.orderOptionOrdinalNum]
                 viewModelScope.launch {
-                    topicRepository.getTopics(displayOrder).cachedIn(viewModelScope).collect { pagingData ->
-                        _state.update {
-                            it.copy(
-                                topicsDisplayOrder = displayOrder,
-                                topicsPagingData = pagingData
-                            )
+                    topicRepository.getTopics(displayOrder).cachedIn(viewModelScope)
+                        .collect { pagingData ->
+                            _state.update {
+                                it.copy(
+                                    topicsDisplayOrder = displayOrder,
+                                    topicsPagingData = pagingData
+                                )
+                            }
                         }
-                    }
                 }
             }
 

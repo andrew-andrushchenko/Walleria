@@ -5,7 +5,7 @@ import com.andrii_a.walleria.domain.models.login.UserPrivateProfile
 import com.andrii_a.walleria.domain.models.preferences.UserPrivateProfileData
 import kotlinx.coroutines.flow.Flow
 
-interface UserAccountPreferencesRepository {
+interface LocalAccountRepository {
 
     val isUserLoggedIn: Flow<Boolean>
 

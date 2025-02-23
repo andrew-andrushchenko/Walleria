@@ -11,20 +11,20 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.andrii_a.walleria.domain.models.login.AccessToken
 import com.andrii_a.walleria.domain.models.login.UserPrivateProfile
 import com.andrii_a.walleria.domain.models.preferences.UserPrivateProfileData
-import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
+import com.andrii_a.walleria.domain.repository.LocalAccountRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 
-private const val TAG = "LocalUserAccountPrefere"
+private const val TAG = "LocalAccountRepository"
 
-private val Context.localUserAccountDataStore: DataStore<Preferences> by preferencesDataStore(name = "user_account_data_store")
+private val Context.localAccountDataStore: DataStore<Preferences> by preferencesDataStore(name = "local_account_data_store")
 
-class UserAccountPreferencesRepositoryImpl(context: Context) : UserAccountPreferencesRepository {
+class LocalAccountRepositoryImpl(context: Context) : LocalAccountRepository {
 
     private val localUserAccountDataStore: DataStore<Preferences> by lazy {
-        return@lazy context.localUserAccountDataStore
+        return@lazy context.localAccountDataStore
     }
 
     private val preferencesFlow = localUserAccountDataStore.data

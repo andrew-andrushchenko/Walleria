@@ -5,7 +5,6 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.kapt)
-    alias(libs.plugins.dagger.hilt.android)
     alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.kotlin.serialization)
 }
@@ -80,10 +79,6 @@ android {
         buildConfig = true
     }
 
-    hilt {
-        enableAggregatingTask = true
-    }
-
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -115,8 +110,6 @@ dependencies {
 
     // Navigation + compose
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.hilt.navigation)
-    implementation(libs.androidx.hilt.navigation.compose)
 
     // Paging + compose
     implementation(libs.androidx.paging.runtime.ktx)
@@ -129,10 +122,11 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.coil.compose)
 
-    // Dagger Hilt
-    implementation(libs.hilt.android)
-    implementation(libs.androidx.hilt.navigation.compose)
-    kapt(libs.hilt.compiler)
+    // Koin
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.compose)
+    implementation(libs.koin.compose.viewmodel)
+    implementation(libs.koin.compose.navigation)
 
     // Ktor client
     implementation(libs.ktor.client.core)
@@ -168,6 +162,8 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.params)
     testRuntimeOnly(libs.junit.jupiter.engine)
+
+    testImplementation(libs.koin.test.junit4)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -10,7 +10,6 @@ import com.andrii_a.walleria.domain.repository.LocalPreferencesRepository
 import com.andrii_a.walleria.domain.repository.RecentSearchesRepository
 import com.andrii_a.walleria.domain.repository.SearchRepository
 import com.andrii_a.walleria.ui.navigation.Screen
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,10 +21,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-@HiltViewModel
-class SearchViewModel @Inject constructor(
+class SearchViewModel(
     private val searchRepository: SearchRepository,
     private val recentSearchesRepository: RecentSearchesRepository,
     localPreferencesRepository: LocalPreferencesRepository,
@@ -131,7 +128,8 @@ class SearchViewModel @Inject constructor(
             orientation = _state.value.photoFilters.orientation
         ).cachedIn(viewModelScope)
 
-        val searchCollectionResultFlow = searchRepository.searchCollections(query).cachedIn(viewModelScope)
+        val searchCollectionResultFlow =
+            searchRepository.searchCollections(query).cachedIn(viewModelScope)
         val searchUserResultFlow = searchRepository.searchUsers(query).cachedIn(viewModelScope)
 
         combine(

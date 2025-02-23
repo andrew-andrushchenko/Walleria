@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.andrii_a.walleria.domain.repository.CollectionRepository
 import com.andrii_a.walleria.domain.repository.LocalPreferencesRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -14,10 +13,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class CollectionsViewModel @Inject constructor(
+class CollectionsViewModel(
     private val collectionRepository: CollectionRepository,
     localPreferencesRepository: LocalPreferencesRepository
 ) : ViewModel() {
@@ -47,11 +44,12 @@ class CollectionsViewModel @Inject constructor(
         when (event) {
             is CollectionsEvent.GetCollections -> {
                 viewModelScope.launch {
-                    collectionRepository.getCollections().cachedIn(viewModelScope).collect { pagingData ->
-                        _state.update {
-                            it.copy(collectionsPagingData = pagingData)
+                    collectionRepository.getCollections().cachedIn(viewModelScope)
+                        .collect { pagingData ->
+                            _state.update {
+                                it.copy(collectionsPagingData = pagingData)
+                            }
                         }
-                    }
                 }
             }
 

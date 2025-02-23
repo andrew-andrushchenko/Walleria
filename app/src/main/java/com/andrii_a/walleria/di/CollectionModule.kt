@@ -4,30 +4,20 @@ import com.andrii_a.walleria.data.remote.repository.CollectionRepositoryImpl
 import com.andrii_a.walleria.data.remote.services.CollectionsService
 import com.andrii_a.walleria.data.remote.services.CollectionsServiceImpl
 import com.andrii_a.walleria.domain.repository.CollectionRepository
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import io.ktor.client.HttpClient
-import javax.inject.Singleton
+import com.andrii_a.walleria.ui.collect_photo.CollectPhotoViewModel
+import com.andrii_a.walleria.ui.collection_details.CollectionDetailsViewModel
+import com.andrii_a.walleria.ui.collections.CollectionsViewModel
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModelOf
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-object CollectionModule {
+val collectionsModule = module {
+    singleOf(::CollectionsServiceImpl) { bind<CollectionsService>() }
 
-    /*@Provides
-    @Singleton
-    fun provideCollectionService(retrofitBuilder: Retrofit.Builder): CollectionsService =
-        retrofitBuilder.baseUrl(BASE_API_URL).build().create(CollectionsService::class.java)*/
+    singleOf(::CollectionRepositoryImpl) { bind<CollectionRepository>() }
 
-    @Provides
-    @Singleton
-    fun provideCollectionService(httpClient: HttpClient): CollectionsService = CollectionsServiceImpl(httpClient)
-
-    @Provides
-    @Singleton
-    fun provideCollectionRepository(
-        collectionsService: CollectionsService,
-    ): CollectionRepository = CollectionRepositoryImpl(collectionsService)
-
+    viewModelOf(::CollectionsViewModel)
+    viewModelOf(::CollectionDetailsViewModel)
+    viewModelOf(::CollectPhotoViewModel)
 }

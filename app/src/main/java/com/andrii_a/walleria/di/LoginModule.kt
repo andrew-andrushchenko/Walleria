@@ -4,32 +4,15 @@ import com.andrii_a.walleria.data.remote.repository.LoginRepositoryImpl
 import com.andrii_a.walleria.data.remote.services.LoginService
 import com.andrii_a.walleria.data.remote.services.LoginServiceImpl
 import com.andrii_a.walleria.domain.repository.LoginRepository
-import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import io.ktor.client.HttpClient
-import javax.inject.Singleton
+import com.andrii_a.walleria.ui.login.LoginViewModel
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModelOf
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-object LoginModule {
+val loginModule = module {
+    singleOf(::LoginServiceImpl) { bind<LoginService>() }
+    singleOf(::LoginRepositoryImpl) { bind<LoginRepository>() }
 
-    /*@Provides
-    @Singleton
-    fun provideLoginService(retrofitBuilder: Retrofit.Builder): LoginService =
-        retrofitBuilder.baseUrl(BASE_URL).build().create(LoginService::class.java)*/
-
-    @Provides
-    @Singleton
-    fun provideLoginService(httpClient: HttpClient): LoginService = LoginServiceImpl(httpClient)
-
-    @Provides
-    @Singleton
-    fun provideLoginRepository(
-        loginService: LoginService,
-        userAccountPreferencesRepository: UserAccountPreferencesRepository
-    ): LoginRepository = LoginRepositoryImpl(loginService, userAccountPreferencesRepository)
-
+    viewModelOf(::LoginViewModel)
 }

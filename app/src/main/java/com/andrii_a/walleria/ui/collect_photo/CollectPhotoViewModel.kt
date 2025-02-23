@@ -8,7 +8,7 @@ import androidx.paging.cachedIn
 import com.andrii_a.walleria.domain.network.Resource
 import com.andrii_a.walleria.domain.repository.CollectionRepository
 import com.andrii_a.walleria.domain.repository.PhotoRepository
-import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
+import com.andrii_a.walleria.domain.repository.LocalAccountRepository
 import com.andrii_a.walleria.ui.collect_photo.event.CollectPhotoEvent
 import com.andrii_a.walleria.ui.collect_photo.event.CollectPhotoNavigationEvent
 import com.andrii_a.walleria.ui.collect_photo.state.CollectActionState
@@ -18,7 +18,6 @@ import com.andrii_a.walleria.ui.common.CollectionId
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.common.UiText
 import com.andrii_a.walleria.ui.navigation.Screen
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,13 +30,11 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class CollectPhotoViewModel @Inject constructor(
+class CollectPhotoViewModel(
     photoRepository: PhotoRepository,
     private val collectionRepository: CollectionRepository,
-    private val userAccountPreferencesRepository: UserAccountPreferencesRepository,
+    private val localAccountRepository: LocalAccountRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -69,7 +66,7 @@ class CollectPhotoViewModel @Inject constructor(
 
     private suspend fun refreshCollectionsList() {
         val userPrivateProfileData =
-            userAccountPreferencesRepository.userPrivateProfileData.firstOrNull() ?: return
+            localAccountRepository.userPrivateProfileData.firstOrNull() ?: return
 
         collectionRepository.getUserCollections(userPrivateProfileData.nickname)
             .cachedIn(viewModelScope)

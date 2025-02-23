@@ -2,7 +2,6 @@ package com.andrii_a.walleria.ui.topic_details
 
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -10,10 +9,11 @@ import androidx.navigation.compose.composable
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 import com.andrii_a.walleria.ui.util.openLinkInBrowser
+import org.koin.compose.viewmodel.koinViewModel
 
 fun NavGraphBuilder.topicDetailsRoute(navController: NavController) {
     composable<Screen.TopicDetails> {
-        val viewModel: TopicDetailsViewModel = hiltViewModel()
+        val viewModel: TopicDetailsViewModel = koinViewModel()
 
         val state by viewModel.state.collectAsStateWithLifecycle()
 

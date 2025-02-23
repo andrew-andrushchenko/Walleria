@@ -1,19 +1,19 @@
 package com.andrii_a.walleria.ui.photos
 
 import androidx.compose.runtime.getValue
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
+import org.koin.compose.viewmodel.koinViewModel
 
 fun NavGraphBuilder.photosNavigationBarRoute(
     navController: NavController
 ) {
     composable<Screen.Photos> {
-        val viewModel: PhotosViewModel = hiltViewModel()
+        val viewModel: PhotosViewModel = koinViewModel()
 
         val state by viewModel.state.collectAsStateWithLifecycle()
 

@@ -2,7 +2,6 @@ package com.andrii_a.walleria.ui.collect_photo
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.getValue
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -11,10 +10,11 @@ import com.andrii_a.walleria.ui.collect_photo.event.CollectPhotoNavigationEvent
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.util.InterScreenCommunicationKeys
 import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
+import org.koin.androidx.compose.koinViewModel
 
 fun NavGraphBuilder.collectPhotoRoute(navController: NavController) {
     composable<Screen.CollectPhoto> {
-        val viewModel: CollectPhotoViewModel = hiltViewModel()
+        val viewModel: CollectPhotoViewModel = koinViewModel()
         val state by viewModel.state.collectAsStateWithLifecycle()
 
         BackHandler(

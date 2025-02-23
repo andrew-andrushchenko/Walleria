@@ -43,7 +43,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -52,7 +52,6 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.PhotoQuality
-import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.ui.common.components.LoadingBanner
 import com.andrii_a.walleria.ui.theme.WalleriaLogoTextStyle
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
@@ -64,20 +63,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Composable
-fun LoginScreen(
-    bannerPhoto: Photo?,
-    isLoading: Boolean,
-    onLoginClicked: () -> Unit,
-    onJoinClicked: () -> Unit,
-    onNavigateBack: () -> Unit
+fun LoginScreenContent(
+    state: LoginUiState,
+    onEvent: (LoginEvent) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = modifier) {
         val placeholderBitmap by produceState<Bitmap?>(initialValue = null) {
             value = withContext(Dispatchers.Default) {
                 BlurHashDecoder.decode(
-                    blurHash = bannerPhoto?.blurHash,
+                    blurHash = state.bannerPhoto?.blurHash,
                     width = 4,
                     height = 3
                 )
@@ -86,11 +83,11 @@ fun LoginScreen(
 
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(bannerPhoto?.getUrlByQuality(quality = PhotoQuality.HIGH))
+                .data(state.bannerPhoto?.getUrlByQuality(quality = PhotoQuality.HIGH))
                 .crossfade(durationMillis = 1000)
                 .placeholder(placeholderBitmap?.toDrawable(context.resources))
                 .fallback(placeholderBitmap?.toDrawable(context.resources))
-                .error(ColorDrawable(bannerPhoto?.primaryColorInt ?: Color.Gray.toArgb()))
+                .error(ColorDrawable(state.bannerPhoto?.primaryColorInt ?: Color.Gray.toArgb()))
                 .build(),
             contentDescription = stringResource(id = R.string.topic_cover_photo),
             contentScale = ContentScale.Crop,
@@ -111,7 +108,7 @@ fun LoginScreen(
         )
 
         TopSection(
-            onNavigateBack = onNavigateBack,
+            onNavigateBack = { onEvent(LoginEvent.GoBack) },
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.TopCenter)
@@ -119,16 +116,16 @@ fun LoginScreen(
         )
 
         BottomSection(
-            accentColor = bannerPhoto?.accentColorForLoginScreen ?: Color.White,
-            onLoginClicked = onLoginClicked,
-            onJoinClicked = onJoinClicked,
+            accentColor = state.bannerPhoto?.accentColorForLoginScreen ?: Color.White,
+            onLoginClicked = { onEvent(LoginEvent.PerformLogin) },
+            onJoinClicked = { onEvent(LoginEvent.PerformJoin) },
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
                 .navigationBarsPadding()
         )
 
-        if (isLoading) {
+        if (state.isLoading) {
             LoadingBanner(
                 modifier = Modifier
                     .fillMaxSize()
@@ -262,16 +259,13 @@ private fun BottomSection(
     }
 }
 
-@Preview
+@PreviewScreenSizes
 @Composable
-fun LoginScreenPreview() {
+fun LoginScreenContentPreview() {
     WalleriaTheme {
-        LoginScreen(
-            bannerPhoto = null,
-            isLoading = false,
-            onLoginClicked = {},
-            onJoinClicked = {},
-            onNavigateBack = {}
+        LoginScreenContent(
+            state = LoginUiState(),
+            onEvent = {}
         )
     }
 }

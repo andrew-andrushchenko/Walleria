@@ -2,7 +2,6 @@ package com.andrii_a.walleria.ui.user_details
 
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -13,10 +12,11 @@ import com.andrii_a.walleria.ui.util.openInstagramProfile
 import com.andrii_a.walleria.ui.util.openLinkInBrowser
 import com.andrii_a.walleria.ui.util.openTwitterProfile
 import com.andrii_a.walleria.ui.util.openUserProfileInBrowser
+import org.koin.compose.viewmodel.koinViewModel
 
 fun NavGraphBuilder.userDetailsRoute(navController: NavController) {
     composable<Screen.UserDetails> {
-        val viewModel: UserDetailsViewModel = hiltViewModel()
+        val viewModel: UserDetailsViewModel = koinViewModel()
 
         val state by viewModel.state.collectAsStateWithLifecycle()
 

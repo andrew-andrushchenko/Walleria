@@ -12,7 +12,6 @@ import com.andrii_a.walleria.domain.repository.TopicRepository
 import com.andrii_a.walleria.ui.common.UiErrorWithRetry
 import com.andrii_a.walleria.ui.common.UiText
 import com.andrii_a.walleria.ui.navigation.Screen
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -23,10 +22,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class TopicDetailsViewModel @Inject constructor(
+class TopicDetailsViewModel(
     private val topicRepository: TopicRepository,
     private val photoRepository: PhotoRepository,
     localPreferencesRepository: LocalPreferencesRepository,

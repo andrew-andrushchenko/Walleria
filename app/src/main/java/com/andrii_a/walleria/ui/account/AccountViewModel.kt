@@ -2,8 +2,7 @@ package com.andrii_a.walleria.ui.account
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.andrii_a.walleria.domain.repository.UserAccountPreferencesRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
+import com.andrii_a.walleria.domain.repository.LocalAccountRepository
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,19 +13,13 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-@HiltViewModel
-class AccountViewModel @Inject constructor(
-    private val userAccountPreferencesRepository: UserAccountPreferencesRepository
-) : ViewModel() {
+class AccountViewModel(private val repository: LocalAccountRepository) : ViewModel() {
 
-    private val _state: MutableStateFlow<AccountScreenUiState> = MutableStateFlow(
-        AccountScreenUiState()
-    )
+    private val _state: MutableStateFlow<AccountScreenUiState> = MutableStateFlow(AccountScreenUiState())
     val state = combine(
-        userAccountPreferencesRepository.isUserLoggedIn,
-        userAccountPreferencesRepository.userPrivateProfileData,
+        repository.isUserLoggedIn,
+        repository.userPrivateProfileData,
         _state
     ) { isUserLoggedIn, userPrivateProfileData, state ->
         state.copy(
@@ -95,7 +88,7 @@ class AccountViewModel @Inject constructor(
     private fun logout() {
         viewModelScope.launch {
             withContext(NonCancellable) {
-                userAccountPreferencesRepository.clearAccountInfo()
+                repository.clearAccountInfo()
             }
         }
     }

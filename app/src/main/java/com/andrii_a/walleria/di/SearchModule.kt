@@ -1,39 +1,21 @@
 package com.andrii_a.walleria.di
 
-import com.andrii_a.walleria.data.local.db.dao.RecentSearchesDao
 import com.andrii_a.walleria.data.local.repository.RecentSearchesRepositoryImpl
 import com.andrii_a.walleria.data.remote.repository.SearchRepositoryImpl
 import com.andrii_a.walleria.data.remote.services.SearchService
 import com.andrii_a.walleria.data.remote.services.SearchServiceImpl
 import com.andrii_a.walleria.domain.repository.RecentSearchesRepository
 import com.andrii_a.walleria.domain.repository.SearchRepository
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import io.ktor.client.HttpClient
-import javax.inject.Singleton
+import com.andrii_a.walleria.ui.search.SearchViewModel
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModelOf
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-object SearchModule {
+val searchModule = module {
+    singleOf(::SearchServiceImpl) { bind<SearchService>() }
+    singleOf(::SearchRepositoryImpl) { bind<SearchRepository>() }
+    singleOf(::RecentSearchesRepositoryImpl) { bind<RecentSearchesRepository>() }
 
-    /*@Provides
-    @Singleton
-    fun provideSearchService(retrofitBuilder: Retrofit.Builder): SearchService =
-        retrofitBuilder.baseUrl(BASE_API_URL).build().create(SearchService::class.java)*/
-
-    @Provides
-    @Singleton
-    fun provideSearchService(httpClient: HttpClient): SearchService = SearchServiceImpl(httpClient)
-
-    @Provides
-    @Singleton
-    fun provideSearchRepository(searchService: SearchService): SearchRepository =
-        SearchRepositoryImpl(searchService)
-
-    @Provides
-    @Singleton
-    fun provideRecentSearchesRepository(recentSearchesDao: RecentSearchesDao): RecentSearchesRepository =
-        RecentSearchesRepositoryImpl(recentSearchesDao)
+    viewModelOf(::SearchViewModel)
 }

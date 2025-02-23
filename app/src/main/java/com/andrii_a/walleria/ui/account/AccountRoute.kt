@@ -3,7 +3,6 @@ package com.andrii_a.walleria.ui.account
 import android.content.Intent
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -11,11 +10,12 @@ import androidx.navigation.compose.composable
 import com.andrii_a.walleria.ui.login.LoginActivity
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
+import org.koin.androidx.compose.koinViewModel
 
 fun NavGraphBuilder.accountNavigationRoute(navController: NavController) {
     composable<Screen.AccountAndSettings> {
 
-        val viewModel: AccountViewModel = hiltViewModel()
+        val viewModel: AccountViewModel = koinViewModel()
         val state by viewModel.state.collectAsStateWithLifecycle()
 
         val context = LocalContext.current
