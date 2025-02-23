@@ -19,13 +19,15 @@ import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.common.UiText
 import com.andrii_a.walleria.ui.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -33,7 +35,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CollectPhotoViewModel @Inject constructor(
-    private val photoRepository: PhotoRepository,
+    photoRepository: PhotoRepository,
     private val collectionRepository: CollectionRepository,
     private val userAccountPreferencesRepository: UserAccountPreferencesRepository,
     savedStateHandle: SavedStateHandle
@@ -46,24 +48,28 @@ class CollectPhotoViewModel @Inject constructor(
     val navigationEventsChannelFlow = navigationChannel.receiveAsFlow()
 
     init {
-        viewModelScope.launch {
-            _state.update {
-                val photoId = savedStateHandle.toRoute<Screen.CollectPhoto>().photoId
-                val userCollectionsContainingPhoto = photoRepository.getUserCollectionIdsForPhoto(photoId)
-
-                it.copy(
-                    photoId = photoId,
-                    userCollectionsContainingPhoto = userCollectionsContainingPhoto,
-                    isLoading = true
-                )
+        val photoId = savedStateHandle.toRoute<Screen.CollectPhoto>().photoId
+        photoRepository.getUserCollectionIdsForPhoto(photoId)
+            .onEach { result ->
+                if (result is Resource.Success) {
+                    _state.update { state ->
+                        state.copy(
+                            photoId = photoId,
+                            userCollectionsContainingPhoto = result.value,
+                            isLoading = true
+                        )
+                    }
+                }
             }
-
-            refreshCollectionsList()
-        }
+            .onCompletion {
+                refreshCollectionsList()
+            }
+            .launchIn(viewModelScope)
     }
 
     private suspend fun refreshCollectionsList() {
-        val userPrivateProfileData = userAccountPreferencesRepository.userPrivateProfileData.firstOrNull() ?: return
+        val userPrivateProfileData =
+            userAccountPreferencesRepository.userPrivateProfileData.firstOrNull() ?: return
 
         collectionRepository.getUserCollections(userPrivateProfileData.nickname)
             .cachedIn(viewModelScope)
@@ -143,51 +149,48 @@ class CollectPhotoViewModel @Inject constructor(
             state = CollectActionState.NotCollected
         )
 
-        viewModelScope.launch {
-            val deferredResult = async {
-                collectionRepository.addPhotoToCollection(collectionId, photoId)
-            }
-
-            when (val result = deferredResult.await()) {
-                is Resource.Empty -> Unit
-                is Resource.Loading -> {
-                    _state.update {
-                        it.copy(
-                            error = null,
-                            modifiedCollectionMetadata = CollectionMetadata(
-                                id = collectionId,
-                                state = CollectActionState.Loading
+        collectionRepository.addPhotoToCollection(collectionId, photoId)
+            .onEach { result ->
+                when (result) {
+                    is Resource.Empty -> Unit
+                    is Resource.Loading -> {
+                        _state.update {
+                            it.copy(
+                                error = null,
+                                modifiedCollectionMetadata = CollectionMetadata(
+                                    id = collectionId,
+                                    state = CollectActionState.Loading
+                                )
                             )
-                        )
+                        }
+                    }
+
+                    is Resource.Error -> {
+                        _state.update {
+                            it.copy(
+                                error = CollectOperationError(
+                                    reason = UiText.DynamicString(result.reason.orEmpty())
+                                ),
+                                modifiedCollectionMetadata = initialCollectionMetadata,
+                                isCreateCollectionInProgress = false
+                            )
+                        }
+                    }
+
+                    is Resource.Success -> {
+                        _state.update {
+                            val newCollectionsList = it.userCollectionsContainingPhoto.toMutableList()
+                            newCollectionsList += collectionId
+
+                            it.copy(
+                                error = null,
+                                userCollectionsContainingPhoto = newCollectionsList,
+                                isCreateCollectionInProgress = false
+                            )
+                        }
                     }
                 }
-
-                is Resource.Error -> {
-                    _state.update {
-                        it.copy(
-                            error = CollectOperationError(
-                                reason = UiText.DynamicString(result.reason.orEmpty())
-                            ),
-                            modifiedCollectionMetadata = initialCollectionMetadata,
-                            isCreateCollectionInProgress = false
-                        )
-                    }
-                }
-
-                is Resource.Success -> {
-                    _state.update {
-                        val newCollectionsList = it.userCollectionsContainingPhoto.toMutableList()
-                        newCollectionsList += collectionId
-
-                        it.copy(
-                            error = null,
-                            userCollectionsContainingPhoto = newCollectionsList,
-                            isCreateCollectionInProgress = false
-                        )
-                    }
-                }
-            }
-        }
+            }.launchIn(viewModelScope)
     }
 
     private fun dropPhotoFromCollection(
@@ -199,51 +202,49 @@ class CollectPhotoViewModel @Inject constructor(
             state = CollectActionState.Collected
         )
 
-        viewModelScope.launch {
-            val deferredResult = async {
-                collectionRepository.deletePhotoFromCollection(collectionId, photoId)
-            }
-
-            when (val result = deferredResult.await()) {
-                is Resource.Empty -> Unit
-                is Resource.Loading -> {
-                    _state.update {
-                        it.copy(
-                            error = null,
-                            modifiedCollectionMetadata = CollectionMetadata(
-                                id = collectionId,
-                                state = CollectActionState.Loading
+        collectionRepository.deletePhotoFromCollection(collectionId, photoId)
+            .onEach { result ->
+                when (result) {
+                    is Resource.Empty -> Unit
+                    is Resource.Loading -> {
+                        _state.update {
+                            it.copy(
+                                error = null,
+                                modifiedCollectionMetadata = CollectionMetadata(
+                                    id = collectionId,
+                                    state = CollectActionState.Loading
+                                )
                             )
-                        )
+                        }
                     }
-                }
 
-                is Resource.Error -> {
-                    _state.update {
-                        it.copy(
-                            error = CollectOperationError(
-                                reason = UiText.DynamicString(result.reason.orEmpty())
-                            ),
-                            modifiedCollectionMetadata = initialCollectionMetadata,
-                            isCreateCollectionInProgress = false
-                        )
+                    is Resource.Error -> {
+                        _state.update {
+                            it.copy(
+                                error = CollectOperationError(
+                                    reason = UiText.DynamicString(result.reason.orEmpty())
+                                ),
+                                modifiedCollectionMetadata = initialCollectionMetadata,
+                                isCreateCollectionInProgress = false
+                            )
+                        }
                     }
-                }
 
-                is Resource.Success -> {
-                    _state.update {
-                        val newCollectionsList = it.userCollectionsContainingPhoto.toMutableList()
-                        newCollectionsList -= collectionId
+                    is Resource.Success -> {
+                        _state.update {
+                            val newCollectionsList = it.userCollectionsContainingPhoto.toMutableList()
+                            newCollectionsList -= collectionId
 
-                        it.copy(
-                            error = null,
-                            userCollectionsContainingPhoto = newCollectionsList,
-                            isCreateCollectionInProgress = false
-                        )
+                            it.copy(
+                                error = null,
+                                userCollectionsContainingPhoto = newCollectionsList,
+                                isCreateCollectionInProgress = false
+                            )
+                        }
                     }
                 }
             }
-        }
+            .launchIn(viewModelScope)
     }
 
     private fun createCollectionAndCollect(
@@ -252,33 +253,33 @@ class CollectPhotoViewModel @Inject constructor(
         isPrivate: Boolean = false,
         photoId: PhotoId
     ) {
-        viewModelScope.launch {
-            val creationResult = collectionRepository.createCollection(title, description, isPrivate)
-
-            when (creationResult) {
-                is Resource.Empty -> Unit
-                is Resource.Loading -> {
-                    _state.update {
-                        it.copy(isCreateCollectionInProgress = true)
+        collectionRepository.createCollection(title, description, isPrivate)
+            .onEach { result ->
+                when (result) {
+                    is Resource.Empty -> Unit
+                    is Resource.Loading -> {
+                        _state.update {
+                            it.copy(isCreateCollectionInProgress = true)
+                        }
                     }
-                }
 
-                is Resource.Error -> {
-                    _state.update {
-                        it.copy(
-                            error = CollectOperationError(
-                                reason = UiText.DynamicString(creationResult.reason.orEmpty())
+                    is Resource.Error -> {
+                        _state.update {
+                            it.copy(
+                                error = CollectOperationError(
+                                    reason = UiText.DynamicString(result.reason.orEmpty())
+                                )
                             )
-                        )
+                        }
                     }
-                }
 
-                is Resource.Success -> {
-                    val collectionId = creationResult.value.id
-                    collectPhoto(collectionId, photoId)
-                    refreshCollectionsList()
+                    is Resource.Success -> {
+                        val collectionId = result.value.id
+                        collectPhoto(collectionId, photoId)
+                        refreshCollectionsList()
+                    }
                 }
             }
-        }
+            .launchIn(viewModelScope)
     }
 }

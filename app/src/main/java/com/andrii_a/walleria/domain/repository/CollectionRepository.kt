@@ -14,30 +14,30 @@ interface CollectionRepository {
 
     fun getUserCollections(username: String): Flow<PagingData<Collection>>
 
-    suspend fun createCollection(
+    fun createCollection(
         title: String,
         description: String?,
         isPrivate: Boolean?
-    ): Resource<Collection>
+    ): Flow<Resource<Collection>>
 
-    suspend fun updateCollection(
+    fun updateCollection(
         id: String,
         title: String?,
         description: String?,
         isPrivate: Boolean
-    ): Resource<Collection>
+    ): Flow<Resource<Collection>>
 
-    suspend fun deleteCollection(id: String): Resource<Unit>
+    fun deleteCollection(id: String): Flow<Resource<Unit>>
 
-    suspend fun addPhotoToCollection(
+    fun addPhotoToCollection(
         collectionId: String,
         photoId: String
-    ): Resource<CollectionPhotoResult>
+    ): Flow<Resource<CollectionPhotoResult>>
 
-    suspend fun deletePhotoFromCollection(
+    fun deletePhotoFromCollection(
         collectionId: String,
         photoId: String
-    ): Resource<CollectionPhotoResult>
+    ): Flow<Resource<CollectionPhotoResult>>
 
-    suspend fun getRelatedCollection(id: String): Resource<List<Collection>>
+    fun getRelatedCollection(id: String): Flow<Resource<List<Collection>>>
 }

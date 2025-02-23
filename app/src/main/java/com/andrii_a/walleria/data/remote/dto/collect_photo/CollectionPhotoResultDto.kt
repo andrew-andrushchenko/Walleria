@@ -1,12 +1,14 @@
 package com.andrii_a.walleria.data.remote.dto.collect_photo
 
 import com.andrii_a.walleria.domain.models.collect_photo.CollectionPhotoResult
-import com.andrii_a.walleria.data.remote.dto.collection.CollectionDTO
-import com.andrii_a.walleria.data.remote.dto.photo.PhotoDTO
+import com.andrii_a.walleria.data.remote.dto.collection.CollectionDto
+import com.andrii_a.walleria.data.remote.dto.photo.PhotoDto
+import kotlinx.serialization.Serializable
 
-data class CollectionPhotoResultDTO(
-    val photo: PhotoDTO?,
-    val collection: CollectionDTO?
+@Serializable
+data class CollectionPhotoResultDto(
+    val photo: PhotoDto? = null,
+    val collection: CollectionDto? = null
 ) {
     fun toCollectionPhotoResult(): CollectionPhotoResult = CollectionPhotoResult(
         photo = photo?.toPhoto(),

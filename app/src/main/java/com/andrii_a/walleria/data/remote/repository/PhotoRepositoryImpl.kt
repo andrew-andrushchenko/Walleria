@@ -3,30 +3,29 @@ package com.andrii_a.walleria.data.remote.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.andrii_a.walleria.domain.network.Resource
-import com.andrii_a.walleria.domain.PhotoListDisplayOrder
-import com.andrii_a.walleria.domain.TopicPhotosOrientation
 import com.andrii_a.walleria.data.remote.services.PhotoService
 import com.andrii_a.walleria.data.remote.source.photo.CollectionPhotosPagingSource
 import com.andrii_a.walleria.data.remote.source.photo.PhotosPagingSource
 import com.andrii_a.walleria.data.remote.source.photo.TopicPhotosPagingSource
 import com.andrii_a.walleria.data.remote.source.photo.UserLikedPhotosPagingSource
 import com.andrii_a.walleria.data.remote.source.photo.UserPhotosPagingSource
-import com.andrii_a.walleria.data.util.PAGE_SIZE
-import com.andrii_a.walleria.data.util.network.backendRequest
-import com.andrii_a.walleria.data.util.network.backendRequestFlow
+import com.andrii_a.walleria.data.util.Config
+import com.andrii_a.walleria.domain.PhotoListDisplayOrder
 import com.andrii_a.walleria.domain.SearchResultsContentFilter
 import com.andrii_a.walleria.domain.SearchResultsPhotoOrientation
+import com.andrii_a.walleria.domain.TopicPhotosOrientation
 import com.andrii_a.walleria.domain.models.photo.Photo
+import com.andrii_a.walleria.domain.network.Resource
 import com.andrii_a.walleria.domain.repository.PhotoRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class PhotoRepositoryImpl(private val photoService: PhotoService) : PhotoRepository {
 
     override fun getPhotos(order: PhotoListDisplayOrder): Flow<PagingData<Photo>> =
         Pager(
             config = PagingConfig(
-                pageSize = PAGE_SIZE,
+                pageSize = Config.PAGE_SIZE,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = { PhotosPagingSource(photoService, order) }
@@ -35,7 +34,7 @@ class PhotoRepositoryImpl(private val photoService: PhotoService) : PhotoReposit
     override fun getCollectionPhotos(collectionId: String): Flow<PagingData<Photo>> =
         Pager(
             config = PagingConfig(
-                pageSize = PAGE_SIZE,
+                pageSize = Config.PAGE_SIZE,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = { CollectionPhotosPagingSource(photoService, collectionId) }
@@ -44,7 +43,7 @@ class PhotoRepositoryImpl(private val photoService: PhotoService) : PhotoReposit
     override fun getUserPhotos(username: String): Flow<PagingData<Photo>> =
         Pager(
             config = PagingConfig(
-                pageSize = PAGE_SIZE,
+                pageSize = Config.PAGE_SIZE,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = { UserPhotosPagingSource(photoService, username) }
@@ -53,7 +52,7 @@ class PhotoRepositoryImpl(private val photoService: PhotoService) : PhotoReposit
     override fun getUserLikedPhotos(username: String): Flow<PagingData<Photo>> =
         Pager(
             config = PagingConfig(
-                pageSize = PAGE_SIZE,
+                pageSize = Config.PAGE_SIZE,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = { UserLikedPhotosPagingSource(photoService, username) }
@@ -66,7 +65,7 @@ class PhotoRepositoryImpl(private val photoService: PhotoService) : PhotoReposit
     ): Flow<PagingData<Photo>> =
         Pager(
             config = PagingConfig(
-                pageSize = PAGE_SIZE,
+                pageSize = Config.PAGE_SIZE,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
@@ -79,10 +78,15 @@ class PhotoRepositoryImpl(private val photoService: PhotoService) : PhotoReposit
             }
         ).flow
 
-    override fun getPhoto(photoId: String): Flow<Resource<Photo>> =
-        backendRequestFlow {
-            photoService.getPhoto(photoId).toPhoto()
+    override fun getPhoto(photoId: String): Flow<Resource<Photo>> = flow {
+        emit(Resource.Loading)
+
+        when (val result = photoService.getPhoto(photoId)) {
+            is Resource.Error -> emit(result)
+            is Resource.Success -> emit(Resource.Success(result.value.toPhoto()))
+            else -> Unit
         }
+    }
 
     override fun getRandomPhoto(
         collectionId: String?,
@@ -91,8 +95,10 @@ class PhotoRepositoryImpl(private val photoService: PhotoService) : PhotoReposit
         query: String?,
         orientation: SearchResultsPhotoOrientation,
         contentFilter: SearchResultsContentFilter
-    ): Flow<Resource<Photo>> = backendRequestFlow {
-        photoService.getRandomPhotos(
+    ): Flow<Resource<Photo>> = flow {
+        emit(Resource.Loading)
+
+        val result = photoService.getRandomPhotos(
             collectionId = collectionId,
             featured = featured,
             username = username,
@@ -100,32 +106,50 @@ class PhotoRepositoryImpl(private val photoService: PhotoService) : PhotoReposit
             orientation = orientation.value,
             contentFilter = contentFilter.value,
             count = 1
-        ).first().toPhoto()
-    }
+        )
 
-    override suspend fun likePhoto(id: String): Resource<Unit> = backendRequest {
-        photoService.likePhoto(id)
-    }
-
-    override suspend fun dislikePhoto(id: String): Resource<Unit> = backendRequest {
-        photoService.dislikePhoto(id)
-    }
-
-    override suspend fun getUserCollectionIdsForPhoto(photoId: String): List<String> {
-        val result = backendRequest {
-            val photo = photoService.getPhoto(photoId).toPhoto()
-            photo.currentUserCollections?.map { it.id }?.toList()
-        }
-
-        return when (result) {
-            is Resource.Empty, is Resource.Loading, is Resource.Error -> emptyList()
-            is Resource.Success -> result.value ?: emptyList()
+        when (result) {
+            is Resource.Error -> emit(result)
+            is Resource.Success -> emit(Resource.Success(result.value.first().toPhoto()))
+            else -> Unit
         }
     }
+
+    override fun likePhoto(id: String): Flow<Resource<Unit>> = flow {
+        emit(Resource.Loading)
+
+        when (val result = photoService.likePhoto(id)) {
+            is Resource.Error -> emit(result)
+            is Resource.Success -> emit(Resource.Success(Unit))
+            else -> Unit
+        }
+    }
+
+    override fun dislikePhoto(id: String): Flow<Resource<Unit>> = flow {
+        emit(Resource.Loading)
+
+        when (val result = photoService.dislikePhoto(id)) {
+            is Resource.Error -> emit(result)
+            is Resource.Success -> emit(Resource.Success(Unit))
+            else -> Unit
+        }
+    }
+
+    override fun getUserCollectionIdsForPhoto(photoId: String): Flow<Resource<List<String>>> =
+        flow {
+            emit(Resource.Loading)
+
+            when (val result = photoService.getPhoto(photoId)) {
+                is Resource.Error -> emit(Resource.Error(result.code))
+                is Resource.Success -> {
+                    val userCollectionsList = result.value.currentUserCollections?.map { it.id.orEmpty() }?.toList() ?: emptyList()
+                    emit(Resource.Success(userCollectionsList))
+                }
+                else -> Unit
+            }
+        }
 
     override suspend fun trackPhotoDownload(photoId: String) {
-        backendRequest {
-            photoService.trackDownload(photoId)
-        }
+        photoService.trackDownload(photoId)
     }
 }

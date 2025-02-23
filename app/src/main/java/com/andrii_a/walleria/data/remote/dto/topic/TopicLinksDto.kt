@@ -1,11 +1,13 @@
 package com.andrii_a.walleria.data.remote.dto.topic
 
 import com.andrii_a.walleria.domain.models.topic.TopicLinks
+import kotlinx.serialization.Serializable
 
-data class TopicLinksDTO(
-    val self: String?,
-    val html: String?,
-    val photos: String?
+@Serializable
+data class TopicLinksDto(
+    val self: String? = null,
+    val html: String? = null,
+    val photos: String? = null
 ) {
     fun toTopicLinks(): TopicLinks = TopicLinks(
         self = self.orEmpty(),

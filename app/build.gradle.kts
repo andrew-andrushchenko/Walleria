@@ -28,6 +28,9 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        val paginationPageSize = gradleLocalProperties(rootDir, providers).getProperty("pagination_page_size").toInt()
+        buildConfigField("Integer", "PAGINATION_PAGE_SIZE", paginationPageSize.toString())
     }
 
     buildTypes {
@@ -37,11 +40,10 @@ android {
             val gradleLocalProperties = gradleLocalProperties(rootDir, providers)
 
             accessKey = gradleLocalProperties.getProperty("unsplash_access_key_debug")
-            secretKey = gradleLocalProperties.getProperty("unsplash_secret_key_debug")
-
             buildConfigField("String", "UNSPLASH_ACCESS_KEY", accessKey)
-            buildConfigField("String", "UNSPLASH_SECRET_KEY", secretKey)
 
+            secretKey = gradleLocalProperties.getProperty("unsplash_secret_key_debug")
+            buildConfigField("String", "UNSPLASH_SECRET_KEY", secretKey)
         }
 
         release {
@@ -55,9 +57,9 @@ android {
             val gradleLocalProperties = gradleLocalProperties(rootDir, providers)
 
             accessKey = gradleLocalProperties.getProperty("unsplash_access_key_release")
-            secretKey = gradleLocalProperties.getProperty("unsplash_secret_key_release")
-
             buildConfigField("String", "UNSPLASH_ACCESS_KEY", accessKey)
+
+            secretKey = gradleLocalProperties.getProperty("unsplash_secret_key_release")
             buildConfigField("String", "UNSPLASH_SECRET_KEY", secretKey)
         }
     }
@@ -132,12 +134,12 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     kapt(libs.hilt.compiler)
 
-    // Retrofit + GSON
-    implementation(libs.retrofit)
-    implementation(libs.converter.gson)
-
-    // OkHttp
-    implementation(libs.okhttp)
+    // Ktor client
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.serialization.kotlinx.json)
 
     // Android splash screen
     implementation(libs.androidx.core.splashscreen)

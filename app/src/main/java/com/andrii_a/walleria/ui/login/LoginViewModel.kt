@@ -1,5 +1,6 @@
 package com.andrii_a.walleria.ui.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.andrii_a.walleria.domain.ApplicationScope
@@ -39,33 +40,36 @@ class LoginViewModel @Inject constructor(
     val bannerPhoto: StateFlow<Photo?> = _bannerPhoto.asStateFlow()
 
     init {
-        photoRepository.getRandomPhoto().onEach { result ->
-            when (result) {
-                is Resource.Empty,
-                is Resource.Error,
-                is Resource.Loading -> Unit
-                is Resource.Success -> {
-                    _bannerPhoto.update { result.value }
+        photoRepository.getRandomPhoto()
+            .onEach { result ->
+                when (result) {
+                    is Resource.Empty,
+                    is Resource.Error,
+                    is Resource.Loading -> Unit
+
+                    is Resource.Success -> {
+                        _bannerPhoto.update { result.value }
+                    }
                 }
-            }
-        }.launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
     }
 
     fun getAccessToken(code: String) {
-        loginRepository.login(code).onEach { backendResult ->
-            _loginState.update {
-                when (backendResult) {
-                    is Resource.Empty -> LoginState.Empty
-                    is Resource.Loading -> LoginState.Loading
-                    is Resource.Error -> LoginState.Error
-                    is Resource.Success -> LoginState.Success(backendResult.value)
+        loginRepository.login(code)
+            .onEach { backendResult ->
+                _loginState.update {
+                    when (backendResult) {
+                        is Resource.Empty -> LoginState.Empty
+                        is Resource.Loading -> LoginState.Loading
+                        is Resource.Error -> LoginState.Error
+                        is Resource.Success -> LoginState.Success(backendResult.value)
+                    }
                 }
-            }
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = Resource.Empty
-        ).launchIn(viewModelScope)
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000L),
+                initialValue = Resource.Empty
+            ).launchIn(viewModelScope)
     }
 
     fun retrieveAndSaveUserData(accessToken: AccessToken) {
@@ -79,11 +83,22 @@ class LoginViewModel @Inject constructor(
         loginRepository.saveAccessToken(accessToken = accessToken)
     }
 
-    private suspend fun getAndSaveUserProfile() {
-        loginRepository.getPrivateUserProfile().let { backendResult ->
-            if (backendResult is Resource.Success) {
-                loginRepository.savePrivateUserProfile(userPrivateProfile = backendResult.value)
+    private fun getAndSaveUserProfile() {
+        loginRepository.getPrivateUserProfile()
+            .onEach { result ->
+                when (result) {
+                    Resource.Empty, Resource.Loading -> Unit
+                    is Resource.Error -> Log.d(TAG, "$result")
+                    is Resource.Success -> {
+                        loginRepository.savePrivateUserProfile(userPrivateProfile = result.value)
+                    }
+                }
+                /*if (result is Resource.Success) {
+                    loginRepository.savePrivateUserProfile(userPrivateProfile = result.value)
+                }*/
             }
-        }
+            .launchIn(viewModelScope)
     }
 }
+
+private const val TAG = "LoginViewModel"

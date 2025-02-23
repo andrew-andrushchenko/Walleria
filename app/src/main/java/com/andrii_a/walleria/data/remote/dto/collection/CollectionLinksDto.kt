@@ -1,12 +1,14 @@
 package com.andrii_a.walleria.data.remote.dto.collection
 
 import com.andrii_a.walleria.domain.models.collection.CollectionLinks
+import kotlinx.serialization.Serializable
 
-data class CollectionLinksDTO(
-    val self: String?,
-    val html: String?,
-    val photos: String?,
-    val related: String?
+@Serializable
+data class CollectionLinksDto(
+    val self: String? = null,
+    val html: String? = null,
+    val photos: String? = null,
+    val related: String? = null
 ) {
     fun toCollectionLinks(): CollectionLinks = CollectionLinks(
         self = self.orEmpty(),

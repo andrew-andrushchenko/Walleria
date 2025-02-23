@@ -2,11 +2,11 @@ package com.andrii_a.walleria.data.remote.source.photo
 
 import com.andrii_a.walleria.data.remote.services.PhotoService
 import com.andrii_a.walleria.data.remote.source.base.BasePagingSource
-import com.andrii_a.walleria.data.util.INITIAL_PAGE_INDEX
-import com.andrii_a.walleria.data.util.PAGE_SIZE
+import com.andrii_a.walleria.data.util.Config
 import com.andrii_a.walleria.domain.models.photo.Photo
-import retrofit2.HttpException
-import java.io.IOException
+import com.andrii_a.walleria.domain.network.Resource
+import kotlinx.coroutines.ensureActive
+import kotlin.coroutines.coroutineContext
 
 class UserLikedPhotosPagingSource(
     private val photoService: PhotoService,
@@ -14,26 +14,30 @@ class UserLikedPhotosPagingSource(
 ) : BasePagingSource<Photo>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Photo> {
-        val pageKey = params.key ?: INITIAL_PAGE_INDEX
+        val pageKey = params.key ?: Config.INITIAL_PAGE_INDEX
 
         return try {
-            val likedPhotos: List<Photo> =
-                photoService.getUserLikedPhotos(
-                    username,
-                    pageKey,
-                    PAGE_SIZE,
-                    "latest",
-                    null
-                ).map { it.toPhoto() }
+            val result = photoService.getUserLikedPhotos(
+                username = username,
+                page = pageKey,
+                perPage = Config.PAGE_SIZE,
+                orderBy = "latest",
+                orientation = null
+            )
+
+            val likedPhotos: List<Photo> = when (result) {
+                is Resource.Empty, Resource.Loading -> emptyList()
+                is Resource.Error -> throw result.asException()
+                is Resource.Success -> result.value.map { it.toPhoto() }
+            }
 
             LoadResult.Page(
                 data = likedPhotos,
-                prevKey = if (pageKey == INITIAL_PAGE_INDEX) null else pageKey - 1,
+                prevKey = if (pageKey == Config.INITIAL_PAGE_INDEX) null else pageKey - 1,
                 nextKey = if (likedPhotos.isEmpty()) null else pageKey + 1
             )
-        } catch (exception: IOException) {
-            LoadResult.Error(exception)
-        } catch (exception: HttpException) {
+        } catch (exception: Exception) {
+            coroutineContext.ensureActive()
             LoadResult.Error(exception)
         }
     }

@@ -23,7 +23,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.andrii_a.walleria.R
-import com.andrii_a.walleria.data.util.UNSPLASH_AUTH_CALLBACK
+import com.andrii_a.walleria.data.util.Config
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.CustomTabsHelper
 import com.andrii_a.walleria.ui.util.toast
@@ -100,7 +100,7 @@ class LoginActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         intent.data?.let { uri ->
-            if (uri.authority.equals(UNSPLASH_AUTH_CALLBACK)) {
+            if (uri.authority.equals(Config.AUTH_CALLBACK.substringAfterLast("/"))) {
                 uri.getQueryParameter("code")?.let { code ->
                     lifecycleScope.launch {
                         repeatOnLifecycle(Lifecycle.State.RESUMED) {

@@ -36,11 +36,11 @@ interface PhotoRepository {
         contentFilter: SearchResultsContentFilter = SearchResultsContentFilter.LOW
     ): Flow<Resource<Photo>>
 
-    suspend fun likePhoto(id: String): Resource<Unit>
+    fun likePhoto(id: String): Flow<Resource<Unit>>
 
-    suspend fun dislikePhoto(id: String): Resource<Unit>
+    fun dislikePhoto(id: String): Flow<Resource<Unit>>
 
-    suspend fun getUserCollectionIdsForPhoto(photoId: String): List<String>
+    fun getUserCollectionIdsForPhoto(photoId: String): Flow<Resource<List<String>>>
 
     suspend fun trackPhotoDownload(photoId: String)
 }

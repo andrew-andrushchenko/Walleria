@@ -1,13 +1,13 @@
 package com.andrii_a.walleria.data.remote.source.topic
 
-import com.andrii_a.walleria.domain.TopicsDisplayOrder
 import com.andrii_a.walleria.data.remote.services.TopicService
 import com.andrii_a.walleria.data.remote.source.base.BasePagingSource
-import com.andrii_a.walleria.data.util.INITIAL_PAGE_INDEX
-import com.andrii_a.walleria.data.util.PAGE_SIZE
+import com.andrii_a.walleria.data.util.Config
+import com.andrii_a.walleria.domain.TopicsDisplayOrder
 import com.andrii_a.walleria.domain.models.topic.Topic
-import retrofit2.HttpException
-import java.io.IOException
+import com.andrii_a.walleria.domain.network.Resource
+import kotlinx.coroutines.ensureActive
+import kotlin.coroutines.coroutineContext
 
 class TopicsPagingSource(
     private val topicService: TopicService,
@@ -15,23 +15,28 @@ class TopicsPagingSource(
 ) : BasePagingSource<Topic>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Topic> {
-        val pageKey = params.key ?: INITIAL_PAGE_INDEX
+        val pageKey = params.key ?: Config.INITIAL_PAGE_INDEX
 
         return try {
-            val topics: List<Topic> = topicService.getTopics(
-                pageKey,
-                PAGE_SIZE,
-                order.value
-            ).map { it.toTopic() }
+            val result = topicService.getTopics(
+                page = pageKey,
+                perPage = Config.PAGE_SIZE,
+                orderBy = order.value
+            )
+
+            val topics: List<Topic> = when (result) {
+                is Resource.Empty, is Resource.Loading -> emptyList()
+                is Resource.Error -> throw result.asException()
+                is Resource.Success -> result.value.map { it.toTopic() }
+            }
 
             LoadResult.Page(
                 data = topics,
-                prevKey = if (pageKey == INITIAL_PAGE_INDEX) null else pageKey - 1,
+                prevKey = if (pageKey == Config.INITIAL_PAGE_INDEX) null else pageKey - 1,
                 nextKey = if (topics.isEmpty()) null else pageKey + 1
             )
-        } catch (exception: IOException) {
-            LoadResult.Error(exception)
-        } catch (exception: HttpException) {
+        } catch (exception: Exception) {
+            coroutineContext.ensureActive()
             LoadResult.Error(exception)
         }
     }

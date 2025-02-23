@@ -1,17 +1,29 @@
 package com.andrii_a.walleria.data.remote.services
 
-import com.andrii_a.walleria.data.remote.dto.login.AccessTokenDTO
-import retrofit2.http.POST
-import retrofit2.http.Query
+import com.andrii_a.walleria.data.remote.dto.login.AccessTokenDto
+import com.andrii_a.walleria.data.remote.dto.login.UserPrivateProfileDto
+import com.andrii_a.walleria.domain.network.Resource
 
 interface LoginService {
 
-    @POST("oauth/token")
     suspend fun getAccessToken(
-        @Query("client_id") clientId: String,
-        @Query("client_secret") clientSecret: String,
-        @Query("redirect_uri") redirectUri: String,
-        @Query("code") code: String,
-        @Query("grant_type") grantType: String
-    ): AccessTokenDTO
+        clientId: String,
+        clientSecret: String,
+        redirectUri: String,
+        code: String,
+        grantType: String
+    ): Resource<AccessTokenDto>
+
+    suspend fun getUserPrivateProfile(): Resource<UserPrivateProfileDto>
+
+    suspend fun updateUserPrivateProfile(
+        username: String?,
+        firstName: String?,
+        lastName: String?,
+        email: String?,
+        url: String?,
+        instagramUsername: String?,
+        location: String?,
+        bio: String?
+    ): Resource<UserPrivateProfileDto>
 }

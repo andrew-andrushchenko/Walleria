@@ -18,10 +18,10 @@ interface LoginRepository {
 
     suspend fun saveAccessToken(accessToken: AccessToken)
 
-    suspend fun getPrivateUserProfile(): Resource<UserPrivateProfile>
+    fun getPrivateUserProfile(): Flow<Resource<UserPrivateProfile>>
 
     suspend fun savePrivateUserProfile(userPrivateProfile: UserPrivateProfile)
 
-    suspend fun updatePrivateUserProfile(userPrivateProfileData: UserPrivateProfileData): Resource<UserPrivateProfile>
+    fun updatePrivateUserProfile(userPrivateProfileData: UserPrivateProfileData): Flow<Resource<UserPrivateProfile>>
 
 }

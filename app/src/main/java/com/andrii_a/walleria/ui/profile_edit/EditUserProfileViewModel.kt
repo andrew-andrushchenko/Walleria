@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -142,20 +144,20 @@ class EditUserProfileViewModel @Inject constructor(
         Patterns.EMAIL_ADDRESS.matcher(emailAddress).matches()
 
     private fun saveUserProfileData(userPrivateProfileData: UserPrivateProfileData) {
-        viewModelScope.launch {
-            val updateResult = loginRepository.updatePrivateUserProfile(userPrivateProfileData)
+        loginRepository.updatePrivateUserProfile(userPrivateProfileData)
+            .onEach { result ->
+                when (result) {
+                    is Resource.Empty, is Resource.Loading -> Unit
+                    is Resource.Error -> {
+                        _profileUpdateMessageFlow.emit(UiText.StringResource(R.string.profile_data_not_updated))
+                    }
 
-            when (updateResult) {
-                is Resource.Empty, is Resource.Loading -> Unit
-                is Resource.Error -> {
-                    _profileUpdateMessageFlow.emit(UiText.StringResource(R.string.profile_data_not_updated))
-                }
-
-                is Resource.Success -> {
-                    loginRepository.savePrivateUserProfile(updateResult.value)
-                    _profileUpdateMessageFlow.emit(UiText.StringResource(R.string.profile_data_updated_successfully))
+                    is Resource.Success -> {
+                        loginRepository.savePrivateUserProfile(result.value)
+                        _profileUpdateMessageFlow.emit(UiText.StringResource(R.string.profile_data_updated_successfully))
+                    }
                 }
             }
-        }
+            .launchIn(viewModelScope)
     }
 }

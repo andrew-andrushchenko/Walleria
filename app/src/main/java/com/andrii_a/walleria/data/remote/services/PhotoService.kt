@@ -1,82 +1,64 @@
 package com.andrii_a.walleria.data.remote.services
 
-import com.andrii_a.walleria.data.remote.dto.photo.PhotoDTO
-import okhttp3.ResponseBody
-import retrofit2.Response
-import retrofit2.http.*
+import com.andrii_a.walleria.data.remote.dto.photo.PhotoDto
+import com.andrii_a.walleria.domain.network.Resource
 
 interface PhotoService {
 
-    @GET("photos")
     suspend fun getPhotos(
-        @Query("page") page: Int?,
-        @Query("per_page") perPage: Int?,
-        @Query("order_by") orderBy: String?
-    ): List<PhotoDTO>
+        page: Int?,
+        perPage: Int?,
+        orderBy: String?
+    ): Resource<List<PhotoDto>>
 
-    @GET("collections/{id}/photos")
     suspend fun getCollectionPhotos(
-        @Path("id") id: String,
-        @Query("page") page: Int?,
-        @Query("per_page") perPage: Int?
-    ): List<PhotoDTO>
+        id: String,
+        page: Int?,
+        perPage: Int?
+    ): Resource<List<PhotoDto>>
 
-    @GET("users/{username}/photos")
     suspend fun getUserPhotos(
-        @Path("username") username: String,
-        @Query("page") page: Int?,
-        @Query("per_page") perPage: Int?,
-        @Query("order_by") orderBy: String?,
-        @Query("stats") stats: Boolean?,
-        @Query("resolution") resolution: String?,
-        @Query("quantity") quantity: Int?,
-        @Query("orientation") orientation: String?
-    ): List<PhotoDTO>
+        username: String,
+        page: Int?,
+        perPage: Int?,
+        orderBy: String?,
+        stats: Boolean?,
+        resolution: String?,
+        quantity: Int?,
+        orientation: String?
+    ): Resource<List<PhotoDto>>
 
-    @GET("users/{username}/likes")
     suspend fun getUserLikedPhotos(
-        @Path("username") username: String,
-        @Query("page") page: Int?,
-        @Query("per_page") perPage: Int?,
-        @Query("order_by") orderBy: String?,
-        @Query("orientation") orientation: String?
-    ): List<PhotoDTO>
+        username: String,
+        page: Int?,
+        perPage: Int?,
+        orderBy: String?,
+        orientation: String?
+    ): Resource<List<PhotoDto>>
 
-    @GET("topics/{id_or_slug}/photos")
     suspend fun getTopicPhotos(
-        @Path("id_or_slug") idOrSlug: String,
-        @Query("page") page: Int?,
-        @Query("per_page") perPage: Int?,
-        @Query("orientation") orientation: String?,
-        @Query("order_by") orderBy: String?
-    ): List<PhotoDTO>
+        idOrSlug: String,
+        page: Int?,
+        perPage: Int?,
+        orientation: String?,
+        orderBy: String?
+    ): Resource<List<PhotoDto>>
 
-    @GET("photos/{id}")
-    suspend fun getPhoto(
-        @Path("id") id: String
-    ): PhotoDTO
+    suspend fun getPhoto(id: String): Resource<PhotoDto>
 
-    @GET("photos/random")
     suspend fun getRandomPhotos(
-        @Query("collections") collectionId: String?,
-        @Query("featured") featured: Boolean?,
-        @Query("username") username: String?,
-        @Query("query") query: String?,
-        @Query("orientation") orientation: String?,
-        @Query("content_filter") contentFilter: String?,
-        @Query("count") count: Int?
-    ): List<PhotoDTO>
+        collectionId: String?,
+        featured: Boolean?,
+        username: String?,
+        query: String?,
+        orientation: String?,
+        contentFilter: String?,
+        count: Int?
+    ): Resource<List<PhotoDto>>
 
-    @POST("photos/{id}/like")
-    suspend fun likePhoto(
-        @Path("id") id: String,
-    ): ResponseBody
+    suspend fun likePhoto(id: String): Resource<Unit>
 
-    @DELETE("photos/{id}/like")
-    suspend fun dislikePhoto(
-        @Path("id") id: String
-    ): Response<Unit>
+    suspend fun dislikePhoto(id: String): Resource<Unit>
 
-    @GET("photos/{id}/download")
-    suspend fun trackDownload(@Path("id") photoId: String): ResponseBody
+    suspend fun trackDownload(photoId: String): Resource<Unit>
 }

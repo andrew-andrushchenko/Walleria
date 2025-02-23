@@ -1,17 +1,16 @@
 package com.andrii_a.walleria.data.remote.source.search
 
+import com.andrii_a.walleria.data.remote.services.SearchService
+import com.andrii_a.walleria.data.remote.source.base.BasePagingSource
+import com.andrii_a.walleria.data.util.Config
 import com.andrii_a.walleria.domain.SearchResultsContentFilter
 import com.andrii_a.walleria.domain.SearchResultsDisplayOrder
 import com.andrii_a.walleria.domain.SearchResultsPhotoColor
 import com.andrii_a.walleria.domain.SearchResultsPhotoOrientation
-import com.andrii_a.walleria.data.remote.dto.search.SearchPhotosResultDTO
-import com.andrii_a.walleria.data.remote.services.SearchService
-import com.andrii_a.walleria.data.remote.source.base.BasePagingSource
-import com.andrii_a.walleria.data.util.INITIAL_PAGE_INDEX
-import com.andrii_a.walleria.data.util.PAGE_SIZE
 import com.andrii_a.walleria.domain.models.photo.Photo
-import retrofit2.HttpException
-import java.io.IOException
+import com.andrii_a.walleria.domain.network.Resource
+import kotlinx.coroutines.ensureActive
+import kotlin.coroutines.coroutineContext
 
 class SearchPhotosPagingSource(
     private val searchService: SearchService,
@@ -24,7 +23,7 @@ class SearchPhotosPagingSource(
 ) : BasePagingSource<Photo>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Photo> {
-        val pageKey = params.key ?: INITIAL_PAGE_INDEX
+        val pageKey = params.key ?: Config.INITIAL_PAGE_INDEX
 
         if (query.isBlank()) {
             return LoadResult.Page(
@@ -35,10 +34,10 @@ class SearchPhotosPagingSource(
         }
 
         return try {
-            val response: SearchPhotosResultDTO = searchService.searchPhotos(
+            val result = searchService.searchPhotos(
                 query = query,
                 page = pageKey,
-                perPage = PAGE_SIZE,
+                perPage = Config.PAGE_SIZE,
                 orderBy = order.value,
                 collections = collections,
                 contentFilter = contentFilter.value,
@@ -46,17 +45,20 @@ class SearchPhotosPagingSource(
                 orientation = orientation.value
             )
 
-            val photos: List<Photo> = response.results.map { it.toPhoto() }
+            val photos: List<Photo> = when (result) {
+                is Resource.Empty, Resource.Loading -> emptyList()
+                is Resource.Error -> throw result.asException()
+                is Resource.Success -> result.value.results?.map { it.toPhoto() } ?: emptyList()
+            }
 
             LoadResult.Page(
                 data = photos,
-                prevKey = if (pageKey == INITIAL_PAGE_INDEX) null else pageKey - 1,
+                prevKey = if (pageKey == Config.INITIAL_PAGE_INDEX) null else pageKey - 1,
                 nextKey = if (photos.isEmpty()) null else pageKey + 1
             )
 
-        } catch (exception: IOException) {
-            LoadResult.Error(exception)
-        } catch (exception: HttpException) {
+        } catch (exception: Exception) {
+            coroutineContext.ensureActive()
             LoadResult.Error(exception)
         }
     }
