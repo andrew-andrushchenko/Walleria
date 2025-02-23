@@ -78,16 +78,13 @@
 
     <!--Login-->
     <string name="add_account">Add an account</string>
-    <string name="join">Join</string>
+    <string name="sign_up">Sign up</string>
+    <string name="continue_as_a_guest">Continue as a guest</string>
     <string name="login">Login</string>
     <string name="logout">Logout</string>
     <string name="logout_confirmation">Are you sure?</string>
     <string name="login_successful">Login successful</string>
     <string name="login_failed">Login failed</string>
-    <string name="login_screen_greetings_text">Hey there!</string>
-    <string name="login_screen_slogan_p1" translatable="false">Compel your audience.\u0020</string>
-    <string name="login_screen_slogan_p2" translatable="false">Capture the moment. Light with purpose.</string>
-    <string name="dont_have_an_account">Don\'t have an account?</string>
     <string name="action_yes">Yes</string>
     <string name="action_no">No</string>
 

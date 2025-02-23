@@ -2,11 +2,9 @@ package com.andrii_a.walleria.domain.repository
 
 import androidx.paging.PagingData
 import com.andrii_a.walleria.domain.PhotoListDisplayOrder
-import com.andrii_a.walleria.domain.SearchResultsContentFilter
-import com.andrii_a.walleria.domain.SearchResultsPhotoOrientation
 import com.andrii_a.walleria.domain.TopicPhotosOrientation
-import com.andrii_a.walleria.domain.network.Resource
 import com.andrii_a.walleria.domain.models.photo.Photo
+import com.andrii_a.walleria.domain.network.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface PhotoRepository {
@@ -26,15 +24,6 @@ interface PhotoRepository {
     ): Flow<PagingData<Photo>>
 
     fun getPhoto(photoId: String): Flow<Resource<Photo>>
-
-    fun getRandomPhoto(
-        collectionId: String? = null,
-        featured: Boolean = false,
-        username: String? = null,
-        query: String? = null,
-        orientation: SearchResultsPhotoOrientation = SearchResultsPhotoOrientation.ANY,
-        contentFilter: SearchResultsContentFilter = SearchResultsContentFilter.LOW
-    ): Flow<Resource<Photo>>
 
     fun likePhoto(id: String): Flow<Resource<Unit>>
 

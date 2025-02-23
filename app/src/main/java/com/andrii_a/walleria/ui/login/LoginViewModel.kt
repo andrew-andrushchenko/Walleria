@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.andrii_a.walleria.domain.network.Resource
 import com.andrii_a.walleria.domain.repository.LocalAccountRepository
 import com.andrii_a.walleria.domain.repository.LoginRepository
-import com.andrii_a.walleria.domain.repository.PhotoRepository
 import com.andrii_a.walleria.domain.repository.UserRepository
 import com.andrii_a.walleria.ui.common.UiErrorWithRetry
 import com.andrii_a.walleria.ui.common.UiText
@@ -22,8 +21,7 @@ import kotlinx.coroutines.launch
 class LoginViewModel(
     private val loginRepository: LoginRepository,
     private val userRepository: UserRepository,
-    private val localAccountRepository: LocalAccountRepository,
-    photoRepository: PhotoRepository
+    private val localAccountRepository: LocalAccountRepository
 ) : ViewModel() {
 
     private val _state: MutableStateFlow<LoginUiState> = MutableStateFlow(LoginUiState())
@@ -31,21 +29,6 @@ class LoginViewModel(
 
     private val navigationEventChannel = Channel<LoginNavigationEvent>()
     val navigationEventFlow = navigationEventChannel.receiveAsFlow()
-
-    init {
-        photoRepository.getRandomPhoto()
-            .onEach { result ->
-                when (result) {
-                    is Resource.Empty,
-                    is Resource.Error,
-                    is Resource.Loading -> Unit
-
-                    is Resource.Success -> {
-                        _state.update { it.copy(bannerPhoto = result.value) }
-                    }
-                }
-            }.launchIn(viewModelScope)
-    }
 
     fun onEvent(event: LoginEvent) {
         when (event) {
@@ -142,6 +125,7 @@ class LoginViewModel(
                             )
                         }
                     }
+
                     is Resource.Error -> {
                         _state.update {
                             it.copy(

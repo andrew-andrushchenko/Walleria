@@ -46,16 +46,6 @@ interface PhotoService {
 
     suspend fun getPhoto(id: String): Resource<PhotoDto>
 
-    suspend fun getRandomPhotos(
-        collectionId: String?,
-        featured: Boolean?,
-        username: String?,
-        query: String?,
-        orientation: String?,
-        contentFilter: String?,
-        count: Int?
-    ): Resource<List<PhotoDto>>
-
     suspend fun likePhoto(id: String): Resource<Unit>
 
     suspend fun dislikePhoto(id: String): Resource<Unit>

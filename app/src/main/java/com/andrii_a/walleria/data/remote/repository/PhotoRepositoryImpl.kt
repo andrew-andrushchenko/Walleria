@@ -11,8 +11,6 @@ import com.andrii_a.walleria.data.remote.source.photo.UserLikedPhotosPagingSourc
 import com.andrii_a.walleria.data.remote.source.photo.UserPhotosPagingSource
 import com.andrii_a.walleria.data.util.Config
 import com.andrii_a.walleria.domain.PhotoListDisplayOrder
-import com.andrii_a.walleria.domain.SearchResultsContentFilter
-import com.andrii_a.walleria.domain.SearchResultsPhotoOrientation
 import com.andrii_a.walleria.domain.TopicPhotosOrientation
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.network.Resource
@@ -84,33 +82,6 @@ class PhotoRepositoryImpl(private val photoService: PhotoService) : PhotoReposit
         when (val result = photoService.getPhoto(photoId)) {
             is Resource.Error -> emit(result)
             is Resource.Success -> emit(Resource.Success(result.value.toPhoto()))
-            else -> Unit
-        }
-    }
-
-    override fun getRandomPhoto(
-        collectionId: String?,
-        featured: Boolean,
-        username: String?,
-        query: String?,
-        orientation: SearchResultsPhotoOrientation,
-        contentFilter: SearchResultsContentFilter
-    ): Flow<Resource<Photo>> = flow {
-        emit(Resource.Loading)
-
-        val result = photoService.getRandomPhotos(
-            collectionId = collectionId,
-            featured = featured,
-            username = username,
-            query = query,
-            orientation = orientation.value,
-            contentFilter = contentFilter.value,
-            count = 1
-        )
-
-        when (result) {
-            is Resource.Error -> emit(result)
-            is Resource.Success -> emit(Resource.Success(result.value.first().toPhoto()))
             else -> Unit
         }
     }

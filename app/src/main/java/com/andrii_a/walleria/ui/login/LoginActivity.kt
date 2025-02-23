@@ -13,10 +13,8 @@ import androidx.browser.customtabs.CustomTabsClient
 import androidx.browser.customtabs.CustomTabsService
 import androidx.browser.customtabs.CustomTabsServiceConnection
 import androidx.browser.customtabs.CustomTabsSession
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
@@ -55,8 +53,9 @@ class LoginActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+
+        enableEdgeToEdge()
         setupCustomTabs()
 
         setContent {
@@ -106,8 +105,7 @@ class LoginActivity : ComponentActivity() {
                 WalleriaTheme {
                     LoginScreenContent(
                         state = state,
-                        onEvent = viewModel::onEvent,
-                        modifier = Modifier.fillMaxSize()
+                        onEvent = viewModel::onEvent
                     )
                 }
             }

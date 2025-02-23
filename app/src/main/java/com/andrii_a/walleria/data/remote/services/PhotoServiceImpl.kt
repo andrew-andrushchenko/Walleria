@@ -133,44 +133,6 @@ class PhotoServiceImpl(private val httpClient: HttpClient) : PhotoService {
         }
     }
 
-    override suspend fun getRandomPhotos(
-        collectionId: String?,
-        featured: Boolean?,
-        username: String?,
-        query: String?,
-        orientation: String?,
-        contentFilter: String?,
-        count: Int?
-    ): Resource<List<PhotoDto>> {
-        return backendRequest {
-            httpClient.get(urlString = Endpoints.RANDOM_PHOTOS) {
-                url {
-                    collectionId?.let {
-                        parameters.append("collections", collectionId.toString())
-                    }
-                    featured?.let {
-                        parameters.append("featured", featured.toString())
-                    }
-                    username?.let {
-                        parameters.append("username", username.toString())
-                    }
-                    query?.let {
-                        parameters.append("query", query.toString())
-                    }
-                    orientation?.let {
-                        parameters.append("orientation", orientation.toString())
-                    }
-                    contentFilter?.let {
-                        parameters.append("content_filter", contentFilter.toString())
-                    }
-                    count?.let {
-                        parameters.append("count", count.toString())
-                    }
-                }
-            }
-        }
-    }
-
     override suspend fun likePhoto(id: String): Resource<Unit> {
         return backendRequest {
             httpClient.post(urlString = Endpoints.likeDislikePhoto(id))

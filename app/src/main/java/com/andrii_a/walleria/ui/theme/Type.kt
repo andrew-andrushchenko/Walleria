@@ -114,5 +114,5 @@ val Typography = Typography(
 
 val WalleriaLogoTextStyle = TextStyle(
     fontFamily = Pacifico,
-    fontSize = 36.sp
+    fontSize = 48.sp
 )
