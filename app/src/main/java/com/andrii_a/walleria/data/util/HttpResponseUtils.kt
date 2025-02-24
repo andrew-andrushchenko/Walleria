@@ -27,6 +27,6 @@ suspend inline fun <reified T> backendRequest(crossinline request: suspend () ->
         request().asResource<T>()
     } catch (e: Exception) {
         coroutineContext.ensureActive()
-        return Resource.Error(exception = e)
+        Resource.Error(exception = e)
     }
 }
