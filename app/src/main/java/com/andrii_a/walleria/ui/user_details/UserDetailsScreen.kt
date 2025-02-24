@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.pager.HorizontalPager
@@ -178,7 +179,8 @@ fun SuccessStateContent(
                 onOpenMoreAboutProfile = { onEvent(UserDetailsEvent.OpenDetailsDialog) },
                 onOpenProfileInBrowser = { onEvent(UserDetailsEvent.OpenUserProfileInBrowser(user.username)) }
             )
-        }
+        },
+        contentWindowInsets = WindowInsets.safeDrawing
     ) { innerPadding ->
         val pagerState = rememberPagerState(initialPage = 0) { UserDetailsScreenTabs.entries.size }
 
@@ -292,13 +294,11 @@ private fun Pages(
                         top = 16.dp,
                         start = 16.dp,
                         end = 16.dp,
-                        bottom = WindowInsets.systemBars.asPaddingValues()
-                            .calculateBottomPadding() + 150.dp,
+                        bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding(),
                     ),
                     scrollToTopButtonPadding = PaddingValues(
-                        bottom = WindowInsets.navigationBars.asPaddingValues()
-                            .calculateBottomPadding() + 90.dp
-                    )
+                        bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+                    ),
                 )
             }
 
@@ -312,13 +312,11 @@ private fun Pages(
                         top = 16.dp,
                         start = 16.dp,
                         end = 16.dp,
-                        bottom = WindowInsets.systemBars.asPaddingValues()
-                            .calculateBottomPadding() + 150.dp,
+                        bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding(),
                     ),
                     scrollToTopButtonPadding = PaddingValues(
-                        bottom = WindowInsets.navigationBars.asPaddingValues()
-                            .calculateBottomPadding() + 90.dp
-                    )
+                        bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+                    ),
                 )
             }
 
@@ -332,13 +330,11 @@ private fun Pages(
                         top = 16.dp,
                         start = 16.dp,
                         end = 16.dp,
-                        bottom = WindowInsets.systemBars.asPaddingValues()
-                            .calculateBottomPadding() + 150.dp,
+                        bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding(),
                     ),
                     scrollToTopButtonPadding = PaddingValues(
-                        bottom = WindowInsets.navigationBars.asPaddingValues()
-                            .calculateBottomPadding() + 90.dp
-                    )
+                        bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+                    ),
                 )
             }
 

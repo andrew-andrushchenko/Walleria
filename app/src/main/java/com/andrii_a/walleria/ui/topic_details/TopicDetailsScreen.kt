@@ -8,11 +8,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material.icons.outlined.OpenInBrowser
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -145,7 +147,7 @@ private fun SuccessStateContent(
 
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = {
                     Text(
                         text = topic.title,
@@ -183,6 +185,7 @@ private fun SuccessStateContent(
                 scrollBehavior = scrollBehavior
             )
         },
+        contentWindowInsets = WindowInsets.safeDrawing,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { innerPadding ->
         val topicPhotosLazyItems by rememberUpdatedState(newValue = state.topicPhotos.collectAsLazyPagingItems())
@@ -202,12 +205,10 @@ private fun SuccessStateContent(
                 top = 16.dp,
                 start = 16.dp,
                 end = 16.dp,
-                bottom = WindowInsets.systemBars.asPaddingValues()
-                    .calculateBottomPadding() + 150.dp,
+                bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding(),
             ),
             scrollToTopButtonPadding = PaddingValues(
-                bottom = WindowInsets.navigationBars.asPaddingValues()
-                    .calculateBottomPadding() + 90.dp
+                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
             ),
             modifier = Modifier.padding(innerPadding)
         )
