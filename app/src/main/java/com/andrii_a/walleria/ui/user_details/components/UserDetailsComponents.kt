@@ -1,7 +1,6 @@
 package com.andrii_a.walleria.ui.user_details.components
 
 import android.content.res.Configuration
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
@@ -10,18 +9,19 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Cases
 import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.Web
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -45,6 +46,7 @@ import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.UserProfileImageQuality
 import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.domain.models.user.UserSocialMediaLinks
+import com.andrii_a.walleria.ui.theme.CloverShape
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.getProfileImageUrlOrEmpty
 import com.andrii_a.walleria.ui.util.userFullName
@@ -63,33 +65,39 @@ fun UserHeader(
             mutableStateOf(false)
         }
 
+        val placeholderColor = MaterialTheme.colorScheme.surfaceColorAtElevation(8.dp)
+
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.padding(8.dp)
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(user.getProfileImageUrlOrEmpty(quality = UserProfileImageQuality.HIGH))
                     .crossfade(true)
-                    .placeholder(ColorDrawable(Color.GRAY))
+                    .placeholder(ColorDrawable(placeholderColor.toArgb()))
                     .build(),
                 contentDescription = stringResource(id = R.string.user_profile_image),
                 modifier = Modifier
                     .size(64.dp)
-                    .clip(CircleShape)
+                    .clip(CloverShape)
                     .combinedClickable(
                         onLongClick = { openProfilePhotoViewDialog = true },
                         onClick = {}
                     )
             )
 
+            Spacer(modifier = Modifier.height(16.dp))
+
             Text(
                 text = user.userFullName,
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
+
+            Spacer(modifier = Modifier.height(8.dp))
 
             if (!user.location.isNullOrBlank()) {
                 Row(
@@ -111,6 +119,8 @@ fun UserHeader(
             }
 
             user.social?.let { userSocial ->
+                Spacer(modifier = Modifier.height(8.dp))
+
                 UserSocialMediaRow(
                     userSocial = userSocial,
                     onOpenPortfolio = onOpenPortfolio,
@@ -118,6 +128,8 @@ fun UserHeader(
                     onOpenTwitterProfile = onOpenTwitterProfile,
                 )
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
         }
 
         if (openProfilePhotoViewDialog) {
@@ -137,7 +149,7 @@ fun UserHeader(
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(user.getProfileImageUrlOrEmpty(quality = UserProfileImageQuality.HIGH))
                             .crossfade(true)
-                            .placeholder(ColorDrawable(Color.GRAY))
+                            .placeholder(ColorDrawable(placeholderColor.toArgb()))
                             .build(),
                         contentDescription = stringResource(id = R.string.user_profile_image),
                         modifier = Modifier.size((configuration.screenWidthDp / 2).dp)
@@ -163,9 +175,9 @@ private fun UserSocialMediaRow(
         modifier = Modifier.fillMaxWidth()
     ) {
         userSocial.portfolioUrl?.let {
-            IconButton(onClick = { onOpenPortfolio(it) }) {
+            FilledIconButton(onClick = { onOpenPortfolio(it) }) {
                 Icon(
-                    imageVector = Icons.Outlined.Cases,
+                    imageVector = Icons.Outlined.Web,
                     contentDescription = stringResource(id = R.string.portfolio_url)
                 )
             }
@@ -174,7 +186,7 @@ private fun UserSocialMediaRow(
         Spacer(modifier = Modifier.padding(8.dp))
 
         userSocial.instagramUsername?.let {
-            IconButton(onClick = { onOpenInstagramProfile(it) }) {
+            FilledIconButton(onClick = { onOpenInstagramProfile(it) }) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_instagram_outlined),
                     contentDescription = stringResource(id = R.string.instagram_profile)
@@ -185,7 +197,7 @@ private fun UserSocialMediaRow(
         Spacer(modifier = Modifier.padding(8.dp))
 
         userSocial.twitterUsername?.let {
-            IconButton(onClick = { onOpenTwitterProfile(it) }) {
+            FilledIconButton(onClick = { onOpenTwitterProfile(it) }) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_twitter_x_outlined),
                     contentDescription = stringResource(id = R.string.x_twitter_profile)
