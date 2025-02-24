@@ -30,7 +30,7 @@ import androidx.compose.material.icons.outlined.FileDownload
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.ZoomInMap
 import androidx.compose.material.icons.outlined.ZoomOutMap
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
@@ -77,6 +77,7 @@ import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.ui.common.UiErrorWithRetry
 import com.andrii_a.walleria.ui.common.UiText
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
+import com.andrii_a.walleria.ui.common.components.LoadingListItem
 import com.andrii_a.walleria.ui.photo_details.components.OverZoomConfig
 import com.andrii_a.walleria.ui.photo_details.components.UserRow
 import com.andrii_a.walleria.ui.photo_details.components.Zoomable
@@ -334,7 +335,7 @@ private fun SuccessStateContent(
 private fun LoadingStateContent(onNavigateBack: () -> Unit) {
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = {},
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
@@ -348,11 +349,12 @@ private fun LoadingStateContent(onNavigateBack: () -> Unit) {
         }
     ) { innerPadding ->
         Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            LoadingListItem()
         }
     }
 }
@@ -365,7 +367,7 @@ private fun ErrorStateContent(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = {},
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {

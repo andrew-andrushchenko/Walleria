@@ -15,14 +15,12 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -39,6 +37,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.ui.common.UiErrorWithRetry
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
+import com.andrii_a.walleria.ui.common.components.LoadingListItem
 import com.andrii_a.walleria.ui.common.components.PhotosGridContent
 import kotlinx.coroutines.launch
 
@@ -78,7 +77,7 @@ fun TopicDetailsScreen(
 private fun LoadingStateContent(onNavigateBack: () -> Unit) {
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = {},
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
@@ -92,11 +91,12 @@ private fun LoadingStateContent(onNavigateBack: () -> Unit) {
         }
     ) { innerPadding ->
         Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            LoadingListItem()
         }
     }
 }
@@ -109,7 +109,7 @@ private fun ErrorStateContent(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = {},
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
