@@ -24,12 +24,10 @@ object CustomTabsHelper {
      *
      * @param context          The host activity
      * @param uri              The Uri to be opened
-     * @param theme            The theme use to set color scheme
      */
     fun openCustomTab(
         context: Context,
         uri: Uri,
-        //theme: String? = null
     ) {
         val packageName = getPackageNameToUse(context)
 
@@ -40,7 +38,7 @@ object CustomTabsHelper {
         } else {
             val customTabsIntent = CustomTabsIntent.Builder()
                 .setShareState(CustomTabsIntent.SHARE_STATE_ON)
-                //.setColorScheme(getCustomTabsColorScheme(theme))
+                .setColorScheme(CustomTabsIntent.COLOR_SCHEME_SYSTEM)
                 .build()
 
             customTabsIntent.intent.putExtra(
@@ -149,12 +147,6 @@ object CustomTabsHelper {
         }
         return false
     }
-
-    /**
-     * @return All possible chrome package names that provide custom tabs feature.
-     */
-    /*val packages: List<String>
-        get() = listOf("", STABLE_PACKAGE, BETA_PACKAGE, DEV_PACKAGE, LOCAL_PACKAGE)*/
 
     private const val TAG = "CustomTabsHelper"
 }
