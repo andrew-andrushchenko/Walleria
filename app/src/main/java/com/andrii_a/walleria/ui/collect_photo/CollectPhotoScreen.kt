@@ -2,12 +2,16 @@ package com.andrii_a.walleria.ui.collect_photo
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.CreateNewFolder
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -26,7 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
@@ -103,22 +107,29 @@ private fun SuccessStateContent(
                         )
                     }
                 },
+                actions = {
+                    IconButton(onClick = { onEvent(CollectPhotoEvent.OpenCreateAndCollectDialog) }) {
+                        Icon(
+                            imageVector = Icons.Outlined.CreateNewFolder,
+                            contentDescription = stringResource(id = R.string.create_new_and_add),
+                        )
+                    }
+                },
                 scrollBehavior = scrollBehavior,
             )
         },
+        contentWindowInsets = WindowInsets.safeDrawing,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { innerPadding ->
-        val lazyListState = rememberLazyListState()
-
         UserCollectionsList(
-            userCollections = userCollections,
-            onCreateNewClick = { onEvent(CollectPhotoEvent.OpenCreateAndCollectDialog) },
+            lazyCollectionItems = userCollections,
             onCollectClick = { collectionId ->
-                val collectState = if (state.userCollectionsContainingPhoto.contains(collectionId)) {
-                    CollectActionState.Collected
-                } else {
-                    CollectActionState.NotCollected
-                }
+                val collectState =
+                    if (state.userCollectionsContainingPhoto.contains(collectionId)) {
+                        CollectActionState.Collected
+                    } else {
+                        CollectActionState.NotCollected
+                    }
 
                 val event =
                     if (collectState == CollectActionState.Collected) {
@@ -143,9 +154,15 @@ private fun SuccessStateContent(
                 }
             },
             modifiedCollectionMetadata = state.modifiedCollectionMetadata,
-            listState = lazyListState,
-            contentPadding = innerPadding,
-            modifier = Modifier.navigationBarsPadding()
+            contentPadding = PaddingValues(
+                top = 16.dp,
+                start = 16.dp,
+                end = 16.dp,
+                bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding(),
+            ),
+            modifier = Modifier
+                .padding(innerPadding)
+                .navigationBarsPadding()
         )
 
         val scope = rememberCoroutineScope()
@@ -218,7 +235,7 @@ private fun LoadingStateContent(onNavigateBack: () -> Unit) {
     }
 }
 
-@Preview
+@PreviewScreenSizes
 @Composable
 private fun CollectPhotoScreenPreview() {
     WalleriaTheme {

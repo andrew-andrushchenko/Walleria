@@ -1,22 +1,26 @@
 package com.andrii_a.walleria.ui.collect_photo
 
+import android.graphics.Bitmap
 import android.graphics.drawable.ColorDrawable
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -35,20 +39,18 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -58,6 +60,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.core.graphics.drawable.toDrawable
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
@@ -68,62 +72,103 @@ import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.ui.collect_photo.state.CollectActionState
 import com.andrii_a.walleria.ui.collect_photo.state.CollectionMetadata
 import com.andrii_a.walleria.ui.common.components.CheckBoxRow
+import com.andrii_a.walleria.ui.common.components.EmptyContentBanner
+import com.andrii_a.walleria.ui.common.components.ErrorBanner
+import com.andrii_a.walleria.ui.common.components.ErrorItem
 import com.andrii_a.walleria.ui.common.components.LoadingListItem
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
+import com.andrii_a.walleria.ui.util.BlurHashDecoder
 import com.andrii_a.walleria.ui.util.abbreviatedNumberString
 import com.andrii_a.walleria.ui.util.getUrlByQuality
-import com.andrii_a.walleria.ui.util.primaryColorInt
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun UserCollectionsList(
-    userCollections: LazyPagingItems<Collection>,
-    listState: LazyListState,
-    onCreateNewClick: () -> Unit,
+    lazyCollectionItems: LazyPagingItems<Collection>,
+    modifier: Modifier = Modifier,
+    gridState: LazyStaggeredGridState = rememberLazyStaggeredGridState(),
     onCollectClick: (String) -> Unit,
     obtainCollectState: (String?) -> CollectActionState,
-    modifier: Modifier = Modifier,
     modifiedCollectionMetadata: CollectionMetadata? = null,
     contentPadding: PaddingValues = PaddingValues()
 ) {
-    LazyColumn(
-        state = listState,
-        contentPadding = contentPadding,
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = modifier
-    ) {
-        item {
-            CreateNewCollectionButton(
-                onClick = onCreateNewClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(80.dp)
-                    .padding(horizontal = 16.dp)
-            )
-        }
+    Box(modifier = Modifier.fillMaxSize()) {
+        LazyVerticalStaggeredGrid(
+            columns = StaggeredGridCells.Adaptive(250.dp),
+            state = gridState,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalItemSpacing = 8.dp,
+            contentPadding = contentPadding,
+            modifier = modifier.align(Alignment.TopCenter)
+        ) {
+            if (lazyCollectionItems.loadState.refresh is LoadState.NotLoading && lazyCollectionItems.itemCount > 0) {
+                items(
+                    count = lazyCollectionItems.itemCount,
+                    key = lazyCollectionItems.itemKey { it.id }
+                ) { index ->
+                    val collection = lazyCollectionItems[index]
+                    collection.let {
+                        var collectState = obtainCollectState(collection?.id)
 
-        items(
-            count = userCollections.itemCount,
-            key = userCollections.itemKey { it.id }
-        ) { index ->
-            val collection = userCollections[index]
-            collection.let {
-                var collectState = obtainCollectState(collection?.id)
-
-                LaunchedEffect(key1 = modifiedCollectionMetadata) {
-                    modifiedCollectionMetadata?.let { metadata ->
-                        if (collection?.id == metadata.id) {
-                            collectState = metadata.state
+                        LaunchedEffect(key1 = modifiedCollectionMetadata) {
+                            modifiedCollectionMetadata?.let { metadata ->
+                                if (collection?.id == metadata.id) {
+                                    collectState = metadata.state
+                                }
+                            }
                         }
+
+                        UserCollectionItem(
+                            collection = collection!!,
+                            collectState = collectState,
+                            onClick = { onCollectClick(collection.id) },
+                            modifier = Modifier
+                                .height(100.dp)
+                                .animateItem()
+                        )
+                    }
+                }
+            }
+
+            when (lazyCollectionItems.loadState.append) {
+                is LoadState.NotLoading -> Unit
+
+                is LoadState.Loading -> {
+                    item(span = StaggeredGridItemSpan.FullLine) {
+                        LoadingListItem(modifier = Modifier.fillMaxWidth())
                     }
                 }
 
-                UserCollectionItem(
-                    collection = collection!!,
-                    collectState = collectState,
-                    onClick = { onCollectClick(collection.id) },
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
+                is LoadState.Error -> {
+                    item(span = StaggeredGridItemSpan.FullLine) {
+                        ErrorItem(
+                            onRetry = lazyCollectionItems::retry,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                        )
+                    }
+                }
             }
+        }
+
+        if (lazyCollectionItems.loadState.refresh is LoadState.Error) {
+            ErrorBanner(
+                onRetry = lazyCollectionItems::retry,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+
+        if (lazyCollectionItems.loadState.refresh is LoadState.Loading) {
+            LoadingListItem(modifier = Modifier.fillMaxSize())
+        }
+
+        val shouldShowEmptyContent = lazyCollectionItems.loadState.refresh is LoadState.NotLoading
+                && lazyCollectionItems.itemCount == 0
+
+        if (shouldShowEmptyContent) {
+            EmptyContentBanner(modifier = Modifier.fillMaxSize())
         }
     }
 }
@@ -140,40 +185,30 @@ fun UserCollectionItem(
     ConstraintLayout(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
-            .fillMaxWidth()
             .height(100.dp)
-
     ) {
         val (coverPhoto, dimmedOverlay, titleText,
             lockIcon, photosCountText, actionButton) = createRefs()
 
-        /*val placeholderBitmap by produceState<Bitmap?>(initialValue = null) {
+        val placeholderBitmap by produceState<Bitmap?>(initialValue = null) {
             value = withContext(Dispatchers.Default) {
                 BlurHashDecoder.decode(
-                    blurHash = collectState.newCoverPhoto?.blurHash,
+                    blurHash = collection.coverPhoto?.blurHash,
                     width = 4,
                     height = 3
                 )
             }
-        }*/
+        }
+
+        val errorColor = MaterialTheme.colorScheme.surfaceColorAtElevation(8.dp)
 
         AsyncImage(
             model = ImageRequest.Builder(context)
-                //.data(collectState.newCoverPhoto?.getUrlByQuality(quality = PhotoQuality.MEDIUM))
                 .data(collection.coverPhoto?.getUrlByQuality(quality = PhotoQuality.MEDIUM))
                 .crossfade(durationMillis = 1000)
-                //.placeholder(placeholderBitmap?.toDrawable(context.resources))
-                //.fallback(placeholderBitmap?.toDrawable(context.resources))
-                /*.error(
-                    ColorDrawable(
-                        collectState.newCoverPhoto?.primaryColorInt ?: Color.Gray.toArgb()
-                    )
-                )*/
-                .error(
-                    ColorDrawable(
-                        collection.coverPhoto?.primaryColorInt ?: Color.Gray.toArgb()
-                    )
-                )
+                .placeholder(placeholderBitmap?.toDrawable(context.resources))
+                .fallback(placeholderBitmap?.toDrawable(context.resources))
+                .error(ColorDrawable(errorColor.toArgb()))
                 .build(),
             contentDescription = null,
             contentScale = ContentScale.Crop,
@@ -288,34 +323,6 @@ fun UserCollectionItem(
 }
 
 @Composable
-fun CreateNewCollectionButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val rectColor = MaterialTheme.colorScheme.onSurface
-    val stroke = Stroke(
-        width = 3f,
-        pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
-    )
-
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier
-            .drawBehind {
-                drawRoundRect(
-                    color = rectColor,
-                    style = stroke,
-                    cornerRadius = CornerRadius(8.dp.toPx())
-                )
-            }
-            .clip(RoundedCornerShape(8.dp))
-            .clickable(onClick = onClick)
-    ) {
-        Text(text = stringResource(id = R.string.create_new_and_add))
-    }
-}
-
-@Composable
 fun CreateAndCollectBottomSheet(
     contentPadding: PaddingValues = PaddingValues(),
     onConfirm: (String, String, Boolean) -> Unit,
@@ -388,19 +395,6 @@ fun CreateCollectionProgressDialog() {
             )
         }
     )
-}
-
-@Preview
-@Composable
-fun CreateNewCollectionButtonPrev() {
-    WalleriaTheme {
-        CreateNewCollectionButton(
-            onClick = {},
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-        )
-    }
 }
 
 @Preview
