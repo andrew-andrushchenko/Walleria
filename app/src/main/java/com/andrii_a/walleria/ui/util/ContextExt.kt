@@ -10,10 +10,6 @@ import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.models.photo.PhotoLocation
 import com.andrii_a.walleria.ui.common.UserNickname
 
-fun Context.startActivity(cls: Class<*>) {
-    startActivity(Intent(this, cls))
-}
-
 fun Context.toast(@StringRes stringRes: Int, duration: Int = Toast.LENGTH_SHORT) {
     Toast.makeText(this, getString(stringRes), duration).show()
 }

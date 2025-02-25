@@ -3,11 +3,10 @@ package com.andrii_a.walleria.ui.util
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.andrii_a.walleria.R
-import androidx.compose.ui.graphics.Color as ComposeColor
-import android.graphics.Color as AndroidColor
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.UserProfileImageQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
+import android.graphics.Color as AndroidColor
 
 fun Photo.getUrlByQuality(quality: PhotoQuality = PhotoQuality.HIGH): String =
     when (quality) {
@@ -39,16 +38,6 @@ val Photo.userNickname: String
 val Photo.primaryColorInt: Int
     get() = AndroidColor.parseColor(this.color)
 
-val Photo.primaryColorComposable: ComposeColor
-    get() = ComposeColor(this.primaryColorInt)
-
-val Photo.accentColorForLoginScreen: ComposeColor
-    @Composable
-    get() = if (!isBrightColor(this.primaryColorInt)) {
-        contentColorFor(this.primaryColorComposable)
-    } else {
-        this.primaryColorComposable
-    }
 
 val Photo.downloadFilename: String
     get() = "${this.id}_${this.userNickname}_unsplash.jpg"
