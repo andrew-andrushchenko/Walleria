@@ -38,6 +38,5 @@ val Photo.userNickname: String
 val Photo.primaryColorInt: Int
     get() = AndroidColor.parseColor(this.color)
 
-
 val Photo.downloadFilename: String
     get() = "${this.id}_${this.userNickname}_unsplash.jpg"

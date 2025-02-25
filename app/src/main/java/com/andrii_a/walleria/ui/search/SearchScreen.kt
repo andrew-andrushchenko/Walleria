@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -50,7 +49,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
@@ -62,7 +60,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.ui.common.components.CollectionsGridContent
 import com.andrii_a.walleria.ui.common.components.PhotosGridContent
-import com.andrii_a.walleria.ui.common.components.UsersList
+import com.andrii_a.walleria.ui.common.components.UsersGridContent
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import kotlinx.coroutines.launch
 
@@ -296,24 +294,19 @@ private fun Pages(
             SearchScreenTabs.Users.ordinal -> {
                 val lazyUserItems by rememberUpdatedState(newValue = uiState.users.collectAsLazyPagingItems())
 
-                val listState = rememberLazyListState()
-                Box(modifier = Modifier.fillMaxWidth()) {
-                    UsersList(
-                        lazyUserItems = lazyUserItems,
-                        onUserClick = { nickname ->
-                            onEvent(SearchEvent.SelectUser(nickname))
-                        },
-                        listState = listState,
-                        contentPadding = PaddingValues(
-                            top = dimensionResource(id = R.dimen.list_top_padding),
-                            bottom = WindowInsets.navigationBars.asPaddingValues()
-                                .calculateBottomPadding(),
-                        ),
-                        modifier = Modifier
-                            .align(Alignment.TopCenter)
-                            .widthIn(min = 300.dp, max = 400.dp)
+                UsersGridContent(
+                    userItems = lazyUserItems,
+                    onUserClick = { onEvent(SearchEvent.SelectUser(it)) },
+                    contentPadding = PaddingValues(
+                        top = 16.dp,
+                        start = 16.dp,
+                        end = 16.dp,
+                        bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding(),
+                    ),
+                    scrollToTopButtonPadding = PaddingValues(
+                        bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
                     )
-                }
+                )
 
             }
 

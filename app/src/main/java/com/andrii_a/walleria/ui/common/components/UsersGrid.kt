@@ -1,33 +1,33 @@
 package com.andrii_a.walleria.ui.common.components
 
 import android.content.res.Configuration
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,57 +45,48 @@ import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.photo.PhotoUrls
 import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.ui.common.UserNickname
+import com.andrii_a.walleria.ui.theme.CloverShape
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.getPreviewPhotos
 import com.andrii_a.walleria.ui.util.getProfileImageUrlOrEmpty
 import com.andrii_a.walleria.ui.util.getUrlByQuality
-import com.andrii_a.walleria.ui.util.primaryColorInt
 import com.andrii_a.walleria.ui.util.userFullName
 
 @Composable
-fun UsersList(
+fun UsersStaggeredGrid(
     lazyUserItems: LazyPagingItems<User>,
     modifier: Modifier = Modifier,
     onUserClick: (UserNickname) -> Unit,
-    listState: LazyListState = rememberLazyListState(),
+    gridState: LazyStaggeredGridState = rememberLazyStaggeredGridState(),
     contentPadding: PaddingValues = PaddingValues()
 ) {
-    ScrollToTopLayout(
-        listState = listState,
-        scrollToTopButtonPadding = PaddingValues(
-            bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() +
-                    dimensionResource(id = R.dimen.scroll_to_top_button_padding)
-        ),
-        modifier = modifier
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.fillMaxSize()
     ) {
-        LazyColumn(
-            state = listState,
-            contentPadding = contentPadding
+        LazyVerticalStaggeredGrid(
+            columns = StaggeredGridCells.Adaptive(250.dp),
+            state = gridState,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalItemSpacing = 8.dp,
+            contentPadding = contentPadding,
+            modifier = modifier
         ) {
-            when (lazyUserItems.loadState.refresh) {
-                is LoadState.NotLoading -> {
-                    loadedStateContent(
-                        lazyUserItems = lazyUserItems,
-                        onUserClick = onUserClick
-                    )
-                }
-
-                is LoadState.Loading -> {
-                    item {
-                        Box(
-                            modifier = Modifier.fillParentMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator()
-                        }
-                    }
-                }
-
-                is LoadState.Error -> {
-                    item {
-                        ErrorBanner(
-                            onRetry = lazyUserItems::retry,
-                            modifier = Modifier.fillParentMaxSize()
+            if (lazyUserItems.loadState.refresh is LoadState.NotLoading && lazyUserItems.itemCount > 0) {
+                items(
+                    count = lazyUserItems.itemCount,
+                    key = lazyUserItems.itemKey { it.id }
+                ) { index ->
+                    val user = lazyUserItems[index]
+                    user?.let {
+                        DefaultUserItem(
+                            user = it,
+                            onUserClick = onUserClick,
+                            modifier = Modifier.padding(
+                                start = 16.dp,
+                                end = 16.dp,
+                                bottom = 16.dp
+                            )
                         )
                     }
                 }
@@ -105,52 +96,40 @@ fun UsersList(
                 is LoadState.NotLoading -> Unit
 
                 is LoadState.Loading -> {
-                    item {
-                        LoadingListItem(modifier = Modifier.fillParentMaxWidth())
+                    item(span = StaggeredGridItemSpan.FullLine) {
+                        LoadingListItem(modifier = Modifier.fillMaxWidth())
                     }
                 }
 
                 is LoadState.Error -> {
-                    item {
+                    item(span = StaggeredGridItemSpan.FullLine) {
                         ErrorItem(
                             onRetry = lazyUserItems::retry,
                             modifier = Modifier
-                                .fillParentMaxWidth()
-                                .padding(horizontal = 16.dp)
-                                .padding(bottom = 16.dp)
+                                .fillMaxWidth()
+                                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                         )
                     }
                 }
             }
         }
-    }
-}
 
-private fun LazyListScope.loadedStateContent(
-    lazyUserItems: LazyPagingItems<User>,
-    onUserClick: (UserNickname) -> Unit
-) {
-    if (lazyUserItems.itemCount > 0) {
-        items(
-            count = lazyUserItems.itemCount,
-            key = lazyUserItems.itemKey { it.id }
-        ) { index ->
-            val user = lazyUserItems[index]
-            user?.let {
-                DefaultUserItem(
-                    user = it,
-                    onUserClick = onUserClick,
-                    modifier = Modifier.padding(
-                        start = 16.dp,
-                        end = 16.dp,
-                        bottom = 16.dp
-                    )
-                )
-            }
+        if (lazyUserItems.loadState.refresh is LoadState.Error) {
+            ErrorBanner(
+                onRetry = lazyUserItems::retry,
+                modifier = Modifier.fillMaxSize()
+            )
         }
-    } else {
-        item {
-            EmptyContentBanner(modifier = Modifier.fillParentMaxSize())
+
+        if (lazyUserItems.loadState.refresh is LoadState.Loading) {
+            LoadingListItem(modifier = Modifier.fillMaxSize())
+        }
+
+        val shouldShowEmptyContent = lazyUserItems.loadState.refresh is LoadState.NotLoading
+                && lazyUserItems.itemCount == 0
+
+        if (shouldShowEmptyContent) {
+            EmptyContentBanner(modifier = Modifier.fillMaxSize())
         }
     }
 }
@@ -163,9 +142,7 @@ fun DefaultUserItem(
 ) {
     Card(
         shape = RoundedCornerShape(16.dp),
-        onClick = {
-            onUserClick(user.username)
-        },
+        onClick = { onUserClick(user.username) },
         modifier = modifier
     ) {
         ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
@@ -176,11 +153,13 @@ fun DefaultUserItem(
 
             val previewPhotos = user.getPreviewPhotos()
 
+            val placeholderColor = MaterialTheme.colorScheme.secondaryContainer
+
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(user.getProfileImageUrlOrEmpty())
                     .crossfade(durationMillis = 1000)
-                    .placeholder(ColorDrawable(Color.GRAY))
+                    .placeholder(ColorDrawable(placeholderColor.toArgb()))
                     .build(),
                 contentDescription = stringResource(id = R.string.user_profile_image),
                 modifier = Modifier
@@ -197,12 +176,12 @@ fun DefaultUserItem(
                         start.linkTo(parent.start, 16.dp)
                     }
                     .size(64.dp)
-                    .clip(CircleShape)
+                    .clip(CloverShape)
             )
 
             Text(
                 text = user.userFullName,
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.constrainAs(usernameText) {
@@ -220,7 +199,7 @@ fun DefaultUserItem(
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.constrainAs(nicknameText) {
                     start.linkTo(profilePhoto.end, 16.dp)
-                    top.linkTo(usernameText.bottom, 8.dp)
+                    top.linkTo(usernameText.bottom, 4.dp)
                     end.linkTo(parent.end, 16.dp)
                     width = Dimension.fillToConstraints
                 }
@@ -231,7 +210,7 @@ fun DefaultUserItem(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(previewPhotos[0].getUrlByQuality(quality = PhotoQuality.LOW))
                         .crossfade(durationMillis = 1000)
-                        .placeholder(ColorDrawable(previewPhotos[0].primaryColorInt))
+                        .placeholder(ColorDrawable(placeholderColor.toArgb()))
                         .build(),
                     contentScale = ContentScale.Crop,
                     contentDescription = null,
@@ -250,7 +229,7 @@ fun DefaultUserItem(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(previewPhotos[1].getUrlByQuality(quality = PhotoQuality.LOW))
                         .crossfade(durationMillis = 1000)
-                        .placeholder(ColorDrawable(previewPhotos[1].primaryColorInt))
+                        .placeholder(ColorDrawable(placeholderColor.toArgb()))
                         .build(),
                     contentScale = ContentScale.Crop,
                     contentDescription = null,
@@ -269,7 +248,7 @@ fun DefaultUserItem(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(previewPhotos[2].getUrlByQuality(quality = PhotoQuality.LOW))
                         .crossfade(durationMillis = 1000)
-                        .placeholder(ColorDrawable(previewPhotos[2].primaryColorInt))
+                        .placeholder(ColorDrawable(placeholderColor.toArgb()))
                         .build(),
                     contentScale = ContentScale.Crop,
                     contentDescription = null,
@@ -288,14 +267,43 @@ fun DefaultUserItem(
     }
 }
 
+@Composable
+fun UsersGridContent(
+    userItems: LazyPagingItems<User>,
+    gridState: LazyStaggeredGridState = rememberLazyStaggeredGridState(),
+    contentPadding: PaddingValues = PaddingValues(),
+    scrollToTopButtonPadding: PaddingValues = PaddingValues(
+        bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 8.dp
+    ),
+    onUserClick: (UserNickname) -> Unit
+) {
+    ScrollToTopLayout(
+        gridState = gridState,
+        scrollToTopButtonPadding = scrollToTopButtonPadding
+    ) {
+        UsersStaggeredGrid(
+            lazyUserItems = userItems,
+            onUserClick = onUserClick,
+            gridState = gridState,
+            contentPadding = PaddingValues(
+                top = contentPadding.calculateTopPadding() + 16.dp,
+                bottom = contentPadding.calculateBottomPadding() + 150.dp,
+                start = 16.dp,
+                end = 16.dp,
+            ),
+            modifier = Modifier.fillMaxSize()
+        )
+    }
+}
+
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun DefaultUserItemPreview() {
     WalleriaTheme {
-        val previewPhotos = listOf(
+        val previewPhotos = (0..2).map {
             Photo(
-                id = "",
+                id = "id$it",
                 width = 200,
                 height = 300,
                 color = "#E0E0E0",
@@ -303,48 +311,6 @@ fun DefaultUserItemPreview() {
                 views = 200,
                 downloads = 200,
                 likes = 10,
-                likedByUser = false,
-                description = "",
-                exif = null,
-                location = null,
-                tags = null,
-                relatedCollections = null,
-                currentUserCollections = null,
-                sponsorship = null,
-                urls = PhotoUrls("", "", "", "", ""),
-                links = null,
-                user = null
-            ),
-            Photo(
-                id = "",
-                width = 200,
-                height = 300,
-                blurHash = "",
-                color = "#E0E0E0",
-                views = 200,
-                downloads = 200,
-                likes = 10,
-                likedByUser = false,
-                description = "",
-                exif = null,
-                location = null,
-                tags = null,
-                relatedCollections = null,
-                currentUserCollections = null,
-                sponsorship = null,
-                urls = PhotoUrls("", "", "", "", ""),
-                links = null,
-                user = null
-            ),
-            Photo(
-                id = "",
-                width = 200,
-                height = 300,
-                blurHash = "",
-                views = 200,
-                downloads = 200,
-                likes = 10,
-                color = "#E0E0E0",
                 likedByUser = false,
                 description = "",
                 exif = null,
@@ -357,7 +323,7 @@ fun DefaultUserItemPreview() {
                 links = null,
                 user = null
             )
-        )
+        }
 
         val user = User(
             id = "",
