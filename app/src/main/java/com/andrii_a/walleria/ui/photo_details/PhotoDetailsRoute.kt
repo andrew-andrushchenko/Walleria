@@ -12,13 +12,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.andrii_a.walleria.ui.login.LoginActivity
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.util.InterScreenCommunicationKeys
 import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 import com.andrii_a.walleria.ui.util.openLinkInBrowser
 import com.andrii_a.walleria.ui.util.sharePhoto
-import com.andrii_a.walleria.ui.util.startActivity
 import org.koin.androidx.compose.koinViewModel
 
 fun NavGraphBuilder.photoDetailsRoute(navController: NavController) {
@@ -98,7 +96,7 @@ fun NavGraphBuilder.photoDetailsRoute(navController: NavController) {
                 }
 
                 is PhotoDetailsNavigationEvent.NavigateToLogin -> {
-                    context.startActivity(LoginActivity::class.java)
+                    navController.navigate(Screen.Login)
                 }
 
                 is PhotoDetailsNavigationEvent.NavigateToShareDialog -> {

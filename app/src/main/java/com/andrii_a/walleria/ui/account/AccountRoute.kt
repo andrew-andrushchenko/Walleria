@@ -1,13 +1,10 @@
 package com.andrii_a.walleria.ui.account
 
-import android.content.Intent
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.andrii_a.walleria.ui.login.LoginActivity
 import com.andrii_a.walleria.ui.navigation.Screen
 import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 import org.koin.androidx.compose.koinViewModel
@@ -17,8 +14,6 @@ fun NavGraphBuilder.accountNavigationRoute(navController: NavController) {
 
         val viewModel: AccountViewModel = koinViewModel()
         val state by viewModel.state.collectAsStateWithLifecycle()
-
-        val context = LocalContext.current
 
         viewModel.navigationEventsChannelFlow.collectAsOneTimeEvents { event ->
             when (event) {
@@ -31,9 +26,7 @@ fun NavGraphBuilder.accountNavigationRoute(navController: NavController) {
                 }
 
                 is AccountScreenNavigationEvent.NavigateToLoginScreen -> {
-                    Intent(context, LoginActivity::class.java).also {
-                        context.startActivity(it)
-                    }
+                    navController.navigate(Screen.Login)
                 }
 
                 is AccountScreenNavigationEvent.NavigateToSettingsScreen -> {

@@ -33,7 +33,7 @@ import com.andrii_a.walleria.ui.theme.WalleriaLogoTextStyle
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 
 @Composable
-fun LoginScreenContent(
+fun LoginScreen(
     state: LoginUiState,
     onEvent: (LoginEvent) -> Unit
 ) {
@@ -114,9 +114,9 @@ fun LoginScreenContent(
 
 @PreviewScreenSizes
 @Composable
-fun LoginScreenContentPreview() {
+fun LoginScreenPreview() {
     WalleriaTheme {
-        LoginScreenContent(
+        LoginScreen(
             state = LoginUiState(isLoading = true),
             onEvent = {}
         )

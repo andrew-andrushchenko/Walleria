@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import com.andrii_a.walleria.ui.about.aboutRoute
 import com.andrii_a.walleria.ui.collect_photo.collectPhotoRoute
 import com.andrii_a.walleria.ui.collection_details.collectionDetailsRoute
+import com.andrii_a.walleria.ui.login.loginRoute
 import com.andrii_a.walleria.ui.photo_details.photoDetailsRoute
 import com.andrii_a.walleria.ui.profile_edit.editUserProfileRoute
 import com.andrii_a.walleria.ui.search.searchRoute
@@ -32,6 +33,8 @@ fun AppNavigationHost(navHostController: NavHostController) {
         },
     ) {
         navigationBarGraph(navHostController)
+
+        loginRoute(navHostController)
 
         searchRoute(navHostController)
 

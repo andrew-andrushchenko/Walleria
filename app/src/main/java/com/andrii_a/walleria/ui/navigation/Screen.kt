@@ -33,6 +33,9 @@ sealed interface Screen {
     data class UserDetails(val userNickname: UserNickname) : Screen
 
     @Serializable
+    data object Login : Screen
+
+    @Serializable
     data class CollectPhoto(val photoId: PhotoId) : Screen
 
     @Serializable
