@@ -1,7 +1,6 @@
 package com.andrii_a.walleria.ui.common.components
 
 import android.content.res.Configuration
-import android.graphics.drawable.ColorDrawable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -34,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.core.graphics.drawable.toDrawable
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
@@ -159,7 +159,7 @@ fun DefaultUserItem(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(user.getProfileImageUrlOrEmpty())
                     .crossfade(durationMillis = 1000)
-                    .placeholder(ColorDrawable(placeholderColor.toArgb()))
+                    .placeholder(placeholderColor.toArgb().toDrawable())
                     .build(),
                 contentDescription = stringResource(id = R.string.user_profile_image),
                 modifier = Modifier
@@ -210,7 +210,7 @@ fun DefaultUserItem(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(previewPhotos[0].getUrlByQuality(quality = PhotoQuality.LOW))
                         .crossfade(durationMillis = 1000)
-                        .placeholder(ColorDrawable(placeholderColor.toArgb()))
+                        .placeholder(placeholderColor.toArgb().toDrawable())
                         .build(),
                     contentScale = ContentScale.Crop,
                     contentDescription = null,
@@ -229,7 +229,7 @@ fun DefaultUserItem(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(previewPhotos[1].getUrlByQuality(quality = PhotoQuality.LOW))
                         .crossfade(durationMillis = 1000)
-                        .placeholder(ColorDrawable(placeholderColor.toArgb()))
+                        .placeholder(placeholderColor.toArgb().toDrawable())
                         .build(),
                     contentScale = ContentScale.Crop,
                     contentDescription = null,
@@ -248,7 +248,7 @@ fun DefaultUserItem(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(previewPhotos[2].getUrlByQuality(quality = PhotoQuality.LOW))
                         .crossfade(durationMillis = 1000)
-                        .placeholder(ColorDrawable(placeholderColor.toArgb()))
+                        .placeholder(placeholderColor.toArgb().toDrawable())
                         .build(),
                     contentScale = ContentScale.Crop,
                     contentDescription = null,

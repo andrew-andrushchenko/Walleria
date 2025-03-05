@@ -1,7 +1,6 @@
 package com.andrii_a.walleria.ui.collect_photo
 
 import android.graphics.Bitmap
-import android.graphics.drawable.ColorDrawable
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -208,7 +207,7 @@ fun UserCollectionItem(
                 .crossfade(durationMillis = 1000)
                 .placeholder(placeholderBitmap?.toDrawable(context.resources))
                 .fallback(placeholderBitmap?.toDrawable(context.resources))
-                .error(ColorDrawable(errorColor.toArgb()))
+                .error(errorColor.toArgb().toDrawable())
                 .build(),
             contentDescription = null,
             contentScale = ContentScale.Crop,

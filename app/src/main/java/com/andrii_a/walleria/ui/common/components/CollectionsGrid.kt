@@ -1,7 +1,6 @@
 package com.andrii_a.walleria.ui.common.components
 
 import android.graphics.Bitmap
-import android.graphics.drawable.ColorDrawable
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -167,7 +166,7 @@ private fun DefaultCollectionItem(
                 .crossfade(durationMillis = 1000)
                 .placeholder(placeholderBitmap?.toDrawable(context.resources))
                 .fallback(placeholderBitmap?.toDrawable(context.resources))
-                .error(ColorDrawable(collection.coverPhoto?.primaryColorInt ?: Color.Gray.toArgb()))
+                .error((collection.coverPhoto?.primaryColorInt ?: Color.Gray.toArgb()).toDrawable())
                 .build(),
             contentScale = ContentScale.Crop,
             contentDescription = stringResource(id = R.string.collection_cover_photo),

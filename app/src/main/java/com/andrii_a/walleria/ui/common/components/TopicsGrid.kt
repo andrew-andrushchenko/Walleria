@@ -2,7 +2,6 @@ package com.andrii_a.walleria.ui.common.components
 
 import android.content.res.Configuration
 import android.graphics.Bitmap
-import android.graphics.drawable.ColorDrawable
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -188,7 +187,7 @@ fun DefaultTopicItem(
                 .crossfade(durationMillis = 1000)
                 .placeholder(placeholderBitmap?.toDrawable(context.resources))
                 .fallback(placeholderBitmap?.toDrawable(context.resources))
-                .error(ColorDrawable(topic.coverPhoto?.primaryColorInt ?: Color.Gray.toArgb()))
+                .error((topic.coverPhoto?.primaryColorInt ?: Color.Gray.toArgb()).toDrawable())
                 .build(),
             contentDescription = stringResource(id = R.string.topic_cover_photo),
             contentScale = ContentScale.Crop,

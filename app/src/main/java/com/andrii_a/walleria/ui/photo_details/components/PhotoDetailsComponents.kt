@@ -1,10 +1,8 @@
 package com.andrii_a.walleria.ui.photo_details.components
 
 import android.graphics.Bitmap
-import android.graphics.drawable.ColorDrawable
 import android.text.SpannableStringBuilder
 import androidx.annotation.StringRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,6 +28,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
@@ -48,7 +47,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.text.italic
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.PhotoQuality
@@ -78,17 +76,14 @@ fun UserRow(
             .clickable(onClick = onUserClick)
             .padding(12.dp)
     ) {
-        val painter = rememberAsyncImagePainter(
+        val placeholderColor = MaterialTheme.colorScheme.surfaceColorAtElevation(8.dp)
+
+        AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(userProfileImageUrl)
                 .crossfade(durationMillis = 1000)
-                .placeholder(ColorDrawable(Color.Gray.toArgb()))
+                .placeholder(placeholderColor.toArgb().toDrawable())
                 .build(),
-            contentScale = ContentScale.Fit
-        )
-
-        Image(
-            painter = painter,
             contentDescription = stringResource(id = R.string.user_profile_image),
             modifier = Modifier
                 .size(32.dp)
@@ -314,7 +309,9 @@ fun RelatedCollectionsItem(
                     .crossfade(durationMillis = 1000)
                     .placeholder(placeholderBitmap?.toDrawable(context.resources))
                     .fallback(placeholderBitmap?.toDrawable(context.resources))
-                    .error(ColorDrawable(collection.coverPhoto?.primaryColorInt ?: Color.Gray.toArgb()))
+                    .error(
+                        (collection.coverPhoto?.primaryColorInt ?: Color.Gray.toArgb()).toDrawable()
+                    )
                     .build(),
                 contentScale = ContentScale.Crop,
                 contentDescription = null,

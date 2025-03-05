@@ -1,7 +1,6 @@
 package com.andrii_a.walleria.ui.common.components
 
 import android.graphics.Bitmap
-import android.graphics.drawable.ColorDrawable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -183,7 +182,7 @@ fun DefaultPhotoItem(
                     .crossfade(durationMillis = 1000)
                     .placeholder(placeholderBitmap?.toDrawable(context.resources))
                     .fallback(placeholderBitmap?.toDrawable(context.resources))
-                    .error(ColorDrawable(photo.primaryColorInt))
+                    .error(photo.primaryColorInt.toDrawable())
                     .build(),
                 contentScale = ContentScale.Crop,
                 contentDescription = stringResource(id = R.string.photo),
@@ -220,7 +219,7 @@ private fun PhotoItemDetails(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(userProfileImageUrl)
                 .crossfade(durationMillis = 1000)
-                .placeholder(ColorDrawable(Color.Gray.toArgb()))
+                .placeholder(Color.Gray.toArgb().toDrawable())
                 .build(),
             contentScale = ContentScale.Fit,
             contentDescription = stringResource(id = R.string.user_profile_image),

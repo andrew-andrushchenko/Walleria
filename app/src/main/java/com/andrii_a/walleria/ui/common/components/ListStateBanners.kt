@@ -53,21 +53,6 @@ fun LoadingListItem(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun LoadingBanner(modifier: Modifier = Modifier) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier
-    ) {
-        val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.loading_animation_light))
-
-        LottieAnimation(
-            composition = composition,
-            iterations = Int.MAX_VALUE
-        )
-    }
-}
-
-@Composable
 fun ErrorBanner(
     modifier: Modifier = Modifier,
     message: String = stringResource(id = R.string.error_banner_text),
