@@ -1,4 +1,4 @@
-package com.andrii_a.walleria.ui.user_details.components
+package com.andrii_a.walleria.ui.common.components
 
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.rememberScrollableState

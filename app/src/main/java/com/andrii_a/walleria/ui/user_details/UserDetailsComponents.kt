@@ -1,4 +1,4 @@
-package com.andrii_a.walleria.ui.user_details.components
+package com.andrii_a.walleria.ui.user_details
 
 import android.content.res.Configuration
 import android.graphics.drawable.ColorDrawable

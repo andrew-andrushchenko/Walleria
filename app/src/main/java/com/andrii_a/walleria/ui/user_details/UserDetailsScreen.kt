@@ -59,9 +59,8 @@ import com.andrii_a.walleria.ui.common.components.ErrorBanner
 import com.andrii_a.walleria.ui.common.components.LoadingListItem
 import com.andrii_a.walleria.ui.common.components.PhotosGridContent
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
-import com.andrii_a.walleria.ui.user_details.components.NestedScrollLayout
-import com.andrii_a.walleria.ui.user_details.components.UserHeader
-import com.andrii_a.walleria.ui.user_details.components.rememberNestedScrollLayoutState
+import com.andrii_a.walleria.ui.common.components.NestedScrollLayout
+import com.andrii_a.walleria.ui.common.components.rememberNestedScrollLayoutState
 import kotlinx.coroutines.launch
 
 @Composable
