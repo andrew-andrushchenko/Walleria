@@ -42,6 +42,7 @@ fun LoginScreen(
             Box(modifier = Modifier.fillMaxWidth()) {
                 TextButton(
                     onClick = { onEvent(LoginEvent.GoBack) },
+                    enabled = !state.isLoading,
                     modifier = Modifier
                         .padding(bottom = 24.dp)
                         .align(Alignment.Center)
@@ -82,6 +83,7 @@ fun LoginScreen(
                 Button(
                     onClick = { onEvent(LoginEvent.PerformLogin) },
                     shape = RoundedCornerShape(16.dp),
+                    enabled = !state.isLoading,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(64.dp)
@@ -94,6 +96,7 @@ fun LoginScreen(
                 OutlinedButton(
                     onClick = { onEvent(LoginEvent.PerformJoin) },
                     shape = RoundedCornerShape(16.dp),
+                    enabled = !state.isLoading,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(64.dp)
@@ -117,7 +120,7 @@ fun LoginScreen(
 fun LoginScreenPreview() {
     WalleriaTheme {
         LoginScreen(
-            state = LoginUiState(isLoading = true),
+            state = LoginUiState(isLoading = false),
             onEvent = {}
         )
     }
