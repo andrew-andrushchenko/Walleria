@@ -32,10 +32,9 @@ unsplash_secret_key_release = "<Release Secret Key>"
 
 # Technology stack
 * Kotlin
-* Jetpack Compose (with Material You)
-* Coroutines
-* Dagger Hilt
-* Retrofit 2
+* Jetpack Compose
+* Koin
+* Ktor Client
 * Paging 3
 * Room
 * DataStore
