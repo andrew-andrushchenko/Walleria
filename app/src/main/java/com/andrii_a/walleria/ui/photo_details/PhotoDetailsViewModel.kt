@@ -186,8 +186,9 @@ class PhotoDetailsViewModel(
                         it.copy(
                             isLoading = false,
                             photo = photo,
+                            currentPhotoLikes = photo.likes,
                             error = null,
-                            isLiked = photo.likedByUser,
+                            isLikedByLoggedInUser = photo.likedByUser,
                             isCollected = isPhotoCollected
                         )
                     }
@@ -220,7 +221,12 @@ class PhotoDetailsViewModel(
         likePhotoJob?.cancel()
         likePhotoJob = viewModelScope.launch {
             photoRepository.likePhoto(photoId)
-            _state.update { it.copy(isLiked = true) }
+            _state.update {
+                it.copy(
+                    isLikedByLoggedInUser = true,
+                    currentPhotoLikes = it.currentPhotoLikes?.plus(1)
+                )
+            }
         }
     }
 
@@ -228,7 +234,12 @@ class PhotoDetailsViewModel(
         dislikePhotoJob?.cancel()
         dislikePhotoJob = viewModelScope.launch {
             photoRepository.dislikePhoto(photoId)
-            _state.update { it.copy(isLiked = false) }
+            _state.update {
+                it.copy(
+                    isLikedByLoggedInUser = false,
+                    currentPhotoLikes = it.photo?.likes
+                )
+            }
         }
     }
 

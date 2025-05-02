@@ -5,9 +5,13 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -31,6 +35,7 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.ZoomInMap
 import androidx.compose.material.icons.outlined.ZoomOutMap
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
@@ -46,7 +51,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -65,10 +69,12 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.core.content.ContextCompat
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
-import coil.size.Size
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.compose.AsyncImagePainter
+import coil3.compose.rememberAsyncImagePainter
+import coil3.request.ImageRequest
+import coil3.request.crossfade
+import coil3.size.Size
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
@@ -128,7 +134,7 @@ fun PhotoDetailsScreen(
     }
 }
 
-typealias LikeCount = Long
+//typealias LikeCount = Long
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -181,7 +187,59 @@ private fun SuccessStateContent(
                     .build()
             )
 
-            if (painter.state is AsyncImagePainter.State.Success) {
+            val painterState = painter.state.collectAsStateWithLifecycle()
+
+            AnimatedContent(
+                targetState = painterState,
+                label = "photo_content",
+                transitionSpec = {
+                    fadeIn() + scaleIn(animationSpec = tween(400)) togetherWith
+                            fadeOut(animationSpec = tween(200))
+                }
+            ) { state ->
+                when (state.value) {
+                    is AsyncImagePainter.State.Empty -> Unit
+                    is AsyncImagePainter.State.Loading -> {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                    is AsyncImagePainter.State.Error -> {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            ErrorBanner(
+                                message = stringResource(R.string.error_banner_text),
+                                onRetry = painter::restart
+                            )
+                        }
+                    }
+                    is AsyncImagePainter.State.Success -> {
+                        val size = painter.intrinsicSize
+
+                        Image(
+                            painter = painter,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .aspectRatio(size.width / size.height)
+                                .fillMaxSize()
+                        )
+
+                        zoomToFillCoefficient = getZoomToFillScaleCoefficient(
+                            imageWidth = size.width,
+                            imageHeight = size.height,
+                            containerWidth = constraints.maxWidth.value,
+                            containerHeight = constraints.maxHeight.value
+                        )
+                    }
+                }
+            }
+
+            /*if (painter.state.value is AsyncImagePainter.State.Success) {
                 val size = painter.intrinsicSize
 
                 Image(
@@ -198,7 +256,7 @@ private fun SuccessStateContent(
                     containerWidth = constraints.maxWidth.value,
                     containerHeight = constraints.maxHeight.value
                 )
-            }
+            }*/
         }
 
         AnimatedVisibility(
@@ -232,9 +290,9 @@ private fun SuccessStateContent(
                 }
         ) {
             BottomControls(
-                likes = photo.likes,
+                likes = /*photo.likes*/state.currentPhotoLikes ?: 0,
                 photoOwner = photo.user,
-                isPhotoLiked = state.isLiked,
+                isLikedByLoggedInUser = state.isLikedByLoggedInUser,
                 isPhotoCollected = state.isCollected,
                 zoomIcon = if (zoomableState.scale == 1f) Icons.Outlined.ZoomOutMap else Icons.Outlined.ZoomInMap,
                 onNavigateToUserDetails = {
@@ -250,17 +308,17 @@ private fun SuccessStateContent(
                 },
                 onLikeButtonClick = {
                     if (state.isUserLoggedIn) {
-                        if (state.isLiked) {
+                        if (state.isLikedByLoggedInUser) {
                             onEvent(PhotoDetailsEvent.DislikePhoto(photo.id))
-                            photo.likes
+                            //photo.likes
                         } else {
                             onEvent(PhotoDetailsEvent.LikePhoto(photo.id))
-                            photo.likes + 1
+                            //photo.likes + 1
                         }
                     } else {
                         context.toast(stringRes = R.string.login_to_like_photo)
                         onEvent(PhotoDetailsEvent.RedirectToLogin)
-                        null
+                        //null
                     }
                 },
                 onInfoButtonClick = { onEvent(PhotoDetailsEvent.ShowInfoDialog) },
@@ -426,12 +484,12 @@ private fun TopBar(
 private fun BottomControls(
     likes: Long,
     photoOwner: User?,
-    isPhotoLiked: Boolean,
+    isLikedByLoggedInUser: Boolean,
     isPhotoCollected: Boolean,
     zoomIcon: ImageVector,
     onNavigateToUserDetails: () -> Unit,
     onNavigateToCollectPhoto: () -> Unit,
-    onLikeButtonClick: () -> LikeCount?,
+    onLikeButtonClick: () -> Unit,
     onInfoButtonClick: () -> Unit,
     onShareButtonClick: () -> Unit,
     onDownloadButtonClick: () -> Unit,
@@ -442,15 +500,15 @@ private fun BottomControls(
         val (likeButton, collectButton, userRow,
             zoomToFillButton, infoButton, shareButton, downloadButton) = createRefs()
 
-        var photoLikes by rememberSaveable { mutableLongStateOf(likes) }
+        //var photoLikes by rememberSaveable { mutableLongStateOf(likes) }
 
         ExtendedFloatingActionButton(
             text = {
-                Text(text = photoLikes.abbreviatedNumberString)
+                Text(text = likes.abbreviatedNumberString)
             },
             icon = {
                 Icon(
-                    imageVector = if (isPhotoLiked) {
+                    imageVector = if (isLikedByLoggedInUser) {
                         Icons.Filled.Favorite
                     } else {
                         Icons.Outlined.FavoriteBorder
@@ -458,10 +516,10 @@ private fun BottomControls(
                     contentDescription = null
                 )
             },
-            onClick = {
+            onClick = onLikeButtonClick/*{
                 val likeCount = onLikeButtonClick()
-                likeCount?.let { photoLikes = it }
-            },
+                likeCount?.let { likes = it }
+            }*/,
             elevation = FloatingActionButtonDefaults.elevation(0.dp),
             containerColor = PhotoDetailsActionButtonContainerColor,
             contentColor = PhotoDetailsActionButtonContentColor,
@@ -640,7 +698,7 @@ private class PhotoDetailsUiStateProvider : PreviewParameterProvider<PhotoDetail
         PhotoDetailsUiState(error = UiErrorWithRetry(reason = UiText.DynamicString("ABC"))),
         PhotoDetailsUiState(
             photo = photo,
-            isLiked = true,
+            isLikedByLoggedInUser = true,
         )
     )
 }

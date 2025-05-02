@@ -2,7 +2,6 @@ package com.andrii_a.walleria.ui.account
 
 import android.content.res.Configuration
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
@@ -57,8 +56,11 @@ import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import androidx.core.graphics.drawable.toDrawable
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
+import coil3.request.placeholder
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.models.preferences.UserPrivateProfileData
 import com.andrii_a.walleria.ui.theme.CloverShape
@@ -284,7 +286,7 @@ private fun LoggedInHeader(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(userPrivateProfileData.profilePhotoUrl)
                     .crossfade(true)
-                    .placeholder(ColorDrawable(Color.LTGRAY))
+                    .placeholder(Color.LTGRAY.toDrawable())
                     .build(),
                 contentDescription = stringResource(id = R.string.user_profile_image),
                 modifier = Modifier

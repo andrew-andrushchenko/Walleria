@@ -1,7 +1,6 @@
 package com.andrii_a.walleria.ui.user_details
 
 import android.content.res.Configuration
-import android.graphics.drawable.ColorDrawable
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -40,8 +39,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import androidx.core.graphics.drawable.toDrawable
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
+import coil3.request.placeholder
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.UserProfileImageQuality
 import com.andrii_a.walleria.domain.models.user.User
@@ -76,7 +78,7 @@ fun UserHeader(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(user.getProfileImageUrlOrEmpty(quality = UserProfileImageQuality.HIGH))
                     .crossfade(true)
-                    .placeholder(ColorDrawable(placeholderColor.toArgb()))
+                    .placeholder(placeholderColor.toArgb().toDrawable())
                     .build(),
                 contentDescription = stringResource(id = R.string.user_profile_image),
                 modifier = Modifier
@@ -149,7 +151,7 @@ fun UserHeader(
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(user.getProfileImageUrlOrEmpty(quality = UserProfileImageQuality.HIGH))
                             .crossfade(true)
-                            .placeholder(ColorDrawable(placeholderColor.toArgb()))
+                            .placeholder(placeholderColor.toArgb().toDrawable())
                             .build(),
                         contentDescription = stringResource(id = R.string.user_profile_image),
                         modifier = Modifier.size((configuration.screenWidthDp / 2).dp)

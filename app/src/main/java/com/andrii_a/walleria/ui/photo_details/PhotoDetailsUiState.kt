@@ -11,7 +11,8 @@ data class PhotoDetailsUiState(
     val isLoading: Boolean = false,
     val error: UiError? = null,
     val photo: Photo? = null,
-    val isLiked: Boolean = false,
+    val currentPhotoLikes: Long? = 0,
+    val isLikedByLoggedInUser: Boolean = false,
     val isCollected: Boolean = false,
     val isInfoDialogOpened: Boolean = false,
     val photoDownloadQuality: PhotoQuality = PhotoQuality.HIGH

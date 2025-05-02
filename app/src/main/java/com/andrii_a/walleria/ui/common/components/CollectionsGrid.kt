@@ -43,8 +43,11 @@ import androidx.core.graphics.drawable.toDrawable
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
+import coil3.request.error
+import coil3.request.placeholder
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.collection.Collection
@@ -165,7 +168,6 @@ private fun DefaultCollectionItem(
                 .data(collection.getCoverPhotoUrl(quality = photoQuality))
                 .crossfade(durationMillis = 1000)
                 .placeholder(placeholderBitmap?.toDrawable(context.resources))
-                .fallback(placeholderBitmap?.toDrawable(context.resources))
                 .error((collection.coverPhoto?.primaryColorInt ?: Color.Gray.toArgb()).toDrawable())
                 .build(),
             contentScale = ContentScale.Crop,

@@ -63,8 +63,12 @@ import androidx.core.graphics.drawable.toDrawable
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
+import coil3.request.error
+import coil3.request.fallback
+import coil3.request.placeholder
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.collection.Collection
@@ -385,7 +389,8 @@ fun CreateAndCollectBottomSheet(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateCollectionProgressDialog() {
-    BasicAlertDialog(onDismissRequest = {},
+    BasicAlertDialog(
+        onDismissRequest = {},
         content = {
             LoadingListItem(
                 modifier = Modifier

@@ -119,8 +119,13 @@ dependencies {
     implementation(libs.androidx.constraintlayout.compose)
 
     // Coil + compose
+    //implementation(libs.coil)
+    //implementation(libs.coil.compose)
+    //implementation(libs.coil.network)
     implementation(libs.coil)
+    implementation(libs.coil.compose.core)
     implementation(libs.coil.compose)
+    implementation(libs.coil.network.ktor)
 
     // Koin
     implementation(platform(libs.koin.bom))
