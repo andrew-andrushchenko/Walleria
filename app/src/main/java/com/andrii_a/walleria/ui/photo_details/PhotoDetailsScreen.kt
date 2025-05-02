@@ -7,10 +7,13 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -134,8 +137,6 @@ fun PhotoDetailsScreen(
     }
 }
 
-//typealias LikeCount = Long
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SuccessStateContent(
@@ -238,25 +239,6 @@ private fun SuccessStateContent(
                     }
                 }
             }
-
-            /*if (painter.state.value is AsyncImagePainter.State.Success) {
-                val size = painter.intrinsicSize
-
-                Image(
-                    painter = painter,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .aspectRatio(size.width / size.height)
-                        .fillMaxSize()
-                )
-
-                zoomToFillCoefficient = getZoomToFillScaleCoefficient(
-                    imageWidth = size.width,
-                    imageHeight = size.height,
-                    containerWidth = constraints.maxWidth.value,
-                    containerHeight = constraints.maxHeight.value
-                )
-            }*/
         }
 
         AnimatedVisibility(
@@ -290,7 +272,7 @@ private fun SuccessStateContent(
                 }
         ) {
             BottomControls(
-                likes = /*photo.likes*/state.currentPhotoLikes ?: 0,
+                likes = state.currentPhotoLikes ?: 0,
                 photoOwner = photo.user,
                 isLikedByLoggedInUser = state.isLikedByLoggedInUser,
                 isPhotoCollected = state.isCollected,
@@ -310,15 +292,12 @@ private fun SuccessStateContent(
                     if (state.isUserLoggedIn) {
                         if (state.isLikedByLoggedInUser) {
                             onEvent(PhotoDetailsEvent.DislikePhoto(photo.id))
-                            //photo.likes
                         } else {
                             onEvent(PhotoDetailsEvent.LikePhoto(photo.id))
-                            //photo.likes + 1
                         }
                     } else {
                         context.toast(stringRes = R.string.login_to_like_photo)
                         onEvent(PhotoDetailsEvent.RedirectToLogin)
-                        //null
                     }
                 },
                 onInfoButtonClick = { onEvent(PhotoDetailsEvent.ShowInfoDialog) },
@@ -500,11 +479,23 @@ private fun BottomControls(
         val (likeButton, collectButton, userRow,
             zoomToFillButton, infoButton, shareButton, downloadButton) = createRefs()
 
-        //var photoLikes by rememberSaveable { mutableLongStateOf(likes) }
-
         ExtendedFloatingActionButton(
             text = {
-                Text(text = likes.abbreviatedNumberString)
+                AnimatedContent(
+                    targetState = likes,
+                    label = "likes_count_animation",
+                    transitionSpec = {
+                        if (targetState > initialState) {
+                            (slideInVertically { height -> height } + fadeIn()) togetherWith
+                                    (slideOutVertically { height -> -height } + fadeOut())
+                        } else {
+                            (slideInVertically { height -> -height } + fadeIn()) togetherWith
+                                    (slideOutVertically { height -> height } + fadeOut())
+                        }.using(SizeTransform(clip = false))
+                    }
+                ) { currentLikes ->
+                    Text(text = currentLikes.abbreviatedNumberString)
+                }
             },
             icon = {
                 Icon(
@@ -516,10 +507,7 @@ private fun BottomControls(
                     contentDescription = null
                 )
             },
-            onClick = onLikeButtonClick/*{
-                val likeCount = onLikeButtonClick()
-                likeCount?.let { likes = it }
-            }*/,
+            onClick = onLikeButtonClick,
             elevation = FloatingActionButtonDefaults.elevation(0.dp),
             containerColor = PhotoDetailsActionButtonContainerColor,
             contentColor = PhotoDetailsActionButtonContentColor,
