@@ -221,9 +221,7 @@ fun CollectionsGridContent(
     collectionItems: LazyPagingItems<Collection>,
     gridState: LazyStaggeredGridState = rememberLazyStaggeredGridState(),
     contentPadding: PaddingValues = PaddingValues(),
-    scrollToTopButtonPadding: PaddingValues = PaddingValues(
-        bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 8.dp
-    ),
+    scrollToTopButtonPadding: PaddingValues = WindowInsets.navigationBars.asPaddingValues(),
     onCollectionClick: (CollectionId) -> Unit
 ) {
     ScrollToTopLayout(

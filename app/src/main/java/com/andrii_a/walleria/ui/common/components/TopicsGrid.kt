@@ -301,9 +301,7 @@ fun TopicsGridContent(
     modifier: Modifier = Modifier,
     gridState: LazyStaggeredGridState = rememberLazyStaggeredGridState(),
     contentPadding: PaddingValues = PaddingValues(),
-    scrollToTopButtonPadding: PaddingValues = PaddingValues(
-        bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 8.dp
-    ),
+    scrollToTopButtonPadding: PaddingValues = WindowInsets.navigationBars.asPaddingValues(),
     onTopicClick: (TopicId) -> Unit,
 ) {
     ScrollToTopLayout(

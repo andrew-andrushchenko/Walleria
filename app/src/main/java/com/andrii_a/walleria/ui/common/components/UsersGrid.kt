@@ -274,9 +274,7 @@ fun UsersGridContent(
     userItems: LazyPagingItems<User>,
     gridState: LazyStaggeredGridState = rememberLazyStaggeredGridState(),
     contentPadding: PaddingValues = PaddingValues(),
-    scrollToTopButtonPadding: PaddingValues = PaddingValues(
-        bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 8.dp
-    ),
+    scrollToTopButtonPadding: PaddingValues = WindowInsets.navigationBars.asPaddingValues(),
     onUserClick: (UserNickname) -> Unit
 ) {
     ScrollToTopLayout(
