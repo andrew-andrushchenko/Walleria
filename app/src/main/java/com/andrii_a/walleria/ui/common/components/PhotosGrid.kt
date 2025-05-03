@@ -51,6 +51,7 @@ import coil3.request.placeholder
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
+import com.andrii_a.walleria.domain.models.photo.PhotoSponsorship
 import com.andrii_a.walleria.domain.models.photo.PhotoUrls
 import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.ui.common.PhotoId
@@ -200,7 +201,7 @@ fun DefaultPhotoItem(
                 userProfileImageUrl = photo.getUserProfileImageUrlOrEmpty(),
                 username = photo.userFullName,
                 isSponsored = photo.sponsorship?.sponsor != null,
-                modifier = Modifier.fillMaxWidth().padding()
+                modifier = Modifier.align(Alignment.CenterHorizontally)
             )
         }
     }
@@ -326,7 +327,7 @@ fun DefaultPhotoItemPreview() {
             tags = null,
             relatedCollections = null,
             currentUserCollections = null,
-            sponsorship = null,
+            sponsorship = PhotoSponsorship(user),
             urls = PhotoUrls("", "", "", "", ""),
             links = null,
             user = user
