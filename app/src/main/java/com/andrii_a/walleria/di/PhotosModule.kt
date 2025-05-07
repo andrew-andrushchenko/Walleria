@@ -9,6 +9,7 @@ import com.andrii_a.walleria.domain.services.PhotoDownloader
 import com.andrii_a.walleria.ui.photo_details.PhotoDetailsViewModel
 import com.andrii_a.walleria.ui.photos.PhotosViewModel
 import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
@@ -16,7 +17,7 @@ import org.koin.dsl.module
 val photosModule = module {
     singleOf(::PhotoServiceImpl) { bind<PhotoService>() }
     singleOf(::PhotoRepositoryImpl) { bind<PhotoRepository>() }
-    singleOf(::AndroidPhotoDownloader) { bind<PhotoDownloader>() }
+    factoryOf(::AndroidPhotoDownloader) { bind<PhotoDownloader>() }
 
     viewModelOf(::PhotosViewModel)
     viewModelOf(::PhotoDetailsViewModel)

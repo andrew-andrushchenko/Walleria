@@ -8,14 +8,14 @@ import com.andrii_a.walleria.domain.repository.RecentSearchesRepository
 import com.andrii_a.walleria.domain.repository.SearchRepository
 import com.andrii_a.walleria.ui.search.SearchViewModel
 import org.koin.core.module.dsl.bind
-import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val searchModule = module {
-    singleOf(::SearchServiceImpl) { bind<SearchService>() }
-    singleOf(::SearchRepositoryImpl) { bind<SearchRepository>() }
-    singleOf(::RecentSearchesRepositoryImpl) { bind<RecentSearchesRepository>() }
+    factoryOf(::SearchServiceImpl) { bind<SearchService>() }
+    factoryOf(::SearchRepositoryImpl) { bind<SearchRepository>() }
+    factoryOf(::RecentSearchesRepositoryImpl) { bind<RecentSearchesRepository>() }
 
     viewModelOf(::SearchViewModel)
 }
