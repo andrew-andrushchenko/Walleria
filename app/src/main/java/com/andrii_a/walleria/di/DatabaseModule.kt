@@ -8,7 +8,7 @@ import org.koin.dsl.module
 val databaseModule = module {
     single<WalleriaDatabase> {
         Room.databaseBuilder(androidApplication(), WalleriaDatabase::class.java, "walleria_db")
-            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigration(true)
             .build()
     }
 
