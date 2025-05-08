@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.math.max
 
 class PhotoDetailsViewModel(
     private val photoRepository: PhotoRepository,
@@ -163,6 +164,21 @@ class PhotoDetailsViewModel(
                     )
                 }
             }
+
+            is PhotoDetailsEvent.ToggleControlsVisibility -> {
+                _state.update {
+                    it.copy(showControls = !it.showControls)
+                }
+            }
+
+            is PhotoDetailsEvent.UpdateZoomToFillCoefficient -> {
+                updateZoomToFillCoefficient(
+                    imageWidth = event.imageWidth,
+                    imageHeight = event.imageHeight,
+                    containerWidth = event.containerWidth,
+                    containerHeight = event.containerHeight
+                )
+            }
         }
     }
 
@@ -245,5 +261,26 @@ class PhotoDetailsViewModel(
 
     private fun downloadPhoto(photo: Photo, quality: PhotoQuality) {
         photoDownloader.downloadPhoto(photo, quality)
+    }
+
+    private fun updateZoomToFillCoefficient(
+        imageWidth: Float,
+        imageHeight: Float,
+        containerWidth: Float,
+        containerHeight: Float
+    ) {
+        val widthRatio = imageWidth / imageHeight
+        val height = containerWidth / widthRatio
+        val zoomScaleH = containerHeight / height
+
+        val heightRatio = imageHeight / imageWidth
+        val width = containerHeight / heightRatio
+        val zoomScaleW = containerWidth / width
+
+        val coefficient =  max(zoomScaleW, zoomScaleH)
+
+        _state.update {
+            it.copy(zoomToFillCoefficient = coefficient)
+        }
     }
 }

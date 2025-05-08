@@ -42,4 +42,13 @@ sealed interface PhotoDetailsEvent {
     data class SelectCollectOption(val photoId: PhotoId) : PhotoDetailsEvent
 
     data object RedirectToLogin : PhotoDetailsEvent
+
+    data object ToggleControlsVisibility : PhotoDetailsEvent
+
+    data class UpdateZoomToFillCoefficient(
+        val imageWidth: Float,
+        val imageHeight: Float,
+        val containerWidth: Float,
+        val containerHeight: Float
+    ) : PhotoDetailsEvent
 }

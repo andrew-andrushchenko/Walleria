@@ -15,5 +15,7 @@ data class PhotoDetailsUiState(
     val isLikedByLoggedInUser: Boolean = false,
     val isCollected: Boolean = false,
     val isInfoDialogOpened: Boolean = false,
-    val photoDownloadQuality: PhotoQuality = PhotoQuality.HIGH
+    val photoDownloadQuality: PhotoQuality = PhotoQuality.HIGH,
+    val showControls: Boolean = true,
+    val zoomToFillCoefficient: Float = 1f,
 )

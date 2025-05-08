@@ -38,7 +38,6 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.ZoomInMap
 import androidx.compose.material.icons.outlined.ZoomOutMap
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
@@ -52,12 +51,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -101,7 +96,6 @@ import com.andrii_a.walleria.ui.util.toast
 import com.andrii_a.walleria.ui.util.userFullName
 import com.andrii_a.walleria.ui.util.userNickname
 import kotlinx.coroutines.launch
-import kotlin.math.max
 
 @Composable
 fun PhotoDetailsScreen(
@@ -157,9 +151,6 @@ private fun SuccessStateContent(
     BoxWithConstraints(modifier = modifier.background(Color.Black)) {
         val constraints = this
 
-        var areControlsVisible by rememberSaveable { mutableStateOf(true) }
-        var zoomToFillCoefficient by rememberSaveable { mutableFloatStateOf(1f) }
-
         val zoomableState = rememberZoomableState(
             minScale = 0.5f,
             maxScale = 6f,
@@ -169,7 +160,7 @@ private fun SuccessStateContent(
         Zoomable(
             state = zoomableState,
             enabled = true,
-            onTap = { areControlsVisible = !areControlsVisible },
+            onTap = { onEvent(PhotoDetailsEvent.ToggleControlsVisibility) },
             dismissGestureEnabled = true,
             onDismiss = {
                 onEvent(PhotoDetailsEvent.GoBack)
@@ -205,9 +196,10 @@ private fun SuccessStateContent(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier.fillMaxSize()
                         ) {
-                            CircularProgressIndicator()
+                            LoadingListItem()
                         }
                     }
+
                     is AsyncImagePainter.State.Error -> {
                         Box(
                             contentAlignment = Alignment.Center,
@@ -219,6 +211,7 @@ private fun SuccessStateContent(
                             )
                         }
                     }
+
                     is AsyncImagePainter.State.Success -> {
                         val size = painter.intrinsicSize
 
@@ -230,19 +223,23 @@ private fun SuccessStateContent(
                                 .fillMaxSize()
                         )
 
-                        zoomToFillCoefficient = getZoomToFillScaleCoefficient(
-                            imageWidth = size.width,
-                            imageHeight = size.height,
-                            containerWidth = constraints.maxWidth.value,
-                            containerHeight = constraints.maxHeight.value
-                        )
+                        LaunchedEffect(Unit) {
+                            onEvent(
+                                PhotoDetailsEvent.UpdateZoomToFillCoefficient(
+                                    imageWidth = size.width,
+                                    imageHeight = size.height,
+                                    containerWidth = constraints.maxWidth.value,
+                                    containerHeight = constraints.maxHeight.value
+                                )
+                            )
+                        }
                     }
                 }
             }
         }
 
         AnimatedVisibility(
-            visible = areControlsVisible,
+            visible = state.showControls,
             enter = fadeIn(),
             exit = fadeOut(),
             modifier = Modifier
@@ -262,7 +259,7 @@ private fun SuccessStateContent(
         ) { /* Unused */ }
 
         AnimatedVisibility(
-            visible = areControlsVisible,
+            visible = state.showControls,
             enter = fadeIn(),
             exit = fadeOut(),
             modifier = Modifier
@@ -334,8 +331,8 @@ private fun SuccessStateContent(
                 onZoomToFillClick = {
                     scope.launch {
                         zoomableState.animateScaleTo(
-                            if (zoomableState.scale >= zoomToFillCoefficient) 1f
-                            else zoomToFillCoefficient
+                            if (zoomableState.scale >= state.zoomToFillCoefficient) 1f
+                            else state.zoomToFillCoefficient
                         )
                     }
                 },
@@ -619,24 +616,6 @@ private fun BottomControls(
             )
         }
     }
-}
-
-@Composable
-private fun getZoomToFillScaleCoefficient(
-    imageWidth: Float,
-    imageHeight: Float,
-    containerWidth: Float,
-    containerHeight: Float
-): Float {
-    val widthRatio = imageWidth / imageHeight
-    val height = containerWidth / widthRatio
-    val zoomScaleH = containerHeight / height
-
-    val heightRatio = imageHeight / imageWidth
-    val width = containerHeight / heightRatio
-    val zoomScaleW = containerWidth / width
-
-    return max(zoomScaleW, zoomScaleH)
 }
 
 private class PhotoDetailsUiStateProvider : PreviewParameterProvider<PhotoDetailsUiState> {
