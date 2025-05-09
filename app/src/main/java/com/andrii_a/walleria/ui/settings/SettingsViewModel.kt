@@ -2,35 +2,35 @@ package com.andrii_a.walleria.ui.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.repository.LocalPreferencesRepository
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-
-sealed interface SettingsEvent {
-    data class UpdatePhotosLoadQuality(val quality: PhotoQuality) : SettingsEvent
-    data class UpdatePhotosDownloadQuality(val quality: PhotoQuality) : SettingsEvent
-}
 
 class SettingsViewModel(private val repository: LocalPreferencesRepository) : ViewModel() {
 
-    val photosLoadQuality: StateFlow<PhotoQuality> = repository.photosLoadQuality
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = runBlocking { repository.photosLoadQuality.first() }
+    private val _state: MutableStateFlow<SettingsUiState> = MutableStateFlow(SettingsUiState())
+    val state = combine(
+        repository.photosLoadQuality,
+        repository.photosDownloadQuality,
+        _state
+    ) { photosLoadQuality, photosDownloadQuality, state ->
+        state.copy(
+            photosLoadQuality = photosLoadQuality,
+            photosDownloadQuality = photosDownloadQuality
         )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000L),
+        initialValue = _state.value
+    )
 
-    val photosDownloadQuality: StateFlow<PhotoQuality> = repository.photosDownloadQuality
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = runBlocking { repository.photosLoadQuality.first() }
-        )
+    private val navigationEventChannel = Channel<SettingsNavigationEvent>()
+    val navigationEventFlow = navigationEventChannel.receiveAsFlow()
 
     fun onEvent(event: SettingsEvent) {
         when (event) {
@@ -43,6 +43,12 @@ class SettingsViewModel(private val repository: LocalPreferencesRepository) : Vi
             is SettingsEvent.UpdatePhotosDownloadQuality -> {
                 viewModelScope.launch {
                     repository.updatePhotosDownloadQuality(event.quality)
+                }
+            }
+
+            is SettingsEvent.GoBack -> {
+                viewModelScope.launch {
+                    navigationEventChannel.send(SettingsNavigationEvent.NavigateBack)
                 }
             }
         }
