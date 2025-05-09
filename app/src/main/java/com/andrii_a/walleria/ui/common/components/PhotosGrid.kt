@@ -3,9 +3,7 @@ package com.andrii_a.walleria.ui.common.components
 import android.graphics.Bitmap
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
@@ -13,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
@@ -22,20 +19,16 @@ import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridS
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toDrawable
@@ -55,13 +48,10 @@ import com.andrii_a.walleria.domain.models.photo.PhotoSponsorship
 import com.andrii_a.walleria.domain.models.photo.PhotoUrls
 import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.ui.common.PhotoId
-import com.andrii_a.walleria.ui.theme.CloverShape
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.BlurHashDecoder
 import com.andrii_a.walleria.ui.util.getUrlByQuality
-import com.andrii_a.walleria.ui.util.getUserProfileImageUrlOrEmpty
 import com.andrii_a.walleria.ui.util.primaryColorInt
-import com.andrii_a.walleria.ui.util.userFullName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.UUID
@@ -81,7 +71,7 @@ fun PhotosStaggeredGrid(
         modifier = Modifier.fillMaxSize()
     ) {
         LazyVerticalStaggeredGrid(
-            columns = StaggeredGridCells.Adaptive(250.dp),
+            columns = StaggeredGridCells.Adaptive(150.dp),
             state = gridState,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalItemSpacing = 8.dp,
@@ -101,7 +91,7 @@ fun PhotosStaggeredGrid(
                 ) { index ->
                     val photo = lazyPhotoItems[index]
                     photo?.let {
-                        DefaultPhotoItem(
+                        PhotoItem(
                             photo = photo,
                             photosLoadQuality = photosLoadQuality,
                             onPhotoClicked = { onPhotoClicked(photo.id) },
@@ -154,7 +144,7 @@ fun PhotosStaggeredGrid(
 }
 
 @Composable
-fun DefaultPhotoItem(
+fun PhotoItem(
     photo: Photo,
     photosLoadQuality: PhotoQuality,
     modifier: Modifier = Modifier,
@@ -162,96 +152,39 @@ fun DefaultPhotoItem(
     onPhotoClicked: () -> Unit
 ) {
     Surface(
-        shape = RoundedCornerShape(16.dp),
+        shape = shape,
         color = MaterialTheme.colorScheme.secondaryContainer,
         tonalElevation = 3.dp,
         onClick = onPhotoClicked,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Column {
-            val context = LocalContext.current
+        val context = LocalContext.current
 
-            val placeholderBitmap by produceState<Bitmap?>(initialValue = null) {
-                value = withContext(Dispatchers.Default) {
-                    BlurHashDecoder.decode(
-                        blurHash = photo.blurHash,
-                        width = 4,
-                        height = 3
-                    )
-                }
-            }
-
-            AsyncImage(
-                model = ImageRequest.Builder(context)
-                    .data(photo.getUrlByQuality(quality = photosLoadQuality))
-                    .crossfade(durationMillis = 1000)
-                    .placeholder(placeholderBitmap?.toDrawable(context.resources))
-                    .fallback(placeholderBitmap?.toDrawable(context.resources))
-                    .error(photo.primaryColorInt.toDrawable())
-                    .build(),
-                contentScale = ContentScale.Crop,
-                contentDescription = stringResource(id = R.string.photo),
-                modifier = modifier
-                    .aspectRatio(photo.width.toFloat() / photo.height.toFloat())
-                    .fillMaxWidth()
-                    .clip(shape)
-            )
-
-            PhotoItemDetails(
-                userProfileImageUrl = photo.getUserProfileImageUrlOrEmpty(),
-                username = photo.userFullName,
-                isSponsored = photo.sponsorship?.sponsor != null,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
-        }
-    }
-}
-
-@Composable
-private fun PhotoItemDetails(
-    isSponsored: Boolean,
-    userProfileImageUrl: String,
-    username: String,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = modifier
-            .padding(12.dp)
-    ) {
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(userProfileImageUrl)
-                .crossfade(durationMillis = 1000)
-                .placeholder(Color.Gray.toArgb().toDrawable())
-                .build(),
-            contentScale = ContentScale.Fit,
-            contentDescription = stringResource(id = R.string.user_profile_image),
-            modifier = Modifier
-                .size(36.dp)
-                .clip(CloverShape)
-        )
-
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(
-                text = username,
-                style = MaterialTheme.typography.titleSmall,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-
-            if (isSponsored) {
-                Text(
-                    text = "Sponsored",
-                    style = MaterialTheme.typography.labelSmall,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+        val placeholderBitmap by produceState<Bitmap?>(initialValue = null) {
+            value = withContext(Dispatchers.Default) {
+                BlurHashDecoder.decode(
+                    blurHash = photo.blurHash,
+                    width = 4,
+                    height = 3
                 )
             }
-
         }
 
+        AsyncImage(
+            model = ImageRequest.Builder(context)
+                .data(photo.getUrlByQuality(quality = photosLoadQuality))
+                .crossfade(durationMillis = 1000)
+                .placeholder(placeholderBitmap?.toDrawable(context.resources))
+                .fallback(placeholderBitmap?.toDrawable(context.resources))
+                .error(photo.primaryColorInt.toDrawable())
+                .build(),
+            contentScale = ContentScale.Crop,
+            contentDescription = stringResource(id = R.string.photo),
+            modifier = modifier
+                .aspectRatio(photo.width.toFloat() / photo.height.toFloat())
+                .fillMaxWidth()
+                .clip(shape)
+        )
     }
 }
 
@@ -332,7 +265,7 @@ fun DefaultPhotoItemPreview() {
         )
 
         Surface {
-            DefaultPhotoItem(
+            PhotoItem(
                 photo = photo,
                 photosLoadQuality = PhotoQuality.MEDIUM,
                 onPhotoClicked = {}
