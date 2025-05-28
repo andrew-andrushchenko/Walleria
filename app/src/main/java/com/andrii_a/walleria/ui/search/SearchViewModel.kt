@@ -51,14 +51,20 @@ class SearchViewModel(
     init {
         val searchQuery = savedStateHandle.toRoute<Screen.Search>().searchQuery
         if (searchQuery.isNotBlank()) {
-            onEvent(SearchEvent.PerformSearch(query = searchQuery))
+            onEvent(SearchEvent.PerformSearch)
         }
     }
 
     fun onEvent(event: SearchEvent) {
         when (event) {
+            is SearchEvent.ChangeQuery -> {
+                _state.update {
+                    it.copy(query = event.query)
+                }
+            }
+
             is SearchEvent.PerformSearch -> {
-                performSearch(event.query)
+                performSearch()
             }
 
             is SearchEvent.ChangePhotoFilters -> {
@@ -117,7 +123,9 @@ class SearchViewModel(
         }
     }
 
-    private fun performSearch(query: String) {
+    private fun performSearch() {
+        val query = _state.value.query
+
         saveRecentQuery(query)
 
         val searchPhotoResultFlow = searchRepository.searchPhotos(

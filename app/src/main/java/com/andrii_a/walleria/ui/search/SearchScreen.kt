@@ -42,11 +42,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -76,11 +73,7 @@ fun SearchScreen(
         skipPartiallyExpanded = true
     )
 
-    var text by rememberSaveable { mutableStateOf(state.query) }
-
-    Surface(
-        shape = RoundedCornerShape(16.dp)
-    ) {
+    Surface(shape = RoundedCornerShape(16.dp)) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -90,11 +83,11 @@ fun SearchScreen(
                 SearchBar(
                     inputField = {
                         SearchBarDefaults.InputField(
-                            query = text,
-                            onQueryChange = { text = it },
+                            query = state.query,
+                            onQueryChange = { onEvent(SearchEvent.ChangeQuery(it)) },
                             onSearch = {
                                 onEvent(SearchEvent.ToggleSearchBox(isExpanded = false))
-                                onEvent(SearchEvent.PerformSearch(query = text))
+                                onEvent(SearchEvent.PerformSearch)
                             },
                             expanded = state.isSearchBoxExpanded,
                             onExpandedChange = { onEvent(SearchEvent.ToggleSearchBox(isExpanded = it)) },
@@ -105,7 +98,13 @@ fun SearchScreen(
                                     label = ""
                                 ) { isExpanded ->
                                     if (isExpanded) {
-                                        IconButton(onClick = { onEvent(SearchEvent.ToggleSearchBox(isExpanded = false)) }) {
+                                        IconButton(onClick = {
+                                            onEvent(
+                                                SearchEvent.ToggleSearchBox(
+                                                    isExpanded = false
+                                                )
+                                            )
+                                        }) {
                                             Icon(
                                                 Icons.Default.Close,
                                                 contentDescription = stringResource(id = R.string.navigate_back)
@@ -158,8 +157,8 @@ fun SearchScreen(
                         recentSearches = state.recentSearches,
                         onItemSelected = { item ->
                             onEvent(SearchEvent.ToggleSearchBox(isExpanded = false))
-                            text = item.title
-                            onEvent(SearchEvent.PerformSearch(query = text))
+                            onEvent(SearchEvent.ChangeQuery(item.title))
+                            onEvent(SearchEvent.PerformSearch)
                         },
                         onDeleteItem = { item ->
                             onEvent(SearchEvent.DeleteRecentSearchItem(item))
@@ -268,7 +267,8 @@ private fun Pages(
                         bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding(),
                     ),
                     scrollToTopButtonPadding = PaddingValues(
-                        bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+                        bottom = WindowInsets.navigationBars.asPaddingValues()
+                            .calculateBottomPadding()
                     )
                 )
             }
@@ -286,7 +286,8 @@ private fun Pages(
                         bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding(),
                     ),
                     scrollToTopButtonPadding = PaddingValues(
-                        bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+                        bottom = WindowInsets.navigationBars.asPaddingValues()
+                            .calculateBottomPadding()
                     )
                 )
             }
@@ -304,7 +305,8 @@ private fun Pages(
                         bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding(),
                     ),
                     scrollToTopButtonPadding = PaddingValues(
-                        bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+                        bottom = WindowInsets.navigationBars.asPaddingValues()
+                            .calculateBottomPadding()
                     )
                 )
 

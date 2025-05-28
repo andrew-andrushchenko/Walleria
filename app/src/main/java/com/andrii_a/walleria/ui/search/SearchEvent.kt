@@ -7,15 +7,27 @@ import com.andrii_a.walleria.ui.common.SearchQuery
 import com.andrii_a.walleria.ui.common.UserNickname
 
 sealed interface SearchEvent {
-    data class PerformSearch(val query: SearchQuery) : SearchEvent
+    data class ChangeQuery(val query: SearchQuery) : SearchEvent
+
+    data object PerformSearch : SearchEvent
+
     data class ChangePhotoFilters(val photoFilters: PhotoFilters) : SearchEvent
+
     data class DeleteRecentSearchItem(val item: RecentSearchItem) : SearchEvent
+
     data object DeleteAllRecentSearches : SearchEvent
+
     data class SelectPhoto(val photoId: PhotoId) : SearchEvent
+
     data class SelectCollection(val collectionId: CollectionId) : SearchEvent
+
     data class SelectUser(val userNickname: UserNickname) : SearchEvent
+
     data object GoBack : SearchEvent
+
     data object OpenFilterDialog : SearchEvent
+
     data object DismissFilterDialog : SearchEvent
+
     data class ToggleSearchBox(val isExpanded: Boolean) : SearchEvent
 }
