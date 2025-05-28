@@ -1,12 +1,8 @@
 package com.andrii_a.walleria.ui.search
 
 import android.content.res.Configuration
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.foundation.border
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,7 +23,6 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.Button
@@ -36,6 +31,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -49,11 +47,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.andrii_a.walleria.R
@@ -62,9 +65,6 @@ import com.andrii_a.walleria.domain.SearchResultsDisplayOrder
 import com.andrii_a.walleria.domain.SearchResultsPhotoColor
 import com.andrii_a.walleria.domain.SearchResultsPhotoOrientation
 import com.andrii_a.walleria.domain.models.search.RecentSearchItem
-import com.andrii_a.walleria.ui.common.components.SelectorItemType
-import com.andrii_a.walleria.ui.common.components.SingleChoiceSelector
-import com.andrii_a.walleria.ui.common.components.SingleChoiceSelectorItem
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.iconRes
 import com.andrii_a.walleria.ui.util.titleRes
@@ -95,24 +95,28 @@ fun SearchPhotoFiltersBottomSheet(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        SingleChoiceSelector(
-            options = SearchResultsDisplayOrder.entries.map {
-                SingleChoiceSelectorItem(titleRes = it.titleRes)
-            },
-            selectedOptionOrdinal = order.ordinal,
-            onOptionSelect = { orderOrdinal ->
-                order = SearchResultsDisplayOrder.entries[orderOrdinal]
-            },
+        SingleChoiceSegmentedButtonRow(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp)
                 .padding(horizontal = 16.dp)
-                .border(
-                    width = 2.dp,
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = RoundedCornerShape(50)
+        ) {
+            val options = SearchResultsDisplayOrder.entries
+
+            options.forEachIndexed { index, displayOrder ->
+                SegmentedButton(
+                    selected = displayOrder == order,
+                    onClick = { order = displayOrder },
+                    shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
+                    label = {
+                        Text(
+                            text = stringResource(id = displayOrder.titleRes),
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                    }
                 )
-        )
+            }
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -124,25 +128,28 @@ fun SearchPhotoFiltersBottomSheet(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        SingleChoiceSelector(
-            options = SearchResultsContentFilter.entries.map {
-                SingleChoiceSelectorItem(titleRes = it.titleRes)
-            },
-            selectedOptionOrdinal = contentFilter.ordinal,
-            onOptionSelect = { contentFilterOrdinal ->
-                contentFilter =
-                    SearchResultsContentFilter.entries[contentFilterOrdinal]
-            },
+        SingleChoiceSegmentedButtonRow(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp)
                 .padding(horizontal = 16.dp)
-                .border(
-                    width = 2.dp,
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = RoundedCornerShape(50)
+        ) {
+            val options = SearchResultsContentFilter.entries
+
+            options.forEachIndexed { index, filter ->
+                SegmentedButton(
+                    selected = contentFilter == filter,
+                    onClick = { contentFilter = filter },
+                    shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
+                    label = {
+                        Text(
+                            text = stringResource(id = filter.titleRes),
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                    }
                 )
-        )
+            }
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -154,32 +161,38 @@ fun SearchPhotoFiltersBottomSheet(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        SingleChoiceSelector(
-            options = SearchResultsPhotoOrientation.entries.mapIndexed { index, item ->
-                if (index == 0) {
-                    SingleChoiceSelectorItem(titleRes = item.titleRes)
-                } else {
-                    SingleChoiceSelectorItem(
-                        titleRes = item.titleRes,
-                        iconRes = item.iconRes,
-                        type = SelectorItemType.IconOnly
-                    )
-                }
-            },
-            selectedOptionOrdinal = orientation.ordinal,
-            onOptionSelect = { orderOrdinal ->
-                orientation = SearchResultsPhotoOrientation.entries[orderOrdinal]
-            },
+        SingleChoiceSegmentedButtonRow(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp)
                 .padding(horizontal = 16.dp)
-                .border(
-                    width = 2.dp,
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = RoundedCornerShape(50)
+        ) {
+            val options = SearchResultsPhotoOrientation.entries
+
+            options.forEachIndexed { index, searchResultsPhotoOrientation ->
+                SegmentedButton(
+                    selected = orientation == searchResultsPhotoOrientation,
+                    onClick = { orientation = searchResultsPhotoOrientation },
+                    shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
+                    icon = {},
+                    label = {
+                        if (index == 0) {
+                            Text(
+                                text = stringResource(id = searchResultsPhotoOrientation.titleRes),
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1
+                            )
+                        } else {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(
+                                    searchResultsPhotoOrientation.iconRes
+                                ),
+                                contentDescription = null
+                            )
+                        }
+                    }
                 )
-        )
+            }
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -319,69 +332,49 @@ private fun PresetColorItem(
     selected: Boolean,
     onSelected: () -> Unit
 ) {
+    val borderWidth by animateDpAsState(targetValue = if (selected) 2.dp else 0.dp)
+
     Surface(
-        color = MaterialTheme.colorScheme.surfaceColorAtElevation(16.dp),
+        color = MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp),
         shape = RoundedCornerShape(16.dp),
+        border = if (selected) BorderStroke(
+            width = borderWidth,
+            MaterialTheme.colorScheme.outline
+        ) else null,
         onClick = onSelected,
         modifier = modifier
     ) {
         Box(
             contentAlignment = Alignment.Center,
+            content = {},
             modifier = Modifier
-                .size(84.dp)
+                .size(72.dp)
                 .padding(12.dp)
                 .drawBehind {
                     drawColorCircle(colorItem)
                 }
-        ) {
-            AnimatedVisibility(
-                visible = selected,
-                enter = fadeIn() + scaleIn(),
-                exit = fadeOut() + scaleOut()
-            ) {
-                Box(
-                    modifier = Modifier
-                        .drawBehind {
-                            val color = if (colorItem == SearchResultsPhotoColor.WHITE) {
-                                Color(0xFF252930)
-                            } else {
-                                Color(0xFFFDFDFD)
-                            }
-
-                            drawCircle(color)
-                        }
-                        .padding(6.dp)
-                ) {
-                    Icon(
-                        Icons.Default.Check,
-                        contentDescription = null,
-                        tint = if (colorItem == SearchResultsPhotoColor.WHITE) {
-                            Color(0xFFFDFDFD)
-                        } else {
-                            Color(0xFF252930)
-                        },
-                        modifier = Modifier.size(16.dp)
-                    )
-                }
-            }
-        }
+        )
     }
 }
 
 private fun DrawScope.drawColorCircle(colorItem: SearchResultsPhotoColor) {
     when (colorItem) {
         SearchResultsPhotoColor.ANY -> {
+            val side1 = 100
+            val side2 = 200
+
             drawCircle(
-                brush = Brush.linearGradient(
-                    listOf(
+                brush = Brush.radialGradient(
+                    colors = listOf(
                         Color(0xFFF36870),
                         Color(0xFFFF9636),
                         Color(0xFFF8EA8C),
-                        Color(0xFF7CB46B),
-                        Color(0xFF005B96),
-                    )
+                    ),
+                    center = Offset(side1 / 2.0f, side2 / 2.0f),
+                    radius = side1 / 2.0f,
+                    tileMode = TileMode.Repeated,
                 ),
-                style = Stroke(15f)
+                style = Stroke(10.dp.toPx())
             )
         }
 
@@ -403,10 +396,18 @@ private fun DrawScope.drawColorCircle(colorItem: SearchResultsPhotoColor) {
 
         SearchResultsPhotoColor.BLACK -> {
             drawCircle(Color(0xFF252930))
+            drawCircle(
+                Color(0xFFFDFDFD),
+                style = Stroke(width = 2.dp.toPx())
+            )
         }
 
         SearchResultsPhotoColor.WHITE -> {
             drawCircle(Color(0xFFFDFDFD))
+            drawCircle(
+                Color(0xFF252930),
+                style = Stroke(width = 2.dp.toPx())
+            )
         }
 
         SearchResultsPhotoColor.YELLOW -> {
