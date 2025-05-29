@@ -1,7 +1,6 @@
 package com.andrii_a.walleria.ui.user_details
 
 import android.content.res.Configuration
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,8 +29,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -53,7 +52,6 @@ import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.getProfileImageUrlOrEmpty
 import com.andrii_a.walleria.ui.util.userFullName
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun UserHeader(
     user: User,
@@ -141,11 +139,11 @@ fun UserHeader(
                     usePlatformDefaultWidth = false
                 )
             ) {
-                val configuration = LocalConfiguration.current
+                val windowInfo = LocalWindowInfo.current
 
                 Surface(
                     shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.size((configuration.screenWidthDp / 2).dp)
+                    modifier = Modifier.size((windowInfo.containerSize.width / 2).dp)
                 ) {
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
@@ -154,7 +152,7 @@ fun UserHeader(
                             .placeholder(placeholderColor.toArgb().toDrawable())
                             .build(),
                         contentDescription = stringResource(id = R.string.user_profile_image),
-                        modifier = Modifier.size((configuration.screenWidthDp / 2).dp)
+                        modifier = Modifier.size((windowInfo.containerSize.width / 2).dp)
                     )
                 }
 
