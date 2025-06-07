@@ -50,7 +50,7 @@ fun PhotosScreen(
     onEvent: (PhotosEvent) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val colors = TopAppBarDefaults.centerAlignedTopAppBarColors()
+    val colors = TopAppBarDefaults.topAppBarColors()
 
     Scaffold(
         topBar = {
