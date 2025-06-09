@@ -4,11 +4,10 @@ import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -23,7 +22,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,13 +38,15 @@ import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.ui.common.CollectionId
 import com.andrii_a.walleria.ui.common.SearchQuery
 import com.andrii_a.walleria.ui.common.components.TagsRow
-import com.andrii_a.walleria.ui.photo_details.components.ExifGrid
-import com.andrii_a.walleria.ui.photo_details.components.LocationRow
+import com.andrii_a.walleria.ui.photo_details.components.PhotoMetadata
 import com.andrii_a.walleria.ui.photo_details.components.RelatedCollectionsRow
 import com.andrii_a.walleria.ui.photo_details.components.StatsRow
+import com.andrii_a.walleria.ui.photo_details.components.UserRow
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
+import com.andrii_a.walleria.ui.util.getProfileImageUrlOrEmpty
 import com.andrii_a.walleria.ui.util.locationString
-import com.andrii_a.walleria.ui.util.openLocationInMaps
+import com.andrii_a.walleria.ui.util.userFullName
+import com.andrii_a.walleria.ui.util.userNickname
 
 @Composable
 fun PhotoInfoBottomSheet(
@@ -55,23 +55,37 @@ fun PhotoInfoBottomSheet(
     navigateToSearch: (SearchQuery) -> Unit,
     navigateToCollectionDetails: (CollectionId) -> Unit
 ) {
-    val context = LocalContext.current
-
     Column(
+        verticalArrangement = Arrangement.spacedBy(12.dp),
         modifier = Modifier
             .padding(contentPadding)
             .verticalScroll(rememberScrollState())
     ) {
-        photo.location?.let { location ->
-            location.locationString?.let { locationString ->
-                LocationRow(
-                    locationString = locationString,
-                    onLocationClick = { context.openLocationInMaps(location.position) },
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
+        UserRow(
+            userProfileImageUrl = photo.user.getProfileImageUrlOrEmpty(),
+            username = photo.userFullName,
+            onUserClick = {
+                navigateToSearch(photo.userNickname)
+            },
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
 
-                Spacer(modifier = Modifier.height(16.dp))
-            }
+        StatsRow(
+            views = photo.views,
+            likes = photo.likes,
+            downloads = photo.downloads,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        photo.tags?.let {
+            TagsRow(
+                tags = it,
+                onTagClicked = { query ->
+                    navigateToSearch(query)
+                },
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp),
+                modifier = Modifier.fillMaxWidth()
+            )
         }
 
         photo.description?.let {
@@ -84,56 +98,29 @@ fun PhotoInfoBottomSheet(
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
                     .fillMaxWidth()
+                    .clickable { isExpanded = !isExpanded }
                     .padding(horizontal = 16.dp)
                     .align(Alignment.CenterHorizontally)
                     .animateContentSize()
-                    .clickable { isExpanded = !isExpanded }
             )
-
-            Spacer(modifier = Modifier.height(16.dp))
         }
 
-        photo.tags?.let {
-            TagsRow(
-                tags = it,
-                onTagClicked = { query ->
-                    navigateToSearch(query)
-                },
-                contentPadding = PaddingValues(start = 16.dp, end = 16.dp),
-                modifier = Modifier.fillMaxWidth()
-            )
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-
-        StatsRow(
-            views = photo.views,
-            likes = photo.likes,
-            downloads = photo.downloads,
+        PhotoMetadata(
+            exif = photo.exif,
+            locationString = photo.location?.locationString,
+            resolution = stringResource(
+                id = R.string.resolution_formatted,
+                photo.width,
+                photo.height
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        photo.exif?.let {
-            ExifGrid(
-                exif = it,
-                resolution = stringResource(
-                    id = R.string.resolution_formatted,
-                    photo.width,
-                    photo.height
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-            )
-        }
-
-        HorizontalDivider(
-            modifier = Modifier.padding(16.dp)
-        )
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
         photo.relatedCollections?.let {
             it.results?.let { collections ->
@@ -145,19 +132,14 @@ fun PhotoInfoBottomSheet(
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
-
                 RelatedCollectionsRow(
                     collections = collections,
                     onCollectionSelected = navigateToCollectionDetails,
                     contentPadding = PaddingValues(start = 16.dp, end = 16.dp)
                 )
-
-                Spacer(modifier = Modifier.height(8.dp))
             }
         }
     }
-
 }
 
 @Preview(uiMode = UI_MODE_NIGHT_NO)

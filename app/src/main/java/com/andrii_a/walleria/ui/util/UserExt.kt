@@ -15,11 +15,11 @@ val User.userFullName: String
         this.lastName
     )
 
-fun User.getProfileImageUrlOrEmpty(quality: UserProfileImageQuality = UserProfileImageQuality.MEDIUM): String =
+fun User?.getProfileImageUrlOrEmpty(quality: UserProfileImageQuality = UserProfileImageQuality.MEDIUM): String =
     when (quality) {
-        UserProfileImageQuality.LOW -> this.profileImage?.small.orEmpty()
-        UserProfileImageQuality.MEDIUM -> this.profileImage?.medium.orEmpty()
-        UserProfileImageQuality.HIGH -> this.profileImage?.large.orEmpty()
+        UserProfileImageQuality.LOW -> this?.profileImage?.small.orEmpty()
+        UserProfileImageQuality.MEDIUM -> this?.profileImage?.medium.orEmpty()
+        UserProfileImageQuality.HIGH -> this?.profileImage?.large.orEmpty()
     }
 
 fun User.getPreviewPhotos(maxPhotos: Int = 3): List<Photo> =

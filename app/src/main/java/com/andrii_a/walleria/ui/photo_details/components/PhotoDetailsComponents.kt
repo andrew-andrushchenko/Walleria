@@ -2,7 +2,6 @@ package com.andrii_a.walleria.ui.photo_details.components
 
 import android.graphics.Bitmap
 import android.text.SpannableStringBuilder
-import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -20,15 +20,13 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material.icons.outlined.FileDownload
-import androidx.compose.material.icons.outlined.LocationOn
-import androidx.compose.material.icons.outlined.RemoveRedEye
+import androidx.compose.material.icons.filled.CloudDownload
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
@@ -74,13 +72,12 @@ fun UserRow(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.Center,
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
             .clickable(onClick = onUserClick)
-            .padding(12.dp)
     ) {
-        val placeholderColor = MaterialTheme.colorScheme.surfaceColorAtElevation(8.dp)
+        val placeholderColor = MaterialTheme.colorScheme.secondary
 
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
@@ -94,41 +91,18 @@ fun UserRow(
                 .clip(CircleShape)
         )
 
+        Spacer(modifier = Modifier.width(8.dp))
+
         Text(
             text = username,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = Color.White
         )
     }
 }
 
 @Composable
-fun LocationRow(
-    locationString: String,
-    onLocationClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .clip(RoundedCornerShape(16.dp))
-            .clickable(onClick = onLocationClick)
-    ) {
-        Icon(imageVector = Icons.Outlined.LocationOn, contentDescription = null)
-
-        Text(
-            text = locationString,
-            style = MaterialTheme.typography.titleMedium,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-    }
-}
-
-@Composable
-fun ExifItem(
+fun MetadataItem(
     title: String,
     text: String,
     modifier: Modifier = Modifier,
@@ -155,8 +129,9 @@ fun ExifItem(
 }
 
 @Composable
-fun ExifGrid(
+fun PhotoMetadata(
     exif: PhotoExif?,
+    locationString: String?,
     resolution: String,
     modifier: Modifier = Modifier
 ) {
@@ -190,6 +165,10 @@ fun ExifGrid(
         Pair(
             stringResource(id = R.string.resolution),
             SpannableStringBuilder(resolution)
+        ),
+        Pair(
+            stringResource(id = R.string.location_hint),
+            locationString?.let { SpannableStringBuilder(it) } ?: unknown
         )
     )
 
@@ -198,10 +177,13 @@ fun ExifGrid(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         userScrollEnabled = false,
-        modifier = modifier.requiredHeight(120.dp)
+        modifier = modifier.requiredHeight(200.dp)
     ) {
         items(gridItems) { (categoryName, categoryValue) ->
-            ExifItem(title = categoryName, text = categoryValue.toString())
+            MetadataItem(
+                title = categoryName,
+                text = categoryValue.toString()
+            )
         }
     }
 }
@@ -209,38 +191,24 @@ fun ExifGrid(
 @Composable
 fun StatsItem(
     imageVector: ImageVector,
-    @StringRes titleRes: Int,
     value: Long,
     modifier: Modifier = Modifier
 ) {
-    Box(modifier = modifier.padding(16.dp)) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                Icon(imageVector = imageVector, contentDescription = null)
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+        modifier = modifier
+    ) {
+        Icon(imageVector = imageVector, contentDescription = null)
 
-                Text(
-                    text = stringResource(id = titleRes),
-                    style = MaterialTheme.typography.titleSmall,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
+        Spacer(modifier = Modifier.width(8.dp))
 
-            Spacer(modifier = Modifier.padding(vertical = 4.dp))
-
-            Text(
-                text = value.abbreviatedNumberString,
-                style = MaterialTheme.typography.titleSmall,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
+        Text(
+            text = value.abbreviatedNumberString,
+            style = MaterialTheme.typography.titleMedium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 
@@ -257,28 +225,22 @@ fun StatsRow(
         modifier = modifier
     ) {
         StatsItem(
-            imageVector = Icons.Outlined.RemoveRedEye,
-            titleRes = R.string.views,
+            imageVector = Icons.Filled.RemoveRedEye,
             value = views,
-            modifier = Modifier.weight(0.33f)
         )
 
-        Spacer(modifier = Modifier.padding(horizontal = 4.dp))
+        Spacer(modifier = Modifier.padding(horizontal = 16.dp))
 
         StatsItem(
-            imageVector = Icons.Outlined.FavoriteBorder,
-            titleRes = R.string.likes,
-            value = likes,
-            modifier = Modifier.weight(0.33f)
+            imageVector = Icons.Filled.Favorite,
+            value = likes
         )
 
-        Spacer(modifier = Modifier.padding(horizontal = 4.dp))
+        Spacer(modifier = Modifier.padding(horizontal = 16.dp))
 
         StatsItem(
-            imageVector = Icons.Outlined.FileDownload,
-            titleRes = R.string.downloads,
-            value = downloads,
-            modifier = Modifier.weight(0.33f)
+            imageVector = Icons.Filled.CloudDownload,
+            value = downloads
         )
     }
 }
@@ -322,7 +284,7 @@ fun RelatedCollectionsItem(
                 modifier = Modifier
                     .size(
                         width = 150.dp,
-                        height = 85.dp
+                        height = 72.dp
                     )
                     .drawWithContent {
                         drawContent()
@@ -336,7 +298,7 @@ fun RelatedCollectionsItem(
                 modifier = Modifier
                     .size(
                         width = 150.dp,
-                        height = 85.dp
+                        height = 72.dp
                     )
                     .padding(horizontal = 8.dp)
             ) {

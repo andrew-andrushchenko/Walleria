@@ -1,13 +1,8 @@
 package com.andrii_a.walleria.ui.photo_details
 
-import android.app.Activity
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
-import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -24,31 +19,6 @@ fun NavGraphBuilder.photoDetailsRoute(navController: NavController) {
         val viewModel: PhotoDetailsViewModel = koinViewModel()
 
         val state by viewModel.state.collectAsStateWithLifecycle()
-
-        val shouldUseDarkIcons = !isSystemInDarkTheme()
-        val view = LocalView.current
-
-        DisposableEffect(key1 = state) {
-            when {
-                state.isLoading || state.error != null -> Unit
-                else -> {
-                    val window = (view.context as Activity).window
-                    WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars =
-                        false
-                }
-            }
-
-            onDispose {
-                when {
-                    state.isLoading || state.error != null -> Unit
-                    else -> {
-                        val window = (view.context as Activity).window
-                        WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars =
-                            shouldUseDarkIcons
-                    }
-                }
-            }
-        }
 
         val collectResult = navController.currentBackStackEntry
             ?.savedStateHandle
