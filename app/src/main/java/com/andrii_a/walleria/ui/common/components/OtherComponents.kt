@@ -22,14 +22,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -43,6 +44,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toDrawable
@@ -129,6 +132,7 @@ fun TagsRow(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DisplayOptions(
     modifier: Modifier = Modifier,
@@ -136,25 +140,31 @@ fun DisplayOptions(
     selectedOption: Int,
     onOptionSelected: (Int) -> Unit
 ) {
-    SingleChoiceSegmentedButtonRow(modifier = modifier) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+        modifier = modifier
+    ) {
         optionsStringRes.forEachIndexed { index, optionStringRes ->
-            SegmentedButton(
-                selected = index == selectedOption,
-                onClick = {
+            ToggleButton(
+                checked = index == selectedOption,
+                onCheckedChange = {
                     onOptionSelected(index)
                 },
-                shape = SegmentedButtonDefaults.itemShape(
-                    index = index,
-                    count = optionsStringRes.size
-                ),
-                label = {
-                    Text(
-                        text = stringResource(id = optionStringRes),
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1
-                    )
-                }
-            )
+                modifier = Modifier.weight(1f).semantics { role = Role.RadioButton },
+                colors = ToggleButtonDefaults.tonalToggleButtonColors(),
+                shapes =
+                    when (index) {
+                        0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                        optionsStringRes.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                        else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                    }
+            ) {
+                Text(
+                    text = stringResource(id = optionStringRes),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
     }
 }
