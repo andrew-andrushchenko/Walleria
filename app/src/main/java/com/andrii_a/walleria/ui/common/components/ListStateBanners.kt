@@ -1,13 +1,11 @@
 package com.andrii_a.walleria.ui.common.components
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -36,21 +34,6 @@ import com.airbnb.lottie.compose.rememberLottieDynamicProperties
 import com.airbnb.lottie.compose.rememberLottieDynamicProperty
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
-
-@Composable
-fun LoadingListItem(modifier: Modifier = Modifier) {
-    Box(contentAlignment = Alignment.TopCenter) {
-        val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.loading_list_item_animation))
-
-        LottieAnimation(
-            composition = composition,
-            iterations = Int.MAX_VALUE,
-            modifier = modifier
-                .requiredSize(64.dp)
-                .scale(2f, 2f)
-        )
-    }
-}
 
 @Composable
 fun ErrorBanner(

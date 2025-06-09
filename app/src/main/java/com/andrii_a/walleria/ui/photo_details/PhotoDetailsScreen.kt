@@ -81,7 +81,7 @@ import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.ui.common.UiErrorWithRetry
 import com.andrii_a.walleria.ui.common.UiText
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
-import com.andrii_a.walleria.ui.common.components.LoadingListItem
+import com.andrii_a.walleria.ui.common.components.WLoadingIndicator
 import com.andrii_a.walleria.ui.photo_details.components.OverZoomConfig
 import com.andrii_a.walleria.ui.photo_details.components.UserRow
 import com.andrii_a.walleria.ui.photo_details.components.Zoomable
@@ -192,12 +192,7 @@ private fun SuccessStateContent(
                 when (state.value) {
                     is AsyncImagePainter.State.Empty -> Unit
                     is AsyncImagePainter.State.Loading -> {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            LoadingListItem()
-                        }
+                        WLoadingIndicator(modifier = Modifier.fillMaxSize())
                     }
 
                     is AsyncImagePainter.State.Error -> {
@@ -388,7 +383,7 @@ private fun LoadingStateContent(onNavigateBack: () -> Unit) {
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            LoadingListItem()
+            WLoadingIndicator()
         }
     }
 }

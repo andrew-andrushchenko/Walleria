@@ -109,7 +109,7 @@ fun PhotosStaggeredGrid(
 
                 is LoadState.Loading -> {
                     item(span = StaggeredGridItemSpan.FullLine) {
-                        LoadingListItem(modifier = Modifier.fillMaxWidth())
+                        WLoadingIndicator(modifier = Modifier.fillMaxWidth())
                     }
                 }
 
@@ -134,7 +134,7 @@ fun PhotosStaggeredGrid(
         }
 
         if (lazyPhotoItems.loadState.refresh is LoadState.Loading) {
-            LoadingListItem(modifier = Modifier.fillMaxSize())
+            WLoadingIndicator(modifier = Modifier.fillMaxSize())
         }
 
         val shouldShowEmptyContent = lazyPhotoItems.loadState.refresh is LoadState.NotLoading

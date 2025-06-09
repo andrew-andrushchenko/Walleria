@@ -27,7 +27,9 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonDefaults
@@ -47,6 +49,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toDrawable
 import coil3.compose.AsyncImage
@@ -56,6 +59,7 @@ import coil3.request.placeholder
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.models.common.Tag
 import com.andrii_a.walleria.domain.models.user.User
+import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.abbreviatedNumberString
 import com.andrii_a.walleria.ui.util.userFullName
 import kotlinx.coroutines.launch
@@ -106,6 +110,16 @@ fun ScrollToTopLayout(
                 Text(text = stringResource(id = R.string.to_top))
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun WLoadingIndicator(modifier: Modifier = Modifier) {
+    Box(modifier = modifier) {
+        LoadingIndicator(
+            modifier = Modifier.align(Alignment.Center)
+        )
     }
 }
 
@@ -236,5 +250,15 @@ fun UserRowWithPhotoCount(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
+    }
+}
+
+@Preview
+@Composable
+private fun LoadingListBannerPreview() {
+    WalleriaTheme {
+        Surface {
+            WLoadingIndicator(modifier = Modifier.fillMaxWidth())
+        }
     }
 }

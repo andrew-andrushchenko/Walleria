@@ -37,7 +37,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.ui.common.UiErrorWithRetry
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
-import com.andrii_a.walleria.ui.common.components.LoadingListItem
+import com.andrii_a.walleria.ui.common.components.WLoadingIndicator
 import com.andrii_a.walleria.ui.common.components.PhotosGridContent
 import kotlinx.coroutines.launch
 
@@ -96,7 +96,7 @@ private fun LoadingStateContent(onNavigateBack: () -> Unit) {
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            LoadingListItem()
+            WLoadingIndicator()
         }
     }
 }

@@ -98,7 +98,7 @@ fun UsersStaggeredGrid(
 
                 is LoadState.Loading -> {
                     item(span = StaggeredGridItemSpan.FullLine) {
-                        LoadingListItem(modifier = Modifier.fillMaxWidth())
+                        WLoadingIndicator(modifier = Modifier.fillMaxWidth())
                     }
                 }
 
@@ -123,7 +123,7 @@ fun UsersStaggeredGrid(
         }
 
         if (lazyUserItems.loadState.refresh is LoadState.Loading) {
-            LoadingListItem(modifier = Modifier.fillMaxSize())
+            WLoadingIndicator(modifier = Modifier.fillMaxSize())
         }
 
         val shouldShowEmptyContent = lazyUserItems.loadState.refresh is LoadState.NotLoading

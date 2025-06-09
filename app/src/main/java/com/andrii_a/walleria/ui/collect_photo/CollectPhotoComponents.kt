@@ -78,7 +78,7 @@ import com.andrii_a.walleria.ui.common.components.CheckBoxRow
 import com.andrii_a.walleria.ui.common.components.EmptyContentBanner
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
 import com.andrii_a.walleria.ui.common.components.ErrorItem
-import com.andrii_a.walleria.ui.common.components.LoadingListItem
+import com.andrii_a.walleria.ui.common.components.WLoadingIndicator
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.BlurHashDecoder
 import com.andrii_a.walleria.ui.util.abbreviatedNumberString
@@ -139,7 +139,7 @@ fun UserCollectionsList(
 
                 is LoadState.Loading -> {
                     item(span = StaggeredGridItemSpan.FullLine) {
-                        LoadingListItem(modifier = Modifier.fillMaxWidth())
+                        WLoadingIndicator(modifier = Modifier.fillMaxWidth())
                     }
                 }
 
@@ -164,7 +164,7 @@ fun UserCollectionsList(
         }
 
         if (lazyCollectionItems.loadState.refresh is LoadState.Loading) {
-            LoadingListItem(modifier = Modifier.fillMaxSize())
+            WLoadingIndicator(modifier = Modifier.fillMaxSize())
         }
 
         val shouldShowEmptyContent = lazyCollectionItems.loadState.refresh is LoadState.NotLoading
@@ -392,7 +392,7 @@ fun CreateCollectionProgressDialog() {
     BasicAlertDialog(
         onDismissRequest = {},
         content = {
-            LoadingListItem(
+            WLoadingIndicator(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)

@@ -56,7 +56,7 @@ import com.andrii_a.walleria.domain.models.user.UserSocialMediaLinks
 import com.andrii_a.walleria.ui.common.UiErrorWithRetry
 import com.andrii_a.walleria.ui.common.components.CollectionsGridContent
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
-import com.andrii_a.walleria.ui.common.components.LoadingListItem
+import com.andrii_a.walleria.ui.common.components.WLoadingIndicator
 import com.andrii_a.walleria.ui.common.components.PhotosGridContent
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.common.components.NestedScrollLayout
@@ -118,7 +118,7 @@ private fun LoadingStateContent(onNavigateBack: () -> Unit) {
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            LoadingListItem()
+            WLoadingIndicator()
         }
     }
 }

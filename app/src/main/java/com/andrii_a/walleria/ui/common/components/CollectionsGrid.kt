@@ -108,7 +108,7 @@ fun CollectionsStaggeredGrid(
 
                 is LoadState.Loading -> {
                     item(span = StaggeredGridItemSpan.FullLine) {
-                        LoadingListItem(modifier = Modifier.fillMaxWidth())
+                        WLoadingIndicator(modifier = Modifier.fillMaxWidth())
                     }
                 }
 
@@ -133,7 +133,7 @@ fun CollectionsStaggeredGrid(
         }
 
         if (lazyCollectionItems.loadState.refresh is LoadState.Loading) {
-            LoadingListItem(modifier = Modifier.fillMaxSize())
+            WLoadingIndicator(modifier = Modifier.fillMaxSize())
         }
 
         val shouldShowEmptyContent = lazyCollectionItems.loadState.refresh is LoadState.NotLoading

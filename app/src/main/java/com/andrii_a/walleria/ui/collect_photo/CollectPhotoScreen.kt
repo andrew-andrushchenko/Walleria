@@ -41,7 +41,7 @@ import com.andrii_a.walleria.ui.collect_photo.event.CollectPhotoEvent
 import com.andrii_a.walleria.ui.collect_photo.state.CollectActionState
 import com.andrii_a.walleria.ui.collect_photo.state.CollectPhotoUiState
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
-import com.andrii_a.walleria.ui.common.components.LoadingListItem
+import com.andrii_a.walleria.ui.common.components.WLoadingIndicator
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.toast
 import kotlinx.coroutines.launch
@@ -230,7 +230,7 @@ private fun LoadingStateContent(onNavigateBack: () -> Unit) {
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            LoadingListItem()
+            WLoadingIndicator()
         }
     }
 }

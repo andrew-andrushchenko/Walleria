@@ -28,7 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import com.andrii_a.walleria.R
-import com.andrii_a.walleria.ui.common.components.LoadingListItem
+import com.andrii_a.walleria.ui.common.components.WLoadingIndicator
 import com.andrii_a.walleria.ui.theme.WalleriaLogoTextStyle
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 
@@ -107,7 +107,7 @@ fun LoginScreen(
                 AnimatedVisibility(visible = state.isLoading) {
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    LoadingListItem()
+                    WLoadingIndicator()
                 }
             }
         }

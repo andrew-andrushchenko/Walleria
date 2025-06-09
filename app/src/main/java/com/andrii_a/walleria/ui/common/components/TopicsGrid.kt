@@ -117,7 +117,7 @@ fun TopicsStaggeredGrid(
 
                 is LoadState.Loading -> {
                     item(span = StaggeredGridItemSpan.FullLine) {
-                        LoadingListItem(modifier = Modifier.fillMaxWidth())
+                        WLoadingIndicator(modifier = Modifier.fillMaxWidth())
                     }
                 }
 
@@ -142,7 +142,7 @@ fun TopicsStaggeredGrid(
         }
 
         if (lazyTopicItems.loadState.refresh is LoadState.Loading) {
-            LoadingListItem(modifier = Modifier.fillMaxSize())
+            WLoadingIndicator(modifier = Modifier.fillMaxSize())
         }
 
         val shouldShowEmptyContent = lazyTopicItems.loadState.refresh is LoadState.NotLoading
