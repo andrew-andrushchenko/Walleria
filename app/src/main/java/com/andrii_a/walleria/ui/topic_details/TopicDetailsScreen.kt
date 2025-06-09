@@ -4,20 +4,21 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.FilterList
-import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -32,13 +33,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
+import com.andrii_a.walleria.domain.TopicStatus
+import com.andrii_a.walleria.domain.models.topic.Topic
+import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.ui.common.UiErrorWithRetry
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
-import com.andrii_a.walleria.ui.common.components.WLoadingIndicator
 import com.andrii_a.walleria.ui.common.components.PhotosGridContent
+import com.andrii_a.walleria.ui.common.components.WLoadingIndicator
+import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import kotlinx.coroutines.launch
 
 @Composable
@@ -80,7 +87,10 @@ private fun LoadingStateContent(onNavigateBack: () -> Unit) {
             CenterAlignedTopAppBar(
                 title = {},
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
+                    FilledTonalIconButton(
+                        onClick = onNavigateBack,
+                        modifier = Modifier.padding(start = 8.dp)
+                    ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
                             contentDescription = stringResource(id = R.string.navigate_back),
@@ -112,7 +122,10 @@ private fun ErrorStateContent(
             CenterAlignedTopAppBar(
                 title = {},
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
+                    FilledTonalIconButton(
+                        onClick = onNavigateBack,
+                        modifier = Modifier.padding(start = 8.dp)
+                    ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
                             contentDescription = stringResource(id = R.string.navigate_back),
@@ -156,34 +169,28 @@ private fun SuccessStateContent(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { onEvent(TopicDetailsEvent.GoBack) }) {
+                    FilledTonalIconButton(
+                        onClick = { onEvent(TopicDetailsEvent.GoBack) },
+                        modifier = Modifier.padding(start = 8.dp)
+                    ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
                             contentDescription = stringResource(id = R.string.navigate_back)
                         )
                     }
                 },
-                actions = {
-                    IconButton(onClick = { onEvent(TopicDetailsEvent.OpenFilterDialog) }) {
-                        Icon(
-                            imageVector = Icons.Outlined.FilterList,
-                            contentDescription = stringResource(id = R.string.filter)
-                        )
-                    }
-
-                    IconButton(
-                        onClick = {
-                            onEvent(TopicDetailsEvent.OpenInBrowser(topic.links?.html))
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.OpenInBrowser,
-                            contentDescription = stringResource(id = R.string.open_in_browser)
-                        )
-                    }
-                },
                 scrollBehavior = scrollBehavior
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { onEvent(TopicDetailsEvent.OpenFilterDialog) },
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.FilterList,
+                    contentDescription = stringResource(id = R.string.filter)
+                )
+            }
         },
         contentWindowInsets = WindowInsets.safeDrawing,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
@@ -198,19 +205,18 @@ private fun SuccessStateContent(
                     topic = topic,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 24.dp, vertical = 16.dp)
+                        .padding(8.dp)
                 )
             },
             contentPadding = PaddingValues(
-                top = 16.dp,
-                start = 16.dp,
-                end = 16.dp,
-                bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding(),
+                top = innerPadding.calculateTopPadding(),
+                bottom = innerPadding.calculateBottomPadding() + 150.dp,
+                start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+                end = innerPadding.calculateEndPadding(LayoutDirection.Ltr)
             ),
             scrollToTopButtonPadding = PaddingValues(
                 bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-            ),
-            modifier = Modifier.padding(innerPadding)
+            )
         )
 
         val scope = rememberCoroutineScope()
@@ -237,5 +243,53 @@ private fun SuccessStateContent(
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun TopicDetailsScreenPreview() {
+    WalleriaTheme {
+        val user = User(
+            id = "",
+            username = "ABC",
+            firstName = "John",
+            lastName = "Smith",
+            bio = "",
+            location = "",
+            totalLikes = 100,
+            totalPhotos = 100,
+            totalCollections = 100,
+            followersCount = 100_000,
+            followingCount = 56,
+            downloads = 99_000,
+            profileImage = null,
+            social = null,
+            tags = null,
+            photos = null
+        )
+
+        val topic = Topic(
+            id = "",
+            title = "Wallpapers",
+            description = "Lorem ipsum dolor sit amet".repeat(10),
+            featured = false,
+            startsAt = "",
+            endsAt = "",
+            updatedAt = "",
+            totalPhotos = 856_000,
+            links = null,
+            status = TopicStatus.OPEN,
+            owners = listOf(user),
+            coverPhoto = null,
+            previewPhotos = null
+        )
+
+        val state = TopicDetailsUiState(topic = topic)
+
+        TopicDetailsScreen(
+            state = state,
+            onEvent = {}
+        )
     }
 }
