@@ -145,7 +145,7 @@
 
     <!-- Collect photo-->
     <string name="select_collections">Select collections</string>
-    <string name="create_new_and_add">Create new and add</string>
+    <string name="create_new_and_add">Create collection</string>
     <string name="action_done">Done</string>
     <string name="action_cancel">Cancel</string>
     <string name="collection_name_hint">Name</string>

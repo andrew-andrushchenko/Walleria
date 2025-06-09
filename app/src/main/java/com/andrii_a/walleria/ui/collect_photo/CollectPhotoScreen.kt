@@ -2,6 +2,7 @@ package com.andrii_a.walleria.ui.collect_photo
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,11 +10,15 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.outlined.CreateNewFolder
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
@@ -86,7 +91,7 @@ fun CollectPhotoScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun SuccessStateContent(
     state: CollectPhotoUiState,
@@ -100,23 +105,32 @@ private fun SuccessStateContent(
             CenterAlignedTopAppBar(
                 title = { Text(text = stringResource(id = R.string.select_collections)) },
                 navigationIcon = {
-                    IconButton(onClick = { onEvent(CollectPhotoEvent.GoBack) }) {
+                    FilledTonalIconButton(
+                        onClick = { onEvent(CollectPhotoEvent.GoBack) },
+                        modifier = Modifier.padding(start = 8.dp)
+                    ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
                             contentDescription = stringResource(id = R.string.navigate_back),
                         )
                     }
                 },
-                actions = {
-                    IconButton(onClick = { onEvent(CollectPhotoEvent.OpenCreateAndCollectDialog) }) {
-                        Icon(
-                            imageVector = Icons.Outlined.CreateNewFolder,
-                            contentDescription = stringResource(id = R.string.create_new_and_add),
-                        )
-                    }
-                },
                 scrollBehavior = scrollBehavior,
             )
+        },
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                onClick = { onEvent(CollectPhotoEvent.OpenCreateAndCollectDialog) },
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Create,
+                    contentDescription = stringResource(id = R.string.create_new_and_add),
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Text(text = stringResource(id = R.string.create_new_and_add))
+            }
         },
         contentWindowInsets = WindowInsets.safeDrawing,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
