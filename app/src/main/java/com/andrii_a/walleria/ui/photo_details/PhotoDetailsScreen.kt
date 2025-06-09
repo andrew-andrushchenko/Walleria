@@ -18,8 +18,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -36,6 +34,7 @@ import androidx.compose.material.icons.outlined.ZoomOutMap
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.HorizontalFloatingToolbar
@@ -161,88 +160,83 @@ private fun SuccessStateContent(
                 )
             }
         },
-        bottomBar = {
-            Box(modifier = Modifier.fillMaxWidth()) {
-                AnimatedVisibility(
-                    visible = state.showControls,
-                    enter = fadeIn(),
-                    exit = fadeOut(),
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .graphicsLayer {
-                            alpha = 1 - zoomableState.dismissDragProgress
+        floatingActionButton = {
+            AnimatedVisibility(
+                visible = state.showControls,
+                enter = fadeIn(),
+                exit = fadeOut(),
+                modifier = Modifier
+                    .graphicsLayer {
+                        alpha = 1 - zoomableState.dismissDragProgress
+                    }
+            ) {
+                PhotoActionsToolbar(
+                    isLikedByLoggedInUser = state.isLikedByLoggedInUser,
+                    isPhotoCollected = state.isCollected,
+                    zoomIcon = if (zoomableState.scale == 1f) Icons.Outlined.ZoomOutMap else Icons.Outlined.ZoomInMap,
+                    onNavigateToCollectPhoto = {
+                        if (state.isUserLoggedIn) {
+                            onEvent(PhotoDetailsEvent.SelectCollectOption(photo.id))
+                        } else {
+                            context.toast(stringRes = R.string.login_to_collect_photo)
+                            onEvent(PhotoDetailsEvent.RedirectToLogin)
                         }
-                ) {
-                    PhotoActionsToolbar(
-                        isLikedByLoggedInUser = state.isLikedByLoggedInUser,
-                        isPhotoCollected = state.isCollected,
-                        zoomIcon = if (zoomableState.scale == 1f) Icons.Outlined.ZoomOutMap else Icons.Outlined.ZoomInMap,
-                        onNavigateToCollectPhoto = {
-                            if (state.isUserLoggedIn) {
-                                onEvent(PhotoDetailsEvent.SelectCollectOption(photo.id))
+                    },
+                    onLikeButtonClick = {
+                        if (state.isUserLoggedIn) {
+                            if (state.isLikedByLoggedInUser) {
+                                onEvent(PhotoDetailsEvent.DislikePhoto(photo.id))
                             } else {
-                                context.toast(stringRes = R.string.login_to_collect_photo)
-                                onEvent(PhotoDetailsEvent.RedirectToLogin)
+                                onEvent(PhotoDetailsEvent.LikePhoto(photo.id))
                             }
-                        },
-                        onLikeButtonClick = {
-                            if (state.isUserLoggedIn) {
-                                if (state.isLikedByLoggedInUser) {
-                                    onEvent(PhotoDetailsEvent.DislikePhoto(photo.id))
-                                } else {
-                                    onEvent(PhotoDetailsEvent.LikePhoto(photo.id))
-                                }
+                        } else {
+                            context.toast(stringRes = R.string.login_to_like_photo)
+                            onEvent(PhotoDetailsEvent.RedirectToLogin)
+                        }
+                    },
+                    onInfoButtonClick = { onEvent(PhotoDetailsEvent.ShowInfoDialog) },
+                    onShareButtonClick = {
+                        onEvent(
+                            PhotoDetailsEvent.SharePhoto(
+                                link = photo.links?.html,
+                                description = photo.description
+                            )
+                        )
+                    },
+                    onDownloadButtonClick = {
+                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                            if (ContextCompat.checkSelfPermission(
+                                    context,
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                                ) == PackageManager.PERMISSION_GRANTED
+                            ) {
+                                context.toast(context.getString(R.string.download_started))
+                                onEvent(PhotoDetailsEvent.DownloadPhoto(photo))
                             } else {
-                                context.toast(stringRes = R.string.login_to_like_photo)
-                                onEvent(PhotoDetailsEvent.RedirectToLogin)
+                                launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                             }
-                        },
-                        onInfoButtonClick = { onEvent(PhotoDetailsEvent.ShowInfoDialog) },
-                        onShareButtonClick = {
+                        } else {
+                            context.toast(context.getString(R.string.download_started))
                             onEvent(
-                                PhotoDetailsEvent.SharePhoto(
-                                    link = photo.links?.html,
-                                    description = photo.description
+                                PhotoDetailsEvent.DownloadPhoto(
+                                    photo = photo,
+                                    quality = state.photoDownloadQuality
                                 )
                             )
-                        },
-                        onDownloadButtonClick = {
-                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-                                if (ContextCompat.checkSelfPermission(
-                                        context,
-                                        Manifest.permission.WRITE_EXTERNAL_STORAGE
-                                    ) == PackageManager.PERMISSION_GRANTED
-                                ) {
-                                    context.toast(context.getString(R.string.download_started))
-                                    onEvent(PhotoDetailsEvent.DownloadPhoto(photo))
-                                } else {
-                                    launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                }
-                            } else {
-                                context.toast(context.getString(R.string.download_started))
-                                onEvent(
-                                    PhotoDetailsEvent.DownloadPhoto(
-                                        photo = photo,
-                                        quality = state.photoDownloadQuality
-                                    )
-                                )
-                            }
-                        },
-                        onZoomToFillClick = {
-                            scope.launch {
-                                zoomableState.animateScaleTo(
-                                    if (zoomableState.scale >= state.zoomToFillCoefficient) 1f
-                                    else state.zoomToFillCoefficient
-                                )
-                            }
-                        },
-                        modifier = Modifier
-                        .navigationBarsPadding()
-                        .padding(16.dp)
-                    )
-                }
+                        }
+                    },
+                    onZoomToFillClick = {
+                        scope.launch {
+                            zoomableState.animateScaleTo(
+                                if (zoomableState.scale >= state.zoomToFillCoefficient) 1f
+                                else state.zoomToFillCoefficient
+                            )
+                        }
+                    }
+                )
             }
-        }
+        },
+        floatingActionButtonPosition = FabPosition.Center,
     ) { innerPadding ->
         BoxWithConstraints(modifier = modifier.consumeWindowInsets(innerPadding)) {
             val constraints = this
