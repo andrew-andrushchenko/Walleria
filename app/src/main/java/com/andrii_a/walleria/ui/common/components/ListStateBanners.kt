@@ -1,11 +1,13 @@
 package com.andrii_a.walleria.ui.common.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -13,25 +15,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.core.graphics.BlendModeColorFilterCompat
-import androidx.core.graphics.BlendModeCompat
-import com.airbnb.lottie.LottieProperty
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.rememberLottieComposition
-import com.airbnb.lottie.compose.rememberLottieDynamicProperties
-import com.airbnb.lottie.compose.rememberLottieDynamicProperty
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 
@@ -46,26 +42,14 @@ fun ErrorBanner(
         verticalArrangement = Arrangement.Center,
         modifier = modifier
     ) {
-        val dynamicProperties = rememberLottieDynamicProperties(
-            rememberLottieDynamicProperty(
-                property = LottieProperty.COLOR_FILTER,
-                value = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
-                    MaterialTheme.colorScheme.primary.hashCode(),
-                    BlendModeCompat.OVERLAY
-                ),
-                keyPath = arrayOf("**")
-            )
-        )
-
-        val composition by rememberLottieComposition(
-            spec = LottieCompositionSpec.RawRes(R.raw.error_state_anim)
-        )
-
-        LottieAnimation(
-            composition = composition,
-            dynamicProperties = dynamicProperties,
-            iterations = 1,
-            modifier = Modifier
+        Image(
+            imageVector = ImageVector.vectorResource(id = R.drawable.connection),
+            contentDescription = "",
+            colorFilter = ColorFilter.lighting(
+                multiply = Color.Gray,
+                add = MaterialTheme.colorScheme.secondary
+            ),
+            modifier = Modifier.size(150.dp)
         )
 
         Text(
@@ -144,29 +128,17 @@ fun EmptyContentBanner(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
-        val dynamicProperties = rememberLottieDynamicProperties(
-            rememberLottieDynamicProperty(
-                property = LottieProperty.COLOR_FILTER,
-                value = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
-                    MaterialTheme.colorScheme.primary.hashCode(),
-                    BlendModeCompat.OVERLAY
-                ),
-                keyPath = arrayOf("**")
-            )
+        Image(
+            imageVector = ImageVector.vectorResource(id = R.drawable.empty_content),
+            contentDescription = "",
+            colorFilter = ColorFilter.lighting(
+                multiply = Color.Gray,
+                add = MaterialTheme.colorScheme.secondary
+            ),
+            modifier = Modifier.size(150.dp)
         )
 
-        val composition by rememberLottieComposition(
-            spec = LottieCompositionSpec.RawRes(R.raw.empty_state_anim)
-        )
-
-        LottieAnimation(
-            composition = composition,
-            dynamicProperties = dynamicProperties,
-            iterations = 1,
-            modifier = Modifier.scale(1.5f)
-        )
-
-        Spacer(modifier = Modifier.height(48.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         Text(
             text = message,

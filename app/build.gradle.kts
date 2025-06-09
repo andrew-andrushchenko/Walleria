@@ -119,9 +119,6 @@ dependencies {
     implementation(libs.androidx.constraintlayout.compose)
 
     // Coil + compose
-    //implementation(libs.coil)
-    //implementation(libs.coil.compose)
-    //implementation(libs.coil.network)
     implementation(libs.coil)
     implementation(libs.coil.compose.core)
     implementation(libs.coil.compose)
@@ -144,7 +141,7 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
 
     // Lottie
-    implementation(libs.lottie.compose)
+    //implementation(libs.lottie.compose)
 
     // DataStore
     implementation(libs.androidx.datastore.preferences)
