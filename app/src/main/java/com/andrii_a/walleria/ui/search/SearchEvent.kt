@@ -1,6 +1,6 @@
 package com.andrii_a.walleria.ui.search
 
-import com.andrii_a.walleria.domain.models.search.RecentSearchItem
+import com.andrii_a.walleria.domain.models.search.SearchHistoryItem
 import com.andrii_a.walleria.ui.common.CollectionId
 import com.andrii_a.walleria.ui.common.PhotoId
 import com.andrii_a.walleria.ui.common.SearchQuery
@@ -13,7 +13,7 @@ sealed interface SearchEvent {
 
     data class ChangePhotoFilters(val photoFilters: PhotoFilters) : SearchEvent
 
-    data class DeleteRecentSearchItem(val item: RecentSearchItem) : SearchEvent
+    data class DeleteRecentSearchItem(val item: SearchHistoryItem) : SearchEvent
 
     data object DeleteAllRecentSearches : SearchEvent
 
@@ -28,6 +28,4 @@ sealed interface SearchEvent {
     data object OpenFilterDialog : SearchEvent
 
     data object DismissFilterDialog : SearchEvent
-
-    data class ToggleSearchBox(val isExpanded: Boolean) : SearchEvent
 }

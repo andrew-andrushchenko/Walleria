@@ -5,7 +5,7 @@ import androidx.paging.PagingData
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.models.collection.Collection
 import com.andrii_a.walleria.domain.models.photo.Photo
-import com.andrii_a.walleria.domain.models.search.RecentSearchItem
+import com.andrii_a.walleria.domain.models.search.SearchHistoryItem
 import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.ui.common.SearchQuery
 import com.andrii_a.walleria.ui.util.emptyPagingData
@@ -18,12 +18,11 @@ import kotlinx.coroutines.flow.update
 data class SearchUiState(
     val query: SearchQuery = "",
     val photoFilters: PhotoFilters = PhotoFilters(),
-    val recentSearches: List<RecentSearchItem> = emptyList(),
+    val searchHistory: List<SearchHistoryItem> = emptyList(),
     private val photosPagingData: PagingData<Photo> = emptyPagingData(),
     private val collectionsPagingData: PagingData<Collection> = emptyPagingData(),
     private val usersPagingData: PagingData<User> = emptyPagingData(),
     val isFilterDialogOpened: Boolean = false,
-    val isSearchBoxExpanded: Boolean = false,
     val photosLoadQuality: PhotoQuality = PhotoQuality.MEDIUM,
 ) {
     private val _photos: MutableStateFlow<PagingData<Photo>> = MutableStateFlow(emptyPagingData())

@@ -73,7 +73,8 @@
     <string name="filter_color_teal">Teal</string>
     <string name="filter_color_blue">Blue</string>
     <string name="order">Order</string>
-    <string name="recent_searches">Recent searches:</string>
+    <string name="search_history">Search history:</string>
+    <string name="search_history_empty_text">Your search history will appear here</string>
     <string name="clear_recent_searches">Clear all</string>
 
     <!--Login-->

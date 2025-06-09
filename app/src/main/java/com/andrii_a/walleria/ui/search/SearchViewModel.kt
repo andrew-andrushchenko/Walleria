@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import androidx.paging.cachedIn
-import com.andrii_a.walleria.domain.models.search.RecentSearchItem
+import com.andrii_a.walleria.domain.models.search.SearchHistoryItem
 import com.andrii_a.walleria.domain.repository.LocalPreferencesRepository
-import com.andrii_a.walleria.domain.repository.RecentSearchesRepository
+import com.andrii_a.walleria.domain.repository.SearchHistoryRepository
 import com.andrii_a.walleria.domain.repository.SearchRepository
 import com.andrii_a.walleria.ui.navigation.Screen
 import kotlinx.coroutines.NonCancellable
@@ -24,19 +24,19 @@ import kotlinx.coroutines.withContext
 
 class SearchViewModel(
     private val searchRepository: SearchRepository,
-    private val recentSearchesRepository: RecentSearchesRepository,
+    private val searchHistoryRepository: SearchHistoryRepository,
     localPreferencesRepository: LocalPreferencesRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val _state: MutableStateFlow<SearchUiState> = MutableStateFlow(SearchUiState())
     val state = combine(
-        recentSearchesRepository.getAllRecentSearches(),
+        searchHistoryRepository.getSearchHistory(),
         localPreferencesRepository.photosLoadQuality,
         _state
     ) { recentSearches, photosLoadQuality, state ->
         state.copy(
-            recentSearches = recentSearches,
+            searchHistory = recentSearches,
             photosLoadQuality = photosLoadQuality
         )
     }.stateIn(
@@ -114,12 +114,6 @@ class SearchViewModel(
                     navigationChannel.send(SearchNavigationEvent.NavigateBack)
                 }
             }
-
-            is SearchEvent.ToggleSearchBox -> {
-                _state.update {
-                    it.copy(isSearchBoxExpanded = event.isExpanded)
-                }
-            }
         }
     }
 
@@ -159,27 +153,27 @@ class SearchViewModel(
     private fun saveRecentQuery(query: String) {
         viewModelScope.launch {
             withContext(NonCancellable) {
-                val itemToModify = recentSearchesRepository.getRecentSearchByTitle(title = query)
+                val itemToModify = searchHistoryRepository.getSearchHistoryItemByTitle(title = query)
                 itemToModify?.let {
-                    recentSearchesRepository.updateItem(
+                    searchHistoryRepository.updateItem(
                         it.copy(timeMillis = System.currentTimeMillis())
                     )
                 } ?: run {
-                    val newRecentSearchItem = RecentSearchItem(
+                    val newSearchHistoryItem = SearchHistoryItem(
                         title = query,
                         timeMillis = System.currentTimeMillis()
                     )
 
-                    recentSearchesRepository.insertItem(newRecentSearchItem)
+                    searchHistoryRepository.insertItem(newSearchHistoryItem)
                 }
             }
         }
     }
 
-    private fun deleteRecentSearch(item: RecentSearchItem) {
+    private fun deleteRecentSearch(item: SearchHistoryItem) {
         viewModelScope.launch {
             withContext(NonCancellable) {
-                recentSearchesRepository.deleteItem(item)
+                searchHistoryRepository.deleteItem(item)
             }
         }
     }
@@ -187,7 +181,7 @@ class SearchViewModel(
     private fun deleteAllRecentSearches() {
         viewModelScope.launch {
             withContext(NonCancellable) {
-                recentSearchesRepository.deleteAllItems()
+                searchHistoryRepository.deleteAllItems()
             }
         }
     }

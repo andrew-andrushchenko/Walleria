@@ -2,10 +2,10 @@ package com.andrii_a.walleria.data.local.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.andrii_a.walleria.data.local.db.dao.RecentSearchesDao
-import com.andrii_a.walleria.data.local.db.entities.RecentSearchItemEntity
+import com.andrii_a.walleria.data.local.db.dao.SearchHistoryDao
+import com.andrii_a.walleria.data.local.db.entities.SearchHistoryEntity
 
-@Database(entities = [RecentSearchItemEntity::class], version = 1)
+@Database(entities = [SearchHistoryEntity::class], version = 1)
 abstract class WalleriaDatabase : RoomDatabase() {
-    abstract fun recentSearchesDao(): RecentSearchesDao
+    abstract fun searchHistoryDao(): SearchHistoryDao
 }

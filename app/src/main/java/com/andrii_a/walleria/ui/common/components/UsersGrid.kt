@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
@@ -30,6 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -84,11 +87,7 @@ fun UsersStaggeredGrid(
                         DefaultUserItem(
                             user = it,
                             onUserClick = onUserClick,
-                            modifier = Modifier.padding(
-                                start = 16.dp,
-                                end = 16.dp,
-                                bottom = 16.dp
-                            )
+                            modifier = Modifier.animateItem()
                         )
                     }
                 }
@@ -275,24 +274,32 @@ fun UsersGridContent(
     gridState: LazyStaggeredGridState = rememberLazyStaggeredGridState(),
     contentPadding: PaddingValues = PaddingValues(),
     scrollToTopButtonPadding: PaddingValues = WindowInsets.navigationBars.asPaddingValues(),
+    scrollToTopButtonEnabled: Boolean = true,
     onUserClick: (UserNickname) -> Unit
 ) {
-    ScrollToTopLayout(
-        gridState = gridState,
-        scrollToTopButtonPadding = scrollToTopButtonPadding
-    ) {
+    val content = @Composable {
         UsersStaggeredGrid(
             lazyUserItems = userItems,
             onUserClick = onUserClick,
             gridState = gridState,
             contentPadding = PaddingValues(
-                top = contentPadding.calculateTopPadding() + 16.dp,
+                top = contentPadding.calculateTopPadding(),
                 bottom = contentPadding.calculateBottomPadding() + 150.dp,
-                start = 16.dp,
-                end = 16.dp,
+                start = contentPadding.calculateStartPadding(LayoutDirection.Ltr) + 8.dp,
+                end = contentPadding.calculateEndPadding(LayoutDirection.Ltr) + 8.dp
             ),
             modifier = Modifier.fillMaxSize()
         )
+    }
+
+    if (scrollToTopButtonEnabled) {
+        ScrollToTopLayout(
+            gridState = gridState,
+            scrollToTopButtonPadding = scrollToTopButtonPadding,
+            grid = content
+        )
+    } else {
+        content()
     }
 }
 

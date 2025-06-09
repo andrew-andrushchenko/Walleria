@@ -12,5 +12,5 @@ val databaseModule = module {
             .build()
     }
 
-    factory { get<WalleriaDatabase>().recentSearchesDao() }
+    factory { get<WalleriaDatabase>().searchHistoryDao() }
 }

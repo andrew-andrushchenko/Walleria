@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
@@ -30,6 +32,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toDrawable
 import androidx.paging.LoadState
@@ -195,27 +198,35 @@ fun PhotosGridContent(
     gridState: LazyStaggeredGridState = rememberLazyStaggeredGridState(),
     contentPadding: PaddingValues = PaddingValues(),
     scrollToTopButtonPadding: PaddingValues = WindowInsets.navigationBars.asPaddingValues(),
+    scrollToTopButtonEnabled: Boolean = true,
     onPhotoClicked: (PhotoId) -> Unit,
     headerContent: (@Composable () -> Unit)? = null
 ) {
-    ScrollToTopLayout(
-        gridState = gridState,
-        scrollToTopButtonPadding = scrollToTopButtonPadding,
-        modifier = modifier
-    ) {
+    val content = @Composable {
         PhotosStaggeredGrid(
             lazyPhotoItems = photoItems,
             onPhotoClicked = onPhotoClicked,
             gridState = gridState,
             contentPadding = PaddingValues(
-                top = contentPadding.calculateTopPadding() + 16.dp,
+                top = contentPadding.calculateTopPadding(),
                 bottom = contentPadding.calculateBottomPadding() + 150.dp,
-                start = 16.dp,
-                end = 16.dp
+                start = contentPadding.calculateStartPadding(LayoutDirection.Ltr) + 8.dp,
+                end = contentPadding.calculateEndPadding(LayoutDirection.Ltr) + 8.dp
             ),
             headerContent = headerContent,
             modifier = Modifier.fillMaxSize()
         )
+    }
+
+    if (scrollToTopButtonEnabled) {
+        ScrollToTopLayout(
+            gridState = gridState,
+            scrollToTopButtonPadding = scrollToTopButtonPadding,
+            modifier = modifier,
+            grid = content
+        )
+    } else {
+        content()
     }
 }
 

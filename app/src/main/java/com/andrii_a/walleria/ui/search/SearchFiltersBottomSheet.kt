@@ -3,17 +3,16 @@ package com.andrii_a.walleria.ui.search
 import android.content.res.Configuration
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -22,21 +21,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonGroupDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -56,6 +49,9 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -64,11 +60,11 @@ import com.andrii_a.walleria.domain.SearchResultsContentFilter
 import com.andrii_a.walleria.domain.SearchResultsDisplayOrder
 import com.andrii_a.walleria.domain.SearchResultsPhotoColor
 import com.andrii_a.walleria.domain.SearchResultsPhotoOrientation
-import com.andrii_a.walleria.domain.models.search.RecentSearchItem
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.iconRes
 import com.andrii_a.walleria.ui.util.titleRes
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SearchPhotoFiltersBottomSheet(
     photoFilters: PhotoFilters,
@@ -95,7 +91,8 @@ fun SearchPhotoFiltersBottomSheet(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        SingleChoiceSegmentedButtonRow(
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
@@ -103,18 +100,26 @@ fun SearchPhotoFiltersBottomSheet(
             val options = SearchResultsDisplayOrder.entries
 
             options.forEachIndexed { index, displayOrder ->
-                SegmentedButton(
-                    selected = displayOrder == order,
-                    onClick = { order = displayOrder },
-                    shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
-                    label = {
-                        Text(
-                            text = stringResource(id = displayOrder.titleRes),
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = 1
-                        )
-                    }
-                )
+                ToggleButton(
+                    checked = displayOrder == order,
+                    onCheckedChange = {
+                        order = displayOrder
+                    },
+                    modifier = Modifier.weight(1f).semantics { role = Role.RadioButton },
+                    colors = ToggleButtonDefaults.tonalToggleButtonColors(),
+                    shapes =
+                        when (index) {
+                            0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                            options.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                        }
+                ) {
+                    Text(
+                        text = stringResource(displayOrder.titleRes),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
         }
 
@@ -128,7 +133,8 @@ fun SearchPhotoFiltersBottomSheet(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        SingleChoiceSegmentedButtonRow(
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
@@ -136,18 +142,26 @@ fun SearchPhotoFiltersBottomSheet(
             val options = SearchResultsContentFilter.entries
 
             options.forEachIndexed { index, filter ->
-                SegmentedButton(
-                    selected = contentFilter == filter,
-                    onClick = { contentFilter = filter },
-                    shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
-                    label = {
-                        Text(
-                            text = stringResource(id = filter.titleRes),
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = 1
-                        )
-                    }
-                )
+                ToggleButton(
+                    checked = contentFilter == filter,
+                    onCheckedChange = {
+                        contentFilter = filter
+                    },
+                    modifier = Modifier.weight(1f).semantics { role = Role.RadioButton },
+                    colors = ToggleButtonDefaults.tonalToggleButtonColors(),
+                    shapes =
+                        when (index) {
+                            0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                            options.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                        }
+                ) {
+                    Text(
+                        text = stringResource(filter.titleRes),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
         }
 
@@ -161,7 +175,8 @@ fun SearchPhotoFiltersBottomSheet(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        SingleChoiceSegmentedButtonRow(
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
@@ -169,28 +184,33 @@ fun SearchPhotoFiltersBottomSheet(
             val options = SearchResultsPhotoOrientation.entries
 
             options.forEachIndexed { index, searchResultsPhotoOrientation ->
-                SegmentedButton(
-                    selected = orientation == searchResultsPhotoOrientation,
-                    onClick = { orientation = searchResultsPhotoOrientation },
-                    shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
-                    icon = {},
-                    label = {
-                        if (index == 0) {
-                            Text(
-                                text = stringResource(id = searchResultsPhotoOrientation.titleRes),
-                                overflow = TextOverflow.Ellipsis,
-                                maxLines = 1
-                            )
-                        } else {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(
-                                    searchResultsPhotoOrientation.iconRes
-                                ),
-                                contentDescription = null
-                            )
+                ToggleButton(
+                    checked = orientation == searchResultsPhotoOrientation,
+                    onCheckedChange = { orientation = searchResultsPhotoOrientation },
+                    modifier = Modifier.weight(1f).semantics { role = Role.RadioButton },
+                    colors = ToggleButtonDefaults.tonalToggleButtonColors(),
+                    shapes =
+                        when (index) {
+                            0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                            options.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
                         }
+                ) {
+                    if (index == 0) {
+                        Text(
+                            text = stringResource(id = searchResultsPhotoOrientation.titleRes),
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                    } else {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(
+                                searchResultsPhotoOrientation.iconRes
+                            ),
+                            contentDescription = null
+                        )
                     }
-                )
+                }
             }
         }
 
@@ -237,65 +257,10 @@ fun SearchPhotoFiltersBottomSheet(
         ) {
             Text(
                 text = stringResource(id = R.string.apply),
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
-        }
-    }
-}
-
-@Composable
-fun RecentSearchesList(
-    recentSearches: List<RecentSearchItem>,
-    onItemSelected: (RecentSearchItem) -> Unit,
-    onDeleteItem: (RecentSearchItem) -> Unit,
-    onDeleteAllItems: () -> Unit
-) {
-    LazyColumn {
-        items(
-            count = recentSearches.size,
-            key = { index -> recentSearches[index].id }
-        ) { index ->
-            val recentSearchItem = recentSearches[index]
-
-            ListItem(
-                headlineContent = { Text(text = recentSearchItem.title) },
-                leadingContent = {
-                    Icon(
-                        Icons.Default.History,
-                        contentDescription = null
-                    )
-                },
-                trailingContent = {
-                    IconButton(onClick = { onDeleteItem(recentSearchItem) }) {
-                        Icon(
-                            Icons.Default.Close,
-                            contentDescription = null
-                        )
-                    }
-                },
-                colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                modifier = Modifier
-                    .clickable(onClick = { onItemSelected(recentSearchItem) })
-                    .fillMaxWidth()
-                    .padding(start = 16.dp)
-            )
-        }
-
-        if (recentSearches.isNotEmpty()) {
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                ) {
-                    TextButton(
-                        onClick = onDeleteAllItems,
-                        modifier = Modifier.align(Alignment.CenterEnd)
-                    ) {
-                        Text(text = stringResource(id = R.string.clear_recent_searches))
-                    }
-                }
-            }
         }
     }
 }
