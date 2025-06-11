@@ -1,40 +1,45 @@
 package com.andrii_a.walleria.ui.user_details
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.FloatingToolbarDefaults
+import androidx.compose.material3.FloatingToolbarDefaults.ScreenOffset
+import androidx.compose.material3.FloatingToolbarExitDirection
+import androidx.compose.material3.FloatingToolbarScrollBehavior
+import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -45,7 +50,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
@@ -56,11 +65,11 @@ import com.andrii_a.walleria.domain.models.user.UserSocialMediaLinks
 import com.andrii_a.walleria.ui.common.UiErrorWithRetry
 import com.andrii_a.walleria.ui.common.components.CollectionsGridContent
 import com.andrii_a.walleria.ui.common.components.ErrorBanner
-import com.andrii_a.walleria.ui.common.components.WLoadingIndicator
-import com.andrii_a.walleria.ui.common.components.PhotosGridContent
-import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.common.components.NestedScrollLayout
+import com.andrii_a.walleria.ui.common.components.PhotosGridContent
+import com.andrii_a.walleria.ui.common.components.WLoadingIndicator
 import com.andrii_a.walleria.ui.common.components.rememberNestedScrollLayoutState
+import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import kotlinx.coroutines.launch
 
 @Composable
@@ -102,7 +111,10 @@ private fun LoadingStateContent(onNavigateBack: () -> Unit) {
             CenterAlignedTopAppBar(
                 title = {},
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
+                    FilledTonalIconButton(
+                        onClick = onNavigateBack,
+                        modifier = Modifier.padding(start = 8.dp)
+                    ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
                             contentDescription = stringResource(id = R.string.navigate_back),
@@ -112,14 +124,11 @@ private fun LoadingStateContent(onNavigateBack: () -> Unit) {
             )
         }
     ) { innerPadding ->
-        Box(
-            contentAlignment = Alignment.Center,
+        WLoadingIndicator(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-        ) {
-            WLoadingIndicator()
-        }
+        )
     }
 }
 
@@ -134,7 +143,10 @@ private fun ErrorStateContent(
             CenterAlignedTopAppBar(
                 title = {},
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
+                    FilledTonalIconButton(
+                        onClick = onNavigateBack,
+                        modifier = Modifier.padding(start = 8.dp)
+                    ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
                             contentDescription = stringResource(id = R.string.navigate_back),
@@ -153,7 +165,7 @@ private fun ErrorStateContent(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SuccessStateContent(
     state: UserDetailsUiState,
@@ -163,6 +175,10 @@ fun SuccessStateContent(
 
     val bottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
+    )
+
+    val toolbarScrollBehavior = FloatingToolbarDefaults.exitAlwaysScrollBehavior(
+        exitDirection = FloatingToolbarExitDirection.Bottom
     )
 
     Scaffold(
@@ -178,7 +194,10 @@ fun SuccessStateContent(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { onEvent(UserDetailsEvent.GoBack) }) {
+                    FilledTonalIconButton(
+                        onClick = { onEvent(UserDetailsEvent.GoBack) },
+                        modifier = Modifier.padding(start = 8.dp)
+                    ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
                             contentDescription = stringResource(id = R.string.navigate_back),
@@ -189,7 +208,7 @@ fun SuccessStateContent(
                     if (state.loggedInUserNickname == user.username) {
                         IconButton(onClick = { onEvent(UserDetailsEvent.SelectEditProfile) }) {
                             Icon(
-                                imageVector = Icons.Outlined.Edit,
+                                imageVector = Icons.Filled.Edit,
                                 contentDescription = stringResource(id = R.string.edit_collection)
                             )
                         }
@@ -205,7 +224,7 @@ fun SuccessStateContent(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.MoreVert,
-                                contentDescription = stringResource(id = R.string.edit_collection)
+                                contentDescription = stringResource(id = R.string.more_about_profile)
                             )
                         }
 
@@ -237,41 +256,44 @@ fun SuccessStateContent(
                 }
             )
         },
-        contentWindowInsets = WindowInsets.safeDrawing
+        contentWindowInsets = WindowInsets.safeDrawing,
+        modifier = Modifier.nestedScroll(toolbarScrollBehavior)
     ) { innerPadding ->
         val pagerState = rememberPagerState(initialPage = 0) { UserDetailsScreenTabs.entries.size }
 
         val nestedScrollLayoutState = rememberNestedScrollLayoutState()
 
-        NestedScrollLayout(
-            state = nestedScrollLayoutState,
-            collapsableHeader = {
-                UserHeader(
-                    user = user,
-                    onOpenPortfolio = { onEvent(UserDetailsEvent.SelectPortfolioLink(it)) },
-                    onOpenInstagramProfile = { onEvent(UserDetailsEvent.SelectInstagramProfile(it)) },
-                    onOpenTwitterProfile = { onEvent(UserDetailsEvent.SelectTwitterProfile(it)) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            },
-            modifier = Modifier.padding(innerPadding)
-        ) {
-            Column {
-                Tabs(
-                    pagerState = pagerState,
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .width(450.dp)
-                        .widthIn(min = 200.dp, max = 600.dp)
-                        .padding(horizontal = 16.dp)
-                )
-
+        Box(modifier = Modifier.fillMaxSize()) {
+            NestedScrollLayout(
+                state = nestedScrollLayoutState,
+                collapsableHeader = {
+                    UserHeader(
+                        user = user,
+                        onOpenPortfolio = { onEvent(UserDetailsEvent.SelectPortfolioLink(it)) },
+                        onOpenInstagramProfile = { onEvent(UserDetailsEvent.SelectInstagramProfile(it)) },
+                        onOpenTwitterProfile = { onEvent(UserDetailsEvent.SelectTwitterProfile(it)) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                },
+                modifier = Modifier.padding(innerPadding)
+            ) {
                 Pages(
                     pagerState = pagerState,
                     uiState = state,
                     onEvent = onEvent
                 )
             }
+
+            ProfileContentToolbar(
+                pagerState = pagerState,
+                scrollBehavior = toolbarScrollBehavior,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .offset(
+                        y = -ScreenOffset - WindowInsets.navigationBars.asPaddingValues()
+                            .calculateBottomPadding()
+                    )
+            )
         }
 
         if (state.isDetailsDialogOpened) {
@@ -283,40 +305,57 @@ fun SuccessStateContent(
                     user = user,
                     navigateToSearch = { query ->
                         onEvent(UserDetailsEvent.SearchByTag(query))
-                    }
+                    },
                 )
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun Tabs(
+private fun ProfileContentToolbar(
     pagerState: PagerState,
+    scrollBehavior: FloatingToolbarScrollBehavior,
     modifier: Modifier = Modifier
 ) {
-    val coroutineScope = rememberCoroutineScope()
+    val scope = rememberCoroutineScope()
 
-    SingleChoiceSegmentedButtonRow(modifier = modifier) {
+    HorizontalFloatingToolbar(
+        expanded = true,
+        scrollBehavior = scrollBehavior,
+        modifier = modifier,
+    ) {
         val options = UserDetailsScreenTabs.entries
 
-        options.forEachIndexed { index, tabPage ->
-            SegmentedButton(
-                selected = index == pagerState.currentPage,
-                onClick = {
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(index)
-                    }
-                },
-                shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
-                label = {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+            modifier = Modifier.padding(horizontal = 8.dp),
+        ) {
+            options.forEachIndexed { index, label ->
+                ToggleButton(
+                    checked = index == pagerState.currentPage,
+                    onCheckedChange = {
+                        scope.launch {
+                            pagerState.animateScrollToPage(index)
+                        }
+                    },
+                    modifier = Modifier.semantics { role = Role.RadioButton },
+                    colors = ToggleButtonDefaults.tonalToggleButtonColors(),
+                    shapes =
+                        when (index) {
+                            0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                            options.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                        }
+                ) {
                     Text(
-                        text = stringResource(id = tabPage.titleRes),
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1
+                        text = stringResource(label.titleRes),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
-            )
+            }
         }
     }
 }
@@ -339,16 +378,8 @@ private fun Pages(
                 PhotosGridContent(
                     photoItems = lazyPhotoItems,
                     onPhotoClicked = { onEvent(UserDetailsEvent.SelectPhoto(it)) },
-                    contentPadding = PaddingValues(
-                        top = 16.dp,
-                        start = 16.dp,
-                        end = 16.dp,
-                        bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding(),
-                    ),
-                    scrollToTopButtonPadding = PaddingValues(
-                        bottom = WindowInsets.navigationBars.asPaddingValues()
-                            .calculateBottomPadding()
-                    ),
+                    contentPadding = contentPadding,
+                    scrollToTopButtonEnabled = false,
                 )
             }
 
@@ -358,16 +389,8 @@ private fun Pages(
                 PhotosGridContent(
                     photoItems = lazyLikedPhotoItems,
                     onPhotoClicked = { onEvent(UserDetailsEvent.SelectPhoto(it)) },
-                    contentPadding = PaddingValues(
-                        top = 16.dp,
-                        start = 16.dp,
-                        end = 16.dp,
-                        bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding(),
-                    ),
-                    scrollToTopButtonPadding = PaddingValues(
-                        bottom = WindowInsets.navigationBars.asPaddingValues()
-                            .calculateBottomPadding()
-                    ),
+                    contentPadding = contentPadding,
+                    scrollToTopButtonEnabled = false,
                 )
             }
 
@@ -377,16 +400,8 @@ private fun Pages(
                 CollectionsGridContent(
                     collectionItems = lazyCollectionItems,
                     onCollectionClick = { onEvent(UserDetailsEvent.SelectCollection(it)) },
-                    contentPadding = PaddingValues(
-                        top = 16.dp,
-                        start = 16.dp,
-                        end = 16.dp,
-                        bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding(),
-                    ),
-                    scrollToTopButtonPadding = PaddingValues(
-                        bottom = WindowInsets.navigationBars.asPaddingValues()
-                            .calculateBottomPadding()
-                    ),
+                    contentPadding = contentPadding,
+                    scrollToTopButtonEnabled = false,
                 )
             }
 
@@ -405,42 +420,40 @@ private enum class UserDetailsScreenTabs(@StringRes val titleRes: Int) {
 @Composable
 fun UserDetailsScreenPreview() {
     WalleriaTheme {
-        Surface {
-            val user = User(
-                id = "",
-                username = "john_smith",
-                firstName = "John",
-                lastName = "Smith",
-                bio = "",
-                location = "San Francisco, California, USA",
-                totalLikes = 100,
-                totalPhotos = 100,
-                totalCollections = 100,
-                followersCount = 100_000,
-                followingCount = 56,
-                downloads = 99_000,
-                profileImage = null,
-                social = UserSocialMediaLinks(
-                    instagramUsername = "a",
-                    portfolioUrl = "a",
-                    twitterUsername = "a",
-                    paypalEmail = "a"
-                ),
-                tags = null,
-                photos = null
-            )
+        val user = User(
+            id = "",
+            username = "john_smith",
+            firstName = "John",
+            lastName = "Smith",
+            bio = "",
+            location = "San Francisco, California, USA",
+            totalLikes = 100,
+            totalPhotos = 100,
+            totalCollections = 100,
+            followersCount = 100_000,
+            followingCount = 56,
+            downloads = 99_000,
+            profileImage = null,
+            social = UserSocialMediaLinks(
+                instagramUsername = "a",
+                portfolioUrl = "a",
+                twitterUsername = "a",
+                paypalEmail = "a"
+            ),
+            tags = null,
+            photos = null
+        )
 
-            val state = UserDetailsUiState(
-                isLoading = false,
-                error = null,
-                loggedInUserNickname = "john_smith",
-                user = user
-            )
+        val state = UserDetailsUiState(
+            isLoading = false,
+            error = null,
+            loggedInUserNickname = "john_smith",
+            user = user,
+        )
 
-            UserDetailsScreen(
-                state = state,
-                onEvent = {}
-            )
-        }
+        UserDetailsScreen(
+            state = state,
+            onEvent = {}
+        )
     }
 }

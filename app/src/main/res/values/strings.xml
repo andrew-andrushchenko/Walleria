@@ -177,7 +177,7 @@
     <string name="downloading_photo">Downloading photo…</string>
 
     <!--User details-->
-    <string name="liked_photos">Liked</string>
+    <string name="liked_photos">Likes</string>
     <string name="more_about_profile">More about profile</string>
     <string name="portfolio_url">Portfolio URL</string>
     <string name="instagram_profile">Instagram profile</string>

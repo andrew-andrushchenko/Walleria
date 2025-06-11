@@ -20,7 +20,6 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.Checkbox
@@ -29,6 +28,7 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
@@ -138,7 +138,7 @@ fun TagsRow(
         items(count = tags.size) { index ->
             val tag = tags[index]
 
-            AssistChip(
+            SuggestionChip(
                 onClick = { onTagClicked(tag.title) },
                 label = { Text(text = tag.title) },
             )
@@ -164,7 +164,9 @@ fun DisplayOptions(
                 onCheckedChange = {
                     onOptionSelected(index)
                 },
-                modifier = Modifier.weight(1f).semantics { role = Role.RadioButton },
+                modifier = Modifier
+                    .weight(1f)
+                    .semantics { role = Role.RadioButton },
                 colors = ToggleButtonDefaults.tonalToggleButtonColors(),
                 shapes =
                     when (index) {

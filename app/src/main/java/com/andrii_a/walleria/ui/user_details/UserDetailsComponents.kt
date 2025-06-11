@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Web
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
@@ -100,23 +99,15 @@ fun UserHeader(
             Spacer(modifier = Modifier.height(8.dp))
 
             if (!user.location.isNullOrBlank()) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.LocationOn,
-                        contentDescription = stringResource(id = R.string.location_hint)
-                    )
-
-                    Text(
-                        text = user.location,
-                        style = MaterialTheme.typography.titleSmall,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+                Text(
+                    text = user.location,
+                    style = MaterialTheme.typography.titleSmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
 
             user.social?.let { userSocial ->
                 Spacer(modifier = Modifier.height(8.dp))
