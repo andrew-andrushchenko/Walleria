@@ -1,7 +1,6 @@
 package com.andrii_a.walleria.ui.main
 
 import android.content.ComponentName
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,6 +12,7 @@ import androidx.browser.customtabs.CustomTabsServiceConnection
 import androidx.browser.customtabs.CustomTabsSession
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.getValue
+import androidx.core.net.toUri
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andrii_a.walleria.data.util.Config
@@ -81,13 +81,13 @@ class MainActivity : ComponentActivity() {
                 customTabsClient?.warmup(0)
                 customTabsSession = customTabsClient?.newSession(CustomTabsCallback())?.apply {
                     mayLaunchUrl(
-                        Uri.parse(Config.LOGIN_URL),
+                        Config.LOGIN_URL.toUri(),
                         null,
                         mutableListOf(
                             Bundle().apply {
                                 putParcelable(
                                     CustomTabsService.KEY_URL,
-                                    Uri.parse(Config.JOIN_URL)
+                                    Config.JOIN_URL.toUri()
                                 )
                             }
                         )
