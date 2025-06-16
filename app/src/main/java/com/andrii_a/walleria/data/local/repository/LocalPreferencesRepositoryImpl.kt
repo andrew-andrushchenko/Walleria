@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.andrii_a.walleria.domain.AppTheme
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.repository.LocalPreferencesRepository
 import kotlinx.coroutines.flow.Flow
@@ -35,6 +36,12 @@ class LocalPreferencesRepositoryImpl(context: Context) : LocalPreferencesReposit
             }
         }
 
+    override val appTheme: Flow<AppTheme> = preferencesFlow.map { preferences ->
+        AppTheme.valueOf(
+            preferences[WalleriaAppPreferencesKeys.APP_THEME] ?: AppTheme.SYSTEM_DEFAULT.name
+        )
+    }
+
     override val photosLoadQuality: Flow<PhotoQuality> = preferencesFlow.map { preferences ->
         PhotoQuality.valueOf(
             preferences[WalleriaAppPreferencesKeys.PHOTOS_LOAD_QUALITY] ?: PhotoQuality.MEDIUM.name
@@ -44,6 +51,12 @@ class LocalPreferencesRepositoryImpl(context: Context) : LocalPreferencesReposit
         PhotoQuality.valueOf(
             preferences[WalleriaAppPreferencesKeys.PHOTOS_DOWNLOAD_QUALITY] ?: PhotoQuality.MEDIUM.name
         )
+    }
+
+    override suspend fun updateAppTheme(appTheme: AppTheme) {
+        appLocalPreferences.edit { preferences ->
+            preferences[WalleriaAppPreferencesKeys.APP_THEME] = appTheme.name
+        }
     }
 
     override suspend fun updatePhotosLoadQuality(photoQuality: PhotoQuality) {
@@ -61,6 +74,7 @@ class LocalPreferencesRepositoryImpl(context: Context) : LocalPreferencesReposit
     }
 
     object WalleriaAppPreferencesKeys {
+        val APP_THEME = stringPreferencesKey("app_theme")
         val PHOTOS_LOAD_QUALITY = stringPreferencesKey("photos_load_quality")
         val PHOTOS_DOWNLOAD_QUALITY = stringPreferencesKey("photos_download_quality")
     }

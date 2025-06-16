@@ -11,9 +11,17 @@ import androidx.browser.customtabs.CustomTabsClient
 import androidx.browser.customtabs.CustomTabsService
 import androidx.browser.customtabs.CustomTabsServiceConnection
 import androidx.browser.customtabs.CustomTabsSession
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andrii_a.walleria.data.util.Config
+import com.andrii_a.walleria.domain.AppTheme
+import com.andrii_a.walleria.domain.repository.LocalPreferencesRepository
 import com.andrii_a.walleria.ui.util.CustomTabsHelper
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
+import org.koin.android.ext.android.inject
 import org.koin.androidx.compose.KoinAndroidContext
 
 class MainActivity : ComponentActivity() {
@@ -35,6 +43,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private val localPreferencesRepository by inject<LocalPreferencesRepository>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
@@ -44,7 +54,17 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             KoinAndroidContext {
-                WalleriaApp()
+                val appTheme by localPreferencesRepository.appTheme.collectAsStateWithLifecycle(
+                    initialValue = runBlocking { localPreferencesRepository.appTheme.first() }
+                )
+
+                val useDarkTheme = when (appTheme) {
+                    AppTheme.SYSTEM_DEFAULT -> isSystemInDarkTheme()
+                    AppTheme.LIGHT -> false
+                    AppTheme.DARK -> true
+                }
+
+                WalleriaApp(darkTheme = useDarkTheme)
             }
         }
     }

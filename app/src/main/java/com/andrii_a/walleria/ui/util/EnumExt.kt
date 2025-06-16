@@ -3,6 +3,7 @@ package com.andrii_a.walleria.ui.util
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.andrii_a.walleria.R
+import com.andrii_a.walleria.domain.AppTheme
 import com.andrii_a.walleria.domain.PhotoListDisplayOrder
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.SearchResultsContentFilter
@@ -113,3 +114,10 @@ val PhotoQuality.titleRes: Int
         PhotoQuality.THUMBNAIL -> R.string.photo_quality_thumbnail
     }
 
+val AppTheme.titleRes: Int
+    @StringRes
+    get() = when (this) {
+        AppTheme.SYSTEM_DEFAULT -> R.string.theme_system_default
+        AppTheme.LIGHT -> R.string.theme_light
+        AppTheme.DARK -> R.string.theme_dark
+    }

@@ -70,3 +70,9 @@ enum class UserProfileImageQuality {
     MEDIUM,
     HIGH
 }
+
+enum class AppTheme {
+    SYSTEM_DEFAULT,
+    LIGHT,
+    DARK
+}

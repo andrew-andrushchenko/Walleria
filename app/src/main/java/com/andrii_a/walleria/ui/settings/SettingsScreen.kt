@@ -11,8 +11,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.andrii_a.walleria.R
+import com.andrii_a.walleria.domain.AppTheme
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.titleRes
@@ -43,7 +44,10 @@ fun SettingsScreen(
                     Text(text = stringResource(id = R.string.settings))
                 },
                 navigationIcon = {
-                    IconButton(onClick = { onEvent(SettingsEvent.GoBack) }) {
+                    FilledTonalIconButton(
+                        onClick = { onEvent(SettingsEvent.GoBack) },
+                        modifier = Modifier.padding(start = 8.dp)
+                    ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
                             contentDescription = stringResource(
@@ -65,6 +69,22 @@ fun SettingsScreen(
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
         ) {
+            SettingsGroup(name = stringResource(id = R.string.appearance)) {
+                SettingsItem(
+                    title = stringResource(id = R.string.theme),
+                    selectedValue = stringResource(id = state.appTheme.titleRes),
+                    selectionOptions = AppTheme.entries.map { stringResource(id = it.titleRes) },
+                    selectedItemPositionOrdinal = state.appTheme.ordinal,
+                    onChangeParameter = { selectedAppThemeOrdinal ->
+                        onEvent(
+                            SettingsEvent.UpdateAppTheme(
+                                AppTheme.entries[selectedAppThemeOrdinal]
+                            )
+                        )
+                    }
+                )
+            }
+
             SettingsGroup(name = stringResource(id = R.string.load_settings)) {
                 SettingsItem(
                     title = stringResource(id = R.string.photo_load_quality),

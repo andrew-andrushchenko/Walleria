@@ -1,5 +1,6 @@
 package com.andrii_a.walleria.ui.main
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
@@ -28,8 +29,8 @@ import com.andrii_a.walleria.ui.util.currentRouteClassName
 import com.andrii_a.walleria.ui.util.noNavBarsRoutes
 
 @Composable
-fun WalleriaApp() {
-    WalleriaTheme {
+fun WalleriaApp(darkTheme: Boolean = isSystemInDarkTheme()) {
+    WalleriaTheme(darkTheme = darkTheme) {
         val navController = rememberNavController()
 
         var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }

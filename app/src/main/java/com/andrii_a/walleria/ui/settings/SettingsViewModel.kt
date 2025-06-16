@@ -15,11 +15,13 @@ class SettingsViewModel(private val repository: LocalPreferencesRepository) : Vi
 
     private val _state: MutableStateFlow<SettingsUiState> = MutableStateFlow(SettingsUiState())
     val state = combine(
+        repository.appTheme,
         repository.photosLoadQuality,
         repository.photosDownloadQuality,
         _state
-    ) { photosLoadQuality, photosDownloadQuality, state ->
+    ) { appTheme, photosLoadQuality, photosDownloadQuality, state ->
         state.copy(
+            appTheme = appTheme,
             photosLoadQuality = photosLoadQuality,
             photosDownloadQuality = photosDownloadQuality
         )
@@ -34,6 +36,12 @@ class SettingsViewModel(private val repository: LocalPreferencesRepository) : Vi
 
     fun onEvent(event: SettingsEvent) {
         when (event) {
+            is SettingsEvent.UpdateAppTheme -> {
+                viewModelScope.launch {
+                    repository.updateAppTheme(event.theme)
+                }
+            }
+
             is SettingsEvent.UpdatePhotosLoadQuality -> {
                 viewModelScope.launch {
                     repository.updatePhotosLoadQuality(event.quality)
