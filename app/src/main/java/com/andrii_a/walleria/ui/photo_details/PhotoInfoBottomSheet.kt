@@ -37,6 +37,7 @@ import com.andrii_a.walleria.domain.models.photo.RelatedCollections
 import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.ui.common.CollectionId
 import com.andrii_a.walleria.ui.common.SearchQuery
+import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.common.components.TagsRow
 import com.andrii_a.walleria.ui.photo_details.components.PhotoMetadata
 import com.andrii_a.walleria.ui.photo_details.components.RelatedCollectionsRow
@@ -53,7 +54,8 @@ fun PhotoInfoBottomSheet(
     photo: Photo,
     contentPadding: PaddingValues = PaddingValues(),
     navigateToSearch: (SearchQuery) -> Unit,
-    navigateToCollectionDetails: (CollectionId) -> Unit
+    navigateToCollectionDetails: (CollectionId) -> Unit,
+    navigateToUserDetails: (UserNickname) -> Unit
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -65,7 +67,7 @@ fun PhotoInfoBottomSheet(
             userProfileImageUrl = photo.user.getProfileImageUrlOrEmpty(),
             username = photo.userFullName,
             onUserClick = {
-                navigateToSearch(photo.userNickname)
+                navigateToUserDetails(photo.userNickname)
             },
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
@@ -233,7 +235,8 @@ fun PhotoInfoBottomSheetPreview() {
             PhotoInfoBottomSheet(
                 photo = photo,
                 navigateToSearch = {},
-                navigateToCollectionDetails = {}
+                navigateToCollectionDetails = {},
+                navigateToUserDetails = {}
             )
         }
     }

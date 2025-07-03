@@ -331,6 +331,9 @@ private fun SuccessStateContent(
                 },
                 navigateToCollectionDetails = { id ->
                     onEvent(PhotoDetailsEvent.SelectCollection(id))
+                },
+                navigateToUserDetails = { nickname ->
+                    onEvent(PhotoDetailsEvent.SelectUser(nickname))
                 }
             )
         }

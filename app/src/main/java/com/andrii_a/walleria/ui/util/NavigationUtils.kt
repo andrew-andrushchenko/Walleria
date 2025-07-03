@@ -25,5 +25,6 @@ val noNavBarsRoutes = listOf(
     Screen.EditUserProfile::class.simpleName,
     Screen.CollectPhoto::class.simpleName,
     Screen.Search::class.simpleName,
-    Screen.Login::class.simpleName
+    Screen.Login::class.simpleName,
+    Screen.UserDetails::class.simpleName
 )
