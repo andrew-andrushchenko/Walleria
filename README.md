@@ -25,6 +25,7 @@ unsplash_access_key_debug = "<Debug Access Key>"
 unsplash_secret_key_debug = "<Debug Secret Key>"
 unsplash_access_key_release = "<Release Access Key>"
 unsplash_secret_key_release = "<Release Secret Key>"
+pagination_page_size = <Desired loading page size>
 ```
 
 > **Note**  
@@ -46,10 +47,6 @@ unsplash_secret_key_release = "<Release Secret Key>"
   for the [Zoomable composable component](https://github.com/mxalbert1996/Zoomable).
 
 * [Tlaster](https://github.com/Tlaster) for the [NestedScrollView](https://github.com/Tlaster/NestedScrollView/) implementation idea for jetpack compose.
-
-* [Musa Adanur](https://lottiefiles.com/musaadanur) for the [Astronaut](https://lottiefiles.com/animations/professional-icon-animation-pYejkhGHZu) animation.<br/>
-* [John Corcoran](https://lottiefiles.com/lu2e4r2a03bxxac8) for the [Broken stick error](https://lottiefiles.com/animations/connect-icon-W2s7wnF5Sw) animation.<br/>
-* [Junior Torres](https://lottiefiles.com/nwuiosky9p) for the list item [Loading](https://lottiefiles.com/animations/loading-Ymt2HaA2pc) animation.
 
 # License
 ```
