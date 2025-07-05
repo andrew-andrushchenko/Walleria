@@ -193,7 +193,7 @@
     <string name="theme_dark">Dark</string>
     <string name="theme_system_default">System default</string>
     <string name="layout_settings">Layout settings</string>
-    <string name="load_settings">Lomad settings</string>
+    <string name="load_settings">Load settings</string>
     <string name="photos_layout">Photos layout</string>
     <string name="collections_layout">Collections layout</string>
     <string name="photo_load_quality">Photo load quality</string>
