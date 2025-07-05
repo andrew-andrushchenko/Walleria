@@ -204,7 +204,6 @@
     <string name="type_grid">Grid</string>
 
     <!-- About -->
-    <string name="developed_and_designed_by">Developed and designed by</string>
     <string name="developer_username" translatable="false">Andrii Andrushchenko</string>
     <string name="powered_by_unsplash">powered by Unsplash</string>
     <string name="developer_email">aw.andrushchenko\@gmail.com</string>
