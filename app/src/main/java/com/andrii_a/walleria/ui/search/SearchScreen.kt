@@ -415,7 +415,7 @@ private fun SearchHistoryList(
     }
 }
 
-private enum class SearchScreenTabs(@StringRes val titleRes: Int) {
+private enum class SearchScreenTabs(@field:StringRes val titleRes: Int) {
     Photos(R.string.photos),
     Collections(R.string.collections),
     Users(R.string.users)
