@@ -13,9 +13,9 @@ sealed interface SearchEvent {
 
     data class ChangePhotoFilters(val photoFilters: PhotoFilters) : SearchEvent
 
-    data class DeleteRecentSearchItem(val item: SearchHistoryItem) : SearchEvent
+    data class DeleteSearchHistoryItem(val item: SearchHistoryItem) : SearchEvent
 
-    data object DeleteAllRecentSearches : SearchEvent
+    data object DeleteSearchHistory : SearchEvent
 
     data class SelectPhoto(val photoId: PhotoId) : SearchEvent
 

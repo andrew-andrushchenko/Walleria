@@ -34,9 +34,9 @@ class SearchViewModel(
         searchHistoryRepository.getSearchHistory(),
         localPreferencesRepository.photosLoadQuality,
         _state
-    ) { recentSearches, photosLoadQuality, state ->
+    ) { searchHistory, photosLoadQuality, state ->
         state.copy(
-            searchHistory = recentSearches,
+            searchHistory = searchHistory,
             photosLoadQuality = photosLoadQuality
         )
     }.stateIn(
@@ -71,12 +71,12 @@ class SearchViewModel(
                 changePhotoFilters(event.photoFilters)
             }
 
-            is SearchEvent.DeleteRecentSearchItem -> {
-                deleteRecentSearch(event.item)
+            is SearchEvent.DeleteSearchHistoryItem -> {
+                deleteSearchHistoryItem(event.item)
             }
 
-            is SearchEvent.DeleteAllRecentSearches -> {
-                deleteAllRecentSearches()
+            is SearchEvent.DeleteSearchHistory -> {
+                deleteSearchHistory()
             }
 
             is SearchEvent.OpenFilterDialog -> {
@@ -170,7 +170,7 @@ class SearchViewModel(
         }
     }
 
-    private fun deleteRecentSearch(item: SearchHistoryItem) {
+    private fun deleteSearchHistoryItem(item: SearchHistoryItem) {
         viewModelScope.launch {
             withContext(NonCancellable) {
                 searchHistoryRepository.deleteItem(item)
@@ -178,7 +178,7 @@ class SearchViewModel(
         }
     }
 
-    private fun deleteAllRecentSearches() {
+    private fun deleteSearchHistory() {
         viewModelScope.launch {
             withContext(NonCancellable) {
                 searchHistoryRepository.deleteAllItems()

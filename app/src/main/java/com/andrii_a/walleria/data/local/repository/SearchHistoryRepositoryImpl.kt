@@ -15,14 +15,14 @@ class SearchHistoryRepositoryImpl(
     override fun getSearchHistory(): Flow<List<SearchHistoryItem>> {
         return searchHistoryDao.getSearchHistory().flatMapLatest { entityList ->
             flow {
-                val recentSearchItems = entityList.map { it.toRecentSearchItem() }
-                emit(recentSearchItems)
+                val searchHistoryItems = entityList.map { it.toSearchHistoryItem() }
+                emit(searchHistoryItems)
             }
         }
     }
 
     override suspend fun getSearchHistoryItemByTitle(title: String): SearchHistoryItem? {
-        return searchHistoryDao.getSearchHistoryItemByTitle(title)?.toRecentSearchItem()
+        return searchHistoryDao.getSearchHistoryItemByTitle(title)?.toSearchHistoryItem()
     }
 
     override suspend fun insertItem(item: SearchHistoryItem) {

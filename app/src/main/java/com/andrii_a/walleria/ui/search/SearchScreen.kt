@@ -203,10 +203,10 @@ fun SearchScreen(
                             onEvent(SearchEvent.PerformSearch)
                         },
                         onDeleteItem = { item ->
-                            onEvent(SearchEvent.DeleteRecentSearchItem(item))
+                            onEvent(SearchEvent.DeleteSearchHistoryItem(item))
                         },
                         onDeleteAllItems = {
-                            onEvent(SearchEvent.DeleteAllRecentSearches)
+                            onEvent(SearchEvent.DeleteSearchHistory)
                         }
                     )
                 }
@@ -370,10 +370,10 @@ private fun SearchHistoryList(
             count = searchHistory.size,
             key = { index -> searchHistory[index].id }
         ) { index ->
-            val recentSearchItem = searchHistory[index]
+            val searchHistoryItem = searchHistory[index]
 
             ListItem(
-                headlineContent = { Text(text = recentSearchItem.title) },
+                headlineContent = { Text(text = searchHistoryItem.title) },
                 leadingContent = {
                     Icon(
                         Icons.Default.History,
@@ -381,7 +381,7 @@ private fun SearchHistoryList(
                     )
                 },
                 trailingContent = {
-                    IconButton(onClick = { onDeleteItem(recentSearchItem) }) {
+                    IconButton(onClick = { onDeleteItem(searchHistoryItem) }) {
                         Icon(
                             Icons.Default.Close,
                             contentDescription = null
@@ -390,7 +390,7 @@ private fun SearchHistoryList(
                 },
                 colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                 modifier = Modifier
-                    .clickable(onClick = { onItemSelected(recentSearchItem) })
+                    .clickable(onClick = { onItemSelected(searchHistoryItem) })
                     .fillMaxWidth()
                     .padding(start = 16.dp)
             )
@@ -407,7 +407,7 @@ private fun SearchHistoryList(
                         onClick = onDeleteAllItems,
                         modifier = Modifier.align(Alignment.CenterEnd)
                     ) {
-                        Text(text = stringResource(id = R.string.clear_recent_searches))
+                        Text(text = stringResource(id = R.string.clear_history))
                     }
                 }
             }

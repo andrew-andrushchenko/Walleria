@@ -75,7 +75,7 @@
     <string name="order">Order</string>
     <string name="search_history">Search history:</string>
     <string name="search_history_empty_text">Your search history will appear here</string>
-    <string name="clear_recent_searches">Clear all</string>
+    <string name="clear_history">Clear all</string>
 
     <!--Login-->
     <string name="add_account">Add an account</string>

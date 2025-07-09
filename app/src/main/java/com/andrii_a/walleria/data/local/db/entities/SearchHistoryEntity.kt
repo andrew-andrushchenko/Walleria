@@ -10,7 +10,7 @@ data class SearchHistoryEntity(
     val title: String,
     val timeMillis: Long
 ) {
-    fun toRecentSearchItem(): SearchHistoryItem {
+    fun toSearchHistoryItem(): SearchHistoryItem {
         return SearchHistoryItem(
             id = id,
             title = title,
