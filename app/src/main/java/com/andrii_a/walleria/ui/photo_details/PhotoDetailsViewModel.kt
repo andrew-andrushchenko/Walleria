@@ -235,28 +235,52 @@ class PhotoDetailsViewModel(
 
     private fun likePhoto(photoId: PhotoId) {
         likePhotoJob?.cancel()
-        likePhotoJob = viewModelScope.launch {
-            photoRepository.likePhoto(photoId)
-            _state.update {
-                it.copy(
-                    isLikedByLoggedInUser = true,
-                    currentPhotoLikes = it.currentPhotoLikes?.plus(1)
-                )
+        likePhotoJob = photoRepository.likePhoto(photoId).onEach { result ->
+            when (result) {
+                is Resource.Empty, Resource.Loading -> Unit
+                is Resource.Error -> {
+                    _state.update {
+                        it.copy(
+                            error = UiErrorWithRetry(reason = UiText.DynamicString(result.reason.orEmpty())),
+                            isLikedByLoggedInUser = false
+                        )
+                    }
+                }
+                is Resource.Success<*> -> {
+                    _state.update {
+                        it.copy(
+                            isLikedByLoggedInUser = true,
+                            currentPhotoLikes = it.currentPhotoLikes?.plus(1)
+                        )
+                    }
+                }
             }
-        }
+        }.launchIn(viewModelScope)
     }
 
     private fun dislikePhoto(photoId: PhotoId) {
         dislikePhotoJob?.cancel()
-        dislikePhotoJob = viewModelScope.launch {
-            photoRepository.dislikePhoto(photoId)
-            _state.update {
-                it.copy(
-                    isLikedByLoggedInUser = false,
-                    currentPhotoLikes = it.photo?.likes
-                )
+        dislikePhotoJob = photoRepository.dislikePhoto(photoId).onEach { result ->
+            when (result) {
+                is Resource.Empty, Resource.Loading -> Unit
+                is Resource.Error -> {
+                    _state.update {
+                        it.copy(
+                            error = UiErrorWithRetry(reason = UiText.DynamicString(result.reason.orEmpty())),
+                            isLikedByLoggedInUser = true
+                        )
+                    }
+                }
+                is Resource.Success<*> -> {
+                    _state.update {
+                        it.copy(
+                            isLikedByLoggedInUser = false,
+                            currentPhotoLikes = it.photo?.likes
+                        )
+                    }
+                }
             }
-        }
+        }.launchIn(viewModelScope)
     }
 
     private fun downloadPhoto(photo: Photo, quality: PhotoQuality) {
