@@ -44,6 +44,7 @@ data class PhotoDto(
         id = id.orEmpty(),
         width = width ?: 0,
         height = height ?: 0,
+        createdAt = createdAt.orEmpty(),
         blurHash = blurHash,
         color = color ?: "#E0E0E0",
         views = views ?: 0,

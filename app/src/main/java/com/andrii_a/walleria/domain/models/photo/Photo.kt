@@ -8,6 +8,7 @@ data class Photo(
     val id: String,
     val width: Int,
     val height: Int,
+    val createdAt: String,
     val blurHash: String?,
     val color: String,
     val views: Long,

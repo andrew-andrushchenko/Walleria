@@ -1,11 +1,14 @@
 package com.andrii_a.walleria.ui.util
 
+import android.text.format.DateFormat
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.PhotoQuality
 import com.andrii_a.walleria.domain.UserProfileImageQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
+import java.text.SimpleDateFormat
+import java.util.Locale
 import android.graphics.Color as AndroidColor
 
 fun Photo.getUrlByQuality(quality: PhotoQuality = PhotoQuality.HIGH): String =
@@ -40,3 +43,11 @@ val Photo.primaryColorInt: Int
 
 val Photo.downloadFilename: String
     get() = "${this.id}_${this.userNickname}_unsplash.jpg"
+
+val Photo.createdDateTime: String
+    get() {
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ROOT)
+        val date = format.parse(this.createdAt)
+
+        return DateFormat.format("E, MMM dd, yyyy \u2022 HH:mm", date).toString()
+    }

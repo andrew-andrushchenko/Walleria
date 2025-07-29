@@ -313,6 +313,7 @@ fun DefaultUserItemPreview() {
                 id = "id$it",
                 width = 200,
                 height = 300,
+                createdAt = "",
                 color = "#E0E0E0",
                 blurHash = "",
                 views = 200,

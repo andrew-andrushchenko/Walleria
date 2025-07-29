@@ -1,20 +1,25 @@
 package com.andrii_a.walleria.ui.photo_details
 
 import android.Manifest
+import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,14 +45,17 @@ import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,12 +63,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
@@ -80,8 +90,11 @@ import com.andrii_a.walleria.ui.photo_details.components.OverZoomConfig
 import com.andrii_a.walleria.ui.photo_details.components.Zoomable
 import com.andrii_a.walleria.ui.photo_details.components.rememberZoomableState
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
+import com.andrii_a.walleria.ui.util.createdDateTime
 import com.andrii_a.walleria.ui.util.getUrlByQuality
 import com.andrii_a.walleria.ui.util.toast
+import com.andrii_a.walleria.ui.util.userFullName
+import com.andrii_a.walleria.ui.util.userNickname
 import kotlinx.coroutines.launch
 
 @Composable
@@ -156,7 +169,11 @@ private fun SuccessStateContent(
             ) {
                 TopBar(
                     onNavigateBack = { onEvent(PhotoDetailsEvent.GoBack) },
-                    onOpenInBrowser = { onEvent(PhotoDetailsEvent.OpenInBrowser(photo.links?.html)) }
+                    onOpenInBrowser = { onEvent(PhotoDetailsEvent.OpenInBrowser(photo.links?.html)) },
+                    navigateToUserDetails = { onEvent(PhotoDetailsEvent.SelectUser(photo.userNickname)) },
+                    currentImageScale = zoomableState.scale,
+                    ownerUserFullName = photo.userFullName,
+                    dateTimePublished = photo.createdDateTime
                 )
             }
         },
@@ -409,10 +426,49 @@ private fun ErrorStateContent(
 @Composable
 private fun TopBar(
     onNavigateBack: () -> Unit,
-    onOpenInBrowser: () -> Unit
+    onOpenInBrowser: () -> Unit,
+    navigateToUserDetails: () -> Unit,
+    currentImageScale: Float = 1f,
+    ownerUserFullName: String,
+    dateTimePublished: String
 ) {
-    TopAppBar(
-        title = {},
+    val bgColor by animateColorAsState(targetValue = if (currentImageScale > 1f) Color.Black.copy(alpha = 0.4f) else Color.Transparent)
+    val textColor by animateColorAsState(targetValue = if (currentImageScale > 1f) Color.White else MaterialTheme.colorScheme.onSurface)
+
+    val shouldUseDarkIcons = !isSystemInDarkTheme()
+    val view = LocalView.current
+
+    DisposableEffect(key1 = currentImageScale) {
+        if (currentImageScale > 1f) {
+            val window = (view.context as Activity).window
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
+        }
+
+        onDispose {
+            val window = (view.context as Activity).window
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = shouldUseDarkIcons
+        }
+    }
+
+    CenterAlignedTopAppBar(
+        title = {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.clickable(onClick = navigateToUserDetails)
+            ) {
+                Text(
+                    text = ownerUserFullName,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = textColor
+                )
+
+                Text(
+                    text = dateTimePublished,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = textColor
+                )
+            }
+        },
         navigationIcon = {
             FilledTonalIconButton(
                 onClick = onNavigateBack,
@@ -435,9 +491,7 @@ private fun TopBar(
                 )
             }
         },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color.Transparent
-        )
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = bgColor)
     )
 }
 
@@ -538,7 +592,8 @@ private class PhotoDetailsUiStateProvider : PreviewParameterProvider<PhotoDetail
         width = 4000,
         height = 3000,
         color = "#E0E0E0",
-        blurHash = "LFC\$yHwc8^\$yIAS\$%M%00KxukYIp",
+        createdAt = "2023-05-03T11:00:28-04:00",
+        blurHash = "LFC\$yHwc8^\$yIAS$%M%00KxukYIp",
         views = 200,
         downloads = 200,
         likes = 10,

@@ -336,6 +336,7 @@ fun DefaultTopicItemPreview() {
             id = "",
             width = 200,
             height = 300,
+            createdAt = "",
             color = "#E0E0E0",
             blurHash = "LFC\$yHwc8^\$yIAS\$%M%00KxukYIp",
             views = 200,
