@@ -3,13 +3,12 @@ package com.andrii_a.walleria.ui.util
 import android.text.format.DateFormat
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import androidx.core.graphics.toColorInt
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.PhotoQuality
-import com.andrii_a.walleria.domain.UserProfileImageQuality
 import com.andrii_a.walleria.domain.models.photo.Photo
 import java.text.SimpleDateFormat
 import java.util.Locale
-import android.graphics.Color as AndroidColor
 
 fun Photo.getUrlByQuality(quality: PhotoQuality = PhotoQuality.HIGH): String =
     when (quality) {
@@ -18,13 +17,6 @@ fun Photo.getUrlByQuality(quality: PhotoQuality = PhotoQuality.HIGH): String =
         PhotoQuality.MEDIUM -> this.urls.regular
         PhotoQuality.LOW -> this.urls.small
         PhotoQuality.THUMBNAIL -> this.urls.thumb
-    }
-
-fun Photo.getUserProfileImageUrlOrEmpty(quality: UserProfileImageQuality = UserProfileImageQuality.MEDIUM): String =
-    when (quality) {
-        UserProfileImageQuality.LOW -> this.user?.profileImage?.small.orEmpty()
-        UserProfileImageQuality.MEDIUM -> this.user?.profileImage?.medium.orEmpty()
-        UserProfileImageQuality.HIGH -> this.user?.profileImage?.large.orEmpty()
     }
 
 val Photo.userFullName: String
@@ -39,7 +31,7 @@ val Photo.userNickname: String
     get() = this.user?.username.orEmpty()
 
 val Photo.primaryColorInt: Int
-    get() = AndroidColor.parseColor(this.color)
+    get() = this.color.toColorInt()
 
 val Photo.downloadFilename: String
     get() = "${this.id}_${this.userNickname}_unsplash.jpg"
