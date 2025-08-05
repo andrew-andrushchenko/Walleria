@@ -348,9 +348,6 @@ private fun SuccessStateContent(
                 },
                 navigateToCollectionDetails = { id ->
                     onEvent(PhotoDetailsEvent.SelectCollection(id))
-                },
-                navigateToUserDetails = { nickname ->
-                    onEvent(PhotoDetailsEvent.SelectUser(nickname))
                 }
             )
         }
@@ -592,7 +589,7 @@ private class PhotoDetailsUiStateProvider : PreviewParameterProvider<PhotoDetail
         width = 4000,
         height = 3000,
         color = "#E0E0E0",
-        createdAt = "2023-05-03T11:00:28-04:00",
+        createdAt = "2023-05-03T11:00:28Z",
         blurHash = "LFC\$yHwc8^\$yIAS$%M%00KxukYIp",
         views = 200,
         downloads = 200,

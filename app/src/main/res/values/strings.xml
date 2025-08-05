@@ -128,13 +128,7 @@
     <!--Photo details-->
     <string name="open_in_browser">Open in browser</string>
     <string name="share">Share</string>
-    <string name="camera">Camera</string>
-    <string name="aperture">Aperture</string>
     <string name="unknown">Unknown</string>
-    <string name="focal_length">Focal length</string>
-    <string name="shutter_speed">Shutter speed</string>
-    <string name="iso" translatable="false">ISO</string>
-    <string name="resolution">Resolution</string>
     <string name="resolution_formatted" translatable="false">%d × %d</string>
     <string name="collect">Collect</string>
     <string name="drop">Drop</string>
@@ -142,6 +136,10 @@
     <string name="views">Views</string>
     <string name="likes">Likes</string>
     <string name="downloads">Downloads</string>
+    <string name="exif_info">\u0020\u2022 %s \u2022 %s \u2022 %s</string>
+    <string name="location">Location</string>
+    <string name="details">Details:</string>
+    <string name="no_description_provided">No description provided</string>
 
     <!-- Collect photo-->
     <string name="select_collections">Select collections</string>

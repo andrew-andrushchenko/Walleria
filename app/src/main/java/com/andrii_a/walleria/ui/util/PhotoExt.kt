@@ -36,6 +36,14 @@ val Photo.primaryColorInt: Int
 val Photo.downloadFilename: String
     get() = "${this.id}_${this.userNickname}_unsplash.jpg"
 
+val Photo.downloadFilename2: String
+    get() {
+        val name = this.urls.full.substringAfterLast("/").substringBefore("?")
+        val extension = this.urls.full.substringAfter("fm=").substringBefore("&")
+
+        return "$name.$extension"
+    }
+
 val Photo.createdDateTime: String
     get() {
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ROOT)

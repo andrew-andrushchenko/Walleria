@@ -15,3 +15,15 @@ val Long.abbreviatedNumberString: String
             "KMGTPE"[exp - 1]
         )
     }
+
+val Int.abbreviatedNumberString: String
+    get() {
+        if (this < 1000) return "$this"
+        val exp = (ln(this.toDouble()) / ln(1000.0)).toInt()
+        return String.format(
+            Locale.ROOT,
+            "%.1f%c",
+            this / 1000.0.pow(exp.toDouble()),
+            "KMGTPE"[exp - 1]
+        )
+    }
