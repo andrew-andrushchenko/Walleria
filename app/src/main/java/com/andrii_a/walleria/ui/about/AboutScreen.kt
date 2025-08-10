@@ -38,7 +38,7 @@ import com.andrii_a.walleria.ui.theme.WalleriaLogoTextStyle
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.openGithubProfile
 import com.andrii_a.walleria.ui.util.openInstagramProfile
-import com.andrii_a.walleria.ui.util.writeALetterTo
+import com.andrii_a.walleria.ui.util.writeLetterTo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -145,7 +145,7 @@ private fun DeveloperContactRow(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        FilledIconButton(onClick = { context.writeALetterTo(context.getString(R.string.developer_email)) }) {
+        FilledIconButton(onClick = { context.writeLetterTo(context.getString(R.string.developer_email)) }) {
             Icon(
                 imageVector = Icons.Outlined.MailOutline,
                 contentDescription = stringResource(id = R.string.developer_email)

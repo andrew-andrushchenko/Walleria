@@ -3,9 +3,9 @@ package com.andrii_a.walleria.ui.util
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.widget.Toast
 import androidx.annotation.StringRes
+import androidx.core.net.toUri
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.domain.models.photo.PhotoLocation
 import com.andrii_a.walleria.ui.common.UserNickname
@@ -19,7 +19,8 @@ fun Context.toast(message: String, duration: Int = Toast.LENGTH_SHORT) {
 }
 
 fun Context.sharePhoto(photoLink: String?, photoDescription: String?) {
-    if (photoLink == null) return
+    if (photoLink == null)
+        return
 
     Intent.createChooser(
         Intent().apply {
@@ -34,7 +35,7 @@ fun Context.sharePhoto(photoLink: String?, photoDescription: String?) {
 }
 
 fun Context.openLinkInBrowser(link: String?) {
-    CustomTabsHelper.openCustomTab(this, Uri.parse(link))
+    link?.let { CustomTabsHelper.openCustomTab(this, it.toUri()) }
 }
 
 fun Context.openLocationInMaps(position: PhotoLocation.Position?) {
@@ -42,7 +43,7 @@ fun Context.openLocationInMaps(position: PhotoLocation.Position?) {
         startActivity(
             Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse("geo:${it.latitude},${it.longitude}")
+                "geo:${it.latitude},${it.longitude}".toUri()
             )
         )
     }
@@ -54,13 +55,13 @@ fun Context.openUserProfileInBrowser(userNickname: UserNickname) {
 }
 
 fun Context.openInstagramProfile(instagramUsername: String) {
-    val uri = Uri.parse("https://instagram.com/_u/$instagramUsername")
+    val uri = "https://instagram.com/_u/$instagramUsername".toUri()
     Intent(Intent.ACTION_VIEW, uri).apply {
         setPackage("com.instagram.android")
     }.let { instagramIntent ->
         try {
             startActivity(instagramIntent)
-        } catch (e: ActivityNotFoundException) {
+        } catch (_: ActivityNotFoundException) {
             val link = "https://instagram.com/$instagramUsername"
             this.openLinkInBrowser(link)
         }
@@ -68,13 +69,13 @@ fun Context.openInstagramProfile(instagramUsername: String) {
 }
 
 fun Context.openTwitterProfile(twitterUsername: String) {
-    val uri = Uri.parse("twitter://user?screen_name=$twitterUsername")
+    val uri = "twitter://user?screen_name=$twitterUsername".toUri()
     Intent(Intent.ACTION_VIEW, uri).apply {
         setPackage("com.twitter.android")
     }.let { twitterIntent ->
         try {
             startActivity(twitterIntent)
-        } catch (e: ActivityNotFoundException) {
+        } catch (_: ActivityNotFoundException) {
             val link = "https://twitter.com/$twitterUsername"
             this.openLinkInBrowser(link)
         }
@@ -86,9 +87,9 @@ fun Context.openGithubProfile(username: String) {
     this.openLinkInBrowser(link)
 }
 
-fun Context.writeALetterTo(email: String) {
+fun Context.writeLetterTo(email: String) {
     Intent(Intent.ACTION_SENDTO).apply {
-        data = Uri.parse("mailto:$email")
+        data = "mailto:$email".toUri()
         putExtra(Intent.EXTRA_SUBJECT, "")
         putExtra(Intent.EXTRA_TEXT, "")
     }.let {

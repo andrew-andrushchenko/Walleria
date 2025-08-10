@@ -8,7 +8,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.andrii_a.walleria.ui.navigation.Screen
-import com.andrii_a.walleria.ui.util.InterScreenCommunicationKeys
+import com.andrii_a.walleria.ui.util.COLLECT_SCREEN_RESULT_KEY
 import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 import com.andrii_a.walleria.ui.util.openLinkInBrowser
 import com.andrii_a.walleria.ui.util.sharePhoto
@@ -23,7 +23,7 @@ fun NavGraphBuilder.photoDetailsRoute(navController: NavController) {
         val collectResult = navController.currentBackStackEntry
             ?.savedStateHandle
             ?.getStateFlow(
-                InterScreenCommunicationKeys.COLLECT_SCREEN_RESULT_KEY,
+                COLLECT_SCREEN_RESULT_KEY,
                 state.isCollected
             )
             ?.collectAsStateWithLifecycle()

@@ -8,7 +8,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.andrii_a.walleria.ui.collect_photo.event.CollectPhotoNavigationEvent
 import com.andrii_a.walleria.ui.navigation.Screen
-import com.andrii_a.walleria.ui.util.InterScreenCommunicationKeys
+import com.andrii_a.walleria.ui.util.COLLECT_SCREEN_RESULT_KEY
 import com.andrii_a.walleria.ui.util.collectAsOneTimeEvents
 import org.koin.androidx.compose.koinViewModel
 
@@ -23,7 +23,7 @@ fun NavGraphBuilder.collectPhotoRoute(navController: NavController) {
                 navController.previousBackStackEntry
                     ?.savedStateHandle
                     ?.set(
-                        InterScreenCommunicationKeys.COLLECT_SCREEN_RESULT_KEY,
+                        COLLECT_SCREEN_RESULT_KEY,
                         state.isCollected
                     )
 
@@ -37,7 +37,7 @@ fun NavGraphBuilder.collectPhotoRoute(navController: NavController) {
                     navController.previousBackStackEntry
                         ?.savedStateHandle
                         ?.set(
-                            InterScreenCommunicationKeys.COLLECT_SCREEN_RESULT_KEY,
+                            COLLECT_SCREEN_RESULT_KEY,
                             state.isCollected
                         )
 
