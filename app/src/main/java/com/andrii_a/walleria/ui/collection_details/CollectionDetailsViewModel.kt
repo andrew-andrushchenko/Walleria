@@ -166,13 +166,17 @@ class CollectionDetailsViewModel(
         isPrivate: Boolean
     ) {
         viewModelScope.launch {
-            collectionRepository.updateCollection(collectionId, title, description, isPrivate)
+            collectionRepository.updateCollection(collectionId, title, description, isPrivate).collect {
+
+            }
         }
     }
 
     private fun deleteCollection(collectionId: CollectionId) {
         viewModelScope.launch {
-            collectionRepository.deleteCollection(collectionId)
+            collectionRepository.deleteCollection(collectionId).collect {
+
+            }
         }
     }
 

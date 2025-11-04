@@ -9,6 +9,7 @@ import android.text.TextUtils
 import android.util.Log
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.browser.customtabs.CustomTabsService
+import androidx.core.net.toUri
 
 object CustomTabsHelper {
 
@@ -43,13 +44,13 @@ object CustomTabsHelper {
 
             customTabsIntent.intent.putExtra(
                 Intent.EXTRA_REFERRER,
-                Uri.parse("${Intent.URI_ANDROID_APP_SCHEME}//${context.packageName}")
+                "${Intent.URI_ANDROID_APP_SCHEME}//${context.packageName}".toUri()
             )
             customTabsIntent.intent.setPackage(packageName)
 
             try {
                 customTabsIntent.launchUrl(context, uri)
-            } catch (e: ActivityNotFoundException) {
+            } catch (_: ActivityNotFoundException) {
                 launchFallback(context, uri)
             }
         }

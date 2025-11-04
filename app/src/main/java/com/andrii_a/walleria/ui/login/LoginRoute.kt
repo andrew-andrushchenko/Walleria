@@ -1,11 +1,11 @@
 package com.andrii_a.walleria.ui.login
 
 import android.content.Intent
-import android.net.Uri
 import androidx.activity.compose.LocalActivity
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.core.net.toUri
 import androidx.core.util.Consumer
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -66,11 +66,11 @@ fun NavGraphBuilder.loginRoute(navController: NavController) {
         viewModel.navigationEventFlow.collectAsOneTimeEvents { event ->
             when (event) {
                 LoginNavigationEvent.NavigateToLoginCustomTab -> {
-                    CustomTabsHelper.openCustomTab(activity, Uri.parse(Config.LOGIN_URL))
+                    CustomTabsHelper.openCustomTab(activity, Config.LOGIN_URL.toUri())
                 }
 
                 LoginNavigationEvent.NavigateToJoinCustomTab -> {
-                    CustomTabsHelper.openCustomTab(activity, Uri.parse(Config.JOIN_URL))
+                    CustomTabsHelper.openCustomTab(activity, Config.JOIN_URL.toUri())
                 }
 
                 LoginNavigationEvent.NavigateBack -> {

@@ -30,6 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
@@ -162,6 +163,7 @@ fun PhotoItem(
         modifier = Modifier.fillMaxWidth()
     ) {
         val context = LocalContext.current
+        val resources = LocalResources.current
 
         val placeholderBitmap by produceState<Bitmap?>(initialValue = null) {
             value = withContext(Dispatchers.Default) {
@@ -177,8 +179,8 @@ fun PhotoItem(
             model = ImageRequest.Builder(context)
                 .data(photo.getUrlByQuality(quality = photosLoadQuality))
                 .crossfade(durationMillis = 1000)
-                .placeholder(placeholderBitmap?.toDrawable(context.resources))
-                .fallback(placeholderBitmap?.toDrawable(context.resources))
+                .placeholder(placeholderBitmap?.toDrawable(resources))
+                .fallback(placeholderBitmap?.toDrawable(resources))
                 .error(photo.primaryColorInt.toDrawable())
                 .build(),
             contentScale = ContentScale.Crop,

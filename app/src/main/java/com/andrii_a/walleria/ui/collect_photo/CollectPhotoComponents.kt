@@ -53,6 +53,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -184,6 +185,7 @@ fun UserCollectionItem(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val resources = LocalResources.current
 
     ConstraintLayout(
         modifier = modifier
@@ -209,8 +211,8 @@ fun UserCollectionItem(
             model = ImageRequest.Builder(context)
                 .data(collection.coverPhoto?.getUrlByQuality(quality = PhotoQuality.MEDIUM))
                 .crossfade(durationMillis = 1000)
-                .placeholder(placeholderBitmap?.toDrawable(context.resources))
-                .fallback(placeholderBitmap?.toDrawable(context.resources))
+                .placeholder(placeholderBitmap?.toDrawable(resources))
+                .fallback(placeholderBitmap?.toDrawable(resources))
                 .error(errorColor.toArgb().toDrawable())
                 .build(),
             contentDescription = null,

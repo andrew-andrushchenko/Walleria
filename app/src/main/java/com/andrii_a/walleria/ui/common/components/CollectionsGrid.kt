@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -153,7 +154,7 @@ private fun DefaultCollectionItem(
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(16.dp)
 ) {
-    val context = LocalContext.current
+    val resources = LocalResources.current
 
     Box(modifier = modifier.clickable(onClick = onCollectionClick)) {
         val placeholderBitmap by produceState<Bitmap?>(initialValue = null) {
@@ -170,7 +171,7 @@ private fun DefaultCollectionItem(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(collection.getCoverPhotoUrl(quality = photoQuality))
                 .crossfade(durationMillis = 1000)
-                .placeholder(placeholderBitmap?.toDrawable(context.resources))
+                .placeholder(placeholderBitmap?.toDrawable(resources))
                 .error((collection.coverPhoto?.primaryColorInt ?: Color.Gray.toArgb()).toDrawable())
                 .build(),
             contentScale = ContentScale.Crop,

@@ -22,7 +22,6 @@ import com.andrii_a.walleria.ui.util.CustomTabsHelper
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
-import org.koin.androidx.compose.KoinAndroidContext
 
 class MainActivity : ComponentActivity() {
 
@@ -53,19 +52,17 @@ class MainActivity : ComponentActivity() {
         setupCustomTabs()
 
         setContent {
-            KoinAndroidContext {
-                val appTheme by localPreferencesRepository.appTheme.collectAsStateWithLifecycle(
-                    initialValue = runBlocking { localPreferencesRepository.appTheme.first() }
-                )
+            val appTheme by localPreferencesRepository.appTheme.collectAsStateWithLifecycle(
+                initialValue = runBlocking { localPreferencesRepository.appTheme.first() }
+            )
 
-                val useDarkTheme = when (appTheme) {
-                    AppTheme.SYSTEM_DEFAULT -> isSystemInDarkTheme()
-                    AppTheme.LIGHT -> false
-                    AppTheme.DARK -> true
-                }
-
-                WalleriaApp(darkTheme = useDarkTheme)
+            val useDarkTheme = when (appTheme) {
+                AppTheme.SYSTEM_DEFAULT -> isSystemInDarkTheme()
+                AppTheme.LIGHT -> false
+                AppTheme.DARK -> true
             }
+
+            WalleriaApp(darkTheme = useDarkTheme)
         }
     }
 
