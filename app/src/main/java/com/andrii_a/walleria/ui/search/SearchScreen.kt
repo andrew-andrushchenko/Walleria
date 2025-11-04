@@ -30,6 +30,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.outlined.FilterList
+import androidx.compose.material3.AppBarWithSearch
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExpandedFullScreenSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -53,7 +54,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonDefaults
-import androidx.compose.material3.TopSearchBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
@@ -163,7 +163,7 @@ fun SearchScreen(
 
     Scaffold(
         topBar = {
-            TopSearchBar(
+            AppBarWithSearch(
                 scrollBehavior = scrollBehavior,
                 state = searchBarState,
                 inputField = inputField,
