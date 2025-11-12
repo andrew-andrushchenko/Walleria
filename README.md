@@ -1,4 +1,7 @@
 # Walleria
+See also [WalleriaMultiplatform](https://github.com/andrew-andrushchenko/WalleriaMultiplatform) a Kotlin Multiplatform + Compose Multiplatform experimantal version of the project.
+<br/>
+<br/>
 ![Walleria](screenshots/Walleria.png)
 
 A simple and beautiful Material You photo client for Android powered by [Unsplash](https://unsplash.com). This is an **unofficial** application. The goal of this project is to explore the feasibility of some conceptions.
