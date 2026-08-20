@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -130,13 +131,14 @@ fun AboutScreenContent(
 @Composable
 private fun DeveloperContactRow(modifier: Modifier = Modifier) {
     val context = LocalContext.current
+    val resources = LocalResources.current
 
     Row(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
     ) {
-        FilledIconButton(onClick = { context.openGithubProfile(context.getString(R.string.developer_github_username)) }) {
+        FilledIconButton(onClick = { context.openGithubProfile(resources.getString(R.string.developer_github_username)) }) {
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_github),
                 contentDescription = stringResource(id = R.string.developer_github_username)
@@ -145,7 +147,7 @@ private fun DeveloperContactRow(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        FilledIconButton(onClick = { context.writeLetterTo(context.getString(R.string.developer_email)) }) {
+        FilledIconButton(onClick = { context.writeLetterTo(resources.getString(R.string.developer_email)) }) {
             Icon(
                 imageVector = Icons.Outlined.MailOutline,
                 contentDescription = stringResource(id = R.string.developer_email)
@@ -154,7 +156,7 @@ private fun DeveloperContactRow(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        FilledIconButton(onClick = { context.openInstagramProfile(context.getString(R.string.developer_instagram_username)) }) {
+        FilledIconButton(onClick = { context.openInstagramProfile(resources.getString(R.string.developer_instagram_username)) }) {
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_instagram_outlined),
                 contentDescription = stringResource(id = R.string.developer_instagram_username)

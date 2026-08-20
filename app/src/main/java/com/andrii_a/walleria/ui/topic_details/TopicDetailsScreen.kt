@@ -21,9 +21,10 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -152,8 +153,8 @@ private fun SuccessStateContent(
 ) {
     val topic = state.topic!!
 
-    val bottomSheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true
+    val bottomSheetState = rememberBottomSheetState(
+        initialValue = SheetValue.Hidden
     )
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()

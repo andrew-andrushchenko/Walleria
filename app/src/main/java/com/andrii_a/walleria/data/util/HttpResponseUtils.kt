@@ -3,8 +3,8 @@ package com.andrii_a.walleria.data.util
 import com.andrii_a.walleria.domain.network.Resource
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
-import kotlin.coroutines.coroutineContext
 
 suspend inline fun <reified T> HttpResponse.asResource(): Resource<T> {
     return when (val statusCode = this.status.value) {
@@ -12,6 +12,7 @@ suspend inline fun <reified T> HttpResponse.asResource(): Resource<T> {
             val result = this.body<T>()
             Resource.Success(result)
         }
+
         401 -> Resource.Error(code = statusCode, reason = "Unauthorized")
         404 -> Resource.Error(code = statusCode, reason = "Not found")
         409 -> Resource.Error(code = statusCode, reason = "Conflict")
@@ -26,7 +27,7 @@ suspend inline fun <reified T> backendRequest(crossinline request: suspend () ->
     return try {
         request().asResource<T>()
     } catch (e: Exception) {
-        coroutineContext.ensureActive()
+        currentCoroutineContext().ensureActive()
         Resource.Error(exception = e)
     }
 }

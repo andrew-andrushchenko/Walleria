@@ -6,8 +6,8 @@ import com.andrii_a.walleria.data.util.Config
 import com.andrii_a.walleria.domain.TopicsDisplayOrder
 import com.andrii_a.walleria.domain.models.topic.Topic
 import com.andrii_a.walleria.domain.network.Resource
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
-import kotlin.coroutines.coroutineContext
 
 class TopicsPagingSource(
     private val topicService: TopicService,
@@ -36,7 +36,7 @@ class TopicsPagingSource(
                 nextKey = if (topics.isEmpty()) null else pageKey + 1
             )
         } catch (exception: Exception) {
-            coroutineContext.ensureActive()
+            currentCoroutineContext().ensureActive()
             LoadResult.Error(exception)
         }
     }

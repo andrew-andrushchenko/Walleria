@@ -81,7 +81,7 @@ fun TopicPhotosFilterBottomSheet(
                     modifier = Modifier
                         .weight(1f)
                         .semantics { role = Role.RadioButton },
-                    colors = ToggleButtonDefaults.tonalToggleButtonColors(),
+                    colors = ToggleButtonDefaults.toggleButtonColors(),
                     shapes =
                         when (index) {
                             0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
@@ -120,7 +120,7 @@ fun TopicPhotosFilterBottomSheet(
                     modifier = Modifier
                         .weight(1f)
                         .semantics { role = Role.RadioButton },
-                    colors = ToggleButtonDefaults.tonalToggleButtonColors(),
+                    colors = ToggleButtonDefaults.toggleButtonColors(),
                     shapes =
                         when (index) {
                             0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()

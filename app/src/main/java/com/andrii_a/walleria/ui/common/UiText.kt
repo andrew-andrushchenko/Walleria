@@ -11,7 +11,7 @@ sealed interface UiText {
     ) : UiText
 
     data class StringResource(
-        @StringRes val id: Int,
+        @param:StringRes val id: Int,
         val args: List<Any> = emptyList()
     ) : UiText
 

@@ -15,7 +15,7 @@ import com.andrii_a.walleria.R
 
 enum class NavigationScreen(
     val route: Screen,
-    @StringRes val titleRes: Int,
+    @param:StringRes val titleRes: Int,
     val iconUnselected: ImageVector,
     val iconSelected: ImageVector
 ) {

@@ -37,10 +37,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -173,8 +174,8 @@ fun SuccessStateContent(
 ) {
     val user = state.user!!
 
-    val bottomSheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true
+    val bottomSheetState = rememberBottomSheetState(
+        initialValue = SheetValue.Hidden
     )
 
     val toolbarScrollBehavior = FloatingToolbarDefaults.exitAlwaysScrollBehavior(
@@ -270,7 +271,13 @@ fun SuccessStateContent(
                     UserHeader(
                         user = user,
                         onOpenPortfolio = { onEvent(UserDetailsEvent.SelectPortfolioLink(it)) },
-                        onOpenInstagramProfile = { onEvent(UserDetailsEvent.SelectInstagramProfile(it)) },
+                        onOpenInstagramProfile = {
+                            onEvent(
+                                UserDetailsEvent.SelectInstagramProfile(
+                                    it
+                                )
+                            )
+                        },
                         onOpenTwitterProfile = { onEvent(UserDetailsEvent.SelectTwitterProfile(it)) },
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -341,7 +348,7 @@ private fun ProfileContentToolbar(
                         }
                     },
                     modifier = Modifier.semantics { role = Role.RadioButton },
-                    colors = ToggleButtonDefaults.tonalToggleButtonColors(),
+                    colors = ToggleButtonDefaults.toggleButtonColors(),
                     shapes =
                         when (index) {
                             0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
@@ -410,7 +417,7 @@ private fun Pages(
     }
 }
 
-private enum class UserDetailsScreenTabs(@StringRes val titleRes: Int) {
+private enum class UserDetailsScreenTabs(@param:StringRes val titleRes: Int) {
     Photos(R.string.photos),
     LikedPhotos(R.string.liked_photos),
     Collections(R.string.collections)

@@ -7,8 +7,8 @@ import com.andrii_a.walleria.domain.PhotoListDisplayOrder
 import com.andrii_a.walleria.domain.TopicPhotosOrientation
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.network.Resource
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
-import kotlin.coroutines.coroutineContext
 
 class TopicPhotosPagingSource(
     private val photoService: PhotoService,
@@ -41,7 +41,7 @@ class TopicPhotosPagingSource(
                 nextKey = if (topicPhotos.isEmpty()) null else pageKey + 1
             )
         } catch (exception: Exception) {
-            coroutineContext.ensureActive()
+            currentCoroutineContext().ensureActive()
             LoadResult.Error(exception)
         }
     }

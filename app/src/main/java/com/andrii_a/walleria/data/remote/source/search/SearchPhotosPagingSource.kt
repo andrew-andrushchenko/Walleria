@@ -9,8 +9,8 @@ import com.andrii_a.walleria.domain.SearchResultsPhotoColor
 import com.andrii_a.walleria.domain.SearchResultsPhotoOrientation
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.network.Resource
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
-import kotlin.coroutines.coroutineContext
 
 class SearchPhotosPagingSource(
     private val searchService: SearchService,
@@ -58,7 +58,7 @@ class SearchPhotosPagingSource(
             )
 
         } catch (exception: Exception) {
-            coroutineContext.ensureActive()
+            currentCoroutineContext().ensureActive()
             LoadResult.Error(exception)
         }
     }

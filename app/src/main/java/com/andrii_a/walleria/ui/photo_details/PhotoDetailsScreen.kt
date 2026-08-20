@@ -48,10 +48,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -63,6 +64,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -137,11 +139,12 @@ private fun SuccessStateContent(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
+    val resources = LocalResources.current
 
     val scope = rememberCoroutineScope()
 
-    val bottomSheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true
+    val bottomSheetState = rememberBottomSheetState(
+        initialValue = SheetValue.Hidden
     )
 
     val photo = state.photo!!
@@ -227,13 +230,13 @@ private fun SuccessStateContent(
                                     Manifest.permission.WRITE_EXTERNAL_STORAGE
                                 ) == PackageManager.PERMISSION_GRANTED
                             ) {
-                                context.toast(context.getString(R.string.download_started))
+                                context.toast(resources.getString(R.string.download_started))
                                 onEvent(PhotoDetailsEvent.DownloadPhoto(photo))
                             } else {
                                 launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                             }
                         } else {
-                            context.toast(context.getString(R.string.download_started))
+                            context.toast(resources.getString(R.string.download_started))
                             onEvent(
                                 PhotoDetailsEvent.DownloadPhoto(
                                     photo = photo,
@@ -429,7 +432,11 @@ private fun TopBar(
     ownerUserFullName: String,
     dateTimePublished: String
 ) {
-    val bgColor by animateColorAsState(targetValue = if (currentImageScale > 1f) Color.Black.copy(alpha = 0.4f) else Color.Transparent)
+    val bgColor by animateColorAsState(
+        targetValue = if (currentImageScale > 1f) Color.Black.copy(
+            alpha = 0.4f
+        ) else Color.Transparent
+    )
     val textColor by animateColorAsState(targetValue = if (currentImageScale > 1f) Color.White else MaterialTheme.colorScheme.onSurface)
 
     val shouldUseDarkIcons = !isSystemInDarkTheme()
@@ -443,7 +450,8 @@ private fun TopBar(
 
         onDispose {
             val window = (view.context as Activity).window
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = shouldUseDarkIcons
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars =
+                shouldUseDarkIcons
         }
     }
 

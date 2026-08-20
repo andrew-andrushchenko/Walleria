@@ -105,8 +105,10 @@ fun SearchPhotoFiltersBottomSheet(
                     onCheckedChange = {
                         order = displayOrder
                     },
-                    modifier = Modifier.weight(1f).semantics { role = Role.RadioButton },
-                    colors = ToggleButtonDefaults.tonalToggleButtonColors(),
+                    modifier = Modifier
+                        .weight(1f)
+                        .semantics { role = Role.RadioButton },
+                    colors = ToggleButtonDefaults.toggleButtonColors(),
                     shapes =
                         when (index) {
                             0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
@@ -147,8 +149,10 @@ fun SearchPhotoFiltersBottomSheet(
                     onCheckedChange = {
                         contentFilter = filter
                     },
-                    modifier = Modifier.weight(1f).semantics { role = Role.RadioButton },
-                    colors = ToggleButtonDefaults.tonalToggleButtonColors(),
+                    modifier = Modifier
+                        .weight(1f)
+                        .semantics { role = Role.RadioButton },
+                    colors = ToggleButtonDefaults.toggleButtonColors(),
                     shapes =
                         when (index) {
                             0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
@@ -187,8 +191,10 @@ fun SearchPhotoFiltersBottomSheet(
                 ToggleButton(
                     checked = orientation == searchResultsPhotoOrientation,
                     onCheckedChange = { orientation = searchResultsPhotoOrientation },
-                    modifier = Modifier.weight(1f).semantics { role = Role.RadioButton },
-                    colors = ToggleButtonDefaults.tonalToggleButtonColors(),
+                    modifier = Modifier
+                        .weight(1f)
+                        .semantics { role = Role.RadioButton },
+                    colors = ToggleButtonDefaults.toggleButtonColors(),
                     shapes =
                         when (index) {
                             0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()

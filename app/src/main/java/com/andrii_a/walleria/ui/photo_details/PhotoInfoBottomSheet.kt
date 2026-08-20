@@ -47,6 +47,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -183,6 +184,7 @@ fun PhotoInfoItem(
     onClick: (() -> Unit)? = null
 ) {
     ListItem(
+        modifier = modifier,
         leadingContent = if (icon != null) {
             {
                 Icon(
@@ -191,22 +193,6 @@ fun PhotoInfoItem(
                 )
             }
         } else null,
-        headlineContent = {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleSmall,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        },
-        supportingContent = {
-            Text(
-                text = text,
-                style = MaterialTheme.typography.bodyMedium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        },
         trailingContent = if (clickable) {
             {
                 FilledTonalIconButton(onClick = { onClick?.invoke() }) {
@@ -217,10 +203,27 @@ fun PhotoInfoItem(
                 }
             }
         } else null,
+        overlineContent = null,
+        supportingContent = {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodyMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        },
         colors = ListItemDefaults.colors(
             containerColor = Color.Transparent
         ),
-        modifier = modifier
+        elevation = ListItemDefaults.elevation(),
+        content = {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleSmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        },
     )
 }
 
@@ -312,6 +315,7 @@ fun RelatedCollectionsItem(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val resources = LocalResources.current
 
     Card(
         shape = RoundedCornerShape(16.dp),
@@ -333,8 +337,8 @@ fun RelatedCollectionsItem(
                 model = ImageRequest.Builder(context)
                     .data(collection.coverPhoto?.getUrlByQuality(quality = PhotoQuality.MEDIUM))
                     .crossfade(durationMillis = 1000)
-                    .placeholder(placeholderBitmap?.toDrawable(context.resources))
-                    .fallback(placeholderBitmap?.toDrawable(context.resources))
+                    .placeholder(placeholderBitmap?.toDrawable(resources))
+                    .fallback(placeholderBitmap?.toDrawable(resources))
                     .error(
                         (collection.coverPhoto?.primaryColorInt ?: Color.Gray.toArgb()).toDrawable()
                     )
@@ -486,7 +490,13 @@ fun PhotoInfoBottomSheetPreview() {
             relatedCollections = relatedCollections,
             currentUserCollections = null,
             sponsorship = null,
-            urls = PhotoUrls("", "https://images.unsplash.com/photo-1417325384643-aac51acc9e5d?q=75&fm=jpg", "", "", ""),
+            urls = PhotoUrls(
+                "",
+                "https://images.unsplash.com/photo-1417325384643-aac51acc9e5d?q=75&fm=jpg",
+                "",
+                "",
+                ""
+            ),
             links = null,
             user = user
         )

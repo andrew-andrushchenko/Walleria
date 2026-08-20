@@ -49,12 +49,13 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SearchBarValue
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -88,8 +89,8 @@ fun SearchScreen(
 ) {
     val pagerState = rememberPagerState(initialPage = 0) { SearchScreenTabs.entries.size }
 
-    val bottomSheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true
+    val bottomSheetState = rememberBottomSheetState(
+        initialValue = SheetValue.Hidden
     )
     val textFieldState = rememberTextFieldState(
         initialText = state.query
@@ -288,7 +289,7 @@ private fun SearchToolbar(
                         }
                     },
                     modifier = Modifier.semantics { role = Role.RadioButton },
-                    colors = ToggleButtonDefaults.tonalToggleButtonColors(),
+                    colors = ToggleButtonDefaults.toggleButtonColors(),
                     shapes =
                         when (index) {
                             0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
@@ -373,7 +374,10 @@ private fun SearchHistoryList(
             val searchHistoryItem = searchHistory[index]
 
             ListItem(
-                headlineContent = { Text(text = searchHistoryItem.title) },
+                modifier = Modifier
+                    .clickable(onClick = { onItemSelected(searchHistoryItem) })
+                    .fillMaxWidth()
+                    .padding(start = 16.dp),
                 leadingContent = {
                     Icon(
                         Icons.Default.History,
@@ -388,11 +392,11 @@ private fun SearchHistoryList(
                         )
                     }
                 },
+                overlineContent = null,
+                supportingContent = null,
                 colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                modifier = Modifier
-                    .clickable(onClick = { onItemSelected(searchHistoryItem) })
-                    .fillMaxWidth()
-                    .padding(start = 16.dp)
+                elevation = ListItemDefaults.elevation(),
+                content = { Text(text = searchHistoryItem.title) },
             )
         }
 

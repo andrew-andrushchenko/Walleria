@@ -5,8 +5,8 @@ import com.andrii_a.walleria.data.remote.source.base.BasePagingSource
 import com.andrii_a.walleria.data.util.Config
 import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.network.Resource
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
-import kotlin.coroutines.coroutineContext
 
 class UserPhotosPagingSource(
     private val photoService: PhotoService,
@@ -40,7 +40,7 @@ class UserPhotosPagingSource(
                 nextKey = if (userPhotos.isEmpty()) null else pageKey + 1
             )
         } catch (exception: Exception) {
-            coroutineContext.ensureActive()
+            currentCoroutineContext().ensureActive()
             LoadResult.Error(exception)
         }
     }
