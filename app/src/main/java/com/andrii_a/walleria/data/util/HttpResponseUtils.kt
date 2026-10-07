@@ -7,19 +7,17 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 
 suspend inline fun <reified T> HttpResponse.asResource(): Resource<T> {
-    return when (val statusCode = this.status.value) {
-        in 200..299 -> {
-            val result = this.body<T>()
-            Resource.Success(result)
-        }
+    val httpStatus = this.status
 
-        401 -> Resource.Error(code = statusCode, reason = "Unauthorized")
-        404 -> Resource.Error(code = statusCode, reason = "Not found")
-        409 -> Resource.Error(code = statusCode, reason = "Conflict")
-        408 -> Resource.Error(code = statusCode, reason = "Request timeout")
-        413 -> Resource.Error(code = statusCode, reason = "Payload too large")
-        in 500..599 -> Resource.Error(code = statusCode, reason = "Internal server error")
-        else -> Resource.Error(code = statusCode, reason = "Unknown error")
+    return try {
+        if (httpStatus.value in 200..299) {
+            Resource.Success(this.body<T>())
+        } else {
+            Resource.Error(code = httpStatus.value, reason = httpStatus.description)
+        }
+    } catch (e: Exception) {
+        currentCoroutineContext().ensureActive()
+        Resource.Error(code = httpStatus.value, reason = e.localizedMessage ?: "Network error")
     }
 }
 
