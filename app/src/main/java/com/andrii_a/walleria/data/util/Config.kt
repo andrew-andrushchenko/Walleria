@@ -5,7 +5,7 @@ import com.andrii_a.walleria.BuildConfig
 object Config {
     const val CLIENT_ID = BuildConfig.UNSPLASH_ACCESS_KEY
     const val CLIENT_SECRET = BuildConfig.UNSPLASH_SECRET_KEY
-    const val AUTH_CALLBACK = "walleria://unsplash-auth-callback"
+    const val AUTH_CALLBACK = BuildConfig.AUTH_CALLBACK
     const val AUTH_GRANT_TYPE = "authorization_code"
 
     private val AUTH_SCOPES = AuthScopes.entries.joinToString("+") { it.scope }

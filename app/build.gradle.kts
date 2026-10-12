@@ -13,6 +13,8 @@ plugins {
 lateinit var accessKey: String
 lateinit var secretKey: String
 
+private val gradleLocalProperties = gradleLocalProperties(rootDir, providers)
+
 configure<ApplicationExtension> {
     namespace = "com.andrii_a.walleria"
     compileSdk = 37
@@ -29,15 +31,17 @@ configure<ApplicationExtension> {
             useSupportLibrary = true
         }
 
-        val paginationPageSize = gradleLocalProperties(rootDir, providers).getProperty("pagination_page_size").toInt()
+        val paginationPageSize = gradleLocalProperties.getProperty("pagination_page_size").toInt()
         buildConfigField("Integer", "PAGINATION_PAGE_SIZE", paginationPageSize.toString())
+
+        val authenticationCallback = gradleLocalProperties.getProperty("auth_callback")
+        buildConfigField("String", "AUTH_CALLBACK", authenticationCallback)
     }
 
     buildTypes {
         debug {
             isMinifyEnabled = false
             applicationIdSuffix = ".debug"
-            val gradleLocalProperties = gradleLocalProperties(rootDir, providers)
 
             accessKey = gradleLocalProperties.getProperty("unsplash_access_key_debug")
             buildConfigField("String", "UNSPLASH_ACCESS_KEY", accessKey)

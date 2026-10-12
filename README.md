@@ -26,6 +26,8 @@ unsplash_secret_key_debug = "<Debug Secret Key>"
 unsplash_access_key_release = "<Release Access Key>"
 unsplash_secret_key_release = "<Release Secret Key>"
 pagination_page_size = <Desired loading page size>
+auth_callback = "<Auth callback path to address this app in order to obtain auth token>"
+(e.g.: walleria://callback)
 ```
 
 > **Note**  

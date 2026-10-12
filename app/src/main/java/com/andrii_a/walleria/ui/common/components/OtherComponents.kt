@@ -32,7 +32,6 @@ import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
-import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -146,7 +145,6 @@ fun TagsRow(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DisplayOptions(
     modifier: Modifier = Modifier,
@@ -167,7 +165,6 @@ fun DisplayOptions(
                 modifier = Modifier
                     .weight(1f)
                     .semantics { role = Role.RadioButton },
-                colors = ToggleButtonDefaults.toggleButtonColors(),
                 shapes =
                     when (index) {
                         0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
