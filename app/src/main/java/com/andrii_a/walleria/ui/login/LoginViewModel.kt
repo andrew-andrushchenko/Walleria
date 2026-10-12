@@ -11,7 +11,6 @@ import com.andrii_a.walleria.ui.common.UiText
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -24,8 +23,7 @@ class LoginViewModel(
     private val localAccountRepository: LocalAccountRepository
 ) : ViewModel() {
 
-    private val _state: MutableStateFlow<LoginUiState> = MutableStateFlow(LoginUiState())
-    val state: StateFlow<LoginUiState> = _state.asStateFlow()
+    val state: StateFlow<LoginUiState> field = MutableStateFlow(LoginUiState())
 
     private val navigationEventChannel = Channel<LoginNavigationEvent>()
     val navigationEventFlow = navigationEventChannel.receiveAsFlow()
@@ -45,7 +43,7 @@ class LoginViewModel(
             }
 
             is LoginEvent.DismissError -> {
-                _state.update {
+                state.update {
                     it.copy(error = null)
                 }
             }
@@ -72,7 +70,7 @@ class LoginViewModel(
                 when (result) {
                     Resource.Empty -> Unit
                     Resource.Loading -> {
-                        _state.update {
+                        state.update {
                             it.copy(
                                 isLoading = true,
                                 isTokenObtained = false,
@@ -83,7 +81,7 @@ class LoginViewModel(
                     }
 
                     is Resource.Error -> {
-                        _state.update {
+                        state.update {
                             it.copy(
                                 isLoading = false,
                                 isTokenObtained = false,
@@ -98,7 +96,7 @@ class LoginViewModel(
                     is Resource.Success -> {
                         val token = result.value
                         localAccountRepository.saveAccessToken(token)
-                        _state.update {
+                        state.update {
                             it.copy(
                                 isLoading = false,
                                 isTokenObtained = true,
@@ -117,7 +115,7 @@ class LoginViewModel(
                 when (result) {
                     is Resource.Empty -> Unit
                     is Resource.Loading -> {
-                        _state.update {
+                        state.update {
                             it.copy(
                                 isLoading = true,
                                 isUserDataSaved = false,
@@ -127,7 +125,7 @@ class LoginViewModel(
                     }
 
                     is Resource.Error -> {
-                        _state.update {
+                        state.update {
                             it.copy(
                                 isLoading = false,
                                 isUserDataSaved = false,
@@ -140,7 +138,7 @@ class LoginViewModel(
 
                     is Resource.Success -> {
                         localAccountRepository.saveAccountInfo(userPrivateProfile = result.value)
-                        _state.update {
+                        state.update {
                             it.copy(
                                 isLoading = false,
                                 isUserDataSaved = true,

@@ -7,8 +7,8 @@ import androidx.navigation.toRoute
 import androidx.paging.cachedIn
 import com.andrii_a.walleria.domain.network.Resource
 import com.andrii_a.walleria.domain.repository.CollectionRepository
-import com.andrii_a.walleria.domain.repository.PhotoRepository
 import com.andrii_a.walleria.domain.repository.LocalAccountRepository
+import com.andrii_a.walleria.domain.repository.PhotoRepository
 import com.andrii_a.walleria.ui.collect_photo.event.CollectPhotoEvent
 import com.andrii_a.walleria.ui.collect_photo.event.CollectPhotoNavigationEvent
 import com.andrii_a.walleria.ui.collect_photo.state.CollectActionState
@@ -21,7 +21,6 @@ import com.andrii_a.walleria.ui.navigation.Screen
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.launchIn
@@ -38,8 +37,7 @@ class CollectPhotoViewModel(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _state: MutableStateFlow<CollectPhotoUiState> = MutableStateFlow(CollectPhotoUiState())
-    val state: StateFlow<CollectPhotoUiState> = _state.asStateFlow()
+    val state: StateFlow<CollectPhotoUiState> field = MutableStateFlow(CollectPhotoUiState())
 
     private val navigationChannel = Channel<CollectPhotoNavigationEvent>()
     val navigationEventsChannelFlow = navigationChannel.receiveAsFlow()
@@ -49,7 +47,7 @@ class CollectPhotoViewModel(
         photoRepository.getUserCollectionIdsForPhoto(photoId)
             .onEach { result ->
                 if (result is Resource.Success) {
-                    _state.update { state ->
+                    state.update { state ->
                         state.copy(
                             photoId = photoId,
                             userCollectionsContainingPhoto = result.value,
@@ -71,7 +69,7 @@ class CollectPhotoViewModel(
         collectionRepository.getUserCollections(userPrivateProfileData.nickname)
             .cachedIn(viewModelScope)
             .catch { e ->
-                _state.update {
+                state.update {
                     it.copy(
                         error = ListLoadingError(
                             reason = UiText.DynamicString(e.message.toString())
@@ -81,7 +79,7 @@ class CollectPhotoViewModel(
                 }
             }
             .collect { pagingData ->
-                _state.update {
+                state.update {
                     it.copy(
                         userCollectionsPagingData = pagingData,
                         isLoading = false,
@@ -123,13 +121,13 @@ class CollectPhotoViewModel(
             }
 
             is CollectPhotoEvent.OpenCreateAndCollectDialog -> {
-                _state.update {
+                state.update {
                     it.copy(isCreateDialogOpened = true)
                 }
             }
 
             is CollectPhotoEvent.DismissCreateAndCollectDialog -> {
-                _state.update {
+                state.update {
                     it.copy(isCreateDialogOpened = false)
                 }
             }
@@ -151,7 +149,7 @@ class CollectPhotoViewModel(
                 when (result) {
                     is Resource.Empty -> Unit
                     is Resource.Loading -> {
-                        _state.update {
+                        state.update {
                             it.copy(
                                 error = null,
                                 modifiedCollectionMetadata = CollectionMetadata(
@@ -163,7 +161,7 @@ class CollectPhotoViewModel(
                     }
 
                     is Resource.Error -> {
-                        _state.update {
+                        state.update {
                             it.copy(
                                 error = CollectOperationError(
                                     reason = UiText.DynamicString(result.reason.orEmpty())
@@ -175,8 +173,9 @@ class CollectPhotoViewModel(
                     }
 
                     is Resource.Success -> {
-                        _state.update {
-                            val newCollectionsList = it.userCollectionsContainingPhoto.toMutableList()
+                        state.update {
+                            val newCollectionsList =
+                                it.userCollectionsContainingPhoto.toMutableList()
                             newCollectionsList += collectionId
 
                             it.copy(
@@ -204,7 +203,7 @@ class CollectPhotoViewModel(
                 when (result) {
                     is Resource.Empty -> Unit
                     is Resource.Loading -> {
-                        _state.update {
+                        state.update {
                             it.copy(
                                 error = null,
                                 modifiedCollectionMetadata = CollectionMetadata(
@@ -216,7 +215,7 @@ class CollectPhotoViewModel(
                     }
 
                     is Resource.Error -> {
-                        _state.update {
+                        state.update {
                             it.copy(
                                 error = CollectOperationError(
                                     reason = UiText.DynamicString(result.reason.orEmpty())
@@ -228,8 +227,9 @@ class CollectPhotoViewModel(
                     }
 
                     is Resource.Success -> {
-                        _state.update {
-                            val newCollectionsList = it.userCollectionsContainingPhoto.toMutableList()
+                        state.update {
+                            val newCollectionsList =
+                                it.userCollectionsContainingPhoto.toMutableList()
                             newCollectionsList -= collectionId
 
                             it.copy(
@@ -255,13 +255,13 @@ class CollectPhotoViewModel(
                 when (result) {
                     is Resource.Empty -> Unit
                     is Resource.Loading -> {
-                        _state.update {
+                        state.update {
                             it.copy(isCreateCollectionInProgress = true)
                         }
                     }
 
                     is Resource.Error -> {
-                        _state.update {
+                        state.update {
                             it.copy(
                                 error = CollectOperationError(
                                     reason = UiText.DynamicString(result.reason.orEmpty())
