@@ -58,19 +58,19 @@ class PhotoServiceImpl(private val httpClient: HttpClient) : PhotoService {
                     parameters.append("page", page.toString())
                     parameters.append("per_page", perPage.toString())
                     orderBy?.let {
-                        parameters.append("order_by", orderBy.toString())
+                        parameters.append("order_by", orderBy)
                     }
                     stats?.let {
                         parameters.append("stats", stats.toString())
                     }
                     resolution?.let {
-                        parameters.append("resolution", resolution.toString())
+                        parameters.append("resolution", resolution)
                     }
                     quantity?.let {
                         parameters.append("quantity", quantity.toString())
                     }
                     orientation?.let {
-                        parameters.append("orientation", orientation.toString())
+                        parameters.append("orientation", orientation)
                     }
                 }
             }
@@ -94,10 +94,10 @@ class PhotoServiceImpl(private val httpClient: HttpClient) : PhotoService {
                     parameters.append("page", page.toString())
                     parameters.append("per_page", perPage.toString())
                     orderBy?.let {
-                        parameters.append("order_by", orderBy.toString())
+                        parameters.append("order_by", orderBy)
                     }
                     orientation?.let {
-                        parameters.append("orientation", orientation.toString())
+                        parameters.append("orientation", orientation)
                     }
                 }
             }
@@ -117,10 +117,10 @@ class PhotoServiceImpl(private val httpClient: HttpClient) : PhotoService {
                     parameters.append("page", page.toString())
                     parameters.append("per_page", perPage.toString())
                     orderBy?.let {
-                        parameters.append("order_by", orderBy.toString())
+                        parameters.append("order_by", orderBy)
                     }
                     orientation?.let {
-                        parameters.append("orientation", orientation.toString())
+                        parameters.append("orientation", orientation)
                     }
                 }
             }

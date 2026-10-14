@@ -80,7 +80,6 @@ fun TopicDetailsScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LoadingStateContent(onNavigateBack: () -> Unit) {
     Scaffold(
@@ -112,7 +111,6 @@ private fun LoadingStateContent(onNavigateBack: () -> Unit) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ErrorStateContent(
     onRetry: () -> Unit,

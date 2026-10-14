@@ -7,7 +7,6 @@ import com.andrii_a.walleria.domain.models.topic.Topic
 import com.andrii_a.walleria.ui.util.emptyPagingData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 @Stable
@@ -16,10 +15,9 @@ data class TopicsUiState(
     val isOrderMenuExpanded: Boolean = false,
     val topicsDisplayOrder: TopicsDisplayOrder = TopicsDisplayOrder.LATEST
 ) {
-    private val _topics: MutableStateFlow<PagingData<Topic>> = MutableStateFlow(emptyPagingData())
-    val topics: StateFlow<PagingData<Topic>> = _topics.asStateFlow()
+    val topics: StateFlow<PagingData<Topic>> field = MutableStateFlow(emptyPagingData())
 
     init {
-        _topics.update { topicsPagingData }
+        topics.update { topicsPagingData }
     }
 }

@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -22,7 +21,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.ui.common.components.CollectionsGridContent
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CollectionsScreen(
     state: CollectionsUiState,

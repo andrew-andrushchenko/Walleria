@@ -10,7 +10,6 @@ import com.andrii_a.walleria.ui.common.UserNickname
 import com.andrii_a.walleria.ui.util.emptyPagingData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 @Stable
@@ -22,12 +21,9 @@ data class CollectionDetailsUiState(
     private val collectionPhotosPagingData: PagingData<Photo> = emptyPagingData(),
     val photosLoadQuality: PhotoQuality = PhotoQuality.MEDIUM
 ) {
-    private val _collectionPhotos: MutableStateFlow<PagingData<Photo>> = MutableStateFlow(
-        emptyPagingData()
-    )
-    val collectionPhotos: StateFlow<PagingData<Photo>> = _collectionPhotos.asStateFlow()
+    val collectionPhotos: StateFlow<PagingData<Photo>> field = MutableStateFlow(emptyPagingData())
 
     init {
-        _collectionPhotos.update { collectionPhotosPagingData }
+        collectionPhotos.update { collectionPhotosPagingData }
     }
 }

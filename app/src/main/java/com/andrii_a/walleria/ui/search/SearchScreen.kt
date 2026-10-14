@@ -275,7 +275,7 @@ private fun SearchToolbar(
 
         Row(
             horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
-            modifier = Modifier.padding(horizontal = 8.dp),
+            //modifier = Modifier.padding(horizontal = 8.dp),
         ) {
             options.forEachIndexed { index, label ->
                 ToggleButton(

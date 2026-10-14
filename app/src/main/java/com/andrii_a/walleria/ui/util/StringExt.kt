@@ -23,7 +23,7 @@ val String?.timeAgoLocalizedString: String?
         }
 
         val now = System.currentTimeMillis()
-        if (time > now || time <= 0) {
+        if (time !in 1..now) {
             return null
         }
 

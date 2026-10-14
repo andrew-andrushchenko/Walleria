@@ -14,7 +14,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.MailOutline
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -41,7 +40,6 @@ import com.andrii_a.walleria.ui.util.openGithubProfile
 import com.andrii_a.walleria.ui.util.openInstagramProfile
 import com.andrii_a.walleria.ui.util.writeLetterTo
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(
     navigateBack: () -> Unit

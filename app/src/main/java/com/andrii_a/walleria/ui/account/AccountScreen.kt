@@ -29,7 +29,6 @@ import androidx.compose.material.icons.outlined.RemoveRedEye
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -65,7 +64,6 @@ import com.andrii_a.walleria.domain.models.preferences.UserPrivateProfileData
 import com.andrii_a.walleria.ui.theme.CloverShape
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     state: AccountScreenUiState,

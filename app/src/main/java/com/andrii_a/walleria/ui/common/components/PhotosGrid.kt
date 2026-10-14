@@ -261,7 +261,7 @@ fun DefaultPhotoItemPreview() {
             height = 3000,
             color = "#E0E0E0",
             createdAt = "",
-            blurHash = "LFC\$yHwc8^\$yIAS\$%M%00KxukYIp",
+            blurHash = $$"LFC$yHwc8^$yIAS$%M%00KxukYIp",
             views = 200,
             downloads = 200,
             likes = 10,

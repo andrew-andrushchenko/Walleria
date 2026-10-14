@@ -9,7 +9,6 @@ import com.andrii_a.walleria.ui.common.UiError
 import com.andrii_a.walleria.ui.util.emptyPagingData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 @Stable
@@ -22,10 +21,9 @@ data class TopicDetailsUiState(
     val isFilterDialogOpened: Boolean = false,
     val photosLoadQuality: PhotoQuality = PhotoQuality.MEDIUM,
 ) {
-    private val _topicPhotos: MutableStateFlow<PagingData<Photo>> = MutableStateFlow(emptyPagingData())
-    val topicPhotos: StateFlow<PagingData<Photo>> = _topicPhotos.asStateFlow()
+    val topicPhotos: StateFlow<PagingData<Photo>> field = MutableStateFlow(emptyPagingData())
 
     init {
-        _topicPhotos.update { topicPhotosPagingData }
+        topicPhotos.update { topicPhotosPagingData }
     }
 }

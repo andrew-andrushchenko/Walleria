@@ -17,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -43,7 +42,6 @@ import com.andrii_a.walleria.ui.common.components.TopicsGridContent
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 import com.andrii_a.walleria.ui.util.titleRes
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopicsScreen(
     state: TopicsUiState,

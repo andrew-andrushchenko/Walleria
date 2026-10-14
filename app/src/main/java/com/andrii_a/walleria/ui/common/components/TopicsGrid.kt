@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -164,7 +165,7 @@ fun DefaultTopicItem(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
-    val context = LocalContext.current
+    val resources = LocalResources.current
 
     val placeholderBitmap by produceState<Bitmap?>(initialValue = null) {
         value = withContext(Dispatchers.Default) {
@@ -192,8 +193,8 @@ fun DefaultTopicItem(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(topic.coverPhoto?.getUrlByQuality(coverPhotoQuality))
                 .crossfade(durationMillis = 1000)
-                .placeholder(placeholderBitmap?.toDrawable(context.resources))
-                .fallback(placeholderBitmap?.toDrawable(context.resources))
+                .placeholder(placeholderBitmap?.toDrawable(resources))
+                .fallback(placeholderBitmap?.toDrawable(resources))
                 .error((topic.coverPhoto?.primaryColorInt ?: Color.Gray.toArgb()).toDrawable())
                 .build(),
             contentDescription = stringResource(id = R.string.topic_cover_photo),
@@ -338,7 +339,7 @@ fun DefaultTopicItemPreview() {
             height = 300,
             createdAt = "",
             color = "#E0E0E0",
-            blurHash = "LFC\$yHwc8^\$yIAS\$%M%00KxukYIp",
+            blurHash = "LFCyHwc8^yIAS%M%00KxukYIp",
             views = 200,
             downloads = 200,
             likes = 10,

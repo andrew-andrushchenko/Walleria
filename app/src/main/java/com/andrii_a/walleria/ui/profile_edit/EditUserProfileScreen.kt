@@ -21,7 +21,6 @@ import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.MailOutline
 import androidx.compose.material.icons.outlined.WorkOutline
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -40,7 +39,6 @@ import androidx.compose.ui.unit.dp
 import com.andrii_a.walleria.R
 import com.andrii_a.walleria.ui.theme.WalleriaTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditUserProfileScreen(
     state: EditUserProfileUiState,

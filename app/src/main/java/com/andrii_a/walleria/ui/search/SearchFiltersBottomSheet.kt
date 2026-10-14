@@ -105,7 +105,6 @@ fun SearchPhotoFiltersBottomSheet(
                     modifier = Modifier
                         .weight(1f)
                         .semantics { role = Role.RadioButton },
-                    //colors = ToggleButtonDefaults.toggleButtonColors(),
                     shapes =
                         when (index) {
                             0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
