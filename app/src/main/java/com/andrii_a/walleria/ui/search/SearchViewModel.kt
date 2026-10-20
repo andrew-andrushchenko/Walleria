@@ -15,7 +15,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -51,6 +50,7 @@ class SearchViewModel(
     init {
         val searchQuery = savedStateHandle.toRoute<Screen.Search>().searchQuery
         if (searchQuery.isNotBlank()) {
+            onEvent(SearchEvent.ChangeQuery(searchQuery))
             onEvent(SearchEvent.PerformSearch)
         }
     }
@@ -118,42 +118,32 @@ class SearchViewModel(
     }
 
     private fun performSearch() {
-        val query = _state.value.query
+        val currentState = _state.value
+        val query = currentState.query
+        val filters = currentState.photoFilters
 
         saveRecentQuery(query)
 
-        val searchPhotoResultFlow = searchRepository.searchPhotos(
-            query = query,
-            order = _state.value.photoFilters.order,
-            contentFilter = _state.value.photoFilters.contentFilter,
-            color = _state.value.photoFilters.color,
-            orientation = _state.value.photoFilters.orientation
-        ).cachedIn(viewModelScope)
-
-        val searchCollectionResultFlow =
-            searchRepository.searchCollections(query).cachedIn(viewModelScope)
-        val searchUserResultFlow = searchRepository.searchUsers(query).cachedIn(viewModelScope)
-
-        combine(
-            searchPhotoResultFlow,
-            searchCollectionResultFlow,
-            searchUserResultFlow
-        ) { photosPagingData, collectionsPagingData, usersPagingData ->
-            _state.update {
-                it.copy(
+        _state.update {
+            it.copy(
+                photos = searchRepository.searchPhotos(
                     query = query,
-                    photosPagingData = photosPagingData,
-                    collectionsPagingData = collectionsPagingData,
-                    usersPagingData = usersPagingData
-                )
-            }
-        }.launchIn(viewModelScope)
+                    order = filters.order,
+                    contentFilter = filters.contentFilter,
+                    color = filters.color,
+                    orientation = filters.orientation
+                ).cachedIn(viewModelScope),
+                collections = searchRepository.searchCollections(query).cachedIn(viewModelScope),
+                users = searchRepository.searchUsers(query).cachedIn(viewModelScope)
+            )
+        }
     }
 
     private fun saveRecentQuery(query: String) {
         viewModelScope.launch {
             withContext(NonCancellable) {
-                val itemToModify = searchHistoryRepository.getSearchHistoryItemByTitle(title = query)
+                val itemToModify =
+                    searchHistoryRepository.getSearchHistoryItemByTitle(title = query)
                 itemToModify?.let {
                     searchHistoryRepository.updateItem(
                         it.copy(timeMillis = System.currentTimeMillis())
@@ -187,21 +177,17 @@ class SearchViewModel(
     }
 
     private fun changePhotoFilters(filters: PhotoFilters) {
-        viewModelScope.launch {
-            searchRepository.searchPhotos(
-                query = _state.value.query,
-                order = filters.order,
-                contentFilter = filters.contentFilter,
-                color = filters.color,
-                orientation = filters.orientation
-            ).cachedIn(viewModelScope).collect { photoPagingData ->
-                _state.update {
-                    it.copy(
-                        photoFilters = filters,
-                        photosPagingData = photoPagingData,
-                    )
-                }
-            }
+        _state.update { currentState ->
+            currentState.copy(
+                photoFilters = filters,
+                photos = searchRepository.searchPhotos(
+                    query = currentState.query,
+                    order = filters.order,
+                    contentFilter = filters.contentFilter,
+                    color = filters.color,
+                    orientation = filters.orientation
+                ).cachedIn(viewModelScope)
+            )
         }
     }
 }

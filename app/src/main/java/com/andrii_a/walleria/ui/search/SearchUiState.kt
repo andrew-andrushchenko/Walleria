@@ -8,31 +8,17 @@ import com.andrii_a.walleria.domain.models.photo.Photo
 import com.andrii_a.walleria.domain.models.search.SearchHistoryItem
 import com.andrii_a.walleria.domain.models.user.User
 import com.andrii_a.walleria.ui.common.SearchQuery
-import com.andrii_a.walleria.ui.util.emptyPagingData
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 @Stable
 data class SearchUiState(
     val query: SearchQuery = "",
     val photoFilters: PhotoFilters = PhotoFilters(),
     val searchHistory: List<SearchHistoryItem> = emptyList(),
-    private val photosPagingData: PagingData<Photo> = emptyPagingData(),
-    private val collectionsPagingData: PagingData<Collection> = emptyPagingData(),
-    private val usersPagingData: PagingData<User> = emptyPagingData(),
+    val photos: Flow<PagingData<Photo>> = emptyFlow(),
+    val collections: Flow<PagingData<Collection>> = emptyFlow(),
+    val users: Flow<PagingData<User>> = emptyFlow(),
     val isFilterDialogOpened: Boolean = false,
     val photosLoadQuality: PhotoQuality = PhotoQuality.MEDIUM,
-) {
-    val photos: StateFlow<PagingData<Photo>> field = MutableStateFlow(emptyPagingData())
-
-    val collections: StateFlow<PagingData<Collection>> field = MutableStateFlow(emptyPagingData())
-
-    val users: StateFlow<PagingData<User>> field = MutableStateFlow(emptyPagingData())
-
-    init {
-        photos.update { photosPagingData }
-        collections.update { collectionsPagingData }
-        users.update { usersPagingData }
-    }
-}
+)
