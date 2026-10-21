@@ -9,7 +9,6 @@ import com.andrii_a.walleria.domain.repository.PhotoRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -26,9 +25,7 @@ class PhotosViewModel(
         localPreferencesRepository.photosLoadQuality,
         _state
     ) { photosLoadQuality, state ->
-        state.copy(
-            photosLoadQuality = photosLoadQuality
-        )
+        state.copy(photosLoadQuality = photosLoadQuality)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000L),
@@ -39,24 +36,18 @@ class PhotosViewModel(
     val navigationEventsChannelFlow = navigationChannel.receiveAsFlow()
 
     init {
-        onEvent(PhotosEvent.ChangeListOrder(orderOptionOrdinalNum = PhotoListDisplayOrder.LATEST.ordinal))
+        onEvent(PhotosEvent.ChangeListOrder(PhotoListDisplayOrder.LATEST.ordinal))
     }
 
     fun onEvent(event: PhotosEvent) {
         when (event) {
             is PhotosEvent.ChangeListOrder -> {
                 val displayOrder = PhotoListDisplayOrder.entries[event.orderOptionOrdinalNum]
-                viewModelScope.launch {
-                    photoRepository.getPhotos(displayOrder)
-                        .cachedIn(viewModelScope)
-                        .collectLatest { pagingData ->
-                            _state.update {
-                                it.copy(
-                                    photosListDisplayOrder = displayOrder,
-                                    photosPagingData = pagingData,
-                                )
-                            }
-                        }
+                _state.update {
+                    it.copy(
+                        photos = photoRepository.getPhotos(displayOrder).cachedIn(viewModelScope),
+                        photosListDisplayOrder = displayOrder
+                    )
                 }
             }
 
